@@ -1,274 +1,493 @@
 <!doctype html>
-<html lang="en" data-webtui-theme="catppuccin-mocha">
+<html lang="en" data-webtui-theme="terminaldotshop">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Helmut Januschka - Personal Blog</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webtui/css/dist/full.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webtui/theme-catppuccin/dist/index.css">
+  <title>Helmut Januschka</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     @layer base, utils, components;
+    @import "https://cdn.jsdelivr.net/npm/@webtui/css/dist/full.css";
     
     :root {
       --font-family: "JetBrains Mono", monospace;
       --font-size: 16px;
+      --background0: #0a0a0a;
+      --background1: #151719;
+      --background2: #1e2124;
+      --foreground0: #ffffff;
+      --foreground1: #a7acb3;
+      --brand: #ff5c00;
+      --cron: #00fdff;
+      --green: #50fa7b;
+      --blue: #8be9fd;
+      --purple: #bd93f9;
+      --yellow: #f1fa8c;
+      --red: #ff5555;
     }
-    
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      min-height: 100vh;
       margin: 0;
-      display: flex;
-      flex-direction: column;
+      padding: 0;
+      font-family: var(--font-family);
+      background: var(--background0);
+      color: var(--foreground0);
+      line-height: 1.6;
     }
-    
-    /* Custom elements as block elements */
+
+    /* Layout utilities */
     row, column {
-      display: block;
-    }
-    
-    /* Row layout */
-    row {
       display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
     }
-    
-    /* Column layout */
+
+    row {
+      flex-direction: row;
+      align-items: center;
+    }
+
     column {
+      flex-direction: column;
+    }
+
+    [gap-="1"] { gap: 1ch 1lh; }
+    [gap-="2"] { gap: 2ch 2lh; }
+    [align-="between"] { justify-content: space-between; }
+    [align-="center"] { justify-content: center; align-items: center; }
+    [align-="end"] { justify-content: flex-end; }
+    [self-="grow"] { flex: 1; }
+    [space-="px:1"] { padding-left: 1ch; padding-right: 1ch; }
+    [space-="py:1"] { padding-top: 1lh; padding-bottom: 1lh; }
+    [space-="px:2 py:1"] { padding: 1lh 2ch; }
+    [space-="p:1"] { padding: 1lh 1ch; }
+    [space-="p:2"] { padding: 2lh 2ch; }
+
+    /* Main layout */
+    .main-container {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-    
-    /* Gap utilities */
-    [gap-="1"] { gap: 0.5rem; }
-    [gap-="2"] { gap: 1rem; }
-    
-    /* Alignment utilities */
-    [align-="between"] { justify-content: space-between; align-items: center; }
-    [align-="center"] { justify-content: center; align-items: center; }
-    
-    /* Self utilities */
-    [self-="grow"] { flex: 1; }
-    
-    /* Space utilities */
-    [space-="px:2 py:1"] { padding: 0.5rem 1rem; }
-    [space-="px:2 py:2"] { padding: 1rem; }
-    [space-="py:3"] { padding: 1.5rem 0; }
-    [space-="px:4 py:3"] { padding: 1.5rem 2rem; }
-    
-    .container {
-      max-width: 900px;
+
+    .header {
+      background: var(--background1);
+      border-bottom: 1px solid var(--background2);
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, var(--background1), var(--background2));
+      border-bottom: 1px solid var(--background2);
+    }
+
+    .content-section {
+      max-width: 100ch;
       margin: 0 auto;
-      padding: 0 1rem;
-      width: 100%;
+      padding: 2lh 2ch;
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--brand);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 2lh 0 1lh 0;
+      color: var(--cron);
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 1lh 0 0.5lh 0;
+      color: var(--foreground0);
+    }
+
+    /* Custom components */
+    .skill-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2ch;
+      margin-top: 2lh;
     }
     
-    .ascii-header {
+    .skill-category {
+      padding: 0;
+    }
+    
+    .skill-category h3 {
+      margin: 0 0 1lh 0;
+      color: var(--cron);
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    
+    .skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5ch;
+      align-items: flex-start;
+    }
+    
+    .skill-list [is-="badge"] {
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .project-card {
+      background: var(--background1);
+      border: 1px solid var(--background2);
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+
+    .project-card:hover {
+      border-color: var(--brand);
+    }
+
+    .ascii-logo {
       font-size: 0.8rem;
       line-height: 1.2;
-      white-space: pre;
+      color: var(--cron);
       font-family: monospace;
-      overflow-x: auto;
     }
-    
-    nav a {
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-right: 0.5ch;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2ch;
+      margin-top: 2lh;
+    }
+
+    /* Links */
+    a {
+      color: var(--blue);
       text-decoration: none;
-      color: inherit;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
     }
-    
-    nav a:hover {
-      text-decoration: underline;
+
+    a:hover {
+      border-bottom-color: var(--blue);
     }
-    
+
+    /* Responsive */
     @media (max-width: 768px) {
-      .ascii-header {
-        font-size: 0.5rem;
+      .content-section {
+        padding: 1lh 1ch;
       }
       
-      row[align-="between"] {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
+      h1 {
+        font-size: 2rem;
       }
       
-      nav row {
-        flex-direction: row;
+      .ascii-logo {
+        font-size: 0.6rem;
+      }
+      
+      .skill-grid,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .skill-grid {
+        gap: 1.5lh;
       }
     }
   </style>
 </head>
 <body>
-  <column self-="grow" style="min-height: 100vh; display: flex; flex-direction: column;">
+  <div class="main-container">
     <!-- Header -->
-    <header box-="square" shear-="bottom">
-      <div class="container">
-        <row align-="between" space-="px:2 py:1">
+    <header class="header">
+      <div class="content-section">
+        <row align-="between" space-="py:1">
           <div>
-            <h1 style="margin: 0;">Helmut Januschka</h1>
-            <row gap-="1" style="margin-top: 0.5rem;">
-              <span is-="badge" variant-="blue">Developer</span>
-              <span is-="badge" variant-="green">DevOps</span>
-              <span is-="badge" variant-="yellow">Open Source</span>
-            </row>
+            <span class="status-indicator"></span>
+            <strong>hjanuschka@terminal</strong>
           </div>
-          <nav>
-            <row gap-="2">
-              <a href="/">Home</a>
-              <a href="#posts">Posts</a>
-              <a href="#about">About</a>
-              <a href="#contact">Contact</a>
-            </row>
-          </nav>
+          <row gap-="2">
+            <a href="#about">about</a>
+            <a href="#skills">skills</a>
+            <a href="#projects">projects</a>
+            <a href="#contact">contact</a>
+          </row>
         </row>
       </div>
     </header>
 
-    <!-- Main Content -->
-    <main self-="grow" space-="py:3" style="flex: 1;">
-      <div class="container">
-        <!-- Welcome Section -->
-        <section box-="round" space-="px:2 py:2" style="margin-bottom: 2rem;">
-          <div class="ascii-header">
- _    _      _                 _     ___                           _     _         
-| |  | |    | |               | |   |_  |                         | |   | |        
-| |  | | ___| | ___ ___  _ __ | |     | | __ _ _ __  _   _ ___  __| |__ | | ____ _ 
-| |/\| |/ _ \ |/ __/ _ \| '_ \| |     | |/ _` | '_ \| | | / __|/ __| '_ \| |/ / _` |
-\  /\  /  __/ | (_| (_) | | | |_|/\__/ / (_| | | | | |_| \__ \ (__| | | |   < (_| |
- \/  \/ \___|_|\___\___/|_| |_(_)\____/ \__,_|_| |_|\__,_|___/\___|_| |_|_|\_\__,_|
-          </div>
-          <p style="margin-top: 1rem;">
-            Welcome to my personal corner of the internet. I'm a software developer and DevOps engineer passionate about 
-            building reliable systems and contributing to open source projects.
-          </p>
-        </section>
-
-        <!-- Recent Posts -->
-        <section id="posts" style="margin-bottom: 2rem;">
-          <row align-="between" style="margin-bottom: 1rem;">
-            <h2>Recent Posts</h2>
-            <a href="/posts.html">View All →</a>
-          </row>
-          
-          <column gap-="1">
-            <article box-="square" space-="px:2 py:1">
-              <row align-="between">
-                <div>
-                  <h3 style="margin: 0;">Getting Started with WebTUI</h3>
-                  <p style="margin: 0.5rem 0;">A deep dive into building terminal-inspired web interfaces with WebTUI.</p>
-                  <row gap-="1">
-                    <span is-="badge" variant-="background1">2025-01-15</span>
-                    <span is-="badge" variant-="purple">Tutorial</span>
-                    <span is-="badge" variant-="cyan">CSS</span>
-                  </row>
-                </div>
-                <button size-="small">Read →</button>
-              </row>
-            </article>
-
-            <article box-="square" space-="px:2 py:1">
-              <row align-="between">
-                <div>
-                  <h3 style="margin: 0;">DevOps Best Practices in 2025</h3>
-                  <p style="margin: 0.5rem 0;">Modern approaches to CI/CD, monitoring, and infrastructure as code.</p>
-                  <row gap-="1">
-                    <span is-="badge" variant-="background1">2025-01-10</span>
-                    <span is-="badge" variant-="orange">DevOps</span>
-                    <span is-="badge" variant-="blue">Cloud</span>
-                  </row>
-                </div>
-                <button size-="small">Read →</button>
-              </row>
-            </article>
-
-            <article box-="square" space-="px:2 py:1">
-              <row align-="between">
-                <div>
-                  <h3 style="margin: 0;">Building CLI Tools with Go</h3>
-                  <p style="margin: 0.5rem 0;">Learn how to create powerful command-line interfaces using Go and Cobra.</p>
-                  <row gap-="1">
-                    <span is-="badge" variant-="background1">2025-01-05</span>
-                    <span is-="badge" variant-="green">Go</span>
-                    <span is-="badge" variant-="yellow">CLI</span>
-                  </row>
-                </div>
-                <button size-="small">Read →</button>
-              </row>
-            </article>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="content-section">
+        <row gap-="2" align-="center">
+          <column self-="grow">
+            <pre class="ascii-logo">
+ _   _      _                 _   
+| | | | ___| |_ __ ___  _   _| |_ 
+| |_| |/ _ \ | '_ ` _ \| | | | __|
+|  _  |  __/ | | | | | | |_| | |_ 
+|_| |_|\___|_|_| |_| |_|\__,_|\__|
+            </pre>
+            <h1>Helmut Januschka</h1>
+            <p style="font-size: 1.2rem; color: var(--foreground1); margin: 1lh 0;">
+              Software Developer • DevOps Engineer • Open Source Enthusiast
+            </p>
+            <row gap-="1" style="margin-top: 2lh;">
+              <span is-="badge" variant-="background1">🚀 Available for hire</span>
+              <span is-="badge" variant-="green">Remote</span>
+              <span is-="badge" variant-="blue">10+ years experience</span>
+            </row>
           </column>
-        </section>
-
-        <!-- About Section -->
-        <section id="about" box-="double" space-="px:2 py:2" style="margin-bottom: 2rem;">
-          <h2>About Me</h2>
-          <row gap-="2">
-            <column self-="grow">
-              <p>
-                I'm a software developer with over a decade of experience building scalable systems and leading 
-                technical teams. My expertise spans from low-level system programming to cloud-native architectures.
-              </p>
-              <p>
-                Currently, I focus on:
-              </p>
-              <ul>
-                <li>Cloud Infrastructure & Kubernetes</li>
-                <li>Site Reliability Engineering</li>
-                <li>Open Source Development</li>
-                <li>Developer Tooling & Automation</li>
-              </ul>
+          <column style="min-width: 300px;" box-="square" space-="p:2">
+            <h3 style="margin-top: 0;">Quick Stats</h3>
+            <column gap-="1">
+              <row align-="between">
+                <span>Projects:</span>
+                <span is-="badge" variant-="brand">50+</span>
+              </row>
+              <row align-="between">
+                <span>Languages:</span>
+                <span is-="badge" variant-="cron">8</span>
+              </row>
+              <row align-="between">
+                <span>Contributions:</span>
+                <span is-="badge" variant-="green">1000+</span>
+              </row>
+              <row align-="between">
+                <span>Coffee consumed:</span>
+                <span is-="badge" variant-="yellow">∞</span>
+              </row>
             </column>
-            <column style="min-width: 200px;">
-              <h3>Tech Stack</h3>
-              <column gap-="1">
-                <row gap-="1">
-                  <span is-="badge" variant-="blue">Go</span>
-                  <span is-="badge" variant-="yellow">Python</span>
-                </row>
-                <row gap-="1">
-                  <span is-="badge" variant-="orange">Rust</span>
-                  <span is-="badge" variant-="green">TypeScript</span>
-                </row>
-                <row gap-="1">
-                  <span is-="badge" variant-="purple">Kubernetes</span>
-                  <span is-="badge" variant-="cyan">Docker</span>
-                </row>
-                <row gap-="1">
-                  <span is-="badge" variant-="red">AWS</span>
-                  <span is-="badge" variant-="background2">GCP</span>
-                </row>
-              </column>
-            </column>
-          </row>
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact" box-="round" space-="px:2 py:2">
-          <h2>Get in Touch</h2>
-          <p>I'm always interested in connecting with fellow developers and discussing new projects.</p>
-          <row gap-="2">
-            <button variant-="blue">GitHub →</button>
-            <button variant-="cyan">LinkedIn →</button>
-            <button variant-="green">Email →</button>
-            <button variant-="purple">Twitter →</button>
-          </row>
-        </section>
+          </column>
+        </row>
       </div>
-    </main>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="content-section">
+      <h2>About</h2>
+      <row gap-="2">
+        <column self-="grow">
+          <p>
+            I'm a passionate software developer with over a decade of experience building scalable 
+            systems and leading technical teams. My journey spans from low-level system programming 
+            to cloud-native architectures, with a strong focus on reliability and performance.
+          </p>
+          <p>
+            I believe in writing clean, maintainable code and building systems that can scale. 
+            When I'm not coding, you'll find me contributing to open source projects or exploring 
+            new technologies that can make developers' lives easier.
+          </p>
+        </column>
+        <column box-="square" space-="p:2" style="min-width: 300px;">
+          <h3 style="margin-top: 0;">Currently</h3>
+          <column gap-="1">
+            <div>🔧 Building developer tools</div>
+            <div>☁️ Architecting cloud solutions</div>
+            <div>📚 Learning Rust & WebAssembly</div>
+            <div>🌱 Contributing to OSS</div>
+          </column>
+        </column>
+      </row>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="content-section">
+      <h2>Skills & Technologies</h2>
+      <div class="skill-grid">
+        <div class="skill-category">
+          <h3>Languages</h3>
+          <div class="skill-list">
+            <a href="https://golang.org" target="_blank"><span is-="badge" variant-="blue">Go</span></a>
+            <a href="https://python.org" target="_blank"><span is-="badge" variant-="yellow">Python</span></a>
+            <a href="https://rust-lang.org" target="_blank"><span is-="badge" variant-="red">Rust</span></a>
+            <a href="https://typescriptlang.org" target="_blank"><span is-="badge" variant-="green">TypeScript</span></a>
+            <a href="https://isocpp.org" target="_blank"><span is-="badge" variant-="purple">C++</span></a>
+            <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank"><span is-="badge" variant-="brand">JavaScript</span></a>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>DevOps & Cloud</h3>
+          <div class="skill-list">
+            <a href="https://kubernetes.io" target="_blank"><span is-="badge" variant-="blue">Kubernetes</span></a>
+            <a href="https://docker.com" target="_blank"><span is-="badge" variant-="cron">Docker</span></a>
+            <a href="https://aws.amazon.com" target="_blank"><span is-="badge" variant-="yellow">AWS</span></a>
+            <a href="https://cloud.google.com" target="_blank"><span is-="badge" variant-="green">GCP</span></a>
+            <a href="https://azure.microsoft.com" target="_blank"><span is-="badge" variant-="purple">Azure</span></a>
+            <a href="https://terraform.io" target="_blank"><span is-="badge" variant-="red">Terraform</span></a>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Tools & Frameworks</h3>
+          <div class="skill-list">
+            <a href="https://react.dev" target="_blank"><span is-="badge" variant-="green">React</span></a>
+            <a href="https://nodejs.org" target="_blank"><span is-="badge" variant-="blue">Node.js</span></a>
+            <a href="https://vuejs.org" target="_blank"><span is-="badge" variant-="purple">Vue.js</span></a>
+            <a href="https://ansible.com" target="_blank"><span is-="badge" variant-="red">Ansible</span></a>
+            <a href="https://jenkins.io" target="_blank"><span is-="badge" variant-="yellow">Jenkins</span></a>
+            <a href="https://github.com/features/actions" target="_blank"><span is-="badge" variant-="cron">GitHub Actions</span></a>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Databases & Infrastructure</h3>
+          <div class="skill-list">
+            <a href="https://postgresql.org" target="_blank"><span is-="badge" variant-="blue">PostgreSQL</span></a>
+            <a href="https://redis.io" target="_blank"><span is-="badge" variant-="red">Redis</span></a>
+            <a href="https://mongodb.com" target="_blank"><span is-="badge" variant-="green">MongoDB</span></a>
+            <a href="https://elastic.co" target="_blank"><span is-="badge" variant-="yellow">Elasticsearch</span></a>
+            <a href="https://kernel.org" target="_blank"><span is-="badge" variant-="brand">Linux</span></a>
+            <a href="https://nginx.org" target="_blank"><span is-="badge" variant-="purple">Nginx</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="content-section">
+      <h2>Open Source Contributions</h2>
+      <column gap-="2">
+        <div class="project-card" box-="square" space-="p:2">
+          <h3>Chromium</h3>
+          <p>Major contributor to Google's open-source web browser project. Led modernization efforts including StringPiece to std::string_view migration and GoogleTest naming convention improvements across multiple modules.</p>
+          <row gap-="1" style="margin-top: 1lh;">
+            <a href="https://github.com/chromium/chromium" target="_blank"><span is-="badge" variant-="purple">C++</span></a>
+            <a href="https://chromium.googlesource.com/chromium/src/+log/main?author=hjanuschka" target="_blank"><span is-="badge" variant-="blue">20+ commits</span></a>
+            <a href="https://chromium.org" target="_blank"><span is-="badge" variant-="brand">Web Browser</span></a>
+          </row>
+        </div>
+
+        <div class="project-card" box-="square" space-="p:2">
+          <h3>LLVM Project</h3>
+          <p>Enhanced clang-tidy modernization tools by implementing pattern detection for substr() operations that can be replaced with C++20 starts_with() method, improving code readability and performance.</p>
+          <row gap-="1" style="margin-top: 1lh;">
+            <a href="https://github.com/llvm/llvm-project" target="_blank"><span is-="badge" variant-="red">C++</span></a>
+            <a href="https://github.com/llvm/llvm-project/search?q=author%3Ahjanuschka&type=commits" target="_blank"><span is-="badge" variant-="green">Clang-tidy</span></a>
+            <a href="https://llvm.org" target="_blank"><span is-="badge" variant-="yellow">Compiler</span></a>
+          </row>
+        </div>
+
+        <div class="project-card" box-="square" space-="p:2">
+          <h3>PDFium</h3>
+          <p>Contributed to Google's PDF rendering library with API enhancements and PDF specification compliance improvements. Added MIME type retrieval for attachments and PDF version handling from catalog dictionary.</p>
+          <row gap-="1" style="margin-top: 1lh;">
+            <a href="https://github.com/chromium/pdfium" target="_blank"><span is-="badge" variant-="purple">C++</span></a>
+            <a href="https://pdfium.googlesource.com/pdfium/+log/main?author=hjanuschka" target="_blank"><span is-="badge" variant-="cron">PDF Engine</span></a>
+            <a href="https://pdfium.googlesource.com/pdfium/" target="_blank"><span is-="badge" variant-="blue">API Design</span></a>
+          </row>
+        </div>
+      </column>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="content-section">
+      <h2>Get In Touch</h2>
+      <p>I'm always interested in discussing new projects, opportunities, or just chatting about technology.</p>
+      
+      <div class="contact-grid">
+        <div box-="square" space-="p:2">
+          <h3>Online</h3>
+          <column gap-="1">
+            <row align-="between">
+              <span>GitHub:</span>
+              <a href="https://github.com/hjanuschka">hjanuschka</a>
+            </row>
+            <row align-="between">
+              <span>LinkedIn:</span>
+              <a href="https://linkedin.com/in/hjanuschka">in/hjanuschka</a>
+            </row>
+            <row align-="between">
+              <span>Twitter:</span>
+              <a href="https://twitter.com/hjanuschka">@hjanuschka</a>
+            </row>
+          </column>
+        </div>
+
+        <div box-="square" space-="p:2">
+          <h3>Direct</h3>
+          <column gap-="1">
+            <row align-="between">
+              <span>Email:</span>
+              <a href="mailto:helmut@januschka.com">helmut@januschka.com</a>
+            </row>
+            <row align-="between">
+              <span>Location:</span>
+              <span>Remote</span>
+            </row>
+            <row align-="between">
+              <span>Timezone:</span>
+              <span>UTC+1</span>
+            </row>
+          </column>
+        </div>
+      </div>
+
+      <div style="margin-top: 3lh; text-align: center;">
+        <row align-="center" gap-="2">
+          <button size-="large" variant-="brand">
+            <a href="mailto:helmut@januschka.com" style="color: inherit; border: none;">Send Email</a>
+          </button>
+          <button size-="large" variant-="background1">
+            <a href="https://github.com/hjanuschka" style="color: inherit; border: none;">View GitHub</a>
+          </button>
+        </row>
+      </div>
+    </section>
 
     <!-- Footer -->
-    <footer box-="square" shear-="top">
-      <div class="container">
-        <row align-="between" space-="px:2 py:1">
-          <span>© 2025 Helmut Januschka</span>
+    <footer style="background: var(--background1); border-top: 1px solid var(--background2); margin-top: 4lh;">
+      <div class="content-section">
+        <row align-="between" space-="py:1">
+          <span style="color: var(--foreground1);">© 2025 Helmut Januschka</span>
           <row gap-="1">
-            <span is-="badge" variant-="background1">Built with WebTUI</span>
-            <span is-="badge" variant-="background2">Hosted on GitHub Pages</span>
+            <span is-="badge" variant-="background2">Made with WebTUI</span>
           </row>
         </row>
       </div>
     </footer>
-  </column>
+  </div>
+
+  <script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
 </body>
 </html>
