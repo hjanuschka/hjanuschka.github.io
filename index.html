@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en" data-webtui-theme="catppuccin-mocha">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helmut Januschka - Personal Blog</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webtui/css/dist/full.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webtui/theme-catppuccin/dist/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-family: "JetBrains Mono", monospace;
+      --font-size: 16px;
+    }
+    
+    body {
+      min-height: 100vh;
+      margin: 0;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .ascii-header {
+      font-size: 0.8rem;
+      line-height: 1.2;
+      white-space: pre;
+      font-family: monospace;
+    }
+    
+    @media (max-width: 768px) {
+      .ascii-header {
+        font-size: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <column self-="grow" style="min-height: 100vh;">
+    <!-- Header -->
+    <header box-="square" shear-="bottom">
+      <div class="container">
+        <row align-="between" space-="px:2 py:1">
+          <div>
+            <h1 style="margin: 0;">Helmut Januschka</h1>
+            <row gap-="1" style="margin-top: 0.5rem;">
+              <span is-="badge" variant-="blue">Developer</span>
+              <span is-="badge" variant-="green">DevOps</span>
+              <span is-="badge" variant-="yellow">Open Source</span>
+            </row>
+          </div>
+          <nav>
+            <row gap-="2">
+              <a href="/">Home</a>
+              <a href="#posts">Posts</a>
+              <a href="#about">About</a>
+              <a href="#contact">Contact</a>
+            </row>
+          </nav>
+        </row>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main self-="grow" space-="py:3">
+      <div class="container">
+        <!-- Welcome Section -->
+        <section box-="round" space-="px:2 py:2" style="margin-bottom: 2rem;">
+          <div class="ascii-header">
+ _    _      _                 _     ___                           _     _         
+| |  | |    | |               | |   |_  |                         | |   | |        
+| |  | | ___| | ___ ___  _ __ | |     | | __ _ _ __  _   _ ___  __| |__ | | ____ _ 
+| |/\| |/ _ \ |/ __/ _ \| '_ \| |     | |/ _` | '_ \| | | / __|/ __| '_ \| |/ / _` |
+\  /\  /  __/ | (_| (_) | | | |_|/\__/ / (_| | | | | |_| \__ \ (__| | | |   < (_| |
+ \/  \/ \___|_|\___\___/|_| |_(_)\____/ \__,_|_| |_|\__,_|___/\___|_| |_|_|\_\__,_|
+          </div>
+          <p style="margin-top: 1rem;">
+            Welcome to my personal corner of the internet. I'm a software developer and DevOps engineer passionate about 
+            building reliable systems and contributing to open source projects.
+          </p>
+        </section>
+
+        <!-- Recent Posts -->
+        <section id="posts" style="margin-bottom: 2rem;">
+          <row align-="between" style="margin-bottom: 1rem;">
+            <h2>Recent Posts</h2>
+            <a href="/posts.html">View All →</a>
+          </row>
+          
+          <column gap-="1">
+            <article box-="square" space-="px:2 py:1">
+              <row align-="between">
+                <div>
+                  <h3 style="margin: 0;">Getting Started with WebTUI</h3>
+                  <p style="margin: 0.5rem 0;">A deep dive into building terminal-inspired web interfaces with WebTUI.</p>
+                  <row gap-="1">
+                    <span is-="badge" variant-="background1">2025-01-15</span>
+                    <span is-="badge" variant-="purple">Tutorial</span>
+                    <span is-="badge" variant-="cyan">CSS</span>
+                  </row>
+                </div>
+                <button size-="small">Read →</button>
+              </row>
+            </article>
+
+            <article box-="square" space-="px:2 py:1">
+              <row align-="between">
+                <div>
+                  <h3 style="margin: 0;">DevOps Best Practices in 2025</h3>
+                  <p style="margin: 0.5rem 0;">Modern approaches to CI/CD, monitoring, and infrastructure as code.</p>
+                  <row gap-="1">
+                    <span is-="badge" variant-="background1">2025-01-10</span>
+                    <span is-="badge" variant-="orange">DevOps</span>
+                    <span is-="badge" variant-="blue">Cloud</span>
+                  </row>
+                </div>
+                <button size-="small">Read →</button>
+              </row>
+            </article>
+
+            <article box-="square" space-="px:2 py:1">
+              <row align-="between">
+                <div>
+                  <h3 style="margin: 0;">Building CLI Tools with Go</h3>
+                  <p style="margin: 0.5rem 0;">Learn how to create powerful command-line interfaces using Go and Cobra.</p>
+                  <row gap-="1">
+                    <span is-="badge" variant-="background1">2025-01-05</span>
+                    <span is-="badge" variant-="green">Go</span>
+                    <span is-="badge" variant-="yellow">CLI</span>
+                  </row>
+                </div>
+                <button size-="small">Read →</button>
+              </row>
+            </article>
+          </column>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" box-="double" space-="px:2 py:2" style="margin-bottom: 2rem;">
+          <h2>About Me</h2>
+          <row gap-="2">
+            <column self-="grow">
+              <p>
+                I'm a software developer with over a decade of experience building scalable systems and leading 
+                technical teams. My expertise spans from low-level system programming to cloud-native architectures.
+              </p>
+              <p>
+                Currently, I focus on:
+              </p>
+              <ul>
+                <li>Cloud Infrastructure & Kubernetes</li>
+                <li>Site Reliability Engineering</li>
+                <li>Open Source Development</li>
+                <li>Developer Tooling & Automation</li>
+              </ul>
+            </column>
+            <column style="min-width: 200px;">
+              <h3>Tech Stack</h3>
+              <column gap-="1">
+                <row gap-="1">
+                  <span is-="badge" variant-="blue">Go</span>
+                  <span is-="badge" variant-="yellow">Python</span>
+                </row>
+                <row gap-="1">
+                  <span is-="badge" variant-="orange">Rust</span>
+                  <span is-="badge" variant-="green">TypeScript</span>
+                </row>
+                <row gap-="1">
+                  <span is-="badge" variant-="purple">Kubernetes</span>
+                  <span is-="badge" variant-="cyan">Docker</span>
+                </row>
+                <row gap-="1">
+                  <span is-="badge" variant-="red">AWS</span>
+                  <span is-="badge" variant-="background2">GCP</span>
+                </row>
+              </column>
+            </column>
+          </row>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" box-="round" space-="px:2 py:2">
+          <h2>Get in Touch</h2>
+          <p>I'm always interested in connecting with fellow developers and discussing new projects.</p>
+          <row gap-="2">
+            <button variant-="blue">GitHub →</button>
+            <button variant-="cyan">LinkedIn →</button>
+            <button variant-="green">Email →</button>
+            <button variant-="purple">Twitter →</button>
+          </row>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer box-="square" shear-="top">
+      <div class="container">
+        <row align-="between" space-="px:2 py:1">
+          <span>© 2025 Helmut Januschka</span>
+          <row gap-="1">
+            <span is-="badge" variant-="background1">Built with WebTUI</span>
+            <span is-="badge" variant-="background2">Hosted on GitHub Pages</span>
+          </row>
+        </row>
+      </div>
+    </footer>
+  </column>
+</body>
+</html>

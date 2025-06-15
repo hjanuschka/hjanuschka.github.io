@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-webtui-theme="catppuccin-mocha">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webtui/css/dist/full.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webtui/theme-catppuccin/dist/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-family: "JetBrains Mono", monospace;
+      --font-size: 16px;
+    }
+    
+    body {
+      min-height: 100vh;
+      margin: 0;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .error-ascii {
+      font-size: 1rem;
+      line-height: 1.2;
+      white-space: pre;
+      font-family: monospace;
+      text-align: center;
+      color: var(--color-red);
+    }
+    
+    @media (max-width: 768px) {
+      .error-ascii {
+        font-size: 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <column self-="grow" align-="center" justify-="center" style="min-height: 100vh;">
+    <div box-="double" space-="px:4 py:3" style="text-align: center;">
+      <div class="error-ascii">
+ _  _    ___  _  _   
+| || |  / _ \| || |  
+| || |_| | | | || |_ 
+|__   _| | | |__   _|
+   | | | |_| |  | |  
+   |_|  \___/   |_|  
+      </div>
+      
+      <h1 style="margin-top: 2rem;">Page Not Found</h1>
+      
+      <p style="margin: 1rem 0;">
+        The page you're looking for doesn't exist in this dimension.
+      </p>
+      
+      <column gap-="1" style="margin: 2rem 0;">
+        <code box-="square" space-="px:2 py:1" style="background: var(--color-surface0);">
+          $ ls -la /requested/path<br>
+          ls: cannot access '/requested/path': No such file or directory
+        </code>
+      </column>
+      
+      <row gap-="2" align-="center">
+        <button variant-="blue" onclick="window.location.href='/'">← Go Home</button>
+        <button variant-="green" onclick="history.back()">Go Back</button>
+      </row>
+    </div>
+  </column>
+</body>
+</html>
