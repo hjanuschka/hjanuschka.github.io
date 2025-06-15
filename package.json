@@ -1,0 +1,23 @@
+{
+  "name": "januschka.com",
+  "version": "1.0.0",
+  "main": "improve-design.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hjanuschka/januschka.com.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hjanuschka/januschka.com/issues"
+  },
+  "homepage": "https://github.com/hjanuschka/januschka.com#readme",
+  "description": "",
+  "dependencies": {
+    "playwright": "^1.53.0"
+  }
+}

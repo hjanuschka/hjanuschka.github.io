@@ -114,33 +114,51 @@
 
     /* Custom components */
     .skill-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2ch;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5lh;
       margin-top: 2lh;
     }
     
     .skill-category {
-      padding: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 2ch;
+      border-bottom: 1px solid var(--background2);
+      padding-bottom: 1lh;
     }
     
     .skill-category h3 {
-      margin: 0 0 1lh 0;
-      color: var(--cron);
-      font-size: 1.2rem;
-      font-weight: 700;
+      margin: 0;
+      color: var(--foreground1);
+      font-size: 1rem;
+      font-weight: 400;
+      min-width: 15ch;
+      opacity: 0.8;
     }
     
     .skill-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5ch;
-      align-items: flex-start;
+      gap: 0.4ch 0.6ch;
+      align-items: center;
+      flex: 1;
     }
     
     .skill-list [is-="badge"] {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       white-space: nowrap;
+      opacity: 0.9;
+      transition: opacity 0.2s ease;
+    }
+    
+    .skill-list a {
+      text-decoration: none;
+      border: none;
+    }
+    
+    .skill-list a:hover [is-="badge"] {
+      opacity: 1;
     }
 
     .project-card {
@@ -218,6 +236,15 @@
       .skill-grid {
         gap: 1.5lh;
       }
+      
+      .skill-category {
+        flex-direction: column;
+        gap: 0.5lh;
+      }
+      
+      .skill-category h3 {
+        min-width: auto;
+      }
     }
   </style>
 </head>
@@ -246,43 +273,15 @@
       <div class="content-section">
         <row gap-="2" align-="center">
           <column self-="grow">
-            <pre class="ascii-logo">
- _   _      _                 _   
-| | | | ___| |_ __ ___  _   _| |_ 
-| |_| |/ _ \ | '_ ` _ \| | | | __|
-|  _  |  __/ | | | | | | |_| | |_ 
-|_| |_|\___|_|_| |_| |_|\__,_|\__|
-            </pre>
             <h1>Helmut Januschka</h1>
             <p style="font-size: 1.2rem; color: var(--foreground1); margin: 1lh 0;">
-              Software Developer • DevOps Engineer • Open Source Enthusiast
+              Head of Engineering @Krone.at • Open Source Contributor
             </p>
             <row gap-="1" style="margin-top: 2lh;">
-              <span is-="badge" variant-="background1">🚀 Available for hire</span>
-              <span is-="badge" variant-="green">Remote</span>
-              <span is-="badge" variant-="blue">10+ years experience</span>
+              <span is-="badge" variant-="background1">25+ years experience</span>
+              <span is-="badge" variant-="green">Currently @krone.at</span>
+              <span is-="badge" variant-="blue">Vienna, Austria</span>
             </row>
-          </column>
-          <column style="min-width: 300px;" box-="square" space-="p:2">
-            <h3 style="margin-top: 0;">Quick Stats</h3>
-            <column gap-="1">
-              <row align-="between">
-                <span>Projects:</span>
-                <span is-="badge" variant-="brand">50+</span>
-              </row>
-              <row align-="between">
-                <span>Languages:</span>
-                <span is-="badge" variant-="cron">8</span>
-              </row>
-              <row align-="between">
-                <span>Contributions:</span>
-                <span is-="badge" variant-="green">1000+</span>
-              </row>
-              <row align-="between">
-                <span>Coffee consumed:</span>
-                <span is-="badge" variant-="yellow">∞</span>
-              </row>
-            </column>
           </column>
         </row>
       </div>
@@ -294,80 +293,67 @@
       <row gap-="2">
         <column self-="grow">
           <p>
-            I'm a passionate software developer with over a decade of experience building scalable 
-            systems and leading technical teams. My journey spans from low-level system programming 
-            to cloud-native architectures, with a strong focus on reliability and performance.
+            I work as Head of Engineering at Krone.at, focusing on engineering management, 
+            technical strategy, and system reliability. My background spans 25+ years across 
+            various technology domains.
           </p>
           <p>
-            I believe in writing clean, maintainable code and building systems that can scale. 
-            When I'm not coding, you'll find me contributing to open source projects or exploring 
-            new technologies that can make developers' lives easier.
+            I contribute to open source projects including Chromium, LLVM, PDFium, and Fastlane. 
+            Areas of interest include system performance, developer tooling, and infrastructure automation.
           </p>
         </column>
         <column box-="square" space-="p:2" style="min-width: 300px;">
-          <h3 style="margin-top: 0;">Currently</h3>
+          <h3 style="margin-top: 0;">Current Roles</h3>
           <column gap-="1">
-            <div>🔧 Building developer tools</div>
-            <div>☁️ Architecting cloud solutions</div>
-            <div>📚 Learning Rust & WebAssembly</div>
-            <div>🌱 Contributing to OSS</div>
+            <div>👔 Head of Engineering @Krone.at</div>
+            <div>🏢 Managing Director @Captcha GmbH</div>
+            <div>🌐 Chromium Committer</div>
+            <div>🛠️ Breaking browsers with C++</div>
           </column>
         </column>
       </row>
     </section>
 
-    <!-- Skills Section -->
+    <!-- Experience Section -->
     <section id="skills" class="content-section">
-      <h2>Skills & Technologies</h2>
-      <div class="skill-grid">
-        <div class="skill-category">
-          <h3>Languages</h3>
-          <div class="skill-list">
-            <a href="https://golang.org" target="_blank"><span is-="badge" variant-="blue">Go</span></a>
-            <a href="https://python.org" target="_blank"><span is-="badge" variant-="yellow">Python</span></a>
-            <a href="https://rust-lang.org" target="_blank"><span is-="badge" variant-="red">Rust</span></a>
-            <a href="https://typescriptlang.org" target="_blank"><span is-="badge" variant-="green">TypeScript</span></a>
-            <a href="https://isocpp.org" target="_blank"><span is-="badge" variant-="purple">C++</span></a>
-            <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank"><span is-="badge" variant-="brand">JavaScript</span></a>
+      <h2>Experience & Focus</h2>
+      <row gap-="2">
+        <column self-="grow">
+          <h3>Engineering Leadership</h3>
+          <p>
+            Leading technical vision and engineering teams at scale. Experience building 
+            and maintaining systems that serve millions of users, with focus on reliability, 
+            performance, and team productivity.
+          </p>
+          
+          <h3>System Architecture</h3>
+          <p>
+            25+ years of hands-on experience across the full technology stack - from 
+            low-level system programming to distributed cloud architectures. Comfortable 
+            working with any technology that solves the problem at hand.
+          </p>
+          
+          <h3>Open Source Philosophy</h3>
+          <p>
+            Active contributor to major open source projects. Believe in giving back 
+            to the community and building tools that make developers more productive.
+          </p>
+        </column>
+        
+        <column style="min-width: 300px;">
+          <div box-="square" space-="p:2">
+            <h3 style="margin-top: 0;">Current Stack @Krone.at</h3>
+            <column gap-="1">
+              <div>• Large-scale web platform architecture</div>
+              <div>• In-house mobile app development teams</div>
+              <div>• TV broadcast technology integration</div>
+              <div>• Real-time content delivery</div>
+              <div>• High-availability databases</div>
+              <div>• CI/CD & automation</div>
+            </column>
           </div>
-        </div>
-
-        <div class="skill-category">
-          <h3>DevOps & Cloud</h3>
-          <div class="skill-list">
-            <a href="https://kubernetes.io" target="_blank"><span is-="badge" variant-="blue">Kubernetes</span></a>
-            <a href="https://docker.com" target="_blank"><span is-="badge" variant-="cron">Docker</span></a>
-            <a href="https://aws.amazon.com" target="_blank"><span is-="badge" variant-="yellow">AWS</span></a>
-            <a href="https://cloud.google.com" target="_blank"><span is-="badge" variant-="green">GCP</span></a>
-            <a href="https://azure.microsoft.com" target="_blank"><span is-="badge" variant-="purple">Azure</span></a>
-            <a href="https://terraform.io" target="_blank"><span is-="badge" variant-="red">Terraform</span></a>
-          </div>
-        </div>
-
-        <div class="skill-category">
-          <h3>Tools & Frameworks</h3>
-          <div class="skill-list">
-            <a href="https://react.dev" target="_blank"><span is-="badge" variant-="green">React</span></a>
-            <a href="https://nodejs.org" target="_blank"><span is-="badge" variant-="blue">Node.js</span></a>
-            <a href="https://vuejs.org" target="_blank"><span is-="badge" variant-="purple">Vue.js</span></a>
-            <a href="https://ansible.com" target="_blank"><span is-="badge" variant-="red">Ansible</span></a>
-            <a href="https://jenkins.io" target="_blank"><span is-="badge" variant-="yellow">Jenkins</span></a>
-            <a href="https://github.com/features/actions" target="_blank"><span is-="badge" variant-="cron">GitHub Actions</span></a>
-          </div>
-        </div>
-
-        <div class="skill-category">
-          <h3>Databases & Infrastructure</h3>
-          <div class="skill-list">
-            <a href="https://postgresql.org" target="_blank"><span is-="badge" variant-="blue">PostgreSQL</span></a>
-            <a href="https://redis.io" target="_blank"><span is-="badge" variant-="red">Redis</span></a>
-            <a href="https://mongodb.com" target="_blank"><span is-="badge" variant-="green">MongoDB</span></a>
-            <a href="https://elastic.co" target="_blank"><span is-="badge" variant-="yellow">Elasticsearch</span></a>
-            <a href="https://kernel.org" target="_blank"><span is-="badge" variant-="brand">Linux</span></a>
-            <a href="https://nginx.org" target="_blank"><span is-="badge" variant-="purple">Nginx</span></a>
-          </div>
-        </div>
-      </div>
+        </column>
+      </row>
     </section>
 
     <!-- Projects Section -->
@@ -401,6 +387,26 @@
             <a href="https://github.com/chromium/pdfium" target="_blank"><span is-="badge" variant-="purple">C++</span></a>
             <a href="https://pdfium.googlesource.com/pdfium/+log/main?author=hjanuschka" target="_blank"><span is-="badge" variant-="cron">PDF Engine</span></a>
             <a href="https://pdfium.googlesource.com/pdfium/" target="_blank"><span is-="badge" variant-="blue">API Design</span></a>
+          </row>
+        </div>
+
+        <div class="project-card" box-="square" space-="p:2">
+          <h3>Fastlane</h3>
+          <p>Key contributor to iOS and Android deployment automation tool. Enhanced Spaceship module for App Store Connect integration, improved terminal responsiveness, and fixed critical build system compatibility issues.</p>
+          <row gap-="1" style="margin-top: 1lh;">
+            <a href="https://github.com/fastlane/fastlane" target="_blank"><span is-="badge" variant-="red">Ruby</span></a>
+            <a href="https://github.com/fastlane/fastlane/commits?author=hjanuschka" target="_blank"><span is-="badge" variant-="green">10+ commits</span></a>
+            <a href="https://fastlane.tools" target="_blank"><span is-="badge" variant-="yellow">Mobile DevOps</span></a>
+          </row>
+        </div>
+
+        <div class="project-card" box-="square" space-="p:2">
+          <h3>Composer</h3>
+          <p>Contributed to PHP's dependency manager. Implemented GitLab API v4 pagination support for repository discovery and improved tag/branch collection functionality for better package resolution.</p>
+          <row gap-="1" style="margin-top: 1lh;">
+            <a href="https://github.com/composer/composer" target="_blank"><span is-="badge" variant-="purple">PHP</span></a>
+            <a href="https://github.com/composer/composer/commits?author=hjanuschka" target="_blank"><span is-="badge" variant-="blue">5+ commits</span></a>
+            <a href="https://getcomposer.org" target="_blank"><span is-="badge" variant-="brand">Package Manager</span></a>
           </row>
         </div>
       </column>
