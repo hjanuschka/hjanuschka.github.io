@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    @layer base, utils, components;
+    
     :root {
       --font-family: "JetBrains Mono", monospace;
       --font-size: 16px;
@@ -18,16 +20,84 @@
     body {
       min-height: 100vh;
       margin: 0;
+      display: flex;
+      flex-direction: column;
     }
+    
+    /* Custom elements as block elements */
+    row, column {
+      display: block;
+    }
+    
+    /* Row layout */
+    row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    
+    /* Column layout */
+    column {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Gap utilities */
+    [gap-="1"] { gap: 0.5rem; }
+    [gap-="2"] { gap: 1rem; }
+    
+    /* Alignment utilities */
+    [align-="between"] { justify-content: space-between; align-items: center; }
+    [align-="center"] { justify-content: center; align-items: center; }
+    
+    /* Self utilities */
+    [self-="grow"] { flex: 1; }
+    
+    /* Space utilities */
+    [space-="px:2 py:1"] { padding: 0.5rem 1rem; }
+    [space-="px:2 py:2"] { padding: 1rem; }
+    [space-="py:3"] { padding: 1.5rem 0; }
     
     .container {
       max-width: 900px;
       margin: 0 auto;
+      padding: 0 1rem;
+      width: 100%;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    nav a:hover {
+      text-decoration: underline;
+    }
+    
+    article > row {
+      gap: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      row[align-="between"] {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      nav row {
+        flex-direction: row;
+      }
+      
+      article > row {
+        flex-direction: column;
+        gap: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <column self-="grow" style="min-height: 100vh;">
+  <column self-="grow" style="min-height: 100vh; display: flex; flex-direction: column;">
     <!-- Header -->
     <header box-="square" shear-="bottom">
       <div class="container">
@@ -53,7 +123,7 @@
     </header>
 
     <!-- Main Content -->
-    <main self-="grow" space-="py:3">
+    <main self-="grow" space-="py:3" style="flex: 1;">
       <div class="container">
         <row align-="between" style="margin-bottom: 2rem;">
           <h1>All Posts</h1>

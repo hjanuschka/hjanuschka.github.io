@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    @layer base, utils, components;
+    
     :root {
       --font-family: "JetBrains Mono", monospace;
       --font-size: 16px;
@@ -18,7 +20,42 @@
     body {
       min-height: 100vh;
       margin: 0;
+      display: flex;
+      flex-direction: column;
     }
+    
+    /* Custom elements as block elements */
+    row, column {
+      display: block;
+    }
+    
+    /* Row layout */
+    row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    
+    /* Column layout */
+    column {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Gap utilities */
+    [gap-="1"] { gap: 0.5rem; }
+    [gap-="2"] { gap: 1rem; }
+    
+    /* Alignment utilities */
+    [align-="center"] { justify-content: center; align-items: center; }
+    [justify-="center"] { justify-content: center; }
+    
+    /* Self utilities */
+    [self-="grow"] { flex: 1; }
+    
+    /* Space utilities */
+    [space-="px:2 py:1"] { padding: 0.5rem 1rem; }
+    [space-="px:4 py:3"] { padding: 1.5rem 2rem; }
     
     .container {
       max-width: 900px;
