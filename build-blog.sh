@@ -817,6 +817,14 @@ $content
       });
     });
   </script>
+  
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script>
+    // Highlight all code blocks
+    Prism.highlightAll();
+  </script>
 </body>
 </html>
 EOF
