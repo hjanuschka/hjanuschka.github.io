@@ -1,10 +1,104 @@
+#!/bin/bash
+
+# Blog Static Site Generator
+# Converts markdown blog posts to static HTML with syntax highlighting
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}Building static blog posts...${NC}"
+
+# Check if required commands exist
+command -v node >/dev/null 2>&1 || { echo -e "${RED}Error: Node.js is required but not installed.${NC}" >&2; exit 1; }
+
+# Install dependencies if needed
+if [ ! -d "node_modules" ]; then
+    echo -e "${BLUE}Installing dependencies...${NC}"
+    npm init -y >/dev/null 2>&1
+    npm install marked prismjs prism-themes --save-dev
+fi
+
+# Create build directory if it doesn't exist
+mkdir -p build
+
+# Create Node.js script for markdown processing
+cat > build-markdown.js << 'EOF'
+const fs = require('fs');
+const path = require('path');
+const { marked } = require('marked');
+const Prism = require('prismjs');
+
+// Load additional languages
+require('prismjs/components/prism-bash');
+require('prismjs/components/prism-c');
+require('prismjs/components/prism-cpp');
+require('prismjs/components/prism-python');
+require('prismjs/components/prism-json');
+require('prismjs/components/prism-shell-session');
+
+// Configure marked to use Prism for syntax highlighting
+marked.setOptions({
+  highlight: function(code, lang) {
+    // Map 'sh' to 'bash' for Prism
+    if (lang === 'sh') lang = 'bash';
+    
+    if (Prism.languages[lang]) {
+      return Prism.highlight(code, Prism.languages[lang], lang);
+    }
+    return code;
+  },
+  breaks: true,
+  gfm: true
+});
+
+// Read command line arguments
+const mdFile = process.argv[2];
+const title = process.argv[3];
+const category = process.argv[4] || 'Chromium';
+const tech = process.argv[5] || 'C++';
+
+if (!mdFile) {
+  console.error('Usage: node build-markdown.js <markdown-file> <title> [category] [tech]');
+  process.exit(1);
+}
+
+// Read markdown file
+const markdown = fs.readFileSync(mdFile, 'utf8');
+
+// Convert to HTML
+const htmlContent = marked.parse(markdown);
+
+// Output just the HTML content
+console.log(htmlContent);
+EOF
+
+# HTML template function
+generate_html() {
+    local md_file="$1"
+    local output_file="$2"
+    local title="$3"
+    local category="${4:-Chromium}"
+    local tech="${5:-C++}"
+    
+    echo -e "${BLUE}Processing: $md_file -> $output_file${NC}"
+    
+    # Generate HTML content from markdown
+    local content=$(node build-markdown.js "$md_file" "$title" "$category" "$tech")
+    
+    # Create full HTML page
+    cat > "$output_file" << EOF
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature - Helmut Januschka</title>
-  <meta name="description" content="From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature">
+  <title>$title - Helmut Januschka</title>
+  <meta name="description" content="$title">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -583,10 +677,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature</h1>
+      <h1 class="blog-title">$title</h1>
       <div class="blog-meta">
-        <span>⚡ Chromium</span>
-        <span>🔧 C++</span>
+        <span>⚡ $category</span>
+        <span>🔧 $tech</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -595,96 +689,7 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>How a Twitter conversation led to adding a major new feature to Chromium</em></p>
-<h2>The Origin Story</h2>
-<p>It started with <a href="https://x.com/tobi/status/1957195479361438142">a tweet from Tobi Lütke</a> (CEO of Shopify). He proposed an elegant solution to a problem every developer faces: tab proliferation. His idea was simple but powerful - Chrome should focus existing tabs instead of blindly creating new ones.</p>
-<p>His proposed CLI syntax was clean:</p>
-<pre><code class="language-sh">chrome --focus=https://github.com/user/repo
-</code></pre>
-<p>I saw the tweet, loved the idea, and thought: &quot;Why wait? Let&#39;s build this into Chrome right now.&quot;</p>
-<h2>From Concept to Implementation</h2>
-<p>The vision was clear:</p>
-<ul>
-<li>If a matching tab exists, focus it</li>
-<li>If multiple matches exist, pick the most recently used</li>
-<li>If nothing matches, optionally open a new tab</li>
-<li>Make it scriptable for automation</li>
-</ul>
-<p>This became my north star for the implementation.</p>
-<h2>The Technical Journey</h2>
-<h3>Turning Ideas into Architecture</h3>
-<p>The spec translated into several technical challenges:</p>
-<ol>
-<li><strong>Selector Parsing</strong>: Supporting exact URLs, wildcards, and app IDs</li>
-<li><strong>MRU Logic</strong>: Finding and focusing the most recently used tab</li>
-<li><strong>Cross-Window Search</strong>: Looking across all Chrome windows</li>
-<li><strong>Result Reporting</strong>: JSON output for automation scripts</li>
-</ol>
-<h3>The Implementation</h3>
-<p>The implementation follows Chrome&#39;s architecture patterns:</p>
-<pre><code class="language-cpp">// Parse the selector syntax
-std::vector&lt;Selector&gt; ParseSelectors(const std::string&amp; input);
-
-// Find matches across all windows
-std::vector&lt;MatchCandidate&gt; CollectMatchingTabs(
-    const Selector&amp; selector,
-    const std::vector&lt;Browser*&gt;&amp; browsers);
-
-// MRU selection - the heart of the feature
-void SortCandidatesByMRU(std::vector&lt;MatchCandidate&gt;&amp; candidates);
-</code></pre>
-<h3>Making MRU Work</h3>
-<p>The most challenging part was &quot;pick the most recently used.&quot; Chrome doesn&#39;t directly track this, so I had to be creative:</p>
-<pre><code class="language-cpp">// Leverage Chrome&#39;s SessionID ordering as a proxy for recency
-bool CompareMRU(const MatchCandidate&amp; a, const MatchCandidate&amp; b) {
-  return a.tab-&gt;session_id() &gt; b.tab-&gt;session_id();
-}
-</code></pre>
-<p>SessionIDs increase monotonically, so higher IDs = more recently created. Not perfect MRU, but a pragmatic solution that works.</p>
-<h2>The Result</h2>
-<p>The feature now supports:</p>
-<h3>Basic Usage</h3>
-<pre><code class="language-sh"># Focus a specific URL
-chrome --focus=&quot;https://github.com/chromium/chromium&quot;
-
-# Wildcard matching
-chrome --focus=&quot;*github.com/chromium/*&quot;
-
-# Multiple selectors (first match wins)
-chrome --focus=&quot;*github.com/*,*gitlab.com/*&quot;
-</code></pre>
-<h3>Advanced Features</h3>
-<pre><code class="language-sh"># JSON output for scripting
-chrome --focus=&quot;*github.com/*&quot; --output-json
-
-# Open if not found
-chrome --focus=&quot;https://example.com&quot; --allow-create
-
-# App ID matching
-chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
-</code></pre>
-<h2>Real-World Impact</h2>
-<p>This feature changes how developers interact with Chrome:</p>
-<ol>
-<li><strong>Shell Integration</strong>: Bind keys to focus specific tabs</li>
-<li><strong>IDE Integration</strong>: Jump to documentation without tab duplication</li>
-<li><strong>Workflow Automation</strong>: Scripts can intelligently manage browser state</li>
-<li><strong>Reduced Memory</strong>: Fewer duplicate tabs = less RAM usage</li>
-</ol>
-<h2>Acknowledgments</h2>
-<p>Thanks to:</p>
-<ul>
-<li><strong>Tobi Lütke</strong> for the original idea</li>
-<li><strong>Yoav Weiss</strong> who is actively supporting me getting forward with this feature</li>
-</ul>
-<hr>
-<p><em>This feature represents what I love about open source: seeing a problem, building a solution, and shipping it to millions of users. One tweet, one implementation, countless improved workflows.</em></p>
-<p><strong>Status:</strong> Implementation complete, preparing for Chromium review</p>
-<p><strong>Follow the development:</strong></p>
-<ul>
-<li><a href="https://x.com/tobi/status/1957195479361438142">Original Tweet</a></li>
-<li><a href="https://github.com/hjanuschka">My GitHub</a></li>
-</ul>
+$content
     </div>
   </article>
 
@@ -757,3 +762,28 @@ chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
   </script>
 </body>
 </html>
+EOF
+    
+    echo -e "${GREEN}✓ Generated: $output_file${NC}"
+}
+
+# Build blog posts
+generate_html \
+    "chromium-focus-feature.md" \
+    "chromium-focus-feature.html" \
+    "From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature" \
+    "Chromium" \
+    "C++"
+
+generate_html \
+    "chromium-omarchy.md" \
+    "chromium-omarchy.html" \
+    "Dynamic Chrome Themes: Building DHH's Vision for Omarchy" \
+    "Chromium" \
+    "C++"
+
+# Clean up temporary files
+rm -f build-markdown.js
+
+echo -e "${GREEN}✓ Build complete!${NC}"
+echo -e "${BLUE}Blog posts have been compiled to static HTML with syntax highlighting.${NC}"

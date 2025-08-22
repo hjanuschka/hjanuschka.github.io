@@ -3,20 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading... - Helmut Januschka</title>
-  <meta name="description" content="Blog post by Helmut Januschka">
+  <title>Dynamic Chrome Themes: Building DHH's Vision for Omarchy - Helmut Januschka</title>
+  <meta name="description" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-c.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-cpp.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -300,21 +292,6 @@
       border-radius: 12px;
       padding: 40px;
       margin-bottom: 40px;
-      min-height: 400px;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-dim);
-    }
-
-    .error {
-      background: var(--orange);
-      color: var(--bg);
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
     }
 
     /* Markdown Content Styles */
@@ -606,8 +583,8 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title" id="blog-title">Loading...</h1>
-      <div class="blog-meta" id="blog-meta">
+      <h1 class="blog-title">Dynamic Chrome Themes: Building DHH's Vision for Omarchy</h1>
+      <div class="blog-meta">
         <span>⚡ Chromium</span>
         <span>🔧 C++</span>
         <span>👤 Helmut Januschka</span>
@@ -617,8 +594,198 @@
 
   <!-- Blog Content -->
   <article class="container">
-    <div class="blog-content" id="content">
-      <div class="loading">Loading blog post...</div>
+    <div class="blog-content">
+<p><em>How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming</em></p>
+<h2>The Tweet That Started Everything</h2>
+<p>It began with <a href="https://x.com/hjanuschka/status/1954552977814855845">a challenge from DHH</a> (David Heinemeier Hansson, creator of Ruby on Rails). He wanted something that seemed simple but revealed an interesting gap: the ability to change Chrome&#39;s theme colors dynamically from the command line.</p>
+<p>The context was important - when Chrome uses GTK/Qt themes, this already works automatically. But when using Chrome&#39;s &quot;Classic&quot; theme (which many prefer for consistency across platforms), there was no CLI way to control colors. While you could manually change themes through settings for each instance, Omarchy needed scriptable control - just like it has for other applications.</p>
+<p>His vision was clear:</p>
+<pre><code class="language-sh"># Change theme when using Chrome&#39;s Classic theme
+chrome --set-user-color=&quot;255,0,0&quot;
+</code></pre>
+<p>This wasn&#39;t just about aesthetics. For DHH&#39;s new <a href="https://omarchy.org">Omarchy Linux distribution</a>, this represented a core philosophy: giving power users complete control over their environment through simple, scriptable interfaces.</p>
+<h2>Why This Matters</h2>
+<p>The gap in Chrome&#39;s theming:</p>
+<ul>
+<li><strong>GTK/Qt themes</strong>: Work great, update automatically</li>
+<li><strong>Classic theme</strong>: No CLI control, must use GUI per instance</li>
+<li><strong>Omarchy&#39;s need</strong>: Scriptable theming like other apps have</li>
+</ul>
+<p>DHH&#39;s request highlighted this inconsistency. Why shouldn&#39;t the Classic theme be as flexible as GTK/Qt integration?</p>
+<h2>The Pleasant Surprise</h2>
+<p>The implementation turned out to be easier than expected - the code was already in Chromium! The theme system was robust and well-designed. It just wasn&#39;t exposed via command-line interface.</p>
+<p>My task was essentially plumbing: connecting existing functionality to a new entry point.</p>
+<h2>The Implementation</h2>
+<h3>Finding the Existing Code</h3>
+<p>Chrome&#39;s theme system was already sophisticated:</p>
+<pre><code class="language-cpp">// Theme colors are defined in the ThemeService
+class ThemeService : public KeyedService {
+  // Material Design 3 (GM3) color generation
+  ui::ColorProviderManager::Key GetColorProviderKey();
+  
+  // This notifies observers when theme changes
+  void NotifyThemeChanged();
+};
+</code></pre>
+<p>The Material Design 3 (GM3) theming logic was all there - it just needed a CLI entry point.</p>
+<h3>Adding Command-Line Support</h3>
+<p>The implementation added several switches that work together:</p>
+<pre><code class="language-cpp">// Core theme switches in chrome_switches.cc
+const char kSetDefaultTheme[] = &quot;set-default-theme&quot;;      // Reset to system
+const char kSetUserColor[] = &quot;set-user-color&quot;;            // GM3 seed color
+const char kSetColorScheme[] = &quot;set-color-scheme&quot;;        // light/dark/system
+const char kSetColorVariant[] = &quot;set-color-variant&quot;;      // Material variants
+const char kSetGrayscaleTheme[] = &quot;set-grayscale-theme&quot;;  // Grayscale overlay
+</code></pre>
+<p>These switches can be combined for complete control:</p>
+<pre><code class="language-sh"># Dark blue vibrant theme
+chrome --set-user-color=&quot;100,150,200&quot; \
+       --set-color-scheme=&quot;dark&quot; \
+       --set-color-variant=&quot;vibrant&quot;
+
+# Light neutral theme with custom color
+chrome --set-user-color=&quot;255,107,53&quot; \
+       --set-color-scheme=&quot;light&quot; \
+       --set-color-variant=&quot;neutral&quot;
+
+# System theme with grayscale
+chrome --set-color-scheme=&quot;system&quot; \
+       --set-grayscale-theme=&quot;true&quot;
+</code></pre>
+<h3>Leveraging Chrome&#39;s Theme System</h3>
+<p>The beauty was that Chrome already had:</p>
+<ul>
+<li>Material Design 3 (GM3) dynamic color generation</li>
+<li>ProcessSingleton IPC for notifying running instances</li>
+<li>ThemeService infrastructure for applying changes</li>
+<li>Support for all Material color variants</li>
+</ul>
+<p>Combined with <code>--no-startup-window</code>, themes update without opening new windows!</p>
+<h2>Plan B: The GTK Theme Generator</h2>
+<p>While working on the Chrome patch, I also explored an alternative approach: what if we could generate GTK themes using Chrome&#39;s Material Design 3 logic?</p>
+<p>This led to <a href="https://github.com/hjanuschka/material-gtk-generator">material-gtk-generator</a>:</p>
+<pre><code class="language-sh"># Generate a GTK theme from Chrome&#39;s GM3 colors
+material-gtk-generator --seed-color=&quot;#FF6B6B&quot; --output-dir=~/.themes/
+</code></pre>
+<p>This was Plan B - if the Chromium CL didn&#39;t land, we could:</p>
+<ol>
+<li>Generate GTK themes matching Chrome&#39;s GM3 palette</li>
+<li>Apply them system-wide</li>
+<li>Chrome would pick them up automatically</li>
+</ol>
+<p>It&#39;s still useful for creating cohesive desktop themes!</p>
+<h2>The Micro Fork: Getting It to Users Fast</h2>
+<p>DHH didn&#39;t want to wait for Google&#39;s review process. He made a decisive move: <strong>invest in build infrastructure</strong> to ship a micro fork immediately.</p>
+<h3>What Happened</h3>
+<ol>
+<li><strong>DHH&#39;s Decision</strong>: &quot;Let&#39;s ship this NOW to Omarchy users&quot;</li>
+<li><strong>Build Infrastructure</strong>: DHH funded dedicated build servers</li>
+<li><strong>The Micro Fork</strong>: <a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium</a> was born</li>
+<li><strong>Immediate Availability</strong>: Users got the feature within days, not months</li>
+</ol>
+<p>There&#39;s an excellent <a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">YouTube video by DHH</a> about the power of open source - showing how we went from idea to fork at incredible speed.</p>
+<h3>The Patch</h3>
+<p>The entire feature is contained in a <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6832165">single CL (Change List)</a>:</p>
+<ul>
+<li>Minimal, focused changes</li>
+<li>Clean integration with existing code</li>
+<li>Easy to maintain and rebase</li>
+<li>No invasive modifications</li>
+</ul>
+<h2>Real-World Usage</h2>
+<h3>For Omarchy Users</h3>
+<p>Omarchy users just use the built-in theme switcher - it all happens automatically in the background! The system handles the Chrome theming seamlessly alongside other applications.</p>
+<h3>For Power Users and Scripters</h3>
+<p>The CLI switches enable powerful automation:</p>
+<pre><code class="language-sh"># Match browser to terminal theme (Classic theme only)
+chromium --set-user-color=&quot;$(get-terminal-color-rgb)&quot;
+
+# Different themes for different workspaces with variants
+workspace-1: chromium --set-user-color=&quot;26,26,26&quot; \
+                      --set-color-variant=&quot;neutral&quot;
+workspace-2: chromium --set-user-color=&quot;0,43,54&quot; \
+                      --set-color-variant=&quot;tonal_spot&quot;
+
+# Time-based theming with color schemes
+if [[ $(date +%H) -gt 18 ]]; then
+  chromium --set-color-scheme=&quot;dark&quot; \
+           --set-user-color=&quot;0,0,0&quot;
+else
+  chromium --set-color-scheme=&quot;light&quot; \
+           --set-user-color=&quot;255,255,255&quot;
+fi
+
+# Update running instances without opening new window
+chromium --no-startup-window \
+         --set-user-color=&quot;100,200,150&quot; \
+         --set-color-variant=&quot;expressive&quot;
+</code></pre>
+<p>Note: This works specifically with Chrome&#39;s Classic theme. If you&#39;re using GTK/Qt themes, Chrome already responds to system theme changes automatically.</p>
+<h3>Integration with Window Managers</h3>
+<p>Window managers can now theme browsers to match the desktop:</p>
+<pre><code class="language-python"># Example i3wm integration
+import i3ipc
+import subprocess
+
+def on_workspace_focus(i3, event):
+    workspace = event.current.name
+    themes = {
+        &quot;1: term&quot;: (&quot;0,0,0&quot;, &quot;dark&quot;, &quot;neutral&quot;),
+        &quot;2: web&quot;: (&quot;26,26,46&quot;, &quot;dark&quot;, &quot;tonal_spot&quot;), 
+        &quot;3: code&quot;: (&quot;15,52,96&quot;, &quot;dark&quot;, &quot;vibrant&quot;)
+    }
+    if workspace in themes:
+        color, scheme, variant = themes[workspace]
+        subprocess.run([
+            &quot;chromium&quot;,
+            &quot;--no-startup-window&quot;,
+            f&quot;--set-user-color={color}&quot;,
+            f&quot;--set-color-scheme={scheme}&quot;,
+            f&quot;--set-color-variant={variant}&quot;
+        ])
+
+i3 = i3ipc.Connection()
+i3.on(&quot;workspace::focus&quot;, on_workspace_focus)
+i3.main()
+</code></pre>
+<h2>What&#39;s Next?</h2>
+<h3>Upstream Progress</h3>
+<p>The <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6832165">Chromium CL</a> is under review. With community support, it might land in mainline Chrome.</p>
+<h3>Extended Features</h3>
+<p>The complete feature set includes:</p>
+<ul>
+<li><strong>Material variants</strong>: tonal_spot, neutral, vibrant, expressive</li>
+<li><strong>Color schemes</strong>: light, dark, system</li>
+<li><strong>Grayscale mode</strong>: For accessibility</li>
+<li><strong>No startup window</strong>: Update running instances silently</li>
+<li><strong>GM3 color generation</strong>: Full Material Design 3 palette from seed color</li>
+</ul>
+<h3>Other Browsers</h3>
+<p>Brave has shown interest in downstream landing our patch.</p>
+<h2>Try It Yourself</h2>
+<h3>For Arch/Omarchy Users</h3>
+<p>The AUR package is available (replaces the standard Chromium):</p>
+<pre><code class="language-sh">yay -S omarchy-chromium-bin
+
+# Teal expressive theme
+chromium --set-user-color=&quot;78,205,196&quot; \
+         --set-color-variant=&quot;expressive&quot;
+
+# Reset to default
+chromium --set-default-theme
+</code></pre>
+<hr>
+<p><em>Sometimes the best features are already there, waiting to be exposed. Thanks to DHH&#39;s vision and investment, Omarchy users don&#39;t have to wait.</em></p>
+<p><strong>Links:</strong></p>
+<ul>
+<li><a href="https://x.com/hjanuschka/status/1954552977814855845">Original Tweet</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6832165">Chromium CL</a></li>
+<li><a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium Fork</a></li>
+<li><a href="https://github.com/hjanuschka/material-gtk-generator">Material GTK Generator (Plan B)</a></li>
+<li><a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">DHH&#39;s Video: Power of OSS - Idea to Fork</a></li>
+<li><a href="https://omarchy.org">Omarchy.org</a></li>
+<li><a href="https://world.hey.com/dhh/omarchy-micro-forks-chromium-1287486d">DHH&#39;s Blog Post</a></li>
+</ul>
     </div>
   </article>
 
@@ -633,82 +800,6 @@
   </footer>
 
   <script>
-    // Blog configuration - set these per blog post
-    const blogConfig = {
-      markdownFile: '', // Will be set based on page
-      title: '',
-      meta: {
-        category: '⚡ Chromium',
-        tech: '🔧 C++',
-        author: '👤 Helmut Januschka'
-      }
-    };
-
-    // Determine which markdown to load based on current page
-    const currentPath = window.location.pathname;
-    if (currentPath.includes('chromium-focus-feature')) {
-      blogConfig.markdownFile = 'chromium-focus-feature.md';
-      blogConfig.title = 'From Tweet to Chrome: Implementing Tobi Lütke\'s Browser Focus Feature';
-    } else if (currentPath.includes('chromium-omarchy')) {
-      blogConfig.markdownFile = 'chromium-omarchy.md';
-      blogConfig.title = 'Dynamic Chrome Themes: Building DHH\'s Vision for Omarchy';
-      blogConfig.meta.category = '🎨 Chromium';
-    }
-
-    // Load and render markdown
-    async function loadBlogPost() {
-      try {
-        // Set page title and header
-        document.title = `${blogConfig.title} - Helmut Januschka`;
-        document.getElementById('blog-title').textContent = blogConfig.title;
-        
-        // Set meta tags
-        const metaDesc = document.querySelector('meta[name="description"]');
-        if (metaDesc) {
-          metaDesc.content = blogConfig.title;
-        }
-
-        // Fetch markdown content
-        const response = await fetch(blogConfig.markdownFile);
-        if (!response.ok) {
-          throw new Error(`Failed to load ${blogConfig.markdownFile}`);
-        }
-        
-        const markdown = await response.text();
-        
-        // Configure marked to use Prism for syntax highlighting
-        marked.setOptions({
-          highlight: function(code, lang) {
-            // Map 'sh' to 'bash' for Prism
-            if (lang === 'sh') lang = 'bash';
-            
-            if (Prism.languages[lang]) {
-              return Prism.highlight(code, Prism.languages[lang], lang);
-            }
-            return code;
-          },
-          breaks: true
-        });
-        
-        // Render markdown
-        const html = marked.parse(markdown);
-        document.getElementById('content').innerHTML = html;
-        
-        // Apply Prism highlighting
-        Prism.highlightAll();
-        
-      } catch (error) {
-        console.error('Error loading blog post:', error);
-        document.getElementById('content').innerHTML = `
-          <div class="error">
-            <h2>Error Loading Blog Post</h2>
-            <p>${error.message}</p>
-            <p>Please try refreshing the page or check back later.</p>
-          </div>
-        `;
-      }
-    }
-
     // Theme switcher functionality
     const themeButton = document.getElementById('themeButton');
     const themeMenu = document.getElementById('themeMenu');
@@ -764,9 +855,6 @@
         }
       });
     });
-
-    // Load the blog post when page loads
-    loadBlogPost();
   </script>
 </body>
 </html>
