@@ -90,6 +90,9 @@ generate_html() {
     # Generate HTML content from markdown
     local content=$(node build-markdown.js "$md_file" "$title" "$category" "$tech")
     
+    # Extract first paragraph for description (remove HTML tags)
+    local description=$(echo "$content" | grep -m1 "<p><em>" | sed 's/<[^>]*>//g' | sed 's/&[^;]*;//g' | cut -c1-160)
+    
     # Create full HTML page
     cat > "$output_file" << EOF
 <!doctype html>
@@ -98,7 +101,61 @@ generate_html() {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>$title - Helmut Januschka</title>
-  <meta name="description" content="$title">
+  <meta name="description" content="${description:-$title}">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "$title",
+    "description": "${description:-$title}",
+    "author": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com",
+      "sameAs": [
+        "https://github.com/hjanuschka",
+        "https://twitter.com/hjanuschka",
+        "https://linkedin.com/in/hjanuschka"
+      ]
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com"
+    },
+    "datePublished": "2024-08-01",
+    "dateModified": "$(date -u +%Y-%m-%d)",
+    "image": "https://januschka.com/og-image.png",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://januschka.com/$output_file"
+    },
+    "keywords": "$category, $tech, Chromium, Open Source, Browser Development",
+    "articleSection": "Technology",
+    "inLanguage": "en-US",
+    "potentialAction": {
+      "@type": "ReadAction",
+      "target": "https://januschka.com/$output_file"
+    }
+  }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="$title">
+  <meta property="og:description" content="${description:-$title}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://januschka.com/$output_file">
+  <meta property="og:site_name" content="Helmut Januschka">
+  <meta property="article:author" content="Helmut Januschka">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@hjanuschka">
+  <meta name="twitter:title" content="$title">
+  <meta name="twitter:description" content="${description:-$title}">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
