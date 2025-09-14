@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2025-08-22",
+    "dateModified": "2025-09-14",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -650,6 +650,77 @@
   <article class="container">
     <div class="blog-content">
 <p><em>How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming</em></p>
+<h2>🎉 Update: September 14, 2025 - MERGED &amp; LANDED! A Better Way Through Managed Policies</h2>
+<h3>The Golden Nugget Discovery</h3>
+<p>Google initially rejected our CLI approach, but working closely with friends at Brave, a crucial insight emerged: <strong>Chrome&#39;s managed policies could set theme colors!</strong> This was a game-changer - policies are an officially supported Chrome feature used by enterprises worldwide.</p>
+<p>However, there was a catch: applying policies took 5+ seconds to take effect. This wasn&#39;t the instant response Omarchy users expected.</p>
+<h3>Making It Instant</h3>
+<p>I dug deeper into Chrome&#39;s policy system and discovered we could add a new flag:</p>
+<pre><code class="language-sh"># Instantly refresh and apply platform policies
+chromium --refresh-platform-policy
+</code></pre>
+<p>This flag forces Chrome to immediately reload and apply managed policies without the usual delay. The implications go far beyond just theming - it enables instant policy updates for any managed Chrome setting!</p>
+<h3>The Implementation Journey</h3>
+<p>After much discussion and collaboration with Chrome&#39;s policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation (<a href="https://chromium-review.googlesource.com/c/chromium/src/+/6900896">CL 6900896</a> - <strong>MERGED!</strong>) adds the <code>--refresh-platform-policy</code> flag:</p>
+<pre><code class="language-cpp">// chrome/common/chrome_switches.cc
+const char kRefreshPlatformPolicy[] = &quot;refresh-platform-policy&quot;;
+
+// chrome/browser/ui/startup/startup_browser_creator.cc
+// Trigger immediate policy refresh when Chrome is already running
+if (command_line.HasSwitch(switches::kRefreshPlatformPolicy)) {
+  g_browser_process-&gt;browser_policy_connector()-&gt;RefreshPlatformPolicies();
+  // Return early to prevent opening a new browser window
+  return;
+}
+</code></pre>
+<p>The beauty of this implementation is its simplicity - just a few lines of code that unlock powerful functionality!</p>
+<h3>Official Chrome Release</h3>
+<p>This change has landed and will be released in <strong>Chrome Stable 142</strong>! This means:</p>
+<ul>
+<li>Official support for instant policy updates</li>
+<li>No more waiting for policy refresh intervals</li>
+<li>Works with any managed policy, not just themes</li>
+</ul>
+<h3>Omarchy&#39;s Lightning-Fast Integration</h3>
+<p>I quickly assembled <a href="https://github.com/basecamp/omarchy/pull/1251">PR #1251</a> for Omarchy that integrates the new flag with JSON policy updates. Here&#39;s how it works in practice:</p>
+<pre><code class="language-sh"># Set theme via managed policy (Linux example)
+sudo mkdir -p /etc/chromium/policies/managed
+echo &#39;{
+  &quot;BrowserThemeColor&quot;: &quot;#ff6b35&quot;
+}&#39; | sudo tee /etc/chromium/policies/managed/theme.json
+
+# Instantly apply to running Chrome instances
+chromium --refresh-platform-policy --no-startup-window
+</code></pre>
+<p>For macOS users:</p>
+<pre><code class="language-sh"># Create policy directory
+sudo mkdir -p /Library/Managed\ Preferences/com.google.Chrome
+
+# Set theme color policy
+sudo defaults write /Library/Managed\ Preferences/com.google.Chrome BrowserThemeColor -string &quot;#ff6b35&quot;
+
+# Apply instantly
+open -a &quot;Google Chrome&quot; --args --refresh-platform-policy --no-startup-window
+</code></pre>
+<p>This approach is <strong>even faster than our original CLI implementation</strong> because:</p>
+<ol>
+<li>Policies are read directly from disk (no IPC overhead)</li>
+<li>The refresh flag bypasses all delays</li>
+<li>Chrome&#39;s native policy system handles the theme application</li>
+<li>Works with existing enterprise policy infrastructure</li>
+</ol>
+<h3>Brave Ships It Early</h3>
+<p>Brave has cherry-picked this change and will ship it even faster with their release based on Chrome 141! This shows the power of open-source collaboration - features can reach users through multiple channels.</p>
+<h3>The Bigger Picture</h3>
+<p>The <code>--refresh-platform-policy</code> flag opens up new possibilities beyond theming:</p>
+<ul>
+<li>Instant enterprise policy updates without browser restart</li>
+<li>Dynamic security policy adjustments</li>
+<li>Real-time configuration changes for managed deployments</li>
+<li>Scriptable policy management for power users</li>
+</ul>
+<p>This is a perfect example of how solving one problem (theme switching) led to a more general solution that benefits the entire Chrome ecosystem.</p>
+<hr>
 <h2>The Tweet That Started Everything</h2>
 <p>It began with <a href="https://x.com/hjanuschka/status/1954552977814855845">a challenge from DHH</a> (David Heinemeier Hansson, creator of Ruby on Rails). He wanted something that seemed simple but revealed an interesting gap: the ability to change Chrome&#39;s theme colors dynamically from the command line.</p>
 <p>The context was important - when Chrome uses GTK/Qt themes, this already works automatically. But when using Chrome&#39;s &quot;Classic&quot; theme (which many prefer for consistency across platforms), there was no CLI way to control colors. While you could manually change themes through settings for each instance, Omarchy needed scriptable control - just like it has for other applications.</p>
