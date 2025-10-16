@@ -1,115 +1,18 @@
-#!/bin/bash
-
-# Blog Static Site Generator
-# Converts markdown blog posts to static HTML with syntax highlighting
-
-set -e
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-echo -e "${BLUE}Building static blog posts...${NC}"
-
-# Check if required commands exist
-command -v node >/dev/null 2>&1 || { echo -e "${RED}Error: Node.js is required but not installed.${NC}" >&2; exit 1; }
-
-# Install dependencies if needed
-if [ ! -d "node_modules" ]; then
-    echo -e "${BLUE}Installing dependencies...${NC}"
-    npm init -y >/dev/null 2>&1
-    npm install marked prismjs prism-themes --save-dev
-fi
-
-# Create build directory if it doesn't exist
-mkdir -p build
-
-# Create Node.js script for markdown processing
-cat > build-markdown.js << 'EOF'
-const fs = require('fs');
-const path = require('path');
-const { marked } = require('marked');
-const Prism = require('prismjs');
-
-// Load additional languages
-require('prismjs/components/prism-bash');
-require('prismjs/components/prism-c');
-require('prismjs/components/prism-cpp');
-require('prismjs/components/prism-python');
-require('prismjs/components/prism-json');
-require('prismjs/components/prism-shell-session');
-
-// Configure marked to use Prism for syntax highlighting
-marked.setOptions({
-  highlight: function(code, lang) {
-    // Map 'sh' to 'bash' for Prism
-    if (lang === 'sh') lang = 'bash';
-    
-    if (Prism.languages[lang]) {
-      return Prism.highlight(code, Prism.languages[lang], lang);
-    }
-    return code;
-  },
-  breaks: true,
-  gfm: true
-});
-
-// Read command line arguments
-const mdFile = process.argv[2];
-const title = process.argv[3];
-const category = process.argv[4] || 'Chromium';
-const tech = process.argv[5] || 'C++';
-
-if (!mdFile) {
-  console.error('Usage: node build-markdown.js <markdown-file> <title> [category] [tech]');
-  process.exit(1);
-}
-
-// Read markdown file
-const markdown = fs.readFileSync(mdFile, 'utf8');
-
-// Convert to HTML
-const htmlContent = marked.parse(markdown);
-
-// Output just the HTML content
-console.log(htmlContent);
-EOF
-
-# HTML template function
-generate_html() {
-    local md_file="$1"
-    local output_file="$2"
-    local title="$3"
-    local category="${4:-Chromium}"
-    local tech="${5:-C++}"
-    
-    echo -e "${BLUE}Processing: $md_file -> $output_file${NC}"
-    
-    # Generate HTML content from markdown
-    local content=$(node build-markdown.js "$md_file" "$title" "$category" "$tech")
-    
-    # Extract first paragraph for description (remove HTML tags)
-    local description=$(echo "$content" | grep -m1 "<p><em>" | sed 's/<[^>]*>//g' | sed 's/&[^;]*;//g' | cut -c1-160)
-    
-    # Create full HTML page
-    cat > "$output_file" << EOF
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>$title - Helmut Januschka</title>
-  <meta name="description" content="${description:-$title}">
+  <title>Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours - Helmut Januschka</title>
+  <meta name="description" content="When Chrome crashes, the community debugs - a story of open source collaboration">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "$title",
-    "description": "${description:-$title}",
+    "headline": "Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours",
+    "description": "When Chrome crashes, the community debugs - a story of open source collaboration",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -126,35 +29,35 @@ generate_html() {
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "$(date -u +%Y-%m-%d)",
+    "dateModified": "2025-10-16",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/$output_file"
+      "@id": "https://januschka.com/chromium-wayland-crash.html"
     },
-    "keywords": "$category, $tech, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Wayland, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/$output_file"
+      "target": "https://januschka.com/chromium-wayland-crash.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="$title">
-  <meta property="og:description" content="${description:-$title}">
+  <meta property="og:title" content="Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours">
+  <meta property="og:description" content="When Chrome crashes, the community debugs - a story of open source collaboration">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/$output_file">
+  <meta property="og:url" content="https://januschka.com/chromium-wayland-crash.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="$title">
-  <meta name="twitter:description" content="${description:-$title}">
+  <meta name="twitter:title" content="Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours">
+  <meta name="twitter:description" content="When Chrome crashes, the community debugs - a story of open source collaboration">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -734,10 +637,10 @@ generate_html() {
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">$title</h1>
+      <h1 class="blog-title">Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours</h1>
       <div class="blog-meta">
-        <span>⚡ $category</span>
-        <span>🔧 $tech</span>
+        <span>⚡ Chromium</span>
+        <span>🔧 C++ / Wayland</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -746,7 +649,96 @@ generate_html() {
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-$content
+<p><em>When Chrome crashes, the community debugs - a story of open source collaboration</em></p>
+<p><strong>Update 16.10.2025:</strong> ✅ Fix landed and merged to Chromium main branch</p>
+<h2>The Problem Surfaces</h2>
+<p>On October 3rd, 2025, users started reporting Chrome crashes across multiple Linux distributions. The symptoms were consistent: move a Chrome window between monitors on Wayland, instant crash. The error logs pointed to Wayland protocol violations.</p>
+<p>What made this interesting: it wasn&#39;t specific to one distro or configuration. Omarchy users, Arch Linux users, Fedora users - all seeing the same crash. Chrome 141 had introduced a regression that affected the entire Wayland ecosystem.</p>
+<p>The <a href="https://github.com/basecamp/omarchy">Omarchy community</a> became the epicenter for this investigation - not because the bug was Omarchy-specific, but because Omarchy represents a movement of people who fix things fast, share openly, and embrace OSS values. When something breaks, they debug collectively and push fixes upstream where everyone benefits.</p>
+<h2>Community Debugging</h2>
+<p>The GitHub issue (<a href="https://github.com/basecamp/omarchy/issues/2184">#2184</a>) became a hub for collective troubleshooting. Users shared logs, system configurations, and workarounds:</p>
+<ul>
+<li>Downgrading to Chrome 140 worked (narrowed the regression window)</li>
+<li>Running with <code>--ozone-platform=x11</code> avoided the crash (isolated to Wayland)</li>
+<li>Disabling <code>WaylandWpColorManagerV1</code> feature prevented crashes (identified the subsystem)</li>
+</ul>
+<p>This is open source at its best: distributed debugging. Each data point narrowed the search space.</p>
+<h2>The Investigation</h2>
+<p>The error logs showed a clear pattern:</p>
+<pre><code>libwayland: wl_display#1: error 0: invalid object 64
+Trace/breakpoint trap (core dumped)
+</code></pre>
+<p>Wayland protocol errors are unforgiving - violate the protocol, lose your connection, crash immediately.</p>
+<p>The community had already identified the timeline:</p>
+<ul>
+<li>Chrome 140: working fine</li>
+<li>Chrome 141: crashing on window moves</li>
+<li>Subsystem: Wayland color management (<code>wp_color_management_v1</code>)</li>
+</ul>
+<p>With a reproducible case (two monitors, Wayland, move window), finding the bug became straightforward code archaeology.</p>
+<h2>The Root Cause</h2>
+<p>The color management feature was re-enabled in Chrome 141 after being temporarily disabled for HDR issues. When a window moves between monitors with different color profiles, Wayland sends a <code>preferred_changed</code> event.</p>
+<p>Chrome&#39;s handler created a new image description object but destroyed the old one too late - after creating the new one. The Wayland protocol specification is explicit: destroy earlier image descriptions <em>before</em> creating new ones.</p>
+<pre><code class="language-cpp">// The bug: old object destroyed after new one created
+CreateNewImageDescription();
+DestroyOldImageDescription(); // Too late! Protocol violation.
+
+// The fix: proper lifecycle ordering
+DestroyOldImageDescription();
+CreateNewImageDescription(); // Now Wayland is happy
+</code></pre>
+<p>A simple timing bug with catastrophic consequences.</p>
+<h2>Parallel Solutions</h2>
+<p>While the Chromium fix was being developed, the Hyprland team created their own workaround (<a href="https://github.com/hyprwm/Hyprland/pull/11877">PR #11877</a>) to handle Chrome&#39;s incorrect ordering more gracefully. This helped their users immediately but didn&#39;t solve the root cause.</p>
+<p>The proper fix needed to be in Chromium - the protocol violation was on Chrome&#39;s side.</p>
+<h2>The Fix</h2>
+<p><strong>Chromium Bug</strong>: <a href="https://issues.chromium.org/issues/449370049">449370049</a><br><strong>Fix CL</strong>: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7003036">7003036</a><br><strong>Merged</strong>: October 6, 2025 (3 days from initial report)<br><strong>Reviewers</strong>: Thomas Anderson, Tom Lukaszewicz</p>
+<p>The fix was minimal - just reordering the object lifecycle to match protocol requirements. Small change, huge impact.</p>
+<h2>Why This Matters</h2>
+<p>This bug affected:</p>
+<ul>
+<li>Chrome, Brave, Edge (all Chromium-based browsers)</li>
+<li>All Wayland compositors with color management support</li>
+<li>Multi-monitor setups globally</li>
+</ul>
+<p>Open source enabled rapid response:</p>
+<ol>
+<li>Users reported with detailed logs</li>
+<li>Community identified workarounds</li>
+<li>Bug was reproduced and fixed</li>
+<li>Fix merged upstream in 3 days</li>
+<li>Everyone benefits from the same fix</li>
+</ol>
+<p>No NDAs. No private bug trackers. No waiting for vendor support contracts. Just people sharing information until the problem was solved.</p>
+<h2>Status: Fixed</h2>
+<p>The fix has landed in Chromium main branch and will reach stable releases in the coming weeks. Until then, users experiencing crashes can use these workarounds:</p>
+<p><strong>Option 1: Disable color management</strong></p>
+<pre><code class="language-sh">chrome --ozone-platform=wayland --disable-features=WaylandWpColorManagerV1
+</code></pre>
+<p><strong>Option 2: Use X11 backend</strong></p>
+<pre><code class="language-sh">chrome --ozone-platform=x11 --force-device-scale-factor=1
+</code></pre>
+<p><strong>Option 3: Install Chromium from tip-of-tree</strong> (includes the fix)</p>
+<h2>The Takeaway</h2>
+<p>This wasn&#39;t about heroic debugging or individual brilliance. This was about open source working as designed - and about communities like Omarchy that embody these values:</p>
+<ul>
+<li>Transparent bug reports</li>
+<li>Shared reproduction steps</li>
+<li>Public code review</li>
+<li>Fast iteration</li>
+<li>Universal benefit</li>
+<li>Fix it upstream, help everyone</li>
+</ul>
+<p>From first report to merged fix: 72 hours. The Omarchy movement isn&#39;t just about a Linux distribution - it&#39;s about embracing the speed, openness, and collaborative spirit that makes open source powerful. When you fix it for everyone, everyone wins.</p>
+<hr>
+<p><strong>Links:</strong></p>
+<ul>
+<li><a href="https://github.com/basecamp/omarchy/issues/2184">GitHub Issue #2184</a></li>
+<li><a href="https://issues.chromium.org/issues/449370049">Chromium Bug 449370049</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7003036">Fix CL 7003036</a></li>
+<li><a href="https://github.com/hyprwm/Hyprland/pull/11877">Hyprland Workaround PR</a></li>
+<li><a href="https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/main/staging/color-management/color-management-v1.xml">Wayland Color Management Protocol</a></li>
+</ul>
     </div>
   </article>
 
@@ -827,35 +819,3 @@ $content
   </script>
 </body>
 </html>
-EOF
-    
-    echo -e "${GREEN}✓ Generated: $output_file${NC}"
-}
-
-# Build blog posts
-generate_html \
-    "chromium-focus-feature.md" \
-    "chromium-focus-feature.html" \
-    "From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature" \
-    "Chromium" \
-    "C++"
-
-generate_html \
-    "chromium-omarchy.md" \
-    "chromium-omarchy.html" \
-    "Dynamic Chrome Themes: Building DHH's Vision for Omarchy" \
-    "Chromium" \
-    "C++"
-
-generate_html \
-    "chromium-wayland-crash.md" \
-    "chromium-wayland-crash.html" \
-    "Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours" \
-    "Chromium" \
-    "C++ / Wayland"
-
-# Clean up temporary files
-rm -f build-markdown.js
-
-echo -e "${GREEN}✓ Build complete!${NC}"
-echo -e "${BLUE}Blog posts have been compiled to static HTML with syntax highlighting.${NC}"
