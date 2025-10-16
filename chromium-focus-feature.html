@@ -71,6 +71,19 @@
     }
 
     :root {
+      --bg: #121212;
+      --bg-light: #1e1e1e;
+      --bg-lighter: #333333;
+      --text: #bebebe;
+      --text-dim: #8a8a8d;
+      --accent: #FFC107;
+      --accent-dim: #e68e0d;
+      --border: #333333;
+      --orange: #D35F5F;
+    }
+
+    /* GitHub Blue Theme */
+    [data-theme="blue"] {
       --bg: #0d1117;
       --bg-light: #161b22;
       --bg-lighter: #21262d;
@@ -82,95 +95,30 @@
       --orange: #ff7b72;
     }
 
-    /* Light mode */
-    [data-theme="light"] {
-      --bg: #ffffff;
-      --bg-light: #f6f8fa;
-      --bg-lighter: #f1f3f4;
-      --text: #24292f;
-      --text-dim: #656d76;
-      --accent: #0969da;
-      --accent-dim: #0550ae;
-      --border: #d0d7de;
-      --orange: #cf222e;
+    /* Osaka Jade Theme (from Omarchy) */
+    [data-theme="osaka-jade"] {
+      --bg: #111c18;
+      --bg-light: #23372B;
+      --bg-lighter: #53685B;
+      --text: #C1C497;
+      --text-dim: #9eebb3;
+      --accent: #2DD5B7;
+      --accent-dim: #549e6a;
+      --border: #509475;
+      --orange: #FF5345;
     }
 
-    /* Matrix Theme */
-    [data-theme="matrix"] {
-      --bg: #0a0a0a;
-      --bg-light: #1a1a1a;
-      --bg-lighter: #2a2a2a;
+    /* Purple Moon Theme */
+    [data-theme="purple-moon"] {
+      --bg: #020007;
+      --bg-light: #37277d;
+      --bg-lighter: #643aad;
       --text: #ffffff;
-      --text-dim: #888888;
-      --accent: #00ff41;
-      --accent-dim: #00aa2b;
-      --border: #333333;
-      --orange: #ff6b35;
-    }
-
-    /* Cyan Terminal Theme */
-    [data-theme="cyan"] {
-      --bg: #001b1d;
-      --bg-light: #003339;
-      --bg-lighter: #004a52;
-      --text: #ffffff;
-      --text-dim: #9ca3af;
-      --accent: #00d9ff;
-      --accent-dim: #0891b2;
-      --border: #374151;
-      --orange: #fbbf24;
-    }
-
-    /* Purple Synthwave Theme */
-    [data-theme="purple"] {
-      --bg: #0f0f23;
-      --bg-light: #1a1a3a;
-      --bg-lighter: #252550;
-      --text: #ffffff;
-      --text-dim: #a78bfa;
-      --accent: #c084fc;
-      --accent-dim: #9333ea;
-      --border: #4c1d95;
-      --orange: #f59e0b;
-    }
-
-    /* Amber Terminal Theme */
-    [data-theme="amber"] {
-      --bg: #1c1611;
-      --bg-light: #2d2318;
-      --bg-lighter: #3d301f;
-      --text: #ffffff;
-      --text-dim: #a3a3a3;
-      --accent: #fbbf24;
-      --accent-dim: #d97706;
-      --border: #57534e;
-      --orange: #dc2626;
-    }
-
-    /* Classic Monochrome Theme */
-    [data-theme="mono"] {
-      --bg: #000000;
-      --bg-light: #1a1a1a;
-      --bg-lighter: #2d2d2d;
-      --text: #ffffff;
-      --text-dim: #9ca3af;
-      --accent: #ffffff;
-      --accent-dim: #d1d5db;
-      --border: #4b5563;
-      --orange: #6b7280;
-    }
-
-    /* Pink Neon Theme */
-    [data-theme="pink"] {
-      --bg: #1a0b1a;
-      --bg-light: #2d1b2d;
-      --bg-lighter: #402b40;
-      --text: #ffffff;
-      --text-dim: #d1d5db;
-      --accent: #ff10f0;
-      --accent-dim: #c026d3;
-      --border: #7c2d12;
-      --orange: #fb923c;
+      --text-dim: #b895dd;
+      --accent: #9b49c8;
+      --accent-dim: #9845c6;
+      --border: #9865cf;
+      --orange: #cd9ce1;
     }
 
     body {
@@ -594,37 +542,21 @@
                 Themes ▼
               </button>
               <div class="theme-menu" id="themeMenu">
+                <button class="theme-option" data-theme="matte-black">
+                  <span class="theme-preview" style="background: #FFC107;"></span>
+                  Matte Black
+                </button>
+                <button class="theme-option" data-theme="osaka-jade">
+                  <span class="theme-preview" style="background: #2DD5B7;"></span>
+                  Osaka Jade
+                </button>
+                <button class="theme-option" data-theme="purple-moon">
+                  <span class="theme-preview" style="background: #9b49c8;"></span>
+                  Purple Moon
+                </button>
                 <button class="theme-option" data-theme="blue">
                   <span class="theme-preview" style="background: #58a6ff;"></span>
                   GitHub Blue
-                </button>
-                <button class="theme-option" data-theme="light">
-                  <span class="theme-preview" style="background: #0969da;"></span>
-                  Light Mode
-                </button>
-                <button class="theme-option" data-theme="matrix">
-                  <span class="theme-preview" style="background: #00ff41;"></span>
-                  Matrix Green
-                </button>
-                <button class="theme-option" data-theme="cyan">
-                  <span class="theme-preview" style="background: #00d9ff;"></span>
-                  Cyan Terminal
-                </button>
-                <button class="theme-option" data-theme="purple">
-                  <span class="theme-preview" style="background: #c084fc;"></span>
-                  Purple Synthwave
-                </button>
-                <button class="theme-option" data-theme="amber">
-                  <span class="theme-preview" style="background: #fbbf24;"></span>
-                  Amber Terminal
-                </button>
-                <button class="theme-option" data-theme="mono">
-                  <span class="theme-preview" style="background: #ffffff;"></span>
-                  Monochrome
-                </button>
-                <button class="theme-option" data-theme="pink">
-                  <span class="theme-preview" style="background: #ff10f0;"></span>
-                  Pink Neon
                 </button>
               </div>
             </div>
@@ -793,16 +725,16 @@ chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
     themeOptions.forEach(option => {
       option.addEventListener('click', function() {
         const theme = this.getAttribute('data-theme');
-        
-        if (theme === 'blue') {
+
+        if (theme === 'matte-black') {
           document.documentElement.removeAttribute('data-theme');
         } else {
           document.documentElement.setAttribute('data-theme', theme);
         }
-        
+
         // Save theme preference
         localStorage.setItem('theme', theme);
-        
+
         // Close menu
         themeMenu.classList.remove('show');
       });
@@ -810,7 +742,7 @@ chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
 
     // Load saved theme
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme && savedTheme !== 'blue') {
+    if (savedTheme && savedTheme !== 'matte-black') {
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
 
