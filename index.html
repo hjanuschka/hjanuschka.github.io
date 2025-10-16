@@ -614,39 +614,51 @@
 
     /* Mobile Responsive */
     @media (max-width: 768px) {
+      body {
+        overflow-x: hidden;
+      }
+
       .hero h1 {
         font-size: 32px;
       }
-      
+
       .nav-content {
         flex-direction: column;
         gap: 20px;
       }
-      
+
       .nav-content > div {
         flex-direction: column;
         gap: 15px;
+        width: 100%;
       }
-      
+
       .nav-links {
         gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
       }
-      
+
       .theme-switcher {
         justify-content: center;
       }
-      
+
       .grid-2 {
         grid-template-columns: 1fr;
       }
-      
+
       .footer-content {
         flex-direction: column;
         gap: 10px;
       }
-      
+
       .badges {
         gap: 10px;
+      }
+
+      .project-card {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
     }
   </style>
