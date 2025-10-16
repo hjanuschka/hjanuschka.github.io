@@ -1,5 +1,7 @@
 *How a Twitter conversation led to adding a major new feature to Chromium*
 
+**Update 16.10.2025:** ✅ Feature landed in Chromium main branch (Chrome 143)
+
 ## The Origin Story
 
 It started with [a tweet from Tobi Lütke](https://x.com/tobi/status/1957195479361438142) (CEO of Shopify). He proposed an elegant solution to a problem every developer faces: tab proliferation. His idea was simple but powerful - Chrome should focus existing tabs instead of blindly creating new ones.
@@ -102,16 +104,30 @@ This feature changes how developers interact with Chrome:
 
 ## Acknowledgments
 
+> Getting a feature into Chromium is a journey, not a sprint. The review process pushed me to think deeper about edge cases, performance implications, and API design. Every piece of feedback made this feature better. Huge thanks to all the reviewers who invested their time and expertise to make this happen.
+
 Thanks to:
 - **Tobi Lütke** for the original idea
 - **Yoav Weiss** who is actively supporting me getting forward with this feature
+- **Daniel Murphy, Kaan Alsan, Erik Chen** for thorough code reviews and valuable feedback
+- **The entire Chromium community** for the collaborative review process
+
+## Implementation Details
+
+**Status:** ✅ Merged to Chromium main branch
+- Foundation CL: [6850334](https://chromium-review.googlesource.com/c/chromium/src/+/6850334) - Core infrastructure (refs/heads/main@{#1520059})
+- Integration CL: [6943437](https://chromium-review.googlesource.com/c/chromium/src/+/6943437) - Wired up to startup flow (refs/heads/main@{#1530630})
+- Reviewers: Erik Chen, Kaan Alsan, Daniel Murphy
+- Bug: [439499872](https://bugs.chromium.org/p/chromium/issues/detail?id=439499872)
+
+**Upcoming Enhancements:**
+- JSON API support for automation (CL [6946350](https://chromium-review.googlesource.com/c/chromium/src/+/6946350) - in review)
 
 ---
 
-*This feature represents what I love about open source: seeing a problem, building a solution, and shipping it to millions of users. One tweet, one implementation, countless improved workflows.*
-
-**Status:** Implementation complete, preparing for Chromium review
-
-**Follow the development:**
+**Links:**
 - [Original Tweet](https://x.com/tobi/status/1957195479361438142)
+- [Foundation CL 6850334](https://chromium-review.googlesource.com/c/chromium/src/+/6850334)
+- [Integration CL 6943437](https://chromium-review.googlesource.com/c/chromium/src/+/6943437)
+- [Design Document](https://docs.google.com/document/d/1YRf-BzHTAhqyV6wL6yRxVOU3zhByE6voSEwSNLgPZSU/edit)
 - [My GitHub](https://github.com/hjanuschka)

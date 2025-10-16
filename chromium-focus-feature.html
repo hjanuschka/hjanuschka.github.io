@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2025-09-14",
+    "dateModified": "2025-10-16",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -650,6 +650,7 @@
   <article class="container">
     <div class="blog-content">
 <p><em>How a Twitter conversation led to adding a major new feature to Chromium</em></p>
+<p><strong>Update 16.10.2025:</strong> ✅ Feature landed in Chromium main branch (Chrome 143)</p>
 <h2>The Origin Story</h2>
 <p>It started with <a href="https://x.com/tobi/status/1957195479361438142">a tweet from Tobi Lütke</a> (CEO of Shopify). He proposed an elegant solution to a problem every developer faces: tab proliferation. His idea was simple but powerful - Chrome should focus existing tabs instead of blindly creating new ones.</p>
 <p>His proposed CLI syntax was clean:</p>
@@ -726,17 +727,35 @@ chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
 <li><strong>Reduced Memory</strong>: Fewer duplicate tabs = less RAM usage</li>
 </ol>
 <h2>Acknowledgments</h2>
+<blockquote>
+<p>Getting a feature into Chromium is a journey, not a sprint. The review process pushed me to think deeper about edge cases, performance implications, and API design. Every piece of feedback made this feature better. Huge thanks to all the reviewers who invested their time and expertise to make this happen.</p>
+</blockquote>
 <p>Thanks to:</p>
 <ul>
 <li><strong>Tobi Lütke</strong> for the original idea</li>
 <li><strong>Yoav Weiss</strong> who is actively supporting me getting forward with this feature</li>
+<li><strong>Daniel Murphy, Kaan Alsan, Erik Chen</strong> for thorough code reviews and valuable feedback</li>
+<li><strong>The entire Chromium community</strong> for the collaborative review process</li>
+</ul>
+<h2>Implementation Details</h2>
+<p><strong>Status:</strong> ✅ Merged to Chromium main branch</p>
+<ul>
+<li>Foundation CL: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6850334">6850334</a> - Core infrastructure (refs/heads/main@{#1520059})</li>
+<li>Integration CL: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6943437">6943437</a> - Wired up to startup flow (refs/heads/main@{#1530630})</li>
+<li>Reviewers: Erik Chen, Kaan Alsan, Daniel Murphy</li>
+<li>Bug: <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=439499872">439499872</a></li>
+</ul>
+<p><strong>Upcoming Enhancements:</strong></p>
+<ul>
+<li>JSON API support for automation (CL <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6946350">6946350</a> - in review)</li>
 </ul>
 <hr>
-<p><em>This feature represents what I love about open source: seeing a problem, building a solution, and shipping it to millions of users. One tweet, one implementation, countless improved workflows.</em></p>
-<p><strong>Status:</strong> Implementation complete, preparing for Chromium review</p>
-<p><strong>Follow the development:</strong></p>
+<p><strong>Links:</strong></p>
 <ul>
 <li><a href="https://x.com/tobi/status/1957195479361438142">Original Tweet</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6850334">Foundation CL 6850334</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6943437">Integration CL 6943437</a></li>
+<li><a href="https://docs.google.com/document/d/1YRf-BzHTAhqyV6wL6yRxVOU3zhByE6voSEwSNLgPZSU/edit">Design Document</a></li>
 <li><a href="https://github.com/hjanuschka">My GitHub</a></li>
 </ul>
     </div>
