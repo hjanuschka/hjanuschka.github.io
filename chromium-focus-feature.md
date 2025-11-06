@@ -109,19 +109,17 @@ This feature changes how developers interact with Chrome:
 Thanks to:
 - **Tobi Lütke** for the original idea
 - **Yoav Weiss** who is actively supporting me getting forward with this feature
-- **Daniel Murphy, Kaan Alsan, Erik Chen** for thorough code reviews and valuable feedback
+- **Daniel Murphy, Kaan Alsan, Erik Chen, Jan Keitel** for thorough code reviews and valuable feedback
 - **The entire Chromium community** for the collaborative review process
 
 ## Implementation Details
 
-**Status:** ✅ Merged to Chromium main branch
+**Status:** ✅ All CLs merged to Chromium main branch
 - Foundation CL: [6850334](https://chromium-review.googlesource.com/c/chromium/src/+/6850334) - Core infrastructure (refs/heads/main@{#1520059})
 - Integration CL: [6943437](https://chromium-review.googlesource.com/c/chromium/src/+/6943437) - Wired up to startup flow (refs/heads/main@{#1530630})
-- Reviewers: Erik Chen, Kaan Alsan, Daniel Murphy
+- JSON API CL: [6946350](https://chromium-review.googlesource.com/c/chromium/src/+/6946350) - Result file output for automation (refs/heads/main@{#1534794})
+- Reviewers: Erik Chen, Kaan Alsan, Daniel Murphy, Jan Keitel
 - Bug: [439499872](https://bugs.chromium.org/p/chromium/issues/detail?id=439499872)
-
-**Upcoming Enhancements:**
-- JSON API support for automation (CL [6946350](https://chromium-review.googlesource.com/c/chromium/src/+/6946350) - in review)
 
 ---
 
@@ -129,5 +127,6 @@ Thanks to:
 - [Original Tweet](https://x.com/tobi/status/1957195479361438142)
 - [Foundation CL 6850334](https://chromium-review.googlesource.com/c/chromium/src/+/6850334)
 - [Integration CL 6943437](https://chromium-review.googlesource.com/c/chromium/src/+/6943437)
+- [JSON API CL 6946350](https://chromium-review.googlesource.com/c/chromium/src/+/6946350)
 - [Design Document](https://docs.google.com/document/d/1YRf-BzHTAhqyV6wL6yRxVOU3zhByE6voSEwSNLgPZSU/edit)
 - [My GitHub](https://github.com/hjanuschka)
