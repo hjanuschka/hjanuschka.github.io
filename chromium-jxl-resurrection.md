@@ -133,19 +133,6 @@ This isn't about AVIF vs JXL vs WebP. Each format has its place:
 
 The web is better with **open choice**. Developers should have options to pick the right format for their specific use case. Some images benefit from AVIF's compression, others need JXL's progressive rendering or lossless JPEG transcoding. Let the format fit the need, not fight over dominance.
 
-## Why This Matters
-
-This isn't just about adding another image format. It's about:
-
-- **Better web performance** - Smaller images mean faster load times
-- **Better image quality** - Same visual quality at much smaller file sizes
-- **Future-proofing** - HDR and wide gamut support for modern displays
-- **Developer choice** - Give web developers the tools to optimize their content
-
-JPEG has served us well for three decades. But the web has evolved. Displays are better. Networks are faster. Users expect more.
-
-JPEG XL is what the web needs next. The community is making it happen.
-
 ## Implementation Details
 
 **Status:** 🚧 In active development
