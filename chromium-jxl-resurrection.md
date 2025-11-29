@@ -104,6 +104,8 @@ Here's an example of JXL animation support in action (if your browser doesn't su
 <script type="module" src="/jxl-polyfill/polyfill.js"></script>
 ```
 
+**Note:** If you're on Safari/iOS with native JXL support, you'll see a static image - no browser currently supports JXL animations natively. The polyfill shows the first frame. To see animations, you'd need to build Chromium with our patches (or wait for them to land!).
+
 The current implementation has all the core features:
 
 ✅ **Standard image decoding** - JPEG XL images render correctly
