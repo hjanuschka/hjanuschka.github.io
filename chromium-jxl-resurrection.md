@@ -12,7 +12,7 @@ Here's a live example of JXL animation support - the implementation shown in the
 
 ```snippet
 <div style="text-align: center; margin: 20px 0;">
-  <img id="jxl-demo" src="/anim-icos.jxl" alt="Animated JXL Demo" style="max-width: 400px; margin: 20px auto; display: block;" />
+  <img id="jxl-demo" src="/anim-icos.jxl" alt="Animated JXL Demo" width="128" height="128" style="margin: 20px auto; display: block;" />
   <button id="force-polyfill-btn" style="display: none; padding: 10px 20px; background: var(--accent, #f59e0b); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-top: 10px;">
     Force Polyfill (See Animation)
   </button>
