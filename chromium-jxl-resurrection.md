@@ -102,7 +102,7 @@ Here's an example of JXL animation support in action (if your browser doesn't su
 ```snippet
 <div style="text-align: center; margin: 20px 0;">
   <img id="jxl-demo" src="/anim-icos.jxl" alt="Animated JXL Demo" style="max-width: 400px; margin: 20px auto; display: block;" />
-  <button id="force-polyfill-btn" style="padding: 10px 20px; background: var(--accent, #f59e0b); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-top: 10px;">
+  <button id="force-polyfill-btn" style="display: none; padding: 10px 20px; background: var(--accent, #f59e0b); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-top: 10px;">
     Force Polyfill (See Animation)
   </button>
   <p id="polyfill-status" style="font-size: 12px; color: var(--text-muted, #666); margin-top: 10px;"></p>
@@ -114,6 +114,28 @@ Here's an example of JXL animation support in action (if your browser doesn't su
   const btn = document.getElementById('force-polyfill-btn');
   const status = document.getElementById('polyfill-status');
   const img = document.getElementById('jxl-demo');
+
+  // Check for native JXL support
+  async function checkNativeJXLSupport() {
+    const jxlData = 'data:image/jxl;base64,/woIELASCAgQAFzgBzgBPAk=';
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = jxlData;
+      setTimeout(() => resolve(false), 100);
+    });
+  }
+
+  // Only show button if native support exists (but animations won't work)
+  checkNativeJXLSupport().then(hasNativeSupport => {
+    if (hasNativeSupport) {
+      btn.style.display = 'inline-block';
+      status.textContent = 'Your browser has native JXL support, but animations aren\'t supported yet. Click the button to see the animation via WASM polyfill.';
+    } else {
+      status.textContent = 'Using WASM polyfill for JXL support - animation should play automatically.';
+    }
+  });
 
   btn.addEventListener('click', async () => {
     btn.disabled = true;
@@ -133,8 +155,6 @@ Here's an example of JXL animation support in action (if your browser doesn't su
   });
 </script>
 ```
-
-**Note:** No browser currently supports JXL animations natively. If you have native JXL support (Safari/iOS), you'll see a static image. Click "Force Polyfill" to use the WASM decoder and see the animation!
 
 The current implementation has all the core features:
 
