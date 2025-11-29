@@ -740,6 +740,63 @@
   <iframe src="https://www.youtube.com/embed/zVkX4bP6qSo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
+<h2>Live Demo: JXL Animation</h2>
+<p>Here&#39;s a live example of JXL animation support - the implementation shown in the video above. No browser currently supports JXL animations natively, so this uses a WASM polyfill:</p>
+<div style="text-align: center; margin: 20px 0;">
+  <img id="jxl-demo" src="/anim-icos.jxl" alt="Animated JXL Demo" style="max-width: 400px; margin: 20px auto; display: block;" />
+  <button id="force-polyfill-btn" style="display: none; padding: 10px 20px; background: var(--accent, #f59e0b); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-top: 10px;">
+    Force Polyfill (See Animation)
+  </button>
+  <p id="polyfill-status" style="font-size: 12px; color: var(--text-muted, #666); margin-top: 10px;"></p>
+</div>
+<script type="module" src="/jxl-polyfill/polyfill.js"></script>
+<script type="module">
+  import { JXLPolyfill } from '/jxl-polyfill/polyfill.js';
+
+  const btn = document.getElementById('force-polyfill-btn');
+  const status = document.getElementById('polyfill-status');
+  const img = document.getElementById('jxl-demo');
+
+  // Check for native JXL support
+  async function checkNativeJXLSupport() {
+    const jxlData = 'data:image/jxl;base64,/woIELASCAgQAFzgBzgBPAk=';
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = jxlData;
+      setTimeout(() => resolve(false), 100);
+    });
+  }
+
+  // Only show button if native support exists (but animations won't work)
+  checkNativeJXLSupport().then(hasNativeSupport => {
+    if (hasNativeSupport) {
+      btn.style.display = 'inline-block';
+      status.textContent = 'Your browser has native JXL support, but animations aren\'t supported yet. Click the button to see the animation via WASM polyfill.';
+    } else {
+      status.textContent = 'Using WASM polyfill for JXL support - animation should play automatically.';
+    }
+  });
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.textContent = 'Loading polyfill...';
+    status.textContent = 'Forcing polyfill to show animation...';
+
+    // Force polyfill usage
+    const polyfill = new JXLPolyfill({
+      verbose: true,
+      forcePolyfill: true
+    });
+    await polyfill.init();
+    await polyfill.processImage(img);
+
+    btn.textContent = 'Polyfill Active';
+    status.textContent = 'Using WASM decoder - animation should now play!';
+  });
+</script>
+
 <h2>The Dramatic U-Turn</h2>
 <p>In October 2022, Google declared JPEG XL &quot;obsolete&quot; and ripped it out of Chromium. The reason? &quot;Insufficient ecosystem interest.&quot; Fast forward to November 2025, and Chrome&#39;s Architecture Tech Leads just announced: &quot;We would welcome contributions to integrate a performant and memory-safe JPEG XL decoder in Chromium.&quot;</p>
 <p>What changed in three years? Everything.</p>
@@ -837,62 +894,6 @@ pub fn decode_jxl(data: &amp;[u8]) -&gt; Result&lt;DecodedImage&gt; {
 </tbody></table>
 <p><strong>The gap closed from 56% slower to just 4% slower than C++</strong> - a 52-point improvement that makes the Rust implementation viable for production use. Meanwhile, <a href="https://github.com/libjxl/jxl-rs/pull/509">PR #509</a> provides a WebAssembly-based polyfill that allows JXL images to work in browsers that don&#39;t yet have native support.</p>
 <h2>What Works Now</h2>
-<p>Here&#39;s an example of JXL animation support in action (if your browser doesn&#39;t support JXL natively, the polyfill will decode it):</p>
-<div style="text-align: center; margin: 20px 0;">
-  <img id="jxl-demo" src="/anim-icos.jxl" alt="Animated JXL Demo" style="max-width: 400px; margin: 20px auto; display: block;" />
-  <button id="force-polyfill-btn" style="display: none; padding: 10px 20px; background: var(--accent, #f59e0b); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-top: 10px;">
-    Force Polyfill (See Animation)
-  </button>
-  <p id="polyfill-status" style="font-size: 12px; color: var(--text-muted, #666); margin-top: 10px;"></p>
-</div>
-<script type="module" src="/jxl-polyfill/polyfill.js"></script>
-<script type="module">
-  import { JXLPolyfill } from '/jxl-polyfill/polyfill.js';
-
-  const btn = document.getElementById('force-polyfill-btn');
-  const status = document.getElementById('polyfill-status');
-  const img = document.getElementById('jxl-demo');
-
-  // Check for native JXL support
-  async function checkNativeJXLSupport() {
-    const jxlData = 'data:image/jxl;base64,/woIELASCAgQAFzgBzgBPAk=';
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
-      img.src = jxlData;
-      setTimeout(() => resolve(false), 100);
-    });
-  }
-
-  // Only show button if native support exists (but animations won't work)
-  checkNativeJXLSupport().then(hasNativeSupport => {
-    if (hasNativeSupport) {
-      btn.style.display = 'inline-block';
-      status.textContent = 'Your browser has native JXL support, but animations aren\'t supported yet. Click the button to see the animation via WASM polyfill.';
-    } else {
-      status.textContent = 'Using WASM polyfill for JXL support - animation should play automatically.';
-    }
-  });
-
-  btn.addEventListener('click', async () => {
-    btn.disabled = true;
-    btn.textContent = 'Loading polyfill...';
-    status.textContent = 'Forcing polyfill to show animation...';
-
-    // Force polyfill usage
-    const polyfill = new JXLPolyfill({
-      verbose: true,
-      forcePolyfill: true
-    });
-    await polyfill.init();
-    await polyfill.processImage(img);
-
-    btn.textContent = 'Polyfill Active';
-    status.textContent = 'Using WASM decoder - animation should now play!';
-  });
-</script>
-
 <p>The current implementation has all the core features:</p>
 <p>✅ <strong>Standard image decoding</strong> - JPEG XL images render correctly<br>✅ <strong>ICC color profiles</strong> - Proper color management<br>✅ <strong>Animations</strong> - Multi-frame JXL support (first browser!)<br>✅ <strong>Alpha/transparency</strong> - Full alpha channel support<br>✅ <strong>Wide gamut</strong> - Display-P3 and other color spaces<br>✅ <strong>HDR support</strong> - PQ/HLG transfer functions (merged via <a href="https://github.com/libjxl/jxl-rs/pull/491">PR #491</a>)</p>
 <p>The implementation is feature-complete with all essential JXL capabilities working.</p>
