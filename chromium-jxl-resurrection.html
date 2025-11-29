@@ -838,10 +838,40 @@ pub fn decode_jxl(data: &amp;[u8]) -&gt; Result&lt;DecodedImage&gt; {
 <p><strong>The gap closed from 56% slower to just 4% slower than C++</strong> - a 52-point improvement that makes the Rust implementation viable for production use. Meanwhile, <a href="https://github.com/libjxl/jxl-rs/pull/509">PR #509</a> provides a WebAssembly-based polyfill that allows JXL images to work in browsers that don&#39;t yet have native support.</p>
 <h2>What Works Now</h2>
 <p>Here&#39;s an example of JXL animation support in action (if your browser doesn&#39;t support JXL natively, the polyfill will decode it):</p>
-<img src="/anim-icos.jxl" alt="Animated JXL Demo" style="max-width: 400px; margin: 20px auto; display: block;" />
+<div style="text-align: center; margin: 20px 0;">
+  <img id="jxl-demo" src="/anim-icos.jxl" alt="Animated JXL Demo" style="max-width: 400px; margin: 20px auto; display: block;" />
+  <button id="force-polyfill-btn" style="padding: 10px 20px; background: var(--accent, #f59e0b); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-top: 10px;">
+    Force Polyfill (See Animation)
+  </button>
+  <p id="polyfill-status" style="font-size: 12px; color: var(--text-muted, #666); margin-top: 10px;"></p>
+</div>
 <script type="module" src="/jxl-polyfill/polyfill.js"></script>
+<script type="module">
+  import { JXLPolyfill } from '/jxl-polyfill/polyfill.js';
 
-<p><strong>Note:</strong> If you&#39;re on Safari/iOS with native JXL support, you&#39;ll see a static image - no browser currently supports JXL animations natively. The polyfill shows the first frame. To see animations, you&#39;d need to build Chromium with our patches (or wait for them to land!).</p>
+  const btn = document.getElementById('force-polyfill-btn');
+  const status = document.getElementById('polyfill-status');
+  const img = document.getElementById('jxl-demo');
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.textContent = 'Loading polyfill...';
+    status.textContent = 'Forcing polyfill to show animation...';
+
+    // Force polyfill usage
+    const polyfill = new JXLPolyfill({
+      verbose: true,
+      forcePolyfill: true
+    });
+    await polyfill.init();
+    await polyfill.processImage(img);
+
+    btn.textContent = 'Polyfill Active';
+    status.textContent = 'Using WASM decoder - animation should now play!';
+  });
+</script>
+
+<p><strong>Note:</strong> No browser currently supports JXL animations natively. If you have native JXL support (Safari/iOS), you&#39;ll see a static image. Click &quot;Force Polyfill&quot; to use the WASM decoder and see the animation!</p>
 <p>The current implementation has all the core features:</p>
 <p>✅ <strong>Standard image decoding</strong> - JPEG XL images render correctly<br>✅ <strong>ICC color profiles</strong> - Proper color management<br>✅ <strong>Animations</strong> - Multi-frame JXL support (first browser!)<br>✅ <strong>Alpha/transparency</strong> - Full alpha channel support<br>✅ <strong>Wide gamut</strong> - Display-P3 and other color spaces<br>✅ <strong>HDR support</strong> - PQ/HLG transfer functions (merged via <a href="https://github.com/libjxl/jxl-rs/pull/491">PR #491</a>)</p>
 <p>The implementation is feature-complete with all essential JXL capabilities working.</p>

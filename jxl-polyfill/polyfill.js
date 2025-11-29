@@ -20,6 +20,7 @@ class JXLPolyfill {
             showLoadingState: options.showLoadingState ?? true,
             cacheDecoded: options.cacheDecoded ?? true,
             verbose: options.verbose ?? false,
+            forcePolyfill: options.forcePolyfill ?? false,
             ...options
         };
 
