@@ -135,12 +135,12 @@ pub fn decode_jxl(data: &[u8]) -> Result<DecodedImage> {
 
 The Rust decoder required performance optimization. The jxl-rs community has been working on improvements:
 
-- **PR #491** - HDR color profile handling (PQ/HLG transfer functions)
-- **PR #492** - Remove unnecessary `allow_unsafe` requirement
-- **PR #493** - Rectangle bounds checking improvements
-- **PR #494** - Precision level matching libjxl C++ version
-- **PR #506** - Major performance improvements bringing jxl-rs nearly on par with C++ libjxl
-- **PR #509** - WASM polyfill implementation for browsers without native JXL support
+- [**PR #491**](https://github.com/libjxl/jxl-rs/pull/491) - HDR color profile handling (PQ/HLG transfer functions)
+- [**PR #492**](https://github.com/libjxl/jxl-rs/pull/492) - Remove unnecessary `allow_unsafe` requirement
+- [**PR #493**](https://github.com/libjxl/jxl-rs/pull/493) - Rectangle bounds checking improvements
+- [**PR #494**](https://github.com/libjxl/jxl-rs/pull/494) - Precision level matching libjxl C++ version
+- [**PR #506**](https://github.com/libjxl/jxl-rs/pull/506) - Major performance improvements bringing jxl-rs nearly on par with C++ libjxl
+- [**PR #509**](https://github.com/libjxl/jxl-rs/pull/509) - WASM polyfill implementation for browsers without native JXL support
 
 [PR #506](https://github.com/libjxl/jxl-rs/pull/506) improves decode performance through parallel VarDCT decoding and AVX2+FMA SIMD optimizations:
 
@@ -180,6 +180,10 @@ Different image formats serve different needs:
 - **JPEG XL** - Lossless JPEG transcoding, progressive decode, animations, HDR
 
 Having multiple format options allows developers to choose based on their specific requirements.
+
+## Acknowledgments
+
+Special thanks to [Luca Versari (veluca93)](https://github.com/veluca93) for reviewing and merging upstream PRs and managing jxl-rs releases. The collaboration and responsiveness from the jxl-rs maintainers has been instrumental in making this implementation possible.
 
 ## Implementation Details
 

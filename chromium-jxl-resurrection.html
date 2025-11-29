@@ -846,12 +846,12 @@ pub fn decode_jxl(data: &amp;[u8]) -&gt; Result&lt;DecodedImage&gt; {
 </code></pre>
 <p>The Rust decoder required performance optimization. The jxl-rs community has been working on improvements:</p>
 <ul>
-<li><strong>PR #491</strong> - HDR color profile handling (PQ/HLG transfer functions)</li>
-<li><strong>PR #492</strong> - Remove unnecessary <code>allow_unsafe</code> requirement</li>
-<li><strong>PR #493</strong> - Rectangle bounds checking improvements</li>
-<li><strong>PR #494</strong> - Precision level matching libjxl C++ version</li>
-<li><strong>PR #506</strong> - Major performance improvements bringing jxl-rs nearly on par with C++ libjxl</li>
-<li><strong>PR #509</strong> - WASM polyfill implementation for browsers without native JXL support</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/491"><strong>PR #491</strong></a> - HDR color profile handling (PQ/HLG transfer functions)</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/492"><strong>PR #492</strong></a> - Remove unnecessary <code>allow_unsafe</code> requirement</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/493"><strong>PR #493</strong></a> - Rectangle bounds checking improvements</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/494"><strong>PR #494</strong></a> - Precision level matching libjxl C++ version</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/506"><strong>PR #506</strong></a> - Major performance improvements bringing jxl-rs nearly on par with C++ libjxl</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/509"><strong>PR #509</strong></a> - WASM polyfill implementation for browsers without native JXL support</li>
 </ul>
 <p><a href="https://github.com/libjxl/jxl-rs/pull/506">PR #506</a> improves decode performance through parallel VarDCT decoding and AVX2+FMA SIMD optimizations:</p>
 <table>
@@ -909,6 +909,8 @@ pub fn decode_jxl(data: &amp;[u8]) -&gt; Result&lt;DecodedImage&gt; {
 <li><strong>JPEG XL</strong> - Lossless JPEG transcoding, progressive decode, animations, HDR</li>
 </ul>
 <p>Having multiple format options allows developers to choose based on their specific requirements.</p>
+<h2>Acknowledgments</h2>
+<p>Special thanks to <a href="https://github.com/veluca93">Luca Versari (veluca93)</a> for reviewing and merging upstream PRs and managing jxl-rs releases. The collaboration and responsiveness from the jxl-rs maintainers has been instrumental in making this implementation possible.</p>
 <h2>Implementation Details</h2>
 <p><strong>Status:</strong> 🚧 In active development</p>
 <ul>
