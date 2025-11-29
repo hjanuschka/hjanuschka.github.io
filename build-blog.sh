@@ -621,19 +621,76 @@ generate_html() {
     /* Mobile table responsiveness */
     @media (max-width: 768px) {
       .blog-content table {
-        font-size: 12px;
+        font-size: 11px;
+        border: none;
       }
 
-      .blog-content th,
-      .blog-content td {
-        padding: 8px 6px;
+      .blog-content thead {
+        display: none;
       }
 
-      /* Make text wrap in cells */
-      .blog-content th,
+      .blog-content tbody,
+      .blog-content tr {
+        display: block;
+        width: 100%;
+      }
+
+      .blog-content tr {
+        margin-bottom: 15px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--bg);
+      }
+
       .blog-content td {
-        word-wrap: break-word;
-        overflow-wrap: break-word;
+        display: block;
+        text-align: left;
+        padding: 8px 0;
+        border: none;
+        position: relative;
+        padding-left: 40%;
+      }
+
+      .blog-content td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 38%;
+        padding-right: 10px;
+        font-weight: bold;
+        color: var(--accent);
+        text-align: left;
+      }
+
+      /* First column (Image name) */
+      .blog-content td:nth-of-type(1):before {
+        content: "Image";
+      }
+
+      /* Second column (Size) */
+      .blog-content td:nth-of-type(2):before {
+        content: "Size";
+      }
+
+      /* Third column (Before) */
+      .blog-content td:nth-of-type(3):before {
+        content: "Before";
+      }
+
+      /* Fourth column (After) */
+      .blog-content td:nth-of-type(4):before {
+        content: "After";
+      }
+
+      /* Fifth column (C++) */
+      .blog-content td:nth-of-type(5):before {
+        content: "C++";
+      }
+
+      /* Sixth column (Speedup) */
+      .blog-content td:nth-of-type(6):before {
+        content: "Speedup";
       }
     }
 
