@@ -582,6 +582,17 @@ generate_html() {
       border: 2px solid var(--border);
       border-radius: 8px;
       overflow: hidden;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .blog-content thead,
+    .blog-content tbody,
+    .blog-content tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
     }
 
     .blog-content th {
@@ -605,6 +616,25 @@ generate_html() {
 
     .blog-content tr:hover {
       background: var(--bg-light);
+    }
+
+    /* Mobile table responsiveness */
+    @media (max-width: 768px) {
+      .blog-content table {
+        font-size: 12px;
+      }
+
+      .blog-content th,
+      .blog-content td {
+        padding: 8px 6px;
+      }
+
+      /* Make text wrap in cells */
+      .blog-content th,
+      .blog-content td {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
     }
 
     /* Snippet blocks for inline HTML */
