@@ -135,12 +135,12 @@ pub fn decode_jxl(data: &[u8]) -> Result<DecodedImage> {
 
 The Rust decoder required performance optimization. The jxl-rs community has been working on improvements:
 
-- [**PR #491**](https://github.com/libjxl/jxl-rs/pull/491) (merged) - HDR color profile handling (PQ/HLG transfer functions)
-- [**PR #492**](https://github.com/libjxl/jxl-rs/pull/492) (merged) - Remove unnecessary `allow_unsafe` requirement
-- [**PR #493**](https://github.com/libjxl/jxl-rs/pull/493) (merged) - Rectangle bounds checking improvements
-- [**PR #494**](https://github.com/libjxl/jxl-rs/pull/494) (merged) - Precision level matching libjxl C++ version
-- [**PR #506**](https://github.com/libjxl/jxl-rs/pull/506) - Major performance improvements bringing jxl-rs nearly on par with C++ libjxl
-- [**PR #509**](https://github.com/libjxl/jxl-rs/pull/509) - WASM polyfill implementation for browsers without native JXL support
+- [**PR #491**](https://github.com/libjxl/jxl-rs/pull/491) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - HDR color profile handling (PQ/HLG transfer functions)
+- [**PR #492**](https://github.com/libjxl/jxl-rs/pull/492) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - Remove unnecessary `allow_unsafe` requirement
+- [**PR #493**](https://github.com/libjxl/jxl-rs/pull/493) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - Rectangle bounds checking improvements
+- [**PR #494**](https://github.com/libjxl/jxl-rs/pull/494) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - Precision level matching libjxl C++ version
+- [**PR #506**](https://github.com/libjxl/jxl-rs/pull/506) <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> - Major performance improvements bringing jxl-rs nearly on par with C++ libjxl
+- [**PR #509**](https://github.com/libjxl/jxl-rs/pull/509) <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> - WASM polyfill implementation for browsers without native JXL support
 
 [PR #506](https://github.com/libjxl/jxl-rs/pull/506) improves decode performance through parallel VarDCT decoding and AVX2+FMA SIMD optimizations:
 
@@ -161,7 +161,7 @@ The implementation includes:
 ✅ **Animations** - Multi-frame JXL support
 ✅ **Alpha/transparency** - Full alpha channel support
 ✅ **Wide gamut** - Display-P3 and other color spaces
-✅ **HDR support** - PQ/HLG transfer functions ([PR #491](https://github.com/libjxl/jxl-rs/pull/491) merged)
+✅ **HDR support** - PQ/HLG transfer functions ([PR #491](https://github.com/libjxl/jxl-rs/pull/491) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span>)
 
 ## Requirements for Shipping
 
