@@ -67,44 +67,40 @@ Here's a live example of JXL animation support - the implementation shown in the
 </script>
 ```
 
-## The Dramatic U-Turn
+## Background
 
-In October 2022, Google declared JPEG XL "obsolete" and ripped it out of Chromium. The reason? "Insufficient ecosystem interest." Fast forward to November 2025, and Chrome's Architecture Tech Leads just announced: "We would welcome contributions to integrate a performant and memory-safe JPEG XL decoder in Chromium."
+In October 2022, Google removed JPEG XL from Chromium, citing "insufficient ecosystem interest." In November 2025, Chrome's Architecture Tech Leads announced: "We would welcome contributions to integrate a performant and memory-safe JPEG XL decoder in Chromium."
 
-What changed in three years? Everything.
+## What Changed
 
-## The Tipping Point
+Rick Byers' announcement on behalf of Chrome ATLs outlined the ecosystem developments:
 
-Rick Byers' announcement on behalf of Chrome ATLs laid out the new reality:
-
-- **Safari shipped JPEG XL support** - Apple bet on the format
+- **Safari shipped JPEG XL support** - Apple implemented the format
 - **Firefox updated their position** - Mozilla signaled support pending a Rust decoder
 - **PDF standardization** - JPEG XL designated as the preferred format for HDR content in PDF
-- **Developer demand** - Bug upvotes, Interop proposals, and survey data showed real interest
+- **Developer interest** - Bug upvotes, Interop proposals, and survey data indicated demand
 
-The ecosystem that "didn't exist" in 2022 had materialized. Chrome needed to catch up.
+The ecosystem evolved between 2022 and 2025.
 
-## Why JPEG XL Matters
+## JPEG XL Features
 
-JPEG XL isn't just another image format - it's the successor to JPEG with compelling advantages:
+JPEG XL offers several technical improvements over existing formats:
 
 - **30-50% better compression** than JPEG at equivalent quality
-- **Lossless JPEG transcoding** with ~20% size reduction (existing JPEGs get smaller for free)
-- **Progressive decoding** - images load smoothly like progressive JPEGs
-- **Modern features** - HDR, wide gamut, alpha channels, and animations
-- **Already shipping** - Safari has it, Firefox is adding it, and it's becoming part of PDF
+- **Lossless JPEG transcoding** with ~20% size reduction
+- **Progressive decoding** - images load incrementally
+- **Modern capabilities** - HDR, wide gamut, alpha channels, and animations
+- **Browser support** - Safari has implemented it, Firefox is working on it, and it's part of the PDF specification
 
-The web needs better images. JPEG is 30 years old. JPEG XL is what comes next.
+## Implementation Approach
 
-## The Implementation Work
+Following Rick's announcement, the implementation work began.
 
-When Rick's announcement hit the blink-dev mailing list, the implementation work began.
+### Phase 1: C++ Implementation
 
-### Phase 1: The C++ Implementation
+The initial approach used the reference implementation - libjxl in C++. Using the previous Chromium JPEG XL code as a blueprint, the implementation was updated to the latest spec:
 
-The first approach used the reference implementation - libjxl in C++. Using the previous Chromium JPEG XL code as a blueprint, the implementation was updated to the latest spec:
-
-**CL 7170439** - Full implementation with animation support (Chromium would be the first browser to support JXL animations!)
+**CL 7170439** - Full implementation with animation support
 
 ```cpp
 // Integrated libjxl decoder with Blink's image pipeline
@@ -112,19 +108,19 @@ class JXLImageDecoder : public ImageDecoder {
   // Handle standard decoding
   void Decode(const uint8_t* data, size_t length);
 
-  // Animation support - first browser to have this!
+  // Animation support
   size_t FrameCount() const override;
   cc::ImageHeaderMetadata MakeMetadataForDecodeAcceleration() const override;
 };
 ```
 
-Status: Feature complete, bots green, [demo video here](https://youtu.be/zVkX4bP6qSo).
+Status: Feature complete, [demo video here](https://youtu.be/zVkX4bP6qSo).
 
-But then the feedback came: "Use Rust for memory safety."
+The feedback requested using Rust for memory safety.
 
-### Phase 2: The Rust Rewrite
+### Phase 2: Rust Implementation
 
-Fair point. Chromium is moving toward memory-safe code. The pivot to jxl-rs, a pure Rust JPEG XL decoder, made sense.
+Chromium is moving toward memory-safe code. The pivot to jxl-rs, a pure Rust JPEG XL decoder, aligned with this direction.
 
 **CL 7184969** - Rust-based implementation using jxl-rs
 
@@ -137,7 +133,7 @@ pub fn decode_jxl(data: &[u8]) -> Result<DecodedImage> {
 }
 ```
 
-The Rust decoder wasn't as performant initially, but that's where open source collaboration kicks in. The jxl-rs community has been actively working on performance improvements:
+The Rust decoder required performance optimization. The jxl-rs community has been working on improvements:
 
 - **PR #491** - HDR color profile handling (PQ/HLG transfer functions)
 - **PR #492** - Remove unnecessary `allow_unsafe` requirement
@@ -146,7 +142,7 @@ The Rust decoder wasn't as performant initially, but that's where open source co
 - **PR #506** - Major performance improvements bringing jxl-rs nearly on par with C++ libjxl
 - **PR #509** - WASM polyfill implementation for browsers without native JXL support
 
-The performance work is crucial - [PR #506](https://github.com/libjxl/jxl-rs/pull/506) dramatically improves decode performance through parallel VarDCT decoding and AVX2+FMA SIMD optimizations. The results speak for themselves:
+[PR #506](https://github.com/libjxl/jxl-rs/pull/506) improves decode performance through parallel VarDCT decoding and AVX2+FMA SIMD optimizations:
 
 | Image | Size | Before PR #506 | After PR #506 | C++ libjxl | Speedup |
 |-------|------|----------------|---------------|------------|---------|
@@ -154,38 +150,36 @@ The performance work is crucial - [PR #506](https://github.com/libjxl/jxl-rs/pul
 | progressive | 4064×2704 | 694ms | 560ms | 450ms | **+24%** |
 | blendmodes | 1024×1024 | 115ms | 85ms | 266ms | **+35%** |
 
-**The gap closed from 56% slower to just 4% slower than C++** - a 52-point improvement that makes the Rust implementation viable for production use. Meanwhile, [PR #509](https://github.com/libjxl/jxl-rs/pull/509) provides a WebAssembly-based polyfill that allows JXL images to work in browsers that don't yet have native support.
+The gap narrowed from 56% slower to 4% slower than C++. [PR #509](https://github.com/libjxl/jxl-rs/pull/509) provides a WebAssembly-based polyfill for browsers without native support.
 
-## What Works Now
+## Current Status
 
-The current implementation has all the core features:
+The implementation includes:
 
 ✅ **Standard image decoding** - JPEG XL images render correctly
 ✅ **ICC color profiles** - Proper color management
-✅ **Animations** - Multi-frame JXL support (first browser!)
+✅ **Animations** - Multi-frame JXL support
 ✅ **Alpha/transparency** - Full alpha channel support
 ✅ **Wide gamut** - Display-P3 and other color spaces
 ✅ **HDR support** - PQ/HLG transfer functions (merged via [PR #491](https://github.com/libjxl/jxl-rs/pull/491))
 
-The implementation is feature-complete with all essential JXL capabilities working.
+## Requirements for Shipping
 
-## The Road Ahead
+Chrome's requirements:
 
-Chrome's requirements for shipping are clear:
+1. **Performant decoder** - Performance optimizations are ongoing
+2. **Memory-safe implementation** - Rust provides memory safety
+3. **Long-term maintenance** - The jxl-rs community is active
 
-1. **Performant decoder** - The jxl-rs optimizations are delivering
-2. **Memory-safe implementation** - Rust gives us this by default
-3. **Long-term maintenance commitment** - The jxl-rs community is active and growing
+## Format Diversity
 
-## Beyond Format Wars
+Different image formats serve different needs:
 
-This isn't about AVIF vs JXL vs WebP. Each format has its place:
-
-- **WebP** - Great general-purpose replacement for JPEG/PNG
-- **AVIF** - Excellent for photo compression with AV1 roots
+- **WebP** - General-purpose replacement for JPEG/PNG
+- **AVIF** - Photo compression with AV1-based encoding
 - **JPEG XL** - Lossless JPEG transcoding, progressive decode, animations, HDR
 
-The web is better with **open choice**. Developers should have options to pick the right format for their specific use case. Some images benefit from AVIF's compression, others need JXL's progressive rendering or lossless JPEG transcoding. Let the format fit the need, not fight over dominance.
+Having multiple format options allows developers to choose based on their specific requirements.
 
 ## Implementation Details
 
