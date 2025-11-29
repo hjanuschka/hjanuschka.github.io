@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature - Helmut Januschka</title>
-  <meta name="description" content="How a Twitter conversation led to adding a major new feature to Chromium">
+  <title>JPEG XL Returns to Chrome: From Obsolete to the Future - Helmut Januschka</title>
+  <meta name="description" content="How JPEG XL went from obsolete to the future of web images - and the honor of being part of its comeback">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature",
-    "description": "How a Twitter conversation led to adding a major new feature to Chromium",
+    "headline": "JPEG XL Returns to Chrome: From Obsolete to the Future",
+    "description": "How JPEG XL went from obsolete to the future of web images - and the honor of being part of its comeback",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-focus-feature.html"
+      "@id": "https://januschka.com/chromium-jxl-resurrection.html"
     },
-    "keywords": "Chromium, C++, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, Rust / C++, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-focus-feature.html"
+      "target": "https://januschka.com/chromium-jxl-resurrection.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature">
-  <meta property="og:description" content="How a Twitter conversation led to adding a major new feature to Chromium">
+  <meta property="og:title" content="JPEG XL Returns to Chrome: From Obsolete to the Future">
+  <meta property="og:description" content="How JPEG XL went from obsolete to the future of web images - and the honor of being part of its comeback">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-focus-feature.html">
+  <meta property="og:url" content="https://januschka.com/chromium-jxl-resurrection.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature">
-  <meta name="twitter:description" content="How a Twitter conversation led to adding a major new feature to Chromium">
+  <meta name="twitter:title" content="JPEG XL Returns to Chrome: From Obsolete to the Future">
+  <meta name="twitter:description" content="How JPEG XL went from obsolete to the future of web images - and the honor of being part of its comeback">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -636,10 +636,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature</h1>
+      <h1 class="blog-title">JPEG XL Returns to Chrome: From Obsolete to the Future</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++</span>
+        <span>🔧 Rust / C++</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -648,111 +648,167 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>How a Twitter conversation led to adding a major new feature to Chromium</em></p>
-<p><strong>Update 16.10.2025:</strong> ✅ Feature landed in Chromium main branch (Chrome 143)</p>
-<h2>The Origin Story</h2>
-<p>It started with <a href="https://x.com/tobi/status/1957195479361438142">a tweet from Tobi Lütke</a> (CEO of Shopify). He proposed an elegant solution to a problem every developer faces: tab proliferation. His idea was simple but powerful - Chrome should focus existing tabs instead of blindly creating new ones.</p>
-<p>His proposed CLI syntax was clean:</p>
-<pre><code class="language-sh">chrome --focus=https://github.com/user/repo
-</code></pre>
-<p>I saw the tweet, loved the idea, and thought: &quot;Why wait? Let&#39;s build this into Chrome right now.&quot;</p>
-<h2>From Concept to Implementation</h2>
-<p>The vision was clear:</p>
+<p><em>How JPEG XL went from &quot;obsolete&quot; to the future of web images - and the honor of being part of its comeback</em></p>
+<div class="youtube-embed">
+  <iframe src="https://www.youtube.com/embed/zVkX4bP6qSo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<h2>The Dramatic U-Turn</h2>
+<p>In October 2022, Google declared JPEG XL &quot;obsolete&quot; and ripped it out of Chromium. The reason? &quot;Insufficient ecosystem interest.&quot; Fast forward to November 2025, and Chrome&#39;s Architecture Tech Leads just announced: &quot;We would welcome contributions to integrate a performant and memory-safe JPEG XL decoder in Chromium.&quot;</p>
+<p>What changed in three years? Everything.</p>
+<h2>The Tipping Point</h2>
+<p>Rick Byers&#39; announcement on behalf of Chrome ATLs laid out the new reality:</p>
 <ul>
-<li>If a matching tab exists, focus it</li>
-<li>If multiple matches exist, pick the most recently used</li>
-<li>If nothing matches, optionally open a new tab</li>
-<li>Make it scriptable for automation</li>
+<li><strong>Safari shipped JPEG XL support</strong> - Apple bet on the format</li>
+<li><strong>Firefox updated their position</strong> - Mozilla signaled support pending a Rust decoder</li>
+<li><strong>PDF standardization</strong> - JPEG XL designated as the preferred format for HDR content in PDF</li>
+<li><strong>Developer demand</strong> - Bug upvotes, Interop proposals, and survey data showed real interest</li>
 </ul>
-<p>This became my north star for the implementation.</p>
-<h2>The Technical Journey</h2>
-<h3>Turning Ideas into Architecture</h3>
-<p>The spec translated into several technical challenges:</p>
-<ol>
-<li><strong>Selector Parsing</strong>: Supporting exact URLs, wildcards, and app IDs</li>
-<li><strong>MRU Logic</strong>: Finding and focusing the most recently used tab</li>
-<li><strong>Cross-Window Search</strong>: Looking across all Chrome windows</li>
-<li><strong>Result Reporting</strong>: JSON output for automation scripts</li>
-</ol>
-<h3>The Implementation</h3>
-<p>The implementation follows Chrome&#39;s architecture patterns:</p>
-<pre><code class="language-cpp">// Parse the selector syntax
-std::vector&lt;Selector&gt; ParseSelectors(const std::string&amp; input);
+<p>The ecosystem that &quot;didn&#39;t exist&quot; in 2022 had materialized. Chrome needed to catch up.</p>
+<h2>Why JPEG XL Matters</h2>
+<p>JPEG XL isn&#39;t just another image format - it&#39;s the successor to JPEG with compelling advantages:</p>
+<ul>
+<li><strong>30-50% better compression</strong> than JPEG at equivalent quality</li>
+<li><strong>Lossless JPEG transcoding</strong> with ~20% size reduction (existing JPEGs get smaller for free)</li>
+<li><strong>Progressive decoding</strong> - images load smoothly like progressive JPEGs</li>
+<li><strong>Modern features</strong> - HDR, wide gamut, alpha channels, and animations</li>
+<li><strong>Already shipping</strong> - Safari has it, Firefox is adding it, and it&#39;s becoming part of PDF</li>
+</ul>
+<p>The web needs better images. JPEG is 30 years old. JPEG XL is what comes next.</p>
+<h2>The Implementation Work</h2>
+<p>When Rick&#39;s announcement hit the blink-dev mailing list, the implementation work began.</p>
+<h3>Phase 1: The C++ Implementation</h3>
+<p>The first approach used the reference implementation - libjxl in C++. Using the previous Chromium JPEG XL code as a blueprint, the implementation was updated to the latest spec:</p>
+<p><strong>CL 7170439</strong> - Full implementation with animation support (Chromium would be the first browser to support JXL animations!)</p>
+<pre><code class="language-cpp">// Integrated libjxl decoder with Blink&#39;s image pipeline
+class JXLImageDecoder : public ImageDecoder {
+  // Handle standard decoding
+  void Decode(const uint8_t* data, size_t length);
 
-// Find matches across all windows
-std::vector&lt;MatchCandidate&gt; CollectMatchingTabs(
-    const Selector&amp; selector,
-    const std::vector&lt;Browser*&gt;&amp; browsers);
-
-// MRU selection - the heart of the feature
-void SortCandidatesByMRU(std::vector&lt;MatchCandidate&gt;&amp; candidates);
+  // Animation support - first browser to have this!
+  size_t FrameCount() const override;
+  cc::ImageHeaderMetadata MakeMetadataForDecodeAcceleration() const override;
+};
 </code></pre>
-<h3>Making MRU Work</h3>
-<p>The most challenging part was &quot;pick the most recently used.&quot; Chrome doesn&#39;t directly track this, so I had to be creative:</p>
-<pre><code class="language-cpp">// Leverage Chrome&#39;s SessionID ordering as a proxy for recency
-bool CompareMRU(const MatchCandidate&amp; a, const MatchCandidate&amp; b) {
-  return a.tab-&gt;session_id() &gt; b.tab-&gt;session_id();
+<p>Status: Feature complete, bots green, <a href="https://youtu.be/zVkX4bP6qSo">demo video here</a>.</p>
+<p>But then the feedback came: &quot;Use Rust for memory safety.&quot;</p>
+<h3>Phase 2: The Rust Rewrite</h3>
+<p>Fair point. Chromium is moving toward memory-safe code. The pivot to jxl-rs, a pure Rust JPEG XL decoder, made sense.</p>
+<p><strong>CL 7184969</strong> - Rust-based implementation using jxl-rs</p>
+<pre><code class="language-rust">// Memory-safe decoder via CXX bindings
+pub fn decode_jxl(data: &amp;[u8]) -&gt; Result&lt;DecodedImage&gt; {
+    let decoder = JxlDecoder::builder()
+        .build()?;
+    decoder.decode_to_image(data)
 }
 </code></pre>
-<p>SessionIDs increase monotonically, so higher IDs = more recently created. Not perfect MRU, but a pragmatic solution that works.</p>
-<h2>The Result</h2>
-<p>The feature now supports:</p>
-<h3>Basic Usage</h3>
-<pre><code class="language-sh"># Focus a specific URL
-chrome --focus=&quot;https://github.com/chromium/chromium&quot;
-
-# Wildcard matching
-chrome --focus=&quot;*github.com/chromium/*&quot;
-
-# Multiple selectors (first match wins)
-chrome --focus=&quot;*github.com/*,*gitlab.com/*&quot;
-</code></pre>
-<h3>Advanced Features</h3>
-<pre><code class="language-sh"># JSON output for scripting
-chrome --focus=&quot;*github.com/*&quot; --output-json
-
-# Open if not found
-chrome --focus=&quot;https://example.com&quot; --allow-create
-
-# App ID matching
-chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
-</code></pre>
-<h2>Real-World Impact</h2>
-<p>This feature changes how developers interact with Chrome:</p>
-<ol>
-<li><strong>Shell Integration</strong>: Bind keys to focus specific tabs</li>
-<li><strong>IDE Integration</strong>: Jump to documentation without tab duplication</li>
-<li><strong>Workflow Automation</strong>: Scripts can intelligently manage browser state</li>
-<li><strong>Reduced Memory</strong>: Fewer duplicate tabs = less RAM usage</li>
-</ol>
-<h2>Acknowledgments</h2>
-<blockquote>
-<p>Getting a feature into Chromium is a journey, not a sprint. The review process pushed me to think deeper about edge cases, performance implications, and API design. Every piece of feedback made this feature better. Huge thanks to all the reviewers who invested their time and expertise to make this happen.</p>
-</blockquote>
-<p>Thanks to:</p>
+<p>The Rust decoder wasn&#39;t as performant initially, but that&#39;s where open source collaboration kicks in. The jxl-rs community has been actively working on performance improvements:</p>
 <ul>
-<li><strong>Tobi Lütke</strong> for the original idea</li>
-<li><strong>Yoav Weiss</strong> who is actively supporting me getting forward with this feature</li>
-<li><strong>Daniel Murphy, Kaan Alsan, Erik Chen, Jan Keitel</strong> for thorough code reviews and valuable feedback</li>
-<li><strong>The entire Chromium community</strong> for the collaborative review process</li>
+<li><strong>PR #491</strong> - HDR color profile handling (PQ/HLG transfer functions)</li>
+<li><strong>PR #492</strong> - Remove unnecessary <code>allow_unsafe</code> requirement</li>
+<li><strong>PR #493</strong> - Rectangle bounds checking improvements</li>
+<li><strong>PR #494</strong> - Precision level matching libjxl C++ version</li>
+<li><strong>PR #506</strong> - Major performance improvements bringing jxl-rs nearly on par with C++ libjxl</li>
+<li><strong>PR #509</strong> - WASM polyfill implementation for browsers without native JXL support</li>
 </ul>
-<h2>Implementation Details</h2>
-<p><strong>Status:</strong> ✅ All CLs merged to Chromium main branch</p>
+<p>The performance work is crucial - <a href="https://github.com/libjxl/jxl-rs/pull/506">PR #506</a> dramatically improves decode performance through parallel VarDCT decoding and AVX2+FMA SIMD optimizations. The results speak for themselves:</p>
+<table>
+<thead>
+<tr>
+<th>Image</th>
+<th>Size</th>
+<th>Before PR #506</th>
+<th>After PR #506</th>
+<th>C++ libjxl</th>
+<th>Speedup</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bike</td>
+<td>2048×2560</td>
+<td>265ms</td>
+<td>198ms</td>
+<td>170ms</td>
+<td><strong>+34%</strong></td>
+</tr>
+<tr>
+<td>progressive</td>
+<td>4064×2704</td>
+<td>694ms</td>
+<td>560ms</td>
+<td>450ms</td>
+<td><strong>+24%</strong></td>
+</tr>
+<tr>
+<td>blendmodes</td>
+<td>1024×1024</td>
+<td>115ms</td>
+<td>85ms</td>
+<td>266ms</td>
+<td><strong>+35%</strong></td>
+</tr>
+</tbody></table>
+<p><strong>The gap closed from 56% slower to just 4% slower than C++</strong> - a 52-point improvement that makes the Rust implementation viable for production use. Meanwhile, <a href="https://github.com/libjxl/jxl-rs/pull/509">PR #509</a> provides a WebAssembly-based polyfill that allows JXL images to work in browsers that don&#39;t yet have native support.</p>
+<h2>What Works Now</h2>
+<p>Here&#39;s an example of JXL animation support in action (if your browser doesn&#39;t support JXL natively, the polyfill will decode it):</p>
+<img src="/anim-icos.jxl" alt="Animated JXL Demo" style="max-width: 400px; margin: 20px auto; display: block;" />
+<script type="module" src="/jxl-polyfill/polyfill.js"></script>
+
+<p>The current implementation has all the core features:</p>
+<p>✅ <strong>Standard image decoding</strong> - JPEG XL images render correctly<br>✅ <strong>ICC color profiles</strong> - Proper color management<br>✅ <strong>Animations</strong> - Multi-frame JXL support (first browser!)<br>✅ <strong>Alpha/transparency</strong> - Full alpha channel support<br>✅ <strong>Wide gamut</strong> - Display-P3 and other color spaces<br>✅ <strong>HDR support</strong> - PQ/HLG transfer functions (merged via <a href="https://github.com/libjxl/jxl-rs/pull/491">PR #491</a>)</p>
+<p>The implementation is feature-complete with all essential JXL capabilities working.</p>
+<h2>The Road Ahead</h2>
+<p>Chrome&#39;s requirements for shipping are clear:</p>
+<ol>
+<li><strong>Performant decoder</strong> - The jxl-rs optimizations are delivering</li>
+<li><strong>Memory-safe implementation</strong> - Rust gives us this by default</li>
+<li><strong>Long-term maintenance commitment</strong> - The jxl-rs community is active and growing</li>
+</ol>
+<h2>Beyond Format Wars</h2>
+<p>This isn&#39;t about AVIF vs JXL vs WebP. Each format has its place:</p>
 <ul>
-<li>Foundation CL: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6850334">6850334</a> - Core infrastructure (refs/heads/main@{#1520059})</li>
-<li>Integration CL: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6943437">6943437</a> - Wired up to startup flow (refs/heads/main@{#1530630})</li>
-<li>JSON API CL: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6946350">6946350</a> - Result file output for automation (refs/heads/main@{#1534794})</li>
-<li>Reviewers: Erik Chen, Kaan Alsan, Daniel Murphy, Jan Keitel</li>
-<li>Bug: <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=439499872">439499872</a></li>
+<li><strong>WebP</strong> - Great general-purpose replacement for JPEG/PNG</li>
+<li><strong>AVIF</strong> - Excellent for photo compression with AV1 roots</li>
+<li><strong>JPEG XL</strong> - Lossless JPEG transcoding, progressive decode, animations, HDR</li>
+</ul>
+<p>The web is better with <strong>open choice</strong>. Developers should have options to pick the right format for their specific use case. Some images benefit from AVIF&#39;s compression, others need JXL&#39;s progressive rendering or lossless JPEG transcoding. Let the format fit the need, not fight over dominance.</p>
+<h2>Why This Matters</h2>
+<p>This isn&#39;t just about adding another image format. It&#39;s about:</p>
+<ul>
+<li><strong>Better web performance</strong> - Smaller images mean faster load times</li>
+<li><strong>Better image quality</strong> - Same visual quality at much smaller file sizes</li>
+<li><strong>Future-proofing</strong> - HDR and wide gamut support for modern displays</li>
+<li><strong>Developer choice</strong> - Give web developers the tools to optimize their content</li>
+</ul>
+<p>JPEG has served us well for three decades. But the web has evolved. Displays are better. Networks are faster. Users expect more.</p>
+<p>JPEG XL is what the web needs next. The community is making it happen.</p>
+<h2>Implementation Details</h2>
+<p><strong>Status:</strong> 🚧 In active development</p>
+<ul>
+<li>C++ Implementation: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7170439">CL 7170439</a> - Abandoned in favor of Rust</li>
+<li>Rust Implementation: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7184969">CL 7184969</a> - Active development</li>
+<li>Tracking Bug: <a href="https://issues.chromium.org/issues/462919304">462919304</a></li>
+<li>Design Document: <a href="https://docs.google.com/document/d/1oT7K2h4Xf4E0ScUmsOQx0zXUVJj57qBwcsa3yK9SJr0/edit?tab=t.0">JPEG XL in Chromium</a></li>
+</ul>
+<p><strong>Upstream Work:</strong></p>
+<ul>
+<li><a href="https://github.com/libjxl/jxl-rs">jxl-rs repository</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/506">Performance improvements (PR #506)</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/509">WASM polyfill (PR #509)</a></li>
+</ul>
+<p><strong>Demo:</strong></p>
+<ul>
+<li><a href="https://youtu.be/zVkX4bP6qSo">JXL Animation Support Video</a></li>
 </ul>
 <hr>
 <p><strong>Links:</strong></p>
 <ul>
-<li><a href="https://x.com/tobi/status/1957195479361438142">Original Tweet</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6850334">Foundation CL 6850334</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6943437">Integration CL 6943437</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6946350">JSON API CL 6946350</a></li>
-<li><a href="https://docs.google.com/document/d/1YRf-BzHTAhqyV6wL6yRxVOU3zhByE6voSEwSNLgPZSU/edit">Design Document</a></li>
+<li><a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/WjCKcBw219k/m/tdJGfuLQAAAJ">Rick Byers&#39; Announcement</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7170439">C++ Implementation CL 7170439</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7184969">Rust Implementation CL 7184969</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs">jxl-rs Repository</a></li>
+<li><a href="https://www.heise.de/en/news/U-turn-Google-wants-to-bring-JPEG-XL-back-to-Chrome-11089880.html">Heise News Coverage</a></li>
+<li><a href="https://devclass.com/2025/11/24/googles-chromium-team-decides-it-will-add-jpeg-xl-support-reverses-obsolete-declaration/">DevClass Coverage</a></li>
 <li><a href="https://github.com/hjanuschka">My GitHub</a></li>
 </ul>
     </div>

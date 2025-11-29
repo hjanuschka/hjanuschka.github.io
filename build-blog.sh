@@ -41,12 +41,30 @@ require('prismjs/components/prism-python');
 require('prismjs/components/prism-json');
 require('prismjs/components/prism-shell-session');
 
+// Custom renderer for code blocks
+const renderer = new marked.Renderer();
+const originalCode = renderer.code.bind(renderer);
+
+renderer.code = function(code, lang, escaped) {
+  // Handle custom snippet blocks - render as raw HTML
+  if (lang === 'snippet') {
+    return code + '\n';
+  }
+
+  // Default code block handling
+  return originalCode(code, lang, escaped);
+};
+
 // Configure marked to use Prism for syntax highlighting
 marked.setOptions({
+  renderer: renderer,
   highlight: function(code, lang) {
+    // Skip highlighting for snippet blocks
+    if (lang === 'snippet') return code;
+
     // Map 'sh' to 'bash' for Prism
     if (lang === 'sh') lang = 'bash';
-    
+
     if (Prism.languages[lang]) {
       return Prism.highlight(code, Prism.languages[lang], lang);
     }
@@ -71,9 +89,23 @@ if (!mdFile) {
 const markdown = fs.readFileSync(mdFile, 'utf8');
 
 // Convert to HTML
-const htmlContent = marked.parse(markdown);
+let htmlContent = marked.parse(markdown);
 
-// Output just the HTML content
+// Post-process: convert snippet code blocks to raw HTML
+htmlContent = htmlContent.replace(
+  /<pre><code class="language-snippet">(.+?)<\/code><\/pre>/gs,
+  (match, content) => {
+    // Unescape HTML entities
+    return content
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&amp;/g, '&');
+  }
+);
+
+// Output the HTML content
 console.log(htmlContent);
 EOF
 
@@ -541,6 +573,73 @@ generate_html() {
       font-weight: bold;
     }
 
+    /* Table styles */
+    .blog-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .blog-content th {
+      background: var(--bg-lighter);
+      color: var(--accent);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .blog-content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .blog-content tr:hover {
+      background: var(--bg-light);
+    }
+
+    /* Snippet blocks for inline HTML */
+    .snippet-block {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .snippet-block img {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    /* YouTube embed container */
+    .youtube-embed {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      margin: 30px 0;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .youtube-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
     /* Status indicator */
     .status {
       display: inline-block;
@@ -785,6 +884,13 @@ generate_html \
     "Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours" \
     "Chromium" \
     "C++ / Wayland"
+
+generate_html \
+    "chromium-jxl-resurrection.md" \
+    "chromium-jxl-resurrection.html" \
+    "JPEG XL Returns to Chrome: From Obsolete to the Future" \
+    "Chromium" \
+    "Rust / C++"
 
 # Clean up temporary files
 rm -f build-markdown.js
