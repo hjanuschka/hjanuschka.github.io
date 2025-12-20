@@ -75,9 +75,11 @@
   <meta name="twitter:title" content="Helmut Januschka">
   <meta name="twitter:description" content="Head of Engineering @krone.at | Open Source Contributor">
   
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" fetchpriority="low">
   <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
   <style>
     * {
@@ -233,7 +235,7 @@
       padding: 8px 16px;
       border: 2px solid transparent;
       border-radius: 6px;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
     }
 
     .nav-links a:hover {
@@ -264,7 +266,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
     }
 
     .theme-button:hover {
@@ -304,7 +306,7 @@
       color: #ffffff;
       text-decoration: none;
       font-size: 12px;
-      transition: background 0.2s ease;
+      transition: background-color 0.2s ease;
       border: none;
       width: 100%;
       text-align: left;
@@ -395,13 +397,13 @@
       grid-template-columns: 1fr;
     }
 
-    /* Cards */
+    /* Cards - optimized transitions */
     .card {
       background: var(--bg-light);
       border: 2px solid var(--border);
       border-radius: 12px;
       padding: 25px;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     }
 
     .card:hover {
@@ -421,13 +423,13 @@
       margin-bottom: 15px;
     }
 
-    /* Project Cards */
+    /* Project Cards - optimized transitions */
     .project-card {
       background: linear-gradient(135deg, var(--bg-light), var(--bg-lighter));
       border: 2px solid var(--border);
       border-radius: 12px;
       padding: 25px;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     }
 
     .project-card:hover {
@@ -461,7 +463,7 @@
       border: 1px solid var(--border);
       font-size: 11px;
       font-weight: bold;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     }
 
     .project-badge:hover {
@@ -470,7 +472,7 @@
       color: var(--bg);
     }
 
-    /* Status indicator */
+    /* Status indicator - GPU-accelerated */
     .status {
       display: inline-block;
       width: 8px;
@@ -479,6 +481,7 @@
       border-radius: 50%;
       margin-right: 8px;
       animation: pulse 2s infinite;
+      will-change: opacity;
     }
 
     @keyframes pulse {
@@ -513,7 +516,7 @@
       border-radius: 8px;
       border: 1px solid var(--border);
       font-size: 11px;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     }
 
     .tech-item:hover {
@@ -522,7 +525,7 @@
       color: var(--bg);
     }
 
-    /* Buttons */
+    /* Buttons - optimized transitions */
     .btn {
       display: inline-block;
       padding: 12px 24px;
@@ -533,7 +536,7 @@
       text-decoration: none;
       font-family: inherit;
       font-weight: bold;
-      transition: all 0.3s ease;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
     }
 
@@ -574,6 +577,22 @@
     #about, #experience, #projects, #contact {
       content-visibility: auto;
       contain-intrinsic-size: 0 500px;
+    }
+
+    /* Reduce motion for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      .nav, .theme-switcher, .footer { display: none; }
+      .terminal-window { box-shadow: none; border: 1px solid #ccc; }
+      body { background: white; color: black; }
     }
 
     /* Mobile Responsive */
