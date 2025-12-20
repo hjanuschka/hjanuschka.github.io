@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2025-11-29",
+    "dateModified": "2025-12-19",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -775,10 +775,10 @@ CreateNewImageDescription(); // Now Wayland is happy
 </code></pre>
 <p>A simple timing bug with catastrophic consequences.</p>
 <h2>Parallel Solutions</h2>
-<p>While the Chromium fix was being developed, the Hyprland team created their own workaround (<a href="https://github.com/hyprwm/Hyprland/pull/11877">PR #11877</a>) to handle Chrome&#39;s incorrect ordering more gracefully. This helped their users immediately but didn&#39;t solve the root cause.</p>
+<p>While the Chromium fix was being developed, the Hyprland team created their own workaround (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/hyprwm/Hyprland/pull/11877"><strong>Hyprland workaround</strong></a>) to handle Chrome&#39;s incorrect ordering more gracefully. This helped their users immediately but didn&#39;t solve the root cause.</p>
 <p>The proper fix needed to be in Chromium - the protocol violation was on Chrome&#39;s side.</p>
 <h2>The Fix</h2>
-<p><strong>Chromium Bug</strong>: <a href="https://issues.chromium.org/issues/449370049">449370049</a><br><strong>Fix CL</strong>: <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7003036">7003036</a><br><strong>Merged</strong>: October 6, 2025 (3 days from initial report)<br><strong>Reviewers</strong>: Thomas Anderson, Tom Lukaszewicz</p>
+<p><strong>Chromium Bug</strong>: <a href="https://issues.chromium.org/issues/449370049">449370049</a><br><strong>Fix CL</strong>: <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7003036"><strong>Fix color management object lifecycle</strong></a><br><strong>Merged</strong>: October 6, 2025 (3 days from initial report)<br><strong>Reviewers</strong>: Thomas Anderson, Tom Lukaszewicz</p>
 <p>The fix was minimal - just reordering the object lifecycle to match protocol requirements. Small change, huge impact.</p>
 <h2>Why This Matters</h2>
 <p>This bug affected:</p>
@@ -821,8 +821,8 @@ CreateNewImageDescription(); // Now Wayland is happy
 <ul>
 <li><a href="https://github.com/basecamp/omarchy/issues/2184">GitHub Issue #2184</a></li>
 <li><a href="https://issues.chromium.org/issues/449370049">Chromium Bug 449370049</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7003036">Fix CL 7003036</a></li>
-<li><a href="https://github.com/hyprwm/Hyprland/pull/11877">Hyprland Workaround PR</a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7003036"><strong>Fix color management object lifecycle</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/hyprwm/Hyprland/pull/11877"><strong>Hyprland Workaround</strong></a></li>
 <li><a href="https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/main/staging/color-management/color-management-v1.xml">Wayland Color Management Protocol</a></li>
 </ul>
     </div>

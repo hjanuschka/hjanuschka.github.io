@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025 Chromium Contributions Wrap-Up - Helmut Januschka</title>
+  <meta name="description" content="95+ merged contributions across Chromium, PDFium, and jxl-rs">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "2025 Chromium Contributions Wrap-Up",
+    "description": "95+ merged contributions across Chromium, PDFium, and jxl-rs",
+    "author": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com",
+      "sameAs": [
+        "https://github.com/hjanuschka",
+        "https://twitter.com/hjanuschka",
+        "https://linkedin.com/in/hjanuschka"
+      ]
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com"
+    },
+    "datePublished": "2024-08-01",
+    "dateModified": "2025-12-19",
+    "image": "https://januschka.com/og-image.png",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://januschka.com/2025-chromium-contributions.html"
+    },
+    "keywords": "Chromium, C++ / Rust, Chromium, Open Source, Browser Development",
+    "articleSection": "Technology",
+    "inLanguage": "en-US",
+    "potentialAction": {
+      "@type": "ReadAction",
+      "target": "https://januschka.com/2025-chromium-contributions.html"
+    }
+  }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="2025 Chromium Contributions Wrap-Up">
+  <meta property="og:description" content="95+ merged contributions across Chromium, PDFium, and jxl-rs">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://januschka.com/2025-chromium-contributions.html">
+  <meta property="og:site_name" content="Helmut Januschka">
+  <meta property="article:author" content="Helmut Januschka">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@hjanuschka">
+  <meta name="twitter:title" content="2025 Chromium Contributions Wrap-Up">
+  <meta name="twitter:description" content="95+ merged contributions across Chromium, PDFium, and jxl-rs">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #121212;
+      --bg-light: #1e1e1e;
+      --bg-lighter: #333333;
+      --text: #bebebe;
+      --text-dim: #8a8a8d;
+      --accent: #FFC107;
+      --accent-dim: #e68e0d;
+      --border: #333333;
+      --orange: #D35F5F;
+    }
+
+    /* GitHub Blue Theme */
+    [data-theme="blue"] {
+      --bg: #0d1117;
+      --bg-light: #161b22;
+      --bg-lighter: #21262d;
+      --text: #ffffff;
+      --text-dim: #7d8590;
+      --accent: #58a6ff;
+      --accent-dim: #1f6feb;
+      --border: #30363d;
+      --orange: #ff7b72;
+    }
+
+    /* Osaka Jade Theme (from Omarchy) */
+    [data-theme="osaka-jade"] {
+      --bg: #111c18;
+      --bg-light: #23372B;
+      --bg-lighter: #53685B;
+      --text: #C1C497;
+      --text-dim: #9eebb3;
+      --accent: #2DD5B7;
+      --accent-dim: #549e6a;
+      --border: #509475;
+      --orange: #FF5345;
+    }
+
+    /* Purple Moon Theme */
+    [data-theme="purple-moon"] {
+      --bg: #020007;
+      --bg-light: #37277d;
+      --bg-lighter: #643aad;
+      --text: #ffffff;
+      --text-dim: #b895dd;
+      --accent: #9b49c8;
+      --accent-dim: #9845c6;
+      --border: #9865cf;
+      --orange: #cd9ce1;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Navigation */
+    .nav {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 15px 0;
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 16px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+
+    /* Theme Switcher */
+    .theme-switcher {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .theme-dropdown {
+      position: relative;
+    }
+
+    .theme-button {
+      background: var(--bg-light);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .theme-button:hover {
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+
+    .theme-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #1a1a1a;
+      border: 2px solid #333333;
+      border-radius: 8px;
+      margin-top: 5px;
+      min-width: 150px;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .theme-menu.show {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .theme-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 12px;
+      transition: background 0.2s ease;
+      border: none;
+      width: 100%;
+      text-align: left;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .theme-option:hover {
+      background: #2a2a2a;
+      color: #ffffff;
+    }
+
+    .theme-option:first-child {
+      border-radius: 6px 6px 0 0;
+    }
+
+    .theme-option:last-child {
+      border-radius: 0 0 6px 6px;
+    }
+
+    .theme-preview {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid #666666;
+      flex-shrink: 0;
+    }
+
+    /* Blog Post Styles */
+    .blog-header {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 40px 0;
+      margin-bottom: 40px;
+    }
+
+    .blog-title {
+      font-size: 32px;
+      color: var(--accent);
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+
+    .blog-meta {
+      display: flex;
+      gap: 20px;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    .blog-content {
+      background: var(--bg-light);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      margin-bottom: 40px;
+    }
+
+    /* Markdown Content Styles */
+    .blog-content h1 {
+      color: var(--accent);
+      font-size: 28px;
+      margin: 30px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content h2 {
+      color: var(--orange);
+      font-size: 24px;
+      margin: 30px 0 15px;
+    }
+
+    .blog-content h3 {
+      color: var(--accent);
+      font-size: 20px;
+      margin: 25px 0 15px;
+    }
+
+    .blog-content p {
+      margin: 15px 0;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .blog-content a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .blog-content a:hover {
+      color: var(--orange);
+      border-bottom-color: var(--orange);
+    }
+
+    .blog-content ul, .blog-content ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+
+    .blog-content li {
+      margin: 8px 0;
+      line-height: 1.8;
+    }
+
+    .blog-content code {
+      background: var(--bg);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .blog-content pre {
+      background: #1d1f21 !important;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 20px !important;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    .blog-content pre code {
+      background: none !important;
+      color: #c5c8c6 !important;
+      padding: 0;
+      text-shadow: none !important;
+    }
+
+    /* Override Prism theme colors for better integration */
+    .token.comment,
+    .token.prolog,
+    .token.doctype,
+    .token.cdata {
+      color: #969896 !important;
+    }
+
+    .token.punctuation {
+      color: #c5c8c6 !important;
+    }
+
+    .token.property,
+    .token.tag,
+    .token.boolean,
+    .token.number,
+    .token.constant,
+    .token.symbol,
+    .token.deleted {
+      color: #cc6666 !important;
+    }
+
+    .token.selector,
+    .token.attr-name,
+    .token.string,
+    .token.char,
+    .token.builtin,
+    .token.inserted {
+      color: #b5bd68 !important;
+    }
+
+    .token.operator,
+    .token.entity,
+    .token.url,
+    .language-css .token.string,
+    .style .token.string {
+      color: #8abeb7 !important;
+    }
+
+    .token.atrule,
+    .token.attr-value,
+    .token.keyword {
+      color: #b294bb !important;
+    }
+
+    .token.function,
+    .token.class-name {
+      color: #81a2be !important;
+    }
+
+    .token.regex,
+    .token.important,
+    .token.variable {
+      color: #de935f !important;
+    }
+
+    .blog-content blockquote {
+      border-left: 4px solid var(--accent);
+      padding-left: 20px;
+      margin: 20px 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content em {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content strong {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* Table styles */
+    .blog-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .blog-content thead,
+    .blog-content tbody,
+    .blog-content tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .blog-content th {
+      background: var(--bg-lighter);
+      color: var(--accent);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .blog-content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .blog-content tr:hover {
+      background: var(--bg-light);
+    }
+
+    /* Mobile table responsiveness */
+    @media (max-width: 768px) {
+      .blog-content table {
+        font-size: 11px;
+        border: none;
+      }
+
+      .blog-content thead {
+        display: none;
+      }
+
+      .blog-content tbody,
+      .blog-content tr {
+        display: block;
+        width: 100%;
+      }
+
+      .blog-content tr {
+        margin-bottom: 15px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--bg);
+      }
+
+      .blog-content td {
+        display: block;
+        text-align: left;
+        padding: 8px 0;
+        border: none;
+        position: relative;
+        padding-left: 40%;
+      }
+
+      .blog-content td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 38%;
+        padding-right: 10px;
+        font-weight: bold;
+        color: var(--accent);
+        text-align: left;
+      }
+
+      /* First column (Image name) */
+      .blog-content td:nth-of-type(1):before {
+        content: "Image";
+      }
+
+      /* Second column (Size) */
+      .blog-content td:nth-of-type(2):before {
+        content: "Size";
+      }
+
+      /* Third column (Before) */
+      .blog-content td:nth-of-type(3):before {
+        content: "Before";
+      }
+
+      /* Fourth column (After) */
+      .blog-content td:nth-of-type(4):before {
+        content: "After";
+      }
+
+      /* Fifth column (C++) */
+      .blog-content td:nth-of-type(5):before {
+        content: "C++";
+      }
+
+      /* Sixth column (Speedup) */
+      .blog-content td:nth-of-type(6):before {
+        content: "Speedup";
+      }
+    }
+
+    /* Snippet blocks for inline HTML */
+    .snippet-block {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .snippet-block img {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    /* YouTube embed container */
+    .youtube-embed {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      margin: 30px 0;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .youtube-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Status indicator */
+    .status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-light);
+      border-top: 3px solid var(--accent);
+      padding: 30px 0;
+      margin-top: 60px;
+      text-align: center;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-dim);
+    }
+
+    .badge {
+      background: var(--bg-lighter);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .blog-title {
+        font-size: 24px;
+      }
+      
+      .nav-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .nav-content > div {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-links {
+        gap: 15px;
+      }
+      
+      .theme-switcher {
+        justify-content: center;
+      }
+      
+      .blog-content {
+        padding: 20px;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-content">
+        <div class="nav-brand">
+          <span class="status"></span>
+          hjanuschka@world
+        </div>
+        <div style="display: flex; align-items: center; gap: 30px;">
+          <div class="nav-links">
+            <a href="/">← Back to Home</a>
+            <a href="/#projects">Projects</a>
+            <a href="/#contact">Contact</a>
+          </div>
+          <div class="theme-switcher">
+            <div class="theme-dropdown">
+              <button class="theme-button" id="themeButton">
+                <span class="theme-preview" style="background: var(--accent);"></span>
+                Themes ▼
+              </button>
+              <div class="theme-menu" id="themeMenu">
+                <button class="theme-option" data-theme="matte-black">
+                  <span class="theme-preview" style="background: #FFC107;"></span>
+                  Matte Black
+                </button>
+                <button class="theme-option" data-theme="osaka-jade">
+                  <span class="theme-preview" style="background: #2DD5B7;"></span>
+                  Osaka Jade
+                </button>
+                <button class="theme-option" data-theme="purple-moon">
+                  <span class="theme-preview" style="background: #9b49c8;"></span>
+                  Purple Moon
+                </button>
+                <button class="theme-option" data-theme="blue">
+                  <span class="theme-preview" style="background: #58a6ff;"></span>
+                  GitHub Blue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Blog Header -->
+  <div class="blog-header">
+    <div class="container">
+      <h1 class="blog-title">2025 Chromium Contributions Wrap-Up</h1>
+      <div class="blog-meta">
+        <span>⚡ Chromium</span>
+        <span>🔧 C++ / Rust</span>
+        <span>👤 Helmut Januschka</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Content -->
+  <article class="container">
+    <div class="blog-content">
+<h1>2025: The Year I Became a Chromium OWNER</h1>
+<p><em>95+ merged contributions across Chromium, PDFium, and jxl-rs</em></p>
+<hr>
+<h2>By the Numbers</h2>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Merged</th>
+<th>In Progress</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Chromium</td>
+<td>68 CLs</td>
+<td>10 CLs</td>
+</tr>
+<tr>
+<td>PDFium</td>
+<td>9 CLs</td>
+<td>-</td>
+</tr>
+<tr>
+<td>jxl-rs</td>
+<td>18 PRs</td>
+<td>4 PRs</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>95</strong></td>
+<td><strong>14</strong></td>
+</tr>
+</tbody></table>
+<h2>2025 Milestones</h2>
+<p>🎉 <strong>Chromium OWNER</strong> - Earned OWNER status via the Tab Focus feature work. Now able to review and approve changes in that area.</p>
+<p>🚀 <strong>JPEG XL Revival</strong> - Part of the team bringing JPEG XL back to Chromium, this time with a Rust decoder. Contributed 18 merged PRs to <a href="https://github.com/libjxl/jxl-rs">jxl-rs</a> for SIMD optimizations, HDR support, and Chromium integration.</p>
+<p>🔧 <strong>omarchy-chromium Maintainer</strong> - Maintaining a <a href="https://github.com/basecamp/omarchy-chromium">custom Chromium build</a> for <a href="https://omarchy.basecamp.com/">Omarchy</a>. Provides ARM64 Linux builds not officially supported by Google.</p>
+<h2>The Browser Trinity (In Progress)</h2>
+<p>Working towards contributing to all three major browser engines. Currently porting Resource Timing Level 3 (interim response timestamps for HTTP 103 Early Hints) to Firefox and Safari:</p>
+<table>
+<thead>
+<tr>
+<th>Browser</th>
+<th>Status</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Firefox</td>
+<td>⏳ First contribution</td>
+<td><a href="https://phabricator.services.mozilla.com/D276668">D276668</a></td>
+</tr>
+<tr>
+<td>Safari/WebKit</td>
+<td>⏳ First contribution</td>
+<td><a href="https://github.com/WebKit/WebKit/pull/55467">#55467</a></td>
+</tr>
+</tbody></table>
+<p>If landed, this completes the trifecta - at least one contribution to each major browser engine.</p>
+<h2>Thank You</h2>
+<ul>
+<li><strong><a href="https://github.com/yoavweiss">Yoav Weiss</a></strong> - for being an incredible mentor, answering endless questions, finding the right reviewers, pointing me to the right mailing lists, and all the guidance that goes way beyond code</li>
+<li><strong><a href="https://github.com/tobi">Tobi Lütke</a></strong> - for the original idea that became the <code>--focus</code> flag</li>
+<li><strong><a href="https://github.com/dhh">DHH</a></strong> - for Omarchy and pushing browser theming forward</li>
+<li><strong><a href="https://github.com/RByers">Rick Byers</a></strong> - for championing JPEG XL&#39;s return and providing direction</li>
+<li><strong><a href="https://github.com/foolip">Philip Jägenstedt</a></strong> - for supporting the JPEG XL revival effort</li>
+</ul>
+<p>And to the countless Chromium developers on Slack - too many to name - who answered questions and provided feedback when I felt lost. Your patience and expertise made these contributions possible. 🙏</p>
+<h2>Major Features</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="/chromium-focus-feature.html"><strong>Tab Focus Flag</strong></a> (Chrome 143)</td>
+<td>New <code>--focus</code> flag that focuses existing tabs instead of opening duplicates</td>
+</tr>
+<tr>
+<td><a href="/chromium-omarchy.html"><strong>Instant Policy Refresh</strong></a></td>
+<td>Added <code>--refresh-platform-policy</code> flag for instant browser theme updates via managed policies</td>
+</tr>
+<tr>
+<td><a href="/chromium-wayland-crash.html"><strong>Wayland Crash Fix</strong></a></td>
+<td>Fixed a crash affecting Linux users when moving Chrome windows between monitors</td>
+</tr>
+<tr>
+<td><a href="/chromium-jxl-resurrection.html"><strong>JPEG XL Support</strong></a> (In Progress)</td>
+<td>Bringing JPEG XL back to Chromium using the Rust-based jxl-rs decoder</td>
+</tr>
+</tbody></table>
+<h2>Chromium Bug Fixes</h2>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7191448"><strong>Fix use-after-free in OmniboxEditModel</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7181280"><strong>Fix styleSheets access for DOMParser-created documents</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7157040"><strong>Fix HTTP 425 retry for TLS early data</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7080077"><strong>Fix Cache-Control parsing (RFC 7234)</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6903519"><strong>Fix iframe unload events during document.open()</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6509110"><strong>Fix modulepreload referrer headers</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6532305"><strong>Fix filter:invert on high-DPI displays</strong></a></li>
+</ul>
+<h2>Other Chromium Features</h2>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6993029"><strong>Expose Font Service for font enumeration</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7052723"><strong>PDFium v2 font matching feature flag</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6931651"><strong>Separate defer/module script execution</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6559109"><strong>Geolocation accuracy in DevTools</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7003545"><strong>ReportBody.toJSON() use counters</strong></a></li>
+</ul>
+<h2>PDFium</h2>
+<p>9 merged CLs to PDFium in 2025:</p>
+<p><strong>New APIs:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/136690"><strong>Add FPDF_SYSFONTINFO v2 for per-request font matching</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/131030"><strong>Add FPDFPage_InsertObjectAtIndex() API</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/131232"><strong>Add FPDFFormObj_RemoveObject API</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/131231"><strong>Add FPDFAnnot_SetFormFieldFlags API</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/130970"><strong>Add API to retrieve MIME type from attachments</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/130850"><strong>Implement PDF version handling from catalog</strong></a></li>
+</ul>
+<p><strong>Bug Fixes:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/134730"><strong>Fix GetLooseBounds char box containment</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/132190"><strong>Fix Form XObject content regeneration</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/132350"><strong>Fix undo counting for cut operations</strong></a></li>
+</ul>
+<h2>jxl-rs Contributions</h2>
+<p>18 merged PRs to <a href="https://github.com/libjxl/jxl-rs">libjxl/jxl-rs</a> - the Rust JPEG XL decoder:</p>
+<p><strong>SIMD Optimizations:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/537"><strong>Add SIMD F32 to U8/U16 conversions</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/536"><strong>Add SIMD versions of transfer functions</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/535"><strong>Add SIMD upsampling for 2x, 4x, and 8x</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/533"><strong>Add min and store_interleaved functions to jxl_simd</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/532"><strong>Add SIMD noise convolution</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/529"><strong>Add SIMD YCbCr to RGB conversion</strong></a></li>
+</ul>
+<p><strong>Performance:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/538"><strong>Implement flattened modular trees</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/526"><strong>Improve weighted predictor cache locality</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/525"><strong>Cache natural coefficient orders using OnceLock</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/524"><strong>Precompute cosines in spline rendering</strong></a></li>
+</ul>
+<p><strong>API &amp; Integration:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/556"><strong>Add FFI-friendly API for Chromium integration</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/496"><strong>Implement remaining decoder API methods</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/495"><strong>Add preview frame API support</strong></a></li>
+</ul>
+<p><strong>Bug Fixes:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/494"><strong>Fix spline DISTANCE_EXP to match libjxl default</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/493"><strong>Fix rect bounds check for padded images</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/492"><strong>Remove zerocopy from production dependencies</strong></a></li>
+</ul>
+<p><strong>HDR Support:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/491"><strong>Implement HDR tone mapping for ICC profile generation</strong></a></li>
+</ul>
+<p><strong>CI:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/540"><strong>Add jxl-perfhistory benchmark CI stage</strong></a></li>
+</ul>
+<p><strong>Open PRs:</strong></p>
+<ul>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/574"><strong>Add premultiply_output option</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/530"><strong>Add SIMD chroma upsampling</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/509"><strong>Add WebAssembly decoder with browser demo</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/504"><strong>Add ISO 21496-1 gain map support</strong></a></li>
+</ul>
+<h2>Chromium CLs In Progress</h2>
+<p>Active CLs currently under review:</p>
+<p><strong>JPEG XL:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7201443"><strong>Add jxl-rs to third_party</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7184969"><strong>Integrate jxl-rs into Blink</strong></a></li>
+</ul>
+<p><strong>Web Platform / Network:</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7137783"><strong>Add Request.isReloadNavigation attribute</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7135039"><strong>Preserve MIME type in URL parser</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7054663"><strong>Preserve %2E encoding in URL paths</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7131545"><strong>Allow data: URL redirects in manual mode</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/6938248"><strong>Complete HTTPS-RR support</strong></a></li>
+</ul>
+<p><strong>Accessibility:</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7232474"><strong>Expose named forms as ATK_ROLE_LANDMARK</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7186763"><strong>Fix crash on profile-dependent flags</strong></a></li>
+</ul>
+<p><strong>Extensions:</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/6927310"><strong>Add theme.getCurrent() WebExtensions API</strong></a></li>
+</ul>
+<h2>Code Modernization</h2>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <strong>Environment::GetVar series</strong> (9 CLs) - Modernized to std::optional</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6760418"><strong>Move PseudoTcp to remoting/protocol</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7052622"><strong>Refactor StartupBrowserCreator for readability</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6632732"><strong>Replace WTF::NotNullTag with base::NotNullTag</strong></a></li>
+</ul>
+<hr>
+<h2>Links</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>All Chromium CLs</td>
+<td><a href="https://chromium-review.googlesource.com/q/owner:helmut@januschka.com">chromium-review.googlesource.com</a></td>
+</tr>
+<tr>
+<td>All PDFium CLs</td>
+<td><a href="https://pdfium-review.googlesource.com/q/owner:helmut@januschka.com">pdfium-review.googlesource.com</a></td>
+</tr>
+<tr>
+<td>All jxl-rs PRs</td>
+<td><a href="https://github.com/libjxl/jxl-rs/pulls?q=is%3Apr+author%3Ahjanuschka">github.com/libjxl/jxl-rs</a></td>
+</tr>
+<tr>
+<td>GitHub</td>
+<td><a href="https://github.com/hjanuschka">github.com/hjanuschka</a></td>
+</tr>
+</tbody></table>
+    </div>
+  </article>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <span>© 2025 Helmut Januschka</span>
+        <span class="badge">Powered by marked.js + Terminal Vibes</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme switcher functionality
+    const themeButton = document.getElementById('themeButton');
+    const themeMenu = document.getElementById('themeMenu');
+    const themeOptions = document.querySelectorAll('.theme-option');
+
+    // Toggle theme menu
+    themeButton.addEventListener('click', function() {
+      themeMenu.classList.toggle('show');
+    });
+
+    // Close theme menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!themeButton.contains(e.target) && !themeMenu.contains(e.target)) {
+        themeMenu.classList.remove('show');
+      }
+    });
+
+    // Theme selection
+    themeOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        const theme = this.getAttribute('data-theme');
+
+        if (theme === 'matte-black') {
+          document.documentElement.removeAttribute('data-theme');
+        } else {
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        // Save theme preference
+        localStorage.setItem('theme', theme);
+
+        // Close menu
+        themeMenu.classList.remove('show');
+      });
+    });
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme && savedTheme !== 'matte-black') {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+  
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script>
+    // Highlight all code blocks
+    Prism.highlightAll();
+  </script>
+</body>
+</html>

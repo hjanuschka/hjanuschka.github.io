@@ -20,7 +20,7 @@ This flag forces Chrome to immediately reload and apply managed policies without
 
 ### The Implementation Journey
 
-After much discussion and collaboration with Chrome's policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation ([CL 6900896](https://chromium-review.googlesource.com/c/chromium/src/+/6900896) - **MERGED!**) adds the `--refresh-platform-policy` flag:
+After much discussion and collaboration with Chrome's policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**--refresh-platform-policy flag**](https://crrev.com/c/6900896)) adds:
 
 ```cpp
 // chrome/common/chrome_switches.cc
@@ -46,7 +46,7 @@ This change has landed and will be released in **Chrome Stable 142**! This means
 
 ### Omarchy's Lightning-Fast Integration
 
-I quickly assembled [PR #1251](https://github.com/basecamp/omarchy/pull/1251) for Omarchy that integrates the new flag with JSON policy updates. Here's how it works in practice:
+I quickly assembled <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Omarchy theme integration**](https://github.com/basecamp/omarchy/pull/1251) that integrates the new flag with JSON policy updates. Here's how it works in practice:
 
 ```sh
 # Set theme via managed policy (Linux example)
@@ -211,7 +211,7 @@ There's an excellent [YouTube video by DHH](https://www.youtube.com/watch?v=ZEFY
 
 ### The Patch
 
-The entire feature is contained in a [single CL (Change List)](https://chromium-review.googlesource.com/c/chromium/src/+/6832165):
+The entire feature is contained in a single CL (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Direct CLI approach**](https://crrev.com/c/6832165) - superseded by policy approach):
 - Minimal, focused changes
 - Clean integration with existing code
 - Easy to maintain and rebase
@@ -286,7 +286,7 @@ i3.main()
 ## What's Next?
 
 ### Upstream Progress
-The [Chromium CL](https://chromium-review.googlesource.com/c/chromium/src/+/6832165) is under review. With community support, it might land in mainline Chrome.
+The direct CLI approach (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**CL 6832165**](https://crrev.com/c/6832165)) was superseded by the policy-based solution (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 6900896**](https://crrev.com/c/6900896)), which landed in Chrome 142.
 
 ### Extended Features
 The complete feature set includes:
@@ -321,7 +321,8 @@ chromium --set-default-theme
 
 **Links:**
 - [Original Tweet](https://x.com/hjanuschka/status/1954552977814855845)
-- [Chromium CL](https://chromium-review.googlesource.com/c/chromium/src/+/6832165)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Policy refresh flag**](https://crrev.com/c/6900896)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Direct CLI approach**](https://crrev.com/c/6832165)
 - [Omarchy Chromium Fork](https://github.com/omacom-io/omarchy-chromium)
 - [Material GTK Generator (Plan B)](https://github.com/hjanuschka/material-gtk-generator)
 - [DHH's Video: Power of OSS - Idea to Fork](https://www.youtube.com/watch?v=ZEFYTdzYxQM)

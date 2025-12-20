@@ -58,14 +58,14 @@ A simple timing bug with catastrophic consequences.
 
 ## Parallel Solutions
 
-While the Chromium fix was being developed, the Hyprland team created their own workaround ([PR #11877](https://github.com/hyprwm/Hyprland/pull/11877)) to handle Chrome's incorrect ordering more gracefully. This helped their users immediately but didn't solve the root cause.
+While the Chromium fix was being developed, the Hyprland team created their own workaround (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Hyprland workaround**](https://github.com/hyprwm/Hyprland/pull/11877)) to handle Chrome's incorrect ordering more gracefully. This helped their users immediately but didn't solve the root cause.
 
 The proper fix needed to be in Chromium - the protocol violation was on Chrome's side.
 
 ## The Fix
 
 **Chromium Bug**: [449370049](https://issues.chromium.org/issues/449370049)
-**Fix CL**: [7003036](https://chromium-review.googlesource.com/c/chromium/src/+/7003036)
+**Fix CL**: <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix color management object lifecycle**](https://crrev.com/c/7003036)
 **Merged**: October 6, 2025 (3 days from initial report)
 **Reviewers**: Thomas Anderson, Tom Lukaszewicz
 
@@ -121,6 +121,6 @@ From first report to merged fix: 72 hours. The Omarchy movement isn't just about
 **Links:**
 - [GitHub Issue #2184](https://github.com/basecamp/omarchy/issues/2184)
 - [Chromium Bug 449370049](https://issues.chromium.org/issues/449370049)
-- [Fix CL 7003036](https://chromium-review.googlesource.com/c/chromium/src/+/7003036)
-- [Hyprland Workaround PR](https://github.com/hyprwm/Hyprland/pull/11877)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix color management object lifecycle**](https://crrev.com/c/7003036)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Hyprland Workaround**](https://github.com/hyprwm/Hyprland/pull/11877)
 - [Wayland Color Management Protocol](https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/main/staging/color-management/color-management-v1.xml)

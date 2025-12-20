@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2025-11-29",
+    "dateModified": "2025-12-20",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -747,7 +747,7 @@ chromium --refresh-platform-policy
 </code></pre>
 <p>This flag forces Chrome to immediately reload and apply managed policies without the usual delay. The implications go far beyond just theming - it enables instant policy updates for any managed Chrome setting!</p>
 <h3>The Implementation Journey</h3>
-<p>After much discussion and collaboration with Chrome&#39;s policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation (<a href="https://chromium-review.googlesource.com/c/chromium/src/+/6900896">CL 6900896</a> - <strong>MERGED!</strong>) adds the <code>--refresh-platform-policy</code> flag:</p>
+<p>After much discussion and collaboration with Chrome&#39;s policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>--refresh-platform-policy flag</strong></a>) adds:</p>
 <pre><code class="language-cpp">// chrome/common/chrome_switches.cc
 const char kRefreshPlatformPolicy[] = &quot;refresh-platform-policy&quot;;
 
@@ -768,7 +768,7 @@ if (command_line.HasSwitch(switches::kRefreshPlatformPolicy)) {
 <li>Works with any managed policy, not just themes</li>
 </ul>
 <h3>Omarchy&#39;s Lightning-Fast Integration</h3>
-<p>I quickly assembled <a href="https://github.com/basecamp/omarchy/pull/1251">PR #1251</a> for Omarchy that integrates the new flag with JSON policy updates. Here&#39;s how it works in practice:</p>
+<p>I quickly assembled <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/basecamp/omarchy/pull/1251"><strong>Omarchy theme integration</strong></a> that integrates the new flag with JSON policy updates. Here&#39;s how it works in practice:</p>
 <pre><code class="language-sh"># Set theme via managed policy (Linux example)
 sudo mkdir -p /etc/chromium/policies/managed
 echo &#39;{
@@ -896,7 +896,7 @@ material-gtk-generator --seed-color=&quot;#FF6B6B&quot; --output-dir=~/.themes/
 </ol>
 <p>There&#39;s an excellent <a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">YouTube video by DHH</a> about the power of open source - showing how we went from idea to fork at incredible speed.</p>
 <h3>The Patch</h3>
-<p>The entire feature is contained in a <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6832165">single CL (Change List)</a>:</p>
+<p>The entire feature is contained in a single CL (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a> - superseded by policy approach):</p>
 <ul>
 <li>Minimal, focused changes</li>
 <li>Clean integration with existing code</li>
@@ -961,7 +961,7 @@ i3.main()
 </code></pre>
 <h2>What&#39;s Next?</h2>
 <h3>Upstream Progress</h3>
-<p>The <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6832165">Chromium CL</a> is under review. With community support, it might land in mainline Chrome.</p>
+<p>The direct CLI approach (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>CL 6832165</strong></a>) was superseded by the policy-based solution (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>CL 6900896</strong></a>), which landed in Chrome 142.</p>
 <h3>Extended Features</h3>
 <p>The complete feature set includes:</p>
 <ul>
@@ -990,7 +990,8 @@ chromium --set-default-theme
 <p><strong>Links:</strong></p>
 <ul>
 <li><a href="https://x.com/hjanuschka/status/1954552977814855845">Original Tweet</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6832165">Chromium CL</a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>Policy refresh flag</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a></li>
 <li><a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium Fork</a></li>
 <li><a href="https://github.com/hjanuschka/material-gtk-generator">Material GTK Generator (Plan B)</a></li>
 <li><a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">DHH&#39;s Video: Power of OSS - Idea to Fork</a></li>

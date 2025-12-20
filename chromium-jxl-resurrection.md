@@ -100,7 +100,7 @@ Following Rick's announcement, the implementation work began.
 
 The initial approach used the reference implementation - libjxl in C++. Using the previous Chromium JPEG XL code as a blueprint, the implementation was updated to the latest spec:
 
-**CL 7170439** - Full implementation with animation support
+[**CL 7170439**](https://crrev.com/c/7170439) <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> - Full implementation with animation support
 
 ```cpp
 // Integrated libjxl decoder with Blink's image pipeline
@@ -122,7 +122,9 @@ The feedback requested using Rust for memory safety.
 
 Chromium is moving toward memory-safe code. The pivot to jxl-rs, a pure Rust JPEG XL decoder, aligned with this direction.
 
-**CL 7184969** - Rust-based implementation using jxl-rs
+[**CL 7201443**](https://crrev.com/c/7201443) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - Add jxl-rs to third_party (73,908 lines!)
+
+[**CL 7184969**](https://crrev.com/c/7184969) <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> - Rust-based Blink integration (122 comments, 50+ patchsets)
 
 ```rust
 // Memory-safe decoder via CXX bindings
@@ -133,16 +135,29 @@ pub fn decode_jxl(data: &[u8]) -> Result<DecodedImage> {
 }
 ```
 
-The Rust decoder required performance optimization. The jxl-rs community has been working on improvements:
+The Rust decoder required significant performance optimization. The jxl-rs community has been working furiously - **18 PRs merged** in December 2025 alone:
 
-- [**PR #491**](https://github.com/libjxl/jxl-rs/pull/491) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - HDR color profile handling (PQ/HLG transfer functions)
-- [**PR #492**](https://github.com/libjxl/jxl-rs/pull/492) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - Remove unnecessary `allow_unsafe` requirement
-- [**PR #493**](https://github.com/libjxl/jxl-rs/pull/493) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - Rectangle bounds checking improvements
-- [**PR #494**](https://github.com/libjxl/jxl-rs/pull/494) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - Precision level matching libjxl C++ version
-- [**PR #506**](https://github.com/libjxl/jxl-rs/pull/506) <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> - Major performance improvements bringing jxl-rs nearly on par with C++ libjxl
-- [**PR #509**](https://github.com/libjxl/jxl-rs/pull/509) <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> - WASM polyfill implementation for browsers without native JXL support
+**SIMD Optimizations:**
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**SIMD F32 to U8/U16 conversions**](https://github.com/libjxl/jxl-rs/pull/537)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**SIMD transfer functions**](https://github.com/libjxl/jxl-rs/pull/536)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**SIMD upsampling (2x, 4x, 8x)**](https://github.com/libjxl/jxl-rs/pull/535)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**SIMD noise convolution**](https://github.com/libjxl/jxl-rs/pull/532)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**SIMD YCbCr to RGB conversion**](https://github.com/libjxl/jxl-rs/pull/529)
 
-[PR #506](https://github.com/libjxl/jxl-rs/pull/506) improves decode performance through parallel VarDCT decoding and AVX2+FMA SIMD optimizations:
+**Performance:**
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Flattened modular trees**](https://github.com/libjxl/jxl-rs/pull/538)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Weighted predictor cache locality**](https://github.com/libjxl/jxl-rs/pull/526)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Cache natural coefficient orders**](https://github.com/libjxl/jxl-rs/pull/525)
+
+**API & Integration:**
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**FFI-friendly API for Chromium integration**](https://github.com/libjxl/jxl-rs/pull/556)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**HDR tone mapping for ICC profiles**](https://github.com/libjxl/jxl-rs/pull/491)
+
+**In Progress:**
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> [**WASM polyfill for browsers without native support**](https://github.com/libjxl/jxl-rs/pull/509)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> [**ISO 21496-1 gain map support (HDR)**](https://github.com/libjxl/jxl-rs/pull/504)
+
+These optimizations have dramatically improved decode performance:
 
 | Image | Size | Before PR #506 | After PR #506 | C++ libjxl | Speedup |
 |-------|------|----------------|---------------|------------|---------|
@@ -150,7 +165,9 @@ The Rust decoder required performance optimization. The jxl-rs community has bee
 | progressive | 4064×2704 | 694ms | 560ms | 450ms | **+24%** |
 | blendmodes | 1024×1024 | 115ms | 85ms | 266ms | **+35%** |
 
-The gap narrowed from 56% slower to 4% slower than C++. [PR #509](https://github.com/libjxl/jxl-rs/pull/509) provides a WebAssembly-based polyfill for browsers without native support.
+The gap narrowed from 56% slower to near-parity with C++. <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> [**WebAssembly-based polyfill**](https://github.com/libjxl/jxl-rs/pull/509) provides support for browsers without native JXL.
+
+**December 2025 Update:** jxl-rs has been rolled to version 0.1.5 in Chromium (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl-rs 0.1.4 → 0.1.5**](https://crrev.com/c/7267207)), incorporating the latest performance improvements.
 
 ## Current Status
 
@@ -161,7 +178,7 @@ The implementation includes:
 ✅ **Animations** - Multi-frame JXL support
 ✅ **Alpha/transparency** - Full alpha channel support
 ✅ **Wide gamut** - Display-P3 and other color spaces
-✅ **HDR support** - PQ/HLG transfer functions ([PR #491](https://github.com/libjxl/jxl-rs/pull/491) <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span>)
+✅ **HDR support** - PQ/HLG transfer functions (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**HDR tone mapping**](https://github.com/libjxl/jxl-rs/pull/491))
 
 ## Requirements for Shipping
 
@@ -183,21 +200,24 @@ Having multiple format options allows developers to choose based on their specif
 
 ## Acknowledgments
 
-Special thanks to [Luca Versari (veluca93)](https://github.com/veluca93) for reviewing and merging upstream PRs and managing jxl-rs releases. The collaboration and responsiveness from the jxl-rs maintainers has been instrumental in making this implementation possible.
+Special thanks to [Luca Versari (veluca93)](https://github.com/veluca93) for reviewing and merging upstream PRs and managing jxl-rs releases. The collaboration and responsiveness from the jxl-rs maintainers has been instrumental in making this implementation possible. (Fun fact: I now have exactly 1 Telegram contact.)
 
 ## Implementation Details
 
-**Status:** 🚧 In active development
+**Status:** 🚧 In active development - jxl-rs landed in third_party, Blink integration under review
 
-- C++ Implementation: [CL 7170439](https://chromium-review.googlesource.com/c/chromium/src/+/7170439) - Abandoned in favor of Rust
-- Rust Implementation: [CL 7184969](https://chromium-review.googlesource.com/c/chromium/src/+/7184969) - Active development
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add jxl-rs to third_party**](https://crrev.com/c/7201443) (73,908 lines)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl-rs 0.1.4 → 0.1.5**](https://crrev.com/c/7267207)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Integrate jxl-rs into Blink**](https://crrev.com/c/7184969) (122 comments)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**C++ Implementation**](https://crrev.com/c/7170439) (superseded by Rust)
+
 - Tracking Bug: [462919304](https://issues.chromium.org/issues/462919304)
 - Design Document: [JPEG XL in Chromium](https://docs.google.com/document/d/1oT7K2h4Xf4E0ScUmsOQx0zXUVJj57qBwcsa3yK9SJr0/edit?tab=t.0)
 
 **Upstream Work:**
 - [jxl-rs repository](https://github.com/libjxl/jxl-rs)
-- [Performance improvements (PR #506)](https://github.com/libjxl/jxl-rs/pull/506)
-- [WASM polyfill (PR #509)](https://github.com/libjxl/jxl-rs/pull/509)
+- [All my jxl-rs PRs](https://github.com/libjxl/jxl-rs/pulls?q=is%3Apr+author%3Ahjanuschka) (18 merged)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> [**WASM polyfill**](https://github.com/libjxl/jxl-rs/pull/509)
 
 **Demo:**
 - [JXL Animation Support Video](https://youtu.be/zVkX4bP6qSo)
@@ -206,9 +226,10 @@ Special thanks to [Luca Versari (veluca93)](https://github.com/veluca93) for rev
 
 **Links:**
 - [Rick Byers' Announcement](https://groups.google.com/a/chromium.org/g/blink-dev/c/WjCKcBw219k/m/tdJGfuLQAAAJ)
-- [C++ Implementation CL 7170439](https://chromium-review.googlesource.com/c/chromium/src/+/7170439)
-- [Rust Implementation CL 7184969](https://chromium-review.googlesource.com/c/chromium/src/+/7184969)
+- [CL 7201443](https://crrev.com/c/7201443) - Add jxl-rs to third_party <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span>
+- [CL 7184969](https://crrev.com/c/7184969) - Blink integration <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span>
 - [jxl-rs Repository](https://github.com/libjxl/jxl-rs)
+- [My jxl-rs PRs](https://github.com/libjxl/jxl-rs/pulls?q=is%3Apr+author%3Ahjanuschka) (18 merged)
 - [Heise News Coverage](https://www.heise.de/en/news/U-turn-Google-wants-to-bring-JPEG-XL-back-to-Chrome-11089880.html)
 - [DevClass Coverage](https://devclass.com/2025/11/24/googles-chromium-team-decides-it-will-add-jpeg-xl-support-reverses-obsolete-declaration/)
 - [My GitHub](https://github.com/hjanuschka)

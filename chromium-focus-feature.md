@@ -115,9 +115,9 @@ Thanks to:
 ## Implementation Details
 
 **Status:** ✅ All CLs merged to Chromium main branch
-- Foundation CL: [6850334](https://chromium-review.googlesource.com/c/chromium/src/+/6850334) - Core infrastructure (refs/heads/main@{#1520059})
-- Integration CL: [6943437](https://chromium-review.googlesource.com/c/chromium/src/+/6943437) - Wired up to startup flow (refs/heads/main@{#1530630})
-- JSON API CL: [6946350](https://chromium-review.googlesource.com/c/chromium/src/+/6946350) - Result file output for automation (refs/heads/main@{#1534794})
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Foundation: Core infrastructure**](https://crrev.com/c/6850334)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Integration: Wired up to startup flow**](https://crrev.com/c/6943437)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**JSON API: Result file output for automation**](https://crrev.com/c/6946350)
 - Reviewers: Erik Chen, Kaan Alsan, Daniel Murphy, Jan Keitel
 - Bug: [439499872](https://bugs.chromium.org/p/chromium/issues/detail?id=439499872)
 
@@ -125,8 +125,8 @@ Thanks to:
 
 **Links:**
 - [Original Tweet](https://x.com/tobi/status/1957195479361438142)
-- [Foundation CL 6850334](https://chromium-review.googlesource.com/c/chromium/src/+/6850334)
-- [Integration CL 6943437](https://chromium-review.googlesource.com/c/chromium/src/+/6943437)
-- [JSON API CL 6946350](https://chromium-review.googlesource.com/c/chromium/src/+/6946350)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Foundation**](https://crrev.com/c/6850334)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Integration**](https://crrev.com/c/6943437)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**JSON API**](https://crrev.com/c/6946350)
 - [Design Document](https://docs.google.com/document/d/1YRf-BzHTAhqyV6wL6yRxVOU3zhByE6voSEwSNLgPZSU/edit)
 - [My GitHub](https://github.com/hjanuschka)
