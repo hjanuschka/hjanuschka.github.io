@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#121212">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Helmut Januschka - Head of Engineering @krone.at | Open Source Contributor</title>
   <meta name="description" content="Head of Engineering at krone.at, Open Source Contributor to Chromium, LLVM, and more. 25+ years of experience in software engineering and system architecture.">
   
@@ -75,7 +77,8 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
   <style>
     * {
       margin: 0;
@@ -134,8 +137,15 @@
       --orange: #cd9ce1;
     }
 
+    /* Fallback font for FOUT prevention */
+    @font-face {
+      font-family: 'JetBrains Mono';
+      font-display: swap;
+      src: local('JetBrains Mono');
+    }
+
     body {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
@@ -560,6 +570,12 @@
       color: var(--text-dim);
     }
 
+    /* Content visibility for below-fold sections */
+    #about, #experience, #projects, #contact {
+      content-visibility: auto;
+      contain-intrinsic-size: 0 500px;
+    }
+
     /* Mobile Responsive */
     @media (max-width: 768px) {
       body {
@@ -687,6 +703,17 @@
         <div class="ascii-box-header">Blog Posts</div>
         <div class="ascii-box-content">
           <div class="grid grid-1" style="gap: 20px;">
+            <a href="/2025-chromium-contributions.html" style="text-decoration: none; color: inherit;">
+              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
+                <span style="position: absolute; top: 15px; right: 15px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🎉 2025 WRAP-UP</span>
+                <h3 style="margin-top: 0;">2025: The Year I Became a Chromium OWNER</h3>
+                <p>95+ merged contributions across Chromium, PDFium, and jxl-rs. From Tab Focus to JPEG XL revival, and working towards the browser trinity - contributions to all three major browser engines.</p>
+                <div class="project-badges">
+                  <span class="project-badge">Read Post →</span>
+                </div>
+              </div>
+            </a>
+
             <a href="/chromium-jxl-resurrection.html" style="text-decoration: none; color: inherit;">
               <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
                 <span style="position: absolute; top: 15px; right: 15px; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🚧 IN PROGRESS</span>
@@ -1031,25 +1058,8 @@
       });
     });
 
-    // Add some terminal-like effects
+    // Theme switcher functionality
     document.addEventListener('DOMContentLoaded', function() {
-      // Typing effect for hero subtitle
-      const subtitle = document.querySelector('.hero-subtitle');
-      const text = subtitle.textContent;
-      subtitle.textContent = '';
-      
-      let i = 0;
-      function typeWriter() {
-        if (i < text.length) {
-          subtitle.textContent += text.charAt(i);
-          i++;
-          setTimeout(typeWriter, 50);
-        }
-      }
-      
-      setTimeout(typeWriter, 1000);
-
-      // Theme switcher functionality
       const themeButton = document.getElementById('themeButton');
       const themeMenu = document.getElementById('themeMenu');
       const themeOptions = document.querySelectorAll('.theme-option');
