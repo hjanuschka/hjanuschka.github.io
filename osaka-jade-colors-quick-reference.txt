@@ -1,0 +1,100 @@
+================================================================================
+                    OSAKA JADE THEME - QUICK COLOR REFERENCE
+================================================================================
+
+CORE PALETTE
+============
+Background:        #111C18  (rgb(17, 28, 24))    - Deep forest green
+Text Primary:      #C1C497  (rgb(193, 196, 151)) - Warm sage
+Text Secondary:    #F7E8B2  (rgb(247, 232, 178)) - Light cream
+Cursor:            #D7C995  (rgb(215, 201, 149)) - Warm gold
+
+TERMINAL COLORS (ANSI 0-7)
+============================
+0  Black:          #23372B  - Dark slate
+1  Red:            #FF5345  - Bright red
+2  Green:          #549E6A  - Muted green
+3  Yellow:         #459451  - Olive
+4  Blue:           #509475  - Teal
+5  Magenta:        #D2689C  - Dusty rose
+6  Cyan:           #2DD5B7  - Turquoise (PRIMARY ACCENT)
+7  White:          #F6F5DD  - Off-white
+
+TERMINAL COLORS (ANSI 8-15)
+=============================
+8  Bright Black:   #53685B  - Gray-green
+9  Bright Red:     #DB9F9C  - Light rose
+10 Bright Green:   #143614  - Dark forest
+11 Bright Yellow:  #E5C736  - Gold (HIGHLIGHT)
+12 Bright Blue:    #ACD4CF  - Light cyan
+13 Bright Magenta: #75BBB3  - Teal
+14 Bright Cyan:    #8CD3CB  - Light turquoise
+15 Bright White:   #9EEBB3  - Mint
+
+ACCENT COLORS
+==============
+Primary Accent:    #2DD5B7  - Cyan/Turquoise
+Secondary Accent:  #D2689C  - Dusty Rose
+Highlight:         #E5C736  - Gold
+Active Border:     #71CEAD  - Lighter teal
+Selected BG:       #364538  - Dark selected state
+
+UI ELEMENTS
+============
+Border Color:      #214237  - Dark green border
+Inactive Text:     #32473B  - Muted green text
+Title Text:        #D6D5BC  - Pale beige
+Graph Text:        #E6D8BA  - Lighter beige
+Box Outline:       #81B8A8  - Muted teal
+
+SPECIAL COLORS
+===============
+Lock Screen BG:    #072820  (rgb(7, 40, 32))    - Very dark green
+Lock Screen Accent: #A7AC84  (rgb(167, 172, 132)) - Muted olive
+OSD Border:        #589A5F  - Medium sage green
+
+================================================================================
+                            HARMONY & THEORY
+================================================================================
+
+Color Story:
+- Dominated by deep forest greens and warm earth tones
+- Jade/turquoise accents provide energy and focus
+- Cream/beige text ensures readability
+- Rose tones add warmth and personality
+
+Suggested Usage:
+- Background:      #111C18 (all backgrounds)
+- Text:            #C1C497 (body text)
+- Accents:         #2DD5B7 (links, focus states)
+- Highlights:      #E5C736 (alerts, important)
+- Borders:         #214237 (UI dividers)
+
+RGB Values for Hyprland/Wallpaper Engines:
+- Primary:         rgb(17, 28, 24)
+- Accent:          rgb(45, 213, 183)
+- Highlight:       rgb(229, 199, 54)
+
+================================================================================
+                         ALL OMARCHY THEMES AVAILABLE
+================================================================================
+
+1. osaka-jade        - Jade/earthy dark theme (CURRENT)
+2. catppuccin        - Pastel dark theme
+3. catppuccin-latte  - Pastel light theme
+4. everforest        - Forest colors
+5. rose-pine         - Rose/pine tones (light)
+6. tokyo-night       - Japanese night colors
+7. nord              - Arctic blues
+8. kanagawa          - Japanese inspired
+9. gruvbox           - Retro warm tones
+10. ristretto        - Espresso minimal
+11. matte-black      - Pure black minimal
+
+Repository:         https://github.com/basecamp/omarchy
+Theme Location:     /themes/osaka-jade/
+Files:              alacritty.toml, btop.theme, kitty.conf, ghostty.conf,
+                    hyprland.conf, hyprlock.conf, mako.ini, walker.css,
+                    waybar.css, swayosd.css, vscode.json, neovim.lua
+
+================================================================================

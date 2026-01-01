@@ -148,18 +148,19 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add WebAssembly decoder with browser demo**](https://github.com/libjxl/jxl-rs/pull/509)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add ISO 21496-1 gain map support**](https://github.com/libjxl/jxl-rs/pull/504)
 
+## JPEG XL Chromium Integration
+
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add jxl-rs to third_party**](https://crrev.com/c/7201443)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add JXL infrastructure: enums and build flag**](https://crrev.com/c/7320482)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.1.5 => 0.2.0**](https://crrev.com/c/7296289)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.2.0 => 0.2.1**](https://crrev.com/c/7300607)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.2.1 => 0.2.2**](https://crrev.com/c/7313560)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add JXL image decoder using jxl-rs**](https://crrev.com/c/7319379)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Wire up JXL decoder**](https://crrev.com/c/7184969)
+
 ## Chromium CLs In Progress
 
 Active CLs currently under review:
-
-**JPEG XL:**
-- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.2.1 => 0.2.2**](https://crrev.com/c/7313560)
-- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.2.0 => 0.2.1**](https://crrev.com/c/7300607)
-- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.1.5 => 0.2.0**](https://crrev.com/c/7296289)
-- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add JXL infrastructure: enums and build flag**](https://crrev.com/c/7320482)
-- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add jxl-rs to third_party**](https://crrev.com/c/7201443)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add JXL image decoder using jxl-rs**](https://crrev.com/c/7319379)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Wire up JXL decoder**](https://crrev.com/c/7184969)
 
 **Web Platform / Network:**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add user-select: none to button, meter, progress, select**](https://crrev.com/c/7231959)

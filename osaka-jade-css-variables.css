@@ -1,0 +1,239 @@
+/**
+ * OSAKA JADE THEME - CSS VARIABLES
+ * 
+ * Generated from basecamp/omarchy repository
+ * https://github.com/basecamp/omarchy/tree/master/themes/osaka-jade
+ * 
+ * Usage: Include this file and use CSS custom properties throughout your site
+ */
+
+:root {
+  /* ========== PRIMARY COLORS ========== */
+  --color-bg-primary: #111c18;
+  --color-text-primary: #C1C497;
+  --color-text-secondary: #F7E8B2;
+  --color-cursor: #D7C995;
+  
+  /* ========== ACCENT COLORS ========== */
+  --color-accent-cyan: #2DD5B7;        /* Primary accent - links, focus */
+  --color-accent-rose: #D2689C;        /* Secondary accent - warmth */
+  --color-accent-gold: #E5C736;        /* Highlights - alerts, important */
+  --color-accent-teal: #71CEAD;        /* Border highlight */
+  
+  /* ========== TERMINAL COLORS (ANSI 0-7) ========== */
+  --color-black: #23372B;
+  --color-red: #FF5345;
+  --color-green: #549E6A;
+  --color-yellow: #459451;
+  --color-blue: #509475;
+  --color-magenta: #D2689C;
+  --color-cyan: #2DD5B7;
+  --color-white: #F6F5DD;
+  
+  /* ========== TERMINAL COLORS (ANSI 8-15) ========== */
+  --color-black-bright: #53685B;
+  --color-red-bright: #DB9F9C;
+  --color-green-bright: #143614;
+  --color-yellow-bright: #E5C736;
+  --color-blue-bright: #ACD4CF;
+  --color-magenta-bright: #75BBB3;
+  --color-cyan-bright: #8CD3CB;
+  --color-white-bright: #9EEBB3;
+  
+  /* ========== UI ELEMENTS ========== */
+  --color-border: #214237;
+  --color-border-light: #589A5F;
+  --color-selected-bg: #364538;
+  --color-selected-fg: #DEB266;
+  --color-inactive: #32473B;
+  --color-title: #D6D5BC;
+  --color-text-graph: #E6D8BA;
+  --color-highlight: #E67D64;
+  
+  /* ========== SEMANTIC COLORS ========== */
+  --color-success: #549E6A;
+  --color-warning: #E5C736;
+  --color-error: #FF5345;
+  --color-info: #2DD5B7;
+  
+  /* ========== SPECIAL USE CASES ========== */
+  --color-lock-screen-bg: #072820;
+  --color-lock-screen-accent: #A7AC84;
+  --color-notification-bg: #11221C;
+  --color-notification-border: #214237;
+  --color-notification-text: #C1C497;
+  
+  /* ========== GRAPH COLORS (for charts/analytics) ========== */
+  --gradient-cpu-start: #5F8C86;
+  --gradient-cpu-mid: #629C89;
+  --gradient-cpu-end: #76AD98;
+  
+  --gradient-temp-start: #BFD99A;
+  --gradient-temp-mid: #E1B55E;
+  --gradient-temp-end: #DBB05C;
+  
+  --gradient-download-start: #75BBB3;
+  --gradient-download-mid: #61949A;
+  --gradient-download-end: #215866;
+  
+  --gradient-upload-start: #215866;
+  --gradient-upload-mid: #91C080;
+  --gradient-upload-end: #549E6A;
+  
+  /* ========== SPACING & SIZING ========== */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* ========== TYPOGRAPHY ========== */
+  --font-family-mono: 'Courier New', 'Monaco', monospace;
+  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ========== COLOR SWATCHES (for documentation/design) ========== */
+
+.color-swatch {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--color-border);
+}
+
+.swatch-bg-primary { background-color: var(--color-bg-primary); }
+.swatch-text-primary { background-color: var(--color-text-primary); }
+.swatch-accent-cyan { background-color: var(--color-accent-cyan); }
+.swatch-accent-rose { background-color: var(--color-accent-rose); }
+.swatch-accent-gold { background-color: var(--color-accent-gold); }
+.swatch-border { background-color: var(--color-border); }
+
+/* ========== COMPONENT STYLES ========== */
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-sans);
+}
+
+a {
+  color: var(--color-accent-cyan);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-accent-teal);
+  text-decoration: underline;
+}
+
+code, pre {
+  background-color: var(--color-selected-bg);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-mono);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: var(--spacing-sm);
+}
+
+button {
+  background-color: var(--color-accent-cyan);
+  color: var(--color-bg-primary);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button:hover {
+  background-color: var(--color-accent-teal);
+}
+
+button:active {
+  background-color: var(--color-accent-gold);
+  color: var(--color-bg-primary);
+}
+
+.alert {
+  border-left: 4px solid var(--color-accent-cyan);
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  border-radius: 0.25rem;
+}
+
+.alert-error {
+  border-left-color: var(--color-error);
+  background-color: rgba(255, 83, 69, 0.1);
+}
+
+.alert-warning {
+  border-left-color: var(--color-warning);
+  background-color: rgba(229, 199, 54, 0.1);
+}
+
+.alert-success {
+  border-left-color: var(--color-success);
+  background-color: rgba(84, 158, 106, 0.1);
+}
+
+.alert-info {
+  border-left-color: var(--color-info);
+  background-color: rgba(45, 213, 183, 0.1);
+}
+
+input, textarea, select {
+  background-color: var(--color-selected-bg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-sm);
+  border-radius: 0.25rem;
+  font-family: var(--font-family-sans);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-accent-cyan);
+  box-shadow: 0 0 0 3px rgba(45, 213, 183, 0.1);
+}
+
+/* ========== DARK MODE SUPPORT ========== */
+
+@media (prefers-color-scheme: dark) {
+  /* Already configured for dark mode */
+}
+
+@media (prefers-color-scheme: light) {
+  /* Could add light mode variants if needed */
+  /* :root { --color-bg-primary: ... } */
+}
+
+/* ========== UTILITY CLASSES ========== */
+
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-accent { color: var(--color-accent-cyan); }
+.text-error { color: var(--color-error); }
+.text-success { color: var(--color-success); }
+.text-warning { color: var(--color-warning); }
+.text-info { color: var(--color-info); }
+
+.bg-primary { background-color: var(--color-bg-primary); }
+.bg-selected { background-color: var(--color-selected-bg); }
+.bg-border { background-color: var(--color-border); }
+
+.border { border-color: var(--color-border); }
+.border-accent { border-color: var(--color-accent-cyan); }
+
+.highlight { background-color: var(--color-accent-gold); color: var(--color-bg-primary); }
+
+/* ========== ANIMATIONS ========== */
+
+@keyframes pulse-accent {
+  0%, 100% { color: var(--color-text-primary); }
+  50% { color: var(--color-accent-cyan); }
+}
+
+.animate-pulse {
+  animation: pulse-accent 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
