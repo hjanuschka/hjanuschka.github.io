@@ -1,6 +1,6 @@
 # 2025: The Year I Became a Chromium OWNER
 
-*95+ merged contributions across Chromium, PDFium, and jxl-rs*
+*107+ merged contributions across Chromium, PDFium, and jxl-rs*
 
 ---
 
@@ -8,18 +8,18 @@
 
 | Project | Merged | In Progress |
 |---------|--------|-------------|
-| Chromium | 68 CLs | 10 CLs |
+| Chromium | 72 CLs | 21 CLs |
 | PDFium | 9 CLs | - |
-| jxl-rs | 18 PRs | 4 PRs |
-| **Total** | **95** | **14** |
+| jxl-rs | 26 PRs | 7 PRs |
+| **Total** | **107** | **28** |
 
 ## 2025 Milestones
 
-🎉 **Chromium OWNER** - Earned OWNER status via the Tab Focus feature work. Now able to review and approve changes in that area.
+🎉 **[Chromium OWNER](/chromium-focus-feature.html)** - Earned OWNER status via the Tab Focus feature work. Now able to review and approve changes in that area.
 
-🚀 **JPEG XL Revival** - Part of the team bringing JPEG XL back to Chromium, this time with a Rust decoder. Contributed 18 merged PRs to [jxl-rs](https://github.com/libjxl/jxl-rs) for SIMD optimizations, HDR support, and Chromium integration.
+🚀 **[JPEG XL Revival](/chromium-jxl-resurrection.html)** - Part of the team bringing JPEG XL back to Chromium, this time with a Rust decoder. Contributed 26 merged PRs to [jxl-rs](https://github.com/libjxl/jxl-rs) for SIMD optimizations, HDR support, and Chromium integration.
 
-🔧 **omarchy-chromium Maintainer** - Maintaining a [custom Chromium build](https://github.com/basecamp/omarchy-chromium) for [Omarchy](https://omarchy.basecamp.com/). Provides ARM64 Linux builds not officially supported by Google.
+🔧 **[omarchy-chromium Maintainer](/chromium-omarchy.html)** - Maintaining a [custom Chromium build](https://github.com/basecamp/omarchy-chromium) for [Omarchy](https://omarchy.basecamp.com/). Provides ARM64 Linux builds not officially supported by Google.
 
 ## The Browser Trinity (In Progress)
 
@@ -28,9 +28,9 @@ Working towards contributing to all three major browser engines. Currently porti
 | Browser | Status | Link |
 |---------|--------|------|
 | Firefox | ⏳ First contribution | [D276668](https://phabricator.services.mozilla.com/D276668) |
-| Safari/WebKit | ⏳ First contribution | [#55467](https://github.com/WebKit/WebKit/pull/55467) |
+| Safari/WebKit | ✅ Merged | [#55467](https://github.com/WebKit/WebKit/pull/55467) |
 
-If landed, this completes the trifecta - at least one contribution to each major browser engine.
+One down, one to go for the browser trifecta!
 
 ## Thank You
 
@@ -66,8 +66,18 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Expose Font Service for font enumeration**](https://crrev.com/c/6993029)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**PDFium v2 font matching feature flag**](https://crrev.com/c/7052723)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Separate defer/module script execution**](https://crrev.com/c/6931651)
-- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Geolocation accuracy in DevTools**](https://crrev.com/c/6559109)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**ReportBody.toJSON() use counters**](https://crrev.com/c/7003545)
+
+## DevTools
+
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add accuracy parameter to geolocation emulation**](https://crrev.com/c/6559109)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix unused accuracyError variable in SensorsView**](https://crrev.com/c/6828850)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Enable reversible pretty-print for editable JSON**](https://crrev.com/c/7366856)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Update iframe document URL in Elements panel after document.open()**](https://crrev.com/c/7363995)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Preserve edits and add prefix filtering to console history**](https://crrev.com/c/7363772)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add user-agent-metadata to iOS devices for mobile emulation**](https://crrev.com/c/7362609)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Connect storage checkbox to Emulation.setStorageAccessBlocked CDP**](https://crrev.com/c/7352729)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Fix display of compressed request bodies in Network panel**](https://crrev.com/c/7321564)
 
 ## PDFium
 
@@ -88,28 +98,35 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 
 ## jxl-rs Contributions
 
-18 merged PRs to [libjxl/jxl-rs](https://github.com/libjxl/jxl-rs) - the Rust JPEG XL decoder:
+26 merged PRs to [libjxl/jxl-rs](https://github.com/libjxl/jxl-rs) - the Rust JPEG XL decoder:
 
 **SIMD Optimizations:**
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add SIMD table lookup with shuffle**](https://github.com/libjxl/jxl-rs/pull/585)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add SIMD F32 to U8/U16 conversions**](https://github.com/libjxl/jxl-rs/pull/537)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add SIMD versions of transfer functions**](https://github.com/libjxl/jxl-rs/pull/536)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add SIMD upsampling for 2x, 4x, and 8x**](https://github.com/libjxl/jxl-rs/pull/535)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add min and store_interleaved functions to jxl_simd**](https://github.com/libjxl/jxl-rs/pull/533)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add SIMD noise convolution**](https://github.com/libjxl/jxl-rs/pull/532)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add SIMD chroma upsampling**](https://github.com/libjxl/jxl-rs/pull/530)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add SIMD YCbCr to RGB conversion**](https://github.com/libjxl/jxl-rs/pull/529)
 
 **Performance:**
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add SinglePropertyLookup for table-based routing**](https://github.com/libjxl/jxl-rs/pull/600)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Optimize EPF sigma for modular encoding**](https://github.com/libjxl/jxl-rs/pull/583)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Cache default quantization tables using OnceLock**](https://github.com/libjxl/jxl-rs/pull/581)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Implement flattened modular trees**](https://github.com/libjxl/jxl-rs/pull/538)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Improve weighted predictor cache locality**](https://github.com/libjxl/jxl-rs/pull/526)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Cache natural coefficient orders using OnceLock**](https://github.com/libjxl/jxl-rs/pull/525)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Precompute cosines in spline rendering**](https://github.com/libjxl/jxl-rs/pull/524)
 
 **API & Integration:**
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add premultiply_output option**](https://github.com/libjxl/jxl-rs/pull/574)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add FFI-friendly API for Chromium integration**](https://github.com/libjxl/jxl-rs/pull/556)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Implement remaining decoder API methods**](https://github.com/libjxl/jxl-rs/pull/496)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add preview frame API support**](https://github.com/libjxl/jxl-rs/pull/495)
 
 **Bug Fixes:**
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix rendering bugs introduced in PR #577**](https://github.com/libjxl/jxl-rs/pull/586)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix spline DISTANCE_EXP to match libjxl default**](https://github.com/libjxl/jxl-rs/pull/494)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix rect bounds check for padded images**](https://github.com/libjxl/jxl-rs/pull/493)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Remove zerocopy from production dependencies**](https://github.com/libjxl/jxl-rs/pull/492)
@@ -117,33 +134,49 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 **HDR Support:**
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Implement HDR tone mapping for ICC profile generation**](https://github.com/libjxl/jxl-rs/pull/491)
 
-**CI:**
+**CI & Releases:**
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Bump version to 0.2.2**](https://github.com/libjxl/jxl-rs/pull/594)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Bump version to 0.2.1**](https://github.com/libjxl/jxl-rs/pull/587)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add jxl-perfhistory benchmark CI stage**](https://github.com/libjxl/jxl-rs/pull/540)
 
 **Open PRs:**
-- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> [**Add premultiply_output option**](https://github.com/libjxl/jxl-rs/pull/574)
-- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> [**Add SIMD chroma upsampling**](https://github.com/libjxl/jxl-rs/pull/530)
-- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> [**Add WebAssembly decoder with browser demo**](https://github.com/libjxl/jxl-rs/pull/509)
-- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> [**Add ISO 21496-1 gain map support**](https://github.com/libjxl/jxl-rs/pull/504)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add i16 sample type support for modular decoding**](https://github.com/libjxl/jxl-rs/pull/601)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add jbrd box support for JPEG reconstruction**](https://github.com/libjxl/jxl-rs/pull/590)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add --data-type CLI option and output format tests**](https://github.com/libjxl/jxl-rs/pull/588)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add fast paths for FlipVertical, FlipHorizontal, and Rotate180**](https://github.com/libjxl/jxl-rs/pull/582)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add SIMD optimization for int_to_float conversion**](https://github.com/libjxl/jxl-rs/pull/580)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add WebAssembly decoder with browser demo**](https://github.com/libjxl/jxl-rs/pull/509)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add ISO 21496-1 gain map support**](https://github.com/libjxl/jxl-rs/pull/504)
 
 ## Chromium CLs In Progress
 
 Active CLs currently under review:
 
 **JPEG XL:**
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.2.1 => 0.2.2**](https://crrev.com/c/7313560)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.2.0 => 0.2.1**](https://crrev.com/c/7300607)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.1.5 => 0.2.0**](https://crrev.com/c/7296289)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add JXL infrastructure: enums and build flag**](https://crrev.com/c/7320482)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add jxl-rs to third_party**](https://crrev.com/c/7201443)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Integrate jxl-rs into Blink**](https://crrev.com/c/7184969)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add JXL image decoder using jxl-rs**](https://crrev.com/c/7319379)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Wire up JXL decoder**](https://crrev.com/c/7184969)
 
 **Web Platform / Network:**
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add user-select: none to button, meter, progress, select**](https://crrev.com/c/7231959)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add Request.isReloadNavigation attribute**](https://crrev.com/c/7137783)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Preserve MIME type in URL parser**](https://crrev.com/c/7135039)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Preserve %2E encoding in URL paths**](https://crrev.com/c/7054663)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Allow data: URL redirects in manual mode**](https://crrev.com/c/7131545)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Complete HTTPS-RR support**](https://crrev.com/c/6938248)
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Fix document.activeElement stuck after programmatic iframe focus**](https://crrev.com/c/7073877)
 
 **Accessibility:**
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Always return kForm for native form elements**](https://crrev.com/c/7257274)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Expose named forms as ATK_ROLE_LANDMARK**](https://crrev.com/c/7232474)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Fix crash on profile-dependent flags**](https://crrev.com/c/7186763)
+
+**Linux/Ozone:**
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Pass DRM modifiers for Y/UV planes in NativePixmapEGLBinding**](https://crrev.com/c/7265225)
 
 **Extensions:**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add theme.getCurrent() WebExtensions API**](https://crrev.com/c/6927310)

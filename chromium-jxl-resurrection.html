@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2025-12-19",
+    "dateModified": "2026-01-01",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -598,6 +598,16 @@
       height: 100%;
     }
 
+    /* Gravatar in nav */
+    .gravatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
     /* Status indicator */
     .status {
       display: inline-block;
@@ -637,6 +647,100 @@
       border-radius: 12px;
       border: 1px solid var(--border);
       font-size: 11px;
+    }
+
+    /* Command Palette */
+    .command-palette {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+    .command-palette.hidden { display: none; }
+    .command-palette-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+    .command-palette-modal {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 20px;
+      background: var(--bg-light);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent);
+      overflow: hidden;
+    }
+    .command-palette-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .command-palette-header .prompt {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .command-palette-header input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+    }
+    .command-palette-header input::placeholder { color: var(--text-dim); }
+    .command-palette-header kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-results {
+      list-style: none;
+      max-height: 320px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 8px;
+    }
+    .command-result {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+    .command-result:hover, .command-result.selected {
+      background: var(--bg-lighter);
+    }
+    .command-result .icon { font-size: 16px; }
+    .command-result .name { flex: 1; color: var(--text); }
+    .command-palette-footer {
+      display: flex;
+      gap: 20px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-palette-footer kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 5px;
+      margin-right: 4px;
     }
 
     /* Mobile Responsive */
@@ -680,6 +784,10 @@
     <div class="container">
       <div class="nav-content">
         <div class="nav-brand">
+          <img src="https://gravatar.com/avatar/7f3d8f25d208327860bdfebf145e481b?s=64"
+               alt="Helmut Januschka"
+               class="gravatar"
+               width="32" height="32">
           <span class="status"></span>
           hjanuschka@world
         </div>
@@ -736,20 +844,163 @@
   <article class="container">
     <div class="blog-content">
 <p><em>How JPEG XL went from &quot;obsolete&quot; to the future of web images - and the honor of being part of its comeback</em></p>
+<p><strong>Status:</strong> 🚧 In active development — jxl-rs landed in Chromium, Blink integration under review</p>
 <div class="youtube-embed">
   <iframe src="https://www.youtube.com/embed/zVkX4bP6qSo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
-<h2>Live Demo: JXL Animation</h2>
-<p>Here&#39;s a live example of JXL animation support - the implementation shown in the video above. No browser currently supports JXL animations natively, so this uses a WASM polyfill:</p>
+<h2>The Story</h2>
+<p>In October 2022, Google removed JPEG XL from Chromium, citing &quot;insufficient ecosystem interest.&quot;</p>
+<p>In November 2025, Chrome&#39;s Architecture Tech Leads announced: <em>&quot;We would welcome contributions to integrate a performant and memory-safe JPEG XL decoder in Chromium.&quot;</em></p>
+<p><strong>What changed?</strong></p>
+<ul>
+<li><strong>Safari shipped JPEG XL</strong> — Apple implemented the format</li>
+<li><strong>Firefox updated their position</strong> — Mozilla signaled support pending a Rust decoder</li>
+<li><strong>PDF standardization</strong> — JPEG XL designated as the preferred format for HDR in PDF</li>
+<li><strong>Developer demand</strong> — Bug upvotes, Interop proposals, and survey data</li>
+</ul>
+<h2>Why JPEG XL?</h2>
+<ul>
+<li><strong>30-50% better compression</strong> than JPEG at equivalent quality</li>
+<li><strong>Lossless JPEG transcoding</strong> with ~20% size reduction</li>
+<li><strong>Progressive decoding</strong> — images load incrementally</li>
+<li><strong>Modern capabilities</strong> — HDR, wide gamut, alpha, animations</li>
+<li><strong>Cross-browser momentum</strong> — Safari ships it, Firefox is working on it</li>
+</ul>
+<h2>Implementation</h2>
+<h3>Phase 1: C++ (Abandoned)</h3>
+<p>Initial approach used libjxl in C++. Feature complete with animation support, but feedback requested Rust for memory safety.</p>
+<p><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7170439"><strong>CL 7170439</strong></a> — C++ implementation (superseded by Rust)</p>
+<h3>Phase 2: Rust (Current)</h3>
+<p>Pivoted to <a href="https://github.com/libjxl/jxl-rs">jxl-rs</a>, a pure Rust decoder. Memory-safe and aligned with Chromium&#39;s direction.</p>
+<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7201443"><strong>CL 7201443</strong></a> — Add jxl-rs to third_party (73,908 lines)</p>
+<p><strong>Blink integration (3 CLs):</strong></p>
+<ol>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7320482"><strong>CL 7320482</strong></a> — Add JXL infrastructure: enums and build flag</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7319379"><strong>CL 7319379</strong></a> — Add JXL image decoder using jxl-rs</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7184969"><strong>CL 7184969</strong></a> — Wire up JXL decoder</li>
+</ol>
+<p>The Rust decoder required significant optimization. The jxl-rs community merged <strong>26 PRs</strong> in December 2025:</p>
+<table>
+<thead>
+<tr>
+<th>Image</th>
+<th>Before</th>
+<th>After</th>
+<th>C++ libjxl</th>
+<th>Speedup</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bike (2048×2560)</td>
+<td>265ms</td>
+<td>198ms</td>
+<td>170ms</td>
+<td><strong>+34%</strong></td>
+</tr>
+<tr>
+<td>progressive (4064×2704)</td>
+<td>694ms</td>
+<td>560ms</td>
+<td>450ms</td>
+<td><strong>+24%</strong></td>
+</tr>
+<tr>
+<td>blendmodes (1024×1024)</td>
+<td>115ms</td>
+<td>85ms</td>
+<td>266ms</td>
+<td><strong>+35%</strong></td>
+</tr>
+</tbody></table>
+<details><summary style="cursor: pointer; color: var(--accent); font-weight: bold;">View all jxl-rs contributions (26 PRs) →</summary>
+
+<p><strong>SIMD Optimizations:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/585">#585</a> SIMD table lookup with shuffle</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/537">#537</a> SIMD F32 to U8/U16 conversions</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/536">#536</a> SIMD transfer functions</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/535">#535</a> SIMD upsampling (2x, 4x, 8x)</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/533">#533</a> SIMD min and store_interleaved</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/532">#532</a> SIMD noise convolution</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/530">#530</a> SIMD chroma upsampling</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/529">#529</a> SIMD YCbCr to RGB</li>
+</ul>
+<p><strong>Performance:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/600">#600</a> SinglePropertyLookup for table-based routing</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/583">#583</a> Optimize EPF sigma for modular encoding</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/581">#581</a> Cache default quantization tables</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/538">#538</a> Flattened modular trees</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/526">#526</a> Weighted predictor cache locality</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/525">#525</a> Cache natural coefficient orders</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/524">#524</a> Precompute cosines in spline rendering</li>
+</ul>
+<p><strong>API &amp; Integration:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/594">#594</a> Bump version to 0.2.2</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/587">#587</a> Bump version to 0.2.1</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/586">#586</a> Fix rendering bugs</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/574">#574</a> Add premultiply_output option</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/556">#556</a> FFI-friendly API for Chromium</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/540">#540</a> Benchmark CI stage</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/496">#496</a> Remaining decoder API methods</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/495">#495</a> Preview frame API</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/494">#494</a> Fix spline DISTANCE_EXP</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/493">#493</a> Fix rect bounds check</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/492">#492</a> Remove zerocopy dependency</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/491">#491</a> HDR tone mapping</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/533">#533</a> Add min and store_interleaved</li>
+</ul>
+</details>
+
+<h2>Current Status</h2>
+<p>✅ Standard image decoding<br>✅ ICC color profiles<br>✅ Animations (multi-frame)<br>✅ Alpha/transparency<br>✅ Wide gamut (Display-P3)<br>✅ HDR support (PQ/HLG)</p>
+<p><strong>Chromium rolls:</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7313560">Roll jxl 0.2.1 → 0.2.2</a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7300607">Roll jxl 0.2.0 → 0.2.1</a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7296289">Roll jxl 0.1.5 → 0.2.0</a></li>
+</ul>
+<hr>
+<h2>Use JPEG XL Today</h2>
+<p>Don&#39;t want to wait? The <a href="https://github.com/hjanuschka/jxl-rs-polyfill">jxl-rs-polyfill</a> brings JPEG XL to all browsers now.</p>
+<p><strong>One line of code:</strong></p>
+<pre><code class="language-html">&lt;script src=&quot;https://cdn.jsdelivr.net/npm/jxl-rs-polyfill/dist/auto.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>That&#39;s it. All <code>.jxl</code> images work everywhere.</p>
+<ul>
+<li><strong>Auto-detection</strong> — skips polyfill in Safari 17+ (native support)</li>
+<li><strong>Zero config</strong> — just include the script</li>
+<li><strong>Full coverage</strong> — <code>&lt;img&gt;</code>, CSS backgrounds, <code>&lt;picture&gt;</code>, SVG</li>
+<li><strong>~540KB gzipped</strong> — compact WASM module</li>
+</ul>
+<details><summary style="cursor: pointer; color: var(--accent); font-weight: bold;">More usage examples →</summary>
+
+<p><strong>NPM:</strong></p>
+<pre><code class="language-bash">npm install jxl-rs-polyfill</code></pre>
+
+<pre><code class="language-javascript">import { JXLPolyfill } from 'jxl-rs-polyfill';
+const polyfill = new JXLPolyfill();
+await polyfill.start();</code></pre>
+
+<p><strong>Programmatic decoding:</strong></p>
+<pre><code class="language-javascript">import { decodeJxlToPng } from 'jxl-rs-polyfill';
+const pngBytes = await decodeJxlToPng(jxlBytes);</code></pre>
+
+</details>
+
+<p>→ <a href="https://github.com/hjanuschka/jxl-rs-polyfill">GitHub: jxl-rs-polyfill</a></p>
+<hr>
+<h2>Live Demo</h2>
+<p>JXL animation support — no browser supports JXL animations natively yet, so this uses the WASM polyfill:</p>
 <div style="text-align: center; margin: 20px 0;">
-  <img id="jxl-demo" src="/anim-icos.jxl" alt="Animated JXL Demo" width="128" height="128" style="margin: 20px auto; display: block;" />
+  <img id="jxl-demo" src="/anim-icos.jxl" alt="Animated JXL Demo" width="128" height="128" style="width: 128px; height: 128px; margin: 20px auto; display: block; filter: blur(8px); transition: filter 0.3s ease;" />
   <button id="force-polyfill-btn" style="display: none; padding: 10px 20px; background: var(--accent, #f59e0b); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-top: 10px;">
     Force Polyfill (See Animation)
   </button>
   <p id="polyfill-status" style="font-size: 12px; color: var(--text-muted, #666); margin-top: 10px;"></p>
 </div>
-<script type="module" src="/jxl-polyfill/polyfill.js"></script>
 <script type="module">
   import { JXLPolyfill } from '/jxl-polyfill/polyfill.js';
 
@@ -757,218 +1008,74 @@
   const status = document.getElementById('polyfill-status');
   const img = document.getElementById('jxl-demo');
 
-  // Check for native JXL support
   async function checkNativeJXLSupport() {
-    const jxlData = 'data:image/jxl;base64,/woIELASCAgQAFzgBzgBPAk=';
     return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
-      img.src = jxlData;
+      const testImg = new Image();
+      testImg.onload = () => resolve(true);
+      testImg.onerror = () => resolve(false);
+      testImg.src = 'data:image/jxl;base64,/woIELASCAgQAFzgBzgBPAk=';
       setTimeout(() => resolve(false), 100);
     });
   }
 
-  // Only show button if native support exists (but animations won't work)
-  checkNativeJXLSupport().then(hasNativeSupport => {
-    if (hasNativeSupport) {
-      btn.style.display = 'inline-block';
-      status.textContent = 'Your browser has native JXL support, but animations aren\'t supported yet. Click the button to see the animation via WASM polyfill.';
-    } else {
-      status.textContent = 'Using WASM polyfill for JXL support - animation should play automatically.';
-    }
-  });
+  const hasNativeSupport = await checkNativeJXLSupport();
+  if (hasNativeSupport) {
+    img.style.filter = 'none';
+    btn.style.display = 'inline-block';
+    status.textContent = 'Your browser has native JXL support (static only). Click to see WASM polyfill.';
+  } else {
+    status.textContent = 'Using WASM polyfill.';
+    const polyfill = new JXLPolyfill();
+    await polyfill.init();
+    await polyfill.processImage(img);
+    img.style.filter = 'none';
+  }
 
   btn.addEventListener('click', async () => {
     btn.disabled = true;
-    btn.textContent = 'Loading polyfill...';
-    status.textContent = 'Forcing polyfill to show animation...';
-
-    // Force polyfill usage
-    const polyfill = new JXLPolyfill({
-      verbose: true,
-      forcePolyfill: true
-    });
+    btn.textContent = 'Loading...';
+    img.style.filter = 'blur(8px)';
+    const polyfill = new JXLPolyfill({ forcePolyfill: true });
     await polyfill.init();
     await polyfill.processImage(img);
-
+    img.style.filter = 'none';
     btn.textContent = 'Polyfill Active';
-    status.textContent = 'Using WASM decoder - animation should now play!';
   });
 </script>
 
-<h2>Background</h2>
-<p>In October 2022, Google removed JPEG XL from Chromium, citing &quot;insufficient ecosystem interest.&quot; In November 2025, Chrome&#39;s Architecture Tech Leads announced: &quot;We would welcome contributions to integrate a performant and memory-safe JPEG XL decoder in Chromium.&quot;</p>
-<h2>What Changed</h2>
-<p>Rick Byers&#39; announcement on behalf of Chrome ATLs outlined the ecosystem developments:</p>
-<ul>
-<li><strong>Safari shipped JPEG XL support</strong> - Apple implemented the format</li>
-<li><strong>Firefox updated their position</strong> - Mozilla signaled support pending a Rust decoder</li>
-<li><strong>PDF standardization</strong> - JPEG XL designated as the preferred format for HDR content in PDF</li>
-<li><strong>Developer interest</strong> - Bug upvotes, Interop proposals, and survey data indicated demand</li>
-</ul>
-<p>The ecosystem evolved between 2022 and 2025.</p>
-<h2>JPEG XL Features</h2>
-<p>JPEG XL offers several technical improvements over existing formats:</p>
-<ul>
-<li><strong>30-50% better compression</strong> than JPEG at equivalent quality</li>
-<li><strong>Lossless JPEG transcoding</strong> with ~20% size reduction</li>
-<li><strong>Progressive decoding</strong> - images load incrementally</li>
-<li><strong>Modern capabilities</strong> - HDR, wide gamut, alpha channels, and animations</li>
-<li><strong>Browser support</strong> - Safari has implemented it, Firefox is working on it, and it&#39;s part of the PDF specification</li>
-</ul>
-<h2>Implementation Approach</h2>
-<p>Following Rick&#39;s announcement, the implementation work began.</p>
-<h3>Phase 1: C++ Implementation</h3>
-<p>The initial approach used the reference implementation - libjxl in C++. Using the previous Chromium JPEG XL code as a blueprint, the implementation was updated to the latest spec:</p>
-<p><a href="https://crrev.com/c/7170439"><strong>CL 7170439</strong></a> <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> - Full implementation with animation support</p>
-<pre><code class="language-cpp">// Integrated libjxl decoder with Blink&#39;s image pipeline
-class JXLImageDecoder : public ImageDecoder {
-  // Handle standard decoding
-  void Decode(const uint8_t* data, size_t length);
-
-  // Animation support
-  size_t FrameCount() const override;
-  cc::ImageHeaderMetadata MakeMetadataForDecodeAcceleration() const override;
-};
-</code></pre>
-<p>Status: Feature complete, <a href="https://youtu.be/zVkX4bP6qSo">demo video here</a>.</p>
-<p>The feedback requested using Rust for memory safety.</p>
-<h3>Phase 2: Rust Implementation</h3>
-<p>Chromium is moving toward memory-safe code. The pivot to jxl-rs, a pure Rust JPEG XL decoder, aligned with this direction.</p>
-<p><a href="https://crrev.com/c/7201443"><strong>CL 7201443</strong></a> <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> - Add jxl-rs to third_party (73,908 lines!)</p>
-<p><a href="https://crrev.com/c/7184969"><strong>CL 7184969</strong></a> <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> - Rust-based Blink integration (122 comments, 50+ patchsets)</p>
-<pre><code class="language-rust">// Memory-safe decoder via CXX bindings
-pub fn decode_jxl(data: &amp;[u8]) -&gt; Result&lt;DecodedImage&gt; {
-    let decoder = JxlDecoder::builder()
-        .build()?;
-    decoder.decode_to_image(data)
-}
-</code></pre>
-<p>The Rust decoder required significant performance optimization. The jxl-rs community has been working furiously - <strong>18 PRs merged</strong> in December 2025 alone:</p>
-<p><strong>SIMD Optimizations:</strong></p>
-<ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/537"><strong>SIMD F32 to U8/U16 conversions</strong></a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/536"><strong>SIMD transfer functions</strong></a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/535"><strong>SIMD upsampling (2x, 4x, 8x)</strong></a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/532"><strong>SIMD noise convolution</strong></a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/529"><strong>SIMD YCbCr to RGB conversion</strong></a></li>
-</ul>
-<p><strong>Performance:</strong></p>
-<ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/538"><strong>Flattened modular trees</strong></a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/526"><strong>Weighted predictor cache locality</strong></a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/525"><strong>Cache natural coefficient orders</strong></a></li>
-</ul>
-<p><strong>API &amp; Integration:</strong></p>
-<ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/556"><strong>FFI-friendly API for Chromium integration</strong></a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/491"><strong>HDR tone mapping for ICC profiles</strong></a></li>
-</ul>
-<p><strong>In Progress:</strong></p>
-<ul>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/509"><strong>WASM polyfill for browsers without native support</strong></a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/504"><strong>ISO 21496-1 gain map support (HDR)</strong></a></li>
-</ul>
-<p>These optimizations have dramatically improved decode performance:</p>
-<table>
-<thead>
-<tr>
-<th>Image</th>
-<th>Size</th>
-<th>Before PR #506</th>
-<th>After PR #506</th>
-<th>C++ libjxl</th>
-<th>Speedup</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>bike</td>
-<td>2048×2560</td>
-<td>265ms</td>
-<td>198ms</td>
-<td>170ms</td>
-<td><strong>+34%</strong></td>
-</tr>
-<tr>
-<td>progressive</td>
-<td>4064×2704</td>
-<td>694ms</td>
-<td>560ms</td>
-<td>450ms</td>
-<td><strong>+24%</strong></td>
-</tr>
-<tr>
-<td>blendmodes</td>
-<td>1024×1024</td>
-<td>115ms</td>
-<td>85ms</td>
-<td>266ms</td>
-<td><strong>+35%</strong></td>
-</tr>
-</tbody></table>
-<p>The gap narrowed from 56% slower to near-parity with C++. <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/509"><strong>WebAssembly-based polyfill</strong></a> provides support for browsers without native JXL.</p>
-<p><strong>December 2025 Update:</strong> jxl-rs has been rolled to version 0.1.5 in Chromium (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7267207"><strong>Roll jxl-rs 0.1.4 → 0.1.5</strong></a>), incorporating the latest performance improvements.</p>
-<h2>Current Status</h2>
-<p>The implementation includes:</p>
-<p>✅ <strong>Standard image decoding</strong> - JPEG XL images render correctly<br>✅ <strong>ICC color profiles</strong> - Proper color management<br>✅ <strong>Animations</strong> - Multi-frame JXL support<br>✅ <strong>Alpha/transparency</strong> - Full alpha channel support<br>✅ <strong>Wide gamut</strong> - Display-P3 and other color spaces<br>✅ <strong>HDR support</strong> - PQ/HLG transfer functions (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/491"><strong>HDR tone mapping</strong></a>)</p>
-<h2>Requirements for Shipping</h2>
-<p>Chrome&#39;s requirements:</p>
-<ol>
-<li><strong>Performant decoder</strong> - Performance optimizations are ongoing</li>
-<li><strong>Memory-safe implementation</strong> - Rust provides memory safety</li>
-<li><strong>Long-term maintenance</strong> - The jxl-rs community is active</li>
-</ol>
-<h2>Format Diversity</h2>
-<p>Different image formats serve different needs:</p>
-<ul>
-<li><strong>WebP</strong> - General-purpose replacement for JPEG/PNG</li>
-<li><strong>AVIF</strong> - Photo compression with AV1-based encoding</li>
-<li><strong>JPEG XL</strong> - Lossless JPEG transcoding, progressive decode, animations, HDR</li>
-</ul>
-<p>Having multiple format options allows developers to choose based on their specific requirements.</p>
-<h2>Acknowledgments</h2>
-<p>Special thanks to <a href="https://github.com/veluca93">Luca Versari (veluca93)</a> for reviewing and merging upstream PRs and managing jxl-rs releases. The collaboration and responsiveness from the jxl-rs maintainers has been instrumental in making this implementation possible. (Fun fact: I now have exactly 1 Telegram contact.)</p>
-<h2>Implementation Details</h2>
-<p><strong>Status:</strong> 🚧 In active development - jxl-rs landed in third_party, Blink integration under review</p>
-<ul>
-<li><p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7201443"><strong>Add jxl-rs to third_party</strong></a> (73,908 lines)</p>
-</li>
-<li><p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7267207"><strong>Roll jxl-rs 0.1.4 → 0.1.5</strong></a></p>
-</li>
-<li><p><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7184969"><strong>Integrate jxl-rs into Blink</strong></a> (122 comments)</p>
-</li>
-<li><p><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7170439"><strong>C++ Implementation</strong></a> (superseded by Rust)</p>
-</li>
-<li><p>Tracking Bug: <a href="https://issues.chromium.org/issues/462919304">462919304</a></p>
-</li>
-<li><p>Design Document: <a href="https://docs.google.com/document/d/1oT7K2h4Xf4E0ScUmsOQx0zXUVJj57qBwcsa3yK9SJr0/edit?tab=t.0">JPEG XL in Chromium</a></p>
-</li>
-</ul>
-<p><strong>Upstream Work:</strong></p>
-<ul>
-<li><a href="https://github.com/libjxl/jxl-rs">jxl-rs repository</a></li>
-<li><a href="https://github.com/libjxl/jxl-rs/pulls?q=is%3Apr+author%3Ahjanuschka">All my jxl-rs PRs</a> (18 merged)</li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/509"><strong>WASM polyfill</strong></a></li>
-</ul>
-<p><strong>Demo:</strong></p>
-<ul>
-<li><a href="https://youtu.be/zVkX4bP6qSo">JXL Animation Support Video</a></li>
-</ul>
 <hr>
-<p><strong>Links:</strong></p>
+<h2>Acknowledgments</h2>
+<p>Special thanks to <a href="https://github.com/veluca93">Luca Versari (veluca93)</a> for reviewing PRs and managing jxl-rs releases. The collaboration from jxl-rs maintainers made this possible.</p>
+<hr>
+<p><strong>Resources:</strong></p>
 <ul>
 <li><a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/WjCKcBw219k/m/tdJGfuLQAAAJ">Rick Byers&#39; Announcement</a></li>
-<li><a href="https://crrev.com/c/7201443">CL 7201443</a> - Add jxl-rs to third_party <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span></li>
-<li><a href="https://crrev.com/c/7184969">CL 7184969</a> - Blink integration <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span></li>
-<li><a href="https://github.com/libjxl/jxl-rs">jxl-rs Repository</a></li>
-<li><a href="https://github.com/libjxl/jxl-rs/pulls?q=is%3Apr+author%3Ahjanuschka">My jxl-rs PRs</a> (18 merged)</li>
-<li><a href="https://www.heise.de/en/news/U-turn-Google-wants-to-bring-JPEG-XL-back-to-Chrome-11089880.html">Heise News Coverage</a></li>
-<li><a href="https://devclass.com/2025/11/24/googles-chromium-team-decides-it-will-add-jpeg-xl-support-reverses-obsolete-declaration/">DevClass Coverage</a></li>
-<li><a href="https://github.com/hjanuschka">My GitHub</a></li>
+<li><a href="https://issues.chromium.org/issues/462919304">Tracking Bug: 462919304</a></li>
+<li><a href="https://docs.google.com/document/d/1oT7K2h4Xf4E0ScUmsOQx0zXUVJj57qBwcsa3yK9SJr0/edit?tab=t.0">Design Document</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs">jxl-rs Repository</a> | <a href="https://github.com/libjxl/jxl-rs/pulls?q=is%3Apr+author%3Ahjanuschka">My PRs (23 merged)</a></li>
+<li><a href="https://github.com/hjanuschka/jxl-rs-polyfill">jxl-rs-polyfill</a></li>
+<li>Press: <a href="https://www.heise.de/en/news/U-turn-Google-wants-to-bring-JPEG-XL-back-to-Chrome-11089880.html">Heise</a> | <a href="https://devclass.com/2025/11/24/googles-chromium-team-decides-it-will-add-jpeg-xl-support-reverses-obsolete-declaration/">DevClass</a></li>
 </ul>
     </div>
   </article>
+
+  <!-- Command Palette -->
+  <div id="commandPalette" class="command-palette hidden">
+    <div class="command-palette-backdrop"></div>
+    <div class="command-palette-modal">
+      <div class="command-palette-header">
+        <span class="prompt">❯</span>
+        <input type="text" id="commandInput" placeholder="Type a command..." autocomplete="off">
+        <kbd>ESC</kbd>
+      </div>
+      <ul id="commandResults" class="command-results"></ul>
+      <div class="command-palette-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer class="footer">
@@ -1022,6 +1129,114 @@ pub fn decode_jxl(data: &amp;[u8]) -&gt; Result&lt;DecodedImage&gt; {
     if (savedTheme && savedTheme !== 'matte-black') {
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
+
+    // Command Palette
+    const palette = document.getElementById('commandPalette');
+    const paletteInput = document.getElementById('commandInput');
+    const paletteResults = document.getElementById('commandResults');
+    let selectedIndex = 0;
+
+    const commands = [
+      { icon: '🏠', name: 'Go to Home', keywords: ['home', 'top', 'start'], action: () => window.location.href = '/' },
+      { icon: '👤', name: 'Go to About', keywords: ['about', 'bio', 'me'], action: () => window.location.href = '/#about' },
+      { icon: '💼', name: 'Go to Experience', keywords: ['experience', 'work', 'career'], action: () => window.location.href = '/#experience' },
+      { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => window.location.href = '/#projects' },
+      { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => window.location.href = '/#blog' },
+      { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => window.location.href = '/#contact' },
+      { icon: '🎨', name: 'Theme: Matte Black', keywords: ['theme', 'matte', 'black', 'dark'], action: () => { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme', 'matte-black'); } },
+      { icon: '🌿', name: 'Theme: Osaka Jade', keywords: ['theme', 'osaka', 'jade', 'green'], action: () => { document.documentElement.setAttribute('data-theme', 'osaka-jade'); localStorage.setItem('theme', 'osaka-jade'); } },
+      { icon: '🌙', name: 'Theme: Purple Moon', keywords: ['theme', 'purple', 'moon'], action: () => { document.documentElement.setAttribute('data-theme', 'purple-moon'); localStorage.setItem('theme', 'purple-moon'); } },
+      { icon: '💙', name: 'Theme: GitHub Blue', keywords: ['theme', 'github', 'blue'], action: () => { document.documentElement.setAttribute('data-theme', 'blue'); localStorage.setItem('theme', 'blue'); } },
+      { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
+      { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
+      { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
+      { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+    ];
+
+    function openPalette() {
+      palette.classList.remove('hidden');
+      paletteInput.value = '';
+      selectedIndex = 0;
+      renderResults(commands);
+      setTimeout(() => paletteInput.focus(), 10);
+    }
+
+    function closePalette() {
+      palette.classList.add('hidden');
+      paletteInput.value = '';
+    }
+
+    function filterCommands(query) {
+      if (!query) return commands;
+      const q = query.toLowerCase();
+      return commands.filter(cmd =>
+        cmd.name.toLowerCase().includes(q) ||
+        cmd.keywords.some(k => k.includes(q))
+      );
+    }
+
+    function renderResults(results) {
+      paletteResults.innerHTML = results.map((cmd, i) =>
+        '<li class="command-result' + (i === selectedIndex ? ' selected' : '') + '" data-index="' + i + '">' +
+          '<span class="icon">' + cmd.icon + '</span>' +
+          '<span class="name">' + cmd.name + '</span>' +
+        '</li>'
+      ).join('');
+    }
+
+    function executeCommand(results) {
+      if (results[selectedIndex]) {
+        results[selectedIndex].action();
+        closePalette();
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+      if (e.key === 'Escape' && !palette.classList.contains('hidden')) {
+        closePalette();
+      }
+    });
+
+    paletteInput.addEventListener('input', function() {
+      const results = filterCommands(this.value);
+      selectedIndex = 0;
+      renderResults(results);
+    });
+
+    paletteInput.addEventListener('keydown', function(e) {
+      const results = filterCommands(this.value);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+        renderResults(results);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        renderResults(results);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        executeCommand(results);
+      }
+    });
+
+    paletteResults.addEventListener('click', function(e) {
+      const item = e.target.closest('.command-result');
+      if (item) {
+        selectedIndex = parseInt(item.dataset.index);
+        executeCommand(filterCommands(paletteInput.value));
+      }
+    });
+
+    palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
 
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

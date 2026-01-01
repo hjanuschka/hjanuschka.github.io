@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2025 Chromium Contributions Wrap-Up - Helmut Januschka</title>
-  <meta name="description" content="95+ merged contributions across Chromium, PDFium, and jxl-rs">
+  <meta name="description" content="107+ merged contributions across Chromium, PDFium, and jxl-rs">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -12,7 +12,7 @@
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "2025 Chromium Contributions Wrap-Up",
-    "description": "95+ merged contributions across Chromium, PDFium, and jxl-rs",
+    "description": "107+ merged contributions across Chromium, PDFium, and jxl-rs",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2025-12-19",
+    "dateModified": "2026-01-01",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -47,7 +47,7 @@
   
   <!-- Open Graph -->
   <meta property="og:title" content="2025 Chromium Contributions Wrap-Up">
-  <meta property="og:description" content="95+ merged contributions across Chromium, PDFium, and jxl-rs">
+  <meta property="og:description" content="107+ merged contributions across Chromium, PDFium, and jxl-rs">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/2025-chromium-contributions.html">
   <meta property="og:site_name" content="Helmut Januschka">
@@ -57,7 +57,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
   <meta name="twitter:title" content="2025 Chromium Contributions Wrap-Up">
-  <meta name="twitter:description" content="95+ merged contributions across Chromium, PDFium, and jxl-rs">
+  <meta name="twitter:description" content="107+ merged contributions across Chromium, PDFium, and jxl-rs">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -598,6 +598,16 @@
       height: 100%;
     }
 
+    /* Gravatar in nav */
+    .gravatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
     /* Status indicator */
     .status {
       display: inline-block;
@@ -637,6 +647,100 @@
       border-radius: 12px;
       border: 1px solid var(--border);
       font-size: 11px;
+    }
+
+    /* Command Palette */
+    .command-palette {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+    .command-palette.hidden { display: none; }
+    .command-palette-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+    .command-palette-modal {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 20px;
+      background: var(--bg-light);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent);
+      overflow: hidden;
+    }
+    .command-palette-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .command-palette-header .prompt {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .command-palette-header input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+    }
+    .command-palette-header input::placeholder { color: var(--text-dim); }
+    .command-palette-header kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-results {
+      list-style: none;
+      max-height: 320px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 8px;
+    }
+    .command-result {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+    .command-result:hover, .command-result.selected {
+      background: var(--bg-lighter);
+    }
+    .command-result .icon { font-size: 16px; }
+    .command-result .name { flex: 1; color: var(--text); }
+    .command-palette-footer {
+      display: flex;
+      gap: 20px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-palette-footer kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 5px;
+      margin-right: 4px;
     }
 
     /* Mobile Responsive */
@@ -680,6 +784,10 @@
     <div class="container">
       <div class="nav-content">
         <div class="nav-brand">
+          <img src="https://gravatar.com/avatar/7f3d8f25d208327860bdfebf145e481b?s=64"
+               alt="Helmut Januschka"
+               class="gravatar"
+               width="32" height="32">
           <span class="status"></span>
           hjanuschka@world
         </div>
@@ -736,7 +844,7 @@
   <article class="container">
     <div class="blog-content">
 <h1>2025: The Year I Became a Chromium OWNER</h1>
-<p><em>95+ merged contributions across Chromium, PDFium, and jxl-rs</em></p>
+<p><em>107+ merged contributions across Chromium, PDFium, and jxl-rs</em></p>
 <hr>
 <h2>By the Numbers</h2>
 <table>
@@ -749,8 +857,8 @@
 </thead>
 <tbody><tr>
 <td>Chromium</td>
-<td>68 CLs</td>
-<td>10 CLs</td>
+<td>72 CLs</td>
+<td>21 CLs</td>
 </tr>
 <tr>
 <td>PDFium</td>
@@ -759,19 +867,19 @@
 </tr>
 <tr>
 <td>jxl-rs</td>
-<td>18 PRs</td>
-<td>4 PRs</td>
+<td>26 PRs</td>
+<td>7 PRs</td>
 </tr>
 <tr>
 <td><strong>Total</strong></td>
-<td><strong>95</strong></td>
-<td><strong>14</strong></td>
+<td><strong>107</strong></td>
+<td><strong>28</strong></td>
 </tr>
 </tbody></table>
 <h2>2025 Milestones</h2>
-<p>🎉 <strong>Chromium OWNER</strong> - Earned OWNER status via the Tab Focus feature work. Now able to review and approve changes in that area.</p>
-<p>🚀 <strong>JPEG XL Revival</strong> - Part of the team bringing JPEG XL back to Chromium, this time with a Rust decoder. Contributed 18 merged PRs to <a href="https://github.com/libjxl/jxl-rs">jxl-rs</a> for SIMD optimizations, HDR support, and Chromium integration.</p>
-<p>🔧 <strong>omarchy-chromium Maintainer</strong> - Maintaining a <a href="https://github.com/basecamp/omarchy-chromium">custom Chromium build</a> for <a href="https://omarchy.basecamp.com/">Omarchy</a>. Provides ARM64 Linux builds not officially supported by Google.</p>
+<p>🎉 <strong><a href="/chromium-focus-feature.html">Chromium OWNER</a></strong> - Earned OWNER status via the Tab Focus feature work. Now able to review and approve changes in that area.</p>
+<p>🚀 <strong><a href="/chromium-jxl-resurrection.html">JPEG XL Revival</a></strong> - Part of the team bringing JPEG XL back to Chromium, this time with a Rust decoder. Contributed 26 merged PRs to <a href="https://github.com/libjxl/jxl-rs">jxl-rs</a> for SIMD optimizations, HDR support, and Chromium integration.</p>
+<p>🔧 <strong><a href="/chromium-omarchy.html">omarchy-chromium Maintainer</a></strong> - Maintaining a <a href="https://github.com/basecamp/omarchy-chromium">custom Chromium build</a> for <a href="https://omarchy.basecamp.com/">Omarchy</a>. Provides ARM64 Linux builds not officially supported by Google.</p>
 <h2>The Browser Trinity (In Progress)</h2>
 <p>Working towards contributing to all three major browser engines. Currently porting Resource Timing Level 3 (interim response timestamps for HTTP 103 Early Hints) to Firefox and Safari:</p>
 <table>
@@ -789,11 +897,11 @@
 </tr>
 <tr>
 <td>Safari/WebKit</td>
-<td>⏳ First contribution</td>
+<td>✅ Merged</td>
 <td><a href="https://github.com/WebKit/WebKit/pull/55467">#55467</a></td>
 </tr>
 </tbody></table>
-<p>If landed, this completes the trifecta - at least one contribution to each major browser engine.</p>
+<p>One down, one to go for the browser trifecta!</p>
 <h2>Thank You</h2>
 <ul>
 <li><strong><a href="https://github.com/yoavweiss">Yoav Weiss</a></strong> - for being an incredible mentor, answering endless questions, finding the right reviewers, pointing me to the right mailing lists, and all the guidance that goes way beyond code</li>
@@ -843,8 +951,18 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6993029"><strong>Expose Font Service for font enumeration</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7052723"><strong>PDFium v2 font matching feature flag</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6931651"><strong>Separate defer/module script execution</strong></a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6559109"><strong>Geolocation accuracy in DevTools</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7003545"><strong>ReportBody.toJSON() use counters</strong></a></li>
+</ul>
+<h2>DevTools</h2>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6559109"><strong>Add accuracy parameter to geolocation emulation</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6828850"><strong>Fix unused accuracyError variable in SensorsView</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7366856"><strong>Enable reversible pretty-print for editable JSON</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7363995"><strong>Update iframe document URL in Elements panel after document.open()</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7363772"><strong>Preserve edits and add prefix filtering to console history</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7362609"><strong>Add user-agent-metadata to iOS devices for mobile emulation</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7352729"><strong>Connect storage checkbox to Emulation.setStorageAccessBlocked CDP</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7321564"><strong>Fix display of compressed request bodies in Network panel</strong></a></li>
 </ul>
 <h2>PDFium</h2>
 <p>9 merged CLs to PDFium in 2025:</p>
@@ -864,18 +982,23 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/132350"><strong>Fix undo counting for cut operations</strong></a></li>
 </ul>
 <h2>jxl-rs Contributions</h2>
-<p>18 merged PRs to <a href="https://github.com/libjxl/jxl-rs">libjxl/jxl-rs</a> - the Rust JPEG XL decoder:</p>
+<p>26 merged PRs to <a href="https://github.com/libjxl/jxl-rs">libjxl/jxl-rs</a> - the Rust JPEG XL decoder:</p>
 <p><strong>SIMD Optimizations:</strong></p>
 <ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/585"><strong>Add SIMD table lookup with shuffle</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/537"><strong>Add SIMD F32 to U8/U16 conversions</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/536"><strong>Add SIMD versions of transfer functions</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/535"><strong>Add SIMD upsampling for 2x, 4x, and 8x</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/533"><strong>Add min and store_interleaved functions to jxl_simd</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/532"><strong>Add SIMD noise convolution</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/530"><strong>Add SIMD chroma upsampling</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/529"><strong>Add SIMD YCbCr to RGB conversion</strong></a></li>
 </ul>
 <p><strong>Performance:</strong></p>
 <ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/600"><strong>Add SinglePropertyLookup for table-based routing</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/583"><strong>Optimize EPF sigma for modular encoding</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/581"><strong>Cache default quantization tables using OnceLock</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/538"><strong>Implement flattened modular trees</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/526"><strong>Improve weighted predictor cache locality</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/525"><strong>Cache natural coefficient orders using OnceLock</strong></a></li>
@@ -883,12 +1006,14 @@
 </ul>
 <p><strong>API &amp; Integration:</strong></p>
 <ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/574"><strong>Add premultiply_output option</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/556"><strong>Add FFI-friendly API for Chromium integration</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/496"><strong>Implement remaining decoder API methods</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/495"><strong>Add preview frame API support</strong></a></li>
 </ul>
 <p><strong>Bug Fixes:</strong></p>
 <ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/586"><strong>Fix rendering bugs introduced in PR #577</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/494"><strong>Fix spline DISTANCE_EXP to match libjxl default</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/493"><strong>Fix rect bounds check for padded images</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/492"><strong>Remove zerocopy from production dependencies</strong></a></li>
@@ -897,36 +1022,53 @@
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/491"><strong>Implement HDR tone mapping for ICC profile generation</strong></a></li>
 </ul>
-<p><strong>CI:</strong></p>
+<p><strong>CI &amp; Releases:</strong></p>
 <ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/594"><strong>Bump version to 0.2.2</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/587"><strong>Bump version to 0.2.1</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/540"><strong>Add jxl-perfhistory benchmark CI stage</strong></a></li>
 </ul>
 <p><strong>Open PRs:</strong></p>
 <ul>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/574"><strong>Add premultiply_output option</strong></a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/530"><strong>Add SIMD chroma upsampling</strong></a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/509"><strong>Add WebAssembly decoder with browser demo</strong></a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://github.com/libjxl/jxl-rs/pull/504"><strong>Add ISO 21496-1 gain map support</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/601"><strong>Add i16 sample type support for modular decoding</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/590"><strong>Add jbrd box support for JPEG reconstruction</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/588"><strong>Add --data-type CLI option and output format tests</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/582"><strong>Add fast paths for FlipVertical, FlipHorizontal, and Rotate180</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/580"><strong>Add SIMD optimization for int_to_float conversion</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/509"><strong>Add WebAssembly decoder with browser demo</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/504"><strong>Add ISO 21496-1 gain map support</strong></a></li>
 </ul>
 <h2>Chromium CLs In Progress</h2>
 <p>Active CLs currently under review:</p>
 <p><strong>JPEG XL:</strong></p>
 <ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7313560"><strong>Roll jxl: 0.2.1 =&gt; 0.2.2</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7300607"><strong>Roll jxl: 0.2.0 =&gt; 0.2.1</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7296289"><strong>Roll jxl: 0.1.5 =&gt; 0.2.0</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7320482"><strong>Add JXL infrastructure: enums and build flag</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7201443"><strong>Add jxl-rs to third_party</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7184969"><strong>Integrate jxl-rs into Blink</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7319379"><strong>Add JXL image decoder using jxl-rs</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7184969"><strong>Wire up JXL decoder</strong></a></li>
 </ul>
 <p><strong>Web Platform / Network:</strong></p>
 <ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7231959"><strong>Add user-select: none to button, meter, progress, select</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7137783"><strong>Add Request.isReloadNavigation attribute</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7135039"><strong>Preserve MIME type in URL parser</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7054663"><strong>Preserve %2E encoding in URL paths</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7131545"><strong>Allow data: URL redirects in manual mode</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/6938248"><strong>Complete HTTPS-RR support</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7073877"><strong>Fix document.activeElement stuck after programmatic iframe focus</strong></a></li>
 </ul>
 <p><strong>Accessibility:</strong></p>
 <ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7257274"><strong>Always return kForm for native form elements</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7232474"><strong>Expose named forms as ATK_ROLE_LANDMARK</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7186763"><strong>Fix crash on profile-dependent flags</strong></a></li>
+</ul>
+<p><strong>Linux/Ozone:</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7265225"><strong>Pass DRM modifiers for Y/UV planes in NativePixmapEGLBinding</strong></a></li>
 </ul>
 <p><strong>Extensions:</strong></p>
 <ul>
@@ -967,6 +1109,24 @@
 </tbody></table>
     </div>
   </article>
+
+  <!-- Command Palette -->
+  <div id="commandPalette" class="command-palette hidden">
+    <div class="command-palette-backdrop"></div>
+    <div class="command-palette-modal">
+      <div class="command-palette-header">
+        <span class="prompt">❯</span>
+        <input type="text" id="commandInput" placeholder="Type a command..." autocomplete="off">
+        <kbd>ESC</kbd>
+      </div>
+      <ul id="commandResults" class="command-results"></ul>
+      <div class="command-palette-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer class="footer">
@@ -1020,6 +1180,114 @@
     if (savedTheme && savedTheme !== 'matte-black') {
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
+
+    // Command Palette
+    const palette = document.getElementById('commandPalette');
+    const paletteInput = document.getElementById('commandInput');
+    const paletteResults = document.getElementById('commandResults');
+    let selectedIndex = 0;
+
+    const commands = [
+      { icon: '🏠', name: 'Go to Home', keywords: ['home', 'top', 'start'], action: () => window.location.href = '/' },
+      { icon: '👤', name: 'Go to About', keywords: ['about', 'bio', 'me'], action: () => window.location.href = '/#about' },
+      { icon: '💼', name: 'Go to Experience', keywords: ['experience', 'work', 'career'], action: () => window.location.href = '/#experience' },
+      { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => window.location.href = '/#projects' },
+      { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => window.location.href = '/#blog' },
+      { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => window.location.href = '/#contact' },
+      { icon: '🎨', name: 'Theme: Matte Black', keywords: ['theme', 'matte', 'black', 'dark'], action: () => { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme', 'matte-black'); } },
+      { icon: '🌿', name: 'Theme: Osaka Jade', keywords: ['theme', 'osaka', 'jade', 'green'], action: () => { document.documentElement.setAttribute('data-theme', 'osaka-jade'); localStorage.setItem('theme', 'osaka-jade'); } },
+      { icon: '🌙', name: 'Theme: Purple Moon', keywords: ['theme', 'purple', 'moon'], action: () => { document.documentElement.setAttribute('data-theme', 'purple-moon'); localStorage.setItem('theme', 'purple-moon'); } },
+      { icon: '💙', name: 'Theme: GitHub Blue', keywords: ['theme', 'github', 'blue'], action: () => { document.documentElement.setAttribute('data-theme', 'blue'); localStorage.setItem('theme', 'blue'); } },
+      { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
+      { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
+      { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
+      { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+    ];
+
+    function openPalette() {
+      palette.classList.remove('hidden');
+      paletteInput.value = '';
+      selectedIndex = 0;
+      renderResults(commands);
+      setTimeout(() => paletteInput.focus(), 10);
+    }
+
+    function closePalette() {
+      palette.classList.add('hidden');
+      paletteInput.value = '';
+    }
+
+    function filterCommands(query) {
+      if (!query) return commands;
+      const q = query.toLowerCase();
+      return commands.filter(cmd =>
+        cmd.name.toLowerCase().includes(q) ||
+        cmd.keywords.some(k => k.includes(q))
+      );
+    }
+
+    function renderResults(results) {
+      paletteResults.innerHTML = results.map((cmd, i) =>
+        '<li class="command-result' + (i === selectedIndex ? ' selected' : '') + '" data-index="' + i + '">' +
+          '<span class="icon">' + cmd.icon + '</span>' +
+          '<span class="name">' + cmd.name + '</span>' +
+        '</li>'
+      ).join('');
+    }
+
+    function executeCommand(results) {
+      if (results[selectedIndex]) {
+        results[selectedIndex].action();
+        closePalette();
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+      if (e.key === 'Escape' && !palette.classList.contains('hidden')) {
+        closePalette();
+      }
+    });
+
+    paletteInput.addEventListener('input', function() {
+      const results = filterCommands(this.value);
+      selectedIndex = 0;
+      renderResults(results);
+    });
+
+    paletteInput.addEventListener('keydown', function(e) {
+      const results = filterCommands(this.value);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+        renderResults(results);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        renderResults(results);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        executeCommand(results);
+      }
+    });
+
+    paletteResults.addEventListener('click', function(e) {
+      const item = e.target.closest('.command-result');
+      if (item) {
+        selectedIndex = parseInt(item.dataset.index);
+        executeCommand(filterCommands(paletteInput.value));
+      }
+    });
+
+    palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
 
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
