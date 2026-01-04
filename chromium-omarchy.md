@@ -1,3 +1,9 @@
+---
+title: "Dynamic Chrome Themes: Building DHH's Vision for Omarchy"
+category: "Chromium"
+tech: "C++"
+---
+
 *How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming*
 
 ## 🎉 Update: September 14, 2025 - MERGED & LANDED! A Better Way Through Managed Policies

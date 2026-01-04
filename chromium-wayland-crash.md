@@ -1,3 +1,9 @@
+---
+title: "Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours"
+category: "Chromium"
+tech: "C++ / Wayland"
+---
+
 *When Chrome crashes, the community debugs - a story of open source collaboration*
 
 **Update 16.10.2025:** ✅ Fix landed and merged to Chromium main branch

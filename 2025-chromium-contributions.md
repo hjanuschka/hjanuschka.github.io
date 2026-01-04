@@ -1,3 +1,9 @@
+---
+title: "2025 Chromium Contributions Wrap-Up"
+category: "Chromium"
+tech: "C++ / Rust"
+---
+
 # 2025: The Year I Became a Chromium OWNER
 
 *107+ merged contributions across Chromium, PDFium, and jxl-rs*

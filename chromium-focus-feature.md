@@ -1,3 +1,9 @@
+---
+title: "From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature"
+category: "Chromium"
+tech: "C++"
+---
+
 *How a Twitter conversation led to adding a major new feature to Chromium*
 
 **Update 16.10.2025:** ✅ Feature landed in Chromium main branch (Chrome 143)

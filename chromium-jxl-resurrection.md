@@ -1,3 +1,9 @@
+---
+title: "JPEG XL Returns to Chrome: From Obsolete to the Future"
+category: "Chromium"
+tech: "Rust / C++"
+---
+
 *How JPEG XL went from "obsolete" to the future of web images - and the honor of being part of its comeback*
 
 **Status:** 🚧 In active development — jxl-rs landed in Chromium, Blink integration under review

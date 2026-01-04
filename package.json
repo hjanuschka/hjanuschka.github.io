@@ -21,6 +21,7 @@
     "playwright": "^1.53.0"
   },
   "devDependencies": {
+    "js-yaml": "^4.1.1",
     "marked": "^16.2.0",
     "prism-themes": "^1.9.0",
     "prismjs": "^1.30.0"
