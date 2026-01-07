@@ -6,7 +6,7 @@ tech: "C++ / Rust"
 
 # 2025: The Year I Became a Chromium OWNER
 
-*107+ merged contributions across Chromium, PDFium, and jxl-rs*
+*110+ merged contributions across Chromium, PDFium, and jxl-rs*
 
 ---
 
@@ -14,29 +14,30 @@ tech: "C++ / Rust"
 
 | Project | Merged | In Progress |
 |---------|--------|-------------|
-| Chromium | 72 CLs | 21 CLs |
+| Chromium | 73 CLs | 20 CLs |
 | PDFium | 9 CLs | - |
-| jxl-rs | 26 PRs | 7 PRs |
-| **Total** | **107** | **28** |
+| jxl-rs | 28 PRs | 5 PRs |
+| **Total** | **110** | **25** |
 
 ## 2025 Milestones
 
 🎉 **[Chromium OWNER](/chromium-focus-feature.html)** - Earned OWNER status via the Tab Focus feature work. Now able to review and approve changes in that area.
 
-🚀 **[JPEG XL Revival](/chromium-jxl-resurrection.html)** - Part of the team bringing JPEG XL back to Chromium, this time with a Rust decoder. Contributed 26 merged PRs to [jxl-rs](https://github.com/libjxl/jxl-rs) for SIMD optimizations, HDR support, and Chromium integration.
+🚀 **[JPEG XL Revival](/chromium-jxl-resurrection.html)** - Part of the team bringing JPEG XL back to Chromium, this time with a Rust decoder. Contributed 28 merged PRs to [jxl-rs](https://github.com/libjxl/jxl-rs) for SIMD optimizations, HDR support, and Chromium integration.
 
 🔧 **[omarchy-chromium Maintainer](/chromium-omarchy.html)** - Maintaining a [custom Chromium build](https://github.com/basecamp/omarchy-chromium) for [Omarchy](https://omarchy.basecamp.com/). Provides ARM64 Linux builds not officially supported by Google.
 
-## The Browser Trinity (In Progress)
+## The Browser Trinity ✅
 
-Working towards contributing to all three major browser engines. Currently porting Resource Timing Level 3 (interim response timestamps for HTTP 103 Early Hints) to Firefox and Safari:
+Contributing to all three major browser engines! Ported Resource Timing Level 3 (interim response timestamps for HTTP 103 Early Hints) across the board:
 
 | Browser | Status | Link |
 |---------|--------|------|
-| Firefox | ⏳ First contribution | [D276668](https://phabricator.services.mozilla.com/D276668) |
+| Chromium | ✅ Merged | [crrev.com/c/6900896](https://crrev.com/c/6900896) |
+| Firefox | ✅ Landed | [D276668](https://phabricator.services.mozilla.com/D276668) |
 | Safari/WebKit | ✅ Merged | [#55467](https://github.com/WebKit/WebKit/pull/55467) |
 
-One down, one to go for the browser trifecta!
+🎉 Browser trifecta complete!
 
 ## Thank You
 
@@ -81,7 +82,7 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Enable reversible pretty-print for editable JSON**](https://crrev.com/c/7366856)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Update iframe document URL in Elements panel after document.open()**](https://crrev.com/c/7363995)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Preserve edits and add prefix filtering to console history**](https://crrev.com/c/7363772)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add user-agent-metadata to iOS devices for mobile emulation**](https://crrev.com/c/7362609)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add user-agent-metadata to iOS devices for mobile emulation**](https://crrev.com/c/7362609)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Connect storage checkbox to Emulation.setStorageAccessBlocked CDP**](https://crrev.com/c/7352729)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Fix display of compressed request bodies in Network panel**](https://crrev.com/c/7321564)
 
@@ -148,8 +149,6 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 **Open PRs:**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add i16 sample type support for modular decoding**](https://github.com/libjxl/jxl-rs/pull/601)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add jbrd box support for JPEG reconstruction**](https://github.com/libjxl/jxl-rs/pull/590)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add --data-type CLI option and output format tests**](https://github.com/libjxl/jxl-rs/pull/588)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add fast paths for FlipVertical, FlipHorizontal, and Rotate180**](https://github.com/libjxl/jxl-rs/pull/582)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add SIMD optimization for int_to_float conversion**](https://github.com/libjxl/jxl-rs/pull/580)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add WebAssembly decoder with browser demo**](https://github.com/libjxl/jxl-rs/pull/509)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add ISO 21496-1 gain map support**](https://github.com/libjxl/jxl-rs/pull/504)
@@ -194,6 +193,14 @@ Active CLs currently under review:
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Move PseudoTcp to remoting/protocol**](https://crrev.com/c/6760418)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Refactor StartupBrowserCreator for readability**](https://crrev.com/c/7052622)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Replace WTF::NotNullTag with base::NotNullTag**](https://crrev.com/c/6632732)
+
+---
+
+## Other Open Source
+
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add tui.alternate_screen config and --no-alt-screen CLI flag for Zellij scrollback**](https://github.com/openai/codex/pull/8555) - OpenAI Codex
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add plan mode for safe code analysis**](https://github.com/badlogic/pi-mono/pull/416) - Pi Coding Agent
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add configurable keybindings system**](https://github.com/badlogic/pi-mono/pull/405) - Pi Coding Agent
 
 ---
 
