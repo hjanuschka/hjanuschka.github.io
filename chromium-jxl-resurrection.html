@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-01-08",
+    "dateModified": "2026-01-13",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -846,7 +846,13 @@
   <article class="container">
     <div class="blog-content">
 <p><em>How JPEG XL went from &quot;obsolete&quot; to the future of web images - and the honor of being part of its comeback</em></p>
-<p><strong>Status:</strong> 🚧 In active development — jxl-rs landed in Chromium, Blink integration under review</p>
+<p><strong>Status:</strong> ✅ <strong>LANDED</strong> — JPEG XL is now supported in Chromium Canary 145.0.7632.0+!</p>
+<div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid #22c55e; border-radius: 12px;">
+  <h3 style="color: #22c55e; margin: 0 0 10px 0;">🎉 MISSION ACCOMPLISHED</h3>
+  <p style="margin: 0;">JPEG XL has officially returned to Chromium.</p>
+  <p style="font-size: 13px; opacity: 0.8; margin-top: 5px;">Enabled by default in Canary 145.0.7632.0+</p>
+</div>
+
 <div class="youtube-embed">
   <iframe src="https://www.youtube.com/embed/zVkX4bP6qSo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
@@ -876,11 +882,11 @@
 <h3>Phase 2: Rust (Current)</h3>
 <p>Pivoted to <a href="https://github.com/libjxl/jxl-rs">jxl-rs</a>, a pure Rust decoder. Memory-safe and aligned with Chromium&#39;s direction.</p>
 <p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7201443"><strong>CL 7201443</strong></a> — Add jxl-rs to third_party (73,908 lines)</p>
-<p><strong>Blink integration (3 CLs):</strong></p>
+<p><strong>Blink integration:</strong></p>
 <ol>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7320482"><strong>CL 7320482</strong></a> — Add JXL infrastructure: enums and build flag</li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7319379"><strong>CL 7319379</strong></a> — Add JXL image decoder using jxl-rs</li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7184969"><strong>CL 7184969</strong></a> — Wire up JXL decoder</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7319379"><strong>CL 7319379</strong></a> — Add JXL image decoder using jxl-rs</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7184969"><strong>CL 7184969</strong></a> — Wire up JXL decoder (The final piece!)</li>
 </ol>
 <p>The Rust decoder required significant optimization. The jxl-rs community merged <strong>26 PRs</strong> in December 2025:</p>
 <table>
@@ -960,7 +966,7 @@
 <p>✅ Standard image decoding<br>✅ ICC color profiles<br>✅ Animations (multi-frame)<br>✅ Alpha/transparency<br>✅ Wide gamut (Display-P3)<br>✅ HDR support (PQ/HLG)</p>
 <p><strong>Chromium rolls:</strong></p>
 <ul>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7313560">Roll jxl 0.2.1 → 0.2.2</a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7313560">Roll jxl 0.2.1 → 0.2.2</a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7300607">Roll jxl 0.2.0 → 0.2.1</a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7296289">Roll jxl 0.1.5 → 0.2.0</a></li>
 </ul>

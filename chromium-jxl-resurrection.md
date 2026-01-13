@@ -6,7 +6,13 @@ tech: "Rust / C++"
 
 *How JPEG XL went from "obsolete" to the future of web images - and the honor of being part of its comeback*
 
-**Status:** 🚧 In active development — jxl-rs landed in Chromium, Blink integration under review
+**Status:** ✅ **LANDED** — JPEG XL is now supported in Chromium Canary 145.0.7632.0+!
+
+<div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid #22c55e; border-radius: 12px;">
+  <h3 style="color: #22c55e; margin: 0 0 10px 0;">🎉 MISSION ACCOMPLISHED</h3>
+  <p style="margin: 0;">JPEG XL has officially returned to Chromium.</p>
+  <p style="font-size: 13px; opacity: 0.8; margin-top: 5px;">Enabled by default in Canary 145.0.7632.0+</p>
+</div>
 
 ```snippet
 <div class="youtube-embed">
@@ -48,10 +54,10 @@ Pivoted to [jxl-rs](https://github.com/libjxl/jxl-rs), a pure Rust decoder. Memo
 
 <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7201443**](https://crrev.com/c/7201443) — Add jxl-rs to third_party (73,908 lines)
 
-**Blink integration (3 CLs):**
+**Blink integration:**
 1. <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7320482**](https://crrev.com/c/7320482) — Add JXL infrastructure: enums and build flag
-2. <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**CL 7319379**](https://crrev.com/c/7319379) — Add JXL image decoder using jxl-rs
-3. <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**CL 7184969**](https://crrev.com/c/7184969) — Wire up JXL decoder
+2. <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7319379**](https://crrev.com/c/7319379) — Add JXL image decoder using jxl-rs
+3. <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7184969**](https://crrev.com/c/7184969) — Wire up JXL decoder (The final piece!)
 
 The Rust decoder required significant optimization. The jxl-rs community merged **26 PRs** in December 2025:
 
@@ -112,7 +118,7 @@ The Rust decoder required significant optimization. The jxl-rs community merged 
 ✅ HDR support (PQ/HLG)
 
 **Chromium rolls:**
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [Roll jxl 0.2.1 → 0.2.2](https://crrev.com/c/7313560)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [Roll jxl 0.2.1 → 0.2.2](https://crrev.com/c/7313560)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [Roll jxl 0.2.0 → 0.2.1](https://crrev.com/c/7300607)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [Roll jxl 0.1.5 → 0.2.0](https://crrev.com/c/7296289)
 
