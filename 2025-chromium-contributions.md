@@ -6,7 +6,7 @@ tech: "C++ / Rust"
 
 # 2025: The Year I Became a Chromium OWNER
 
-*110+ merged contributions across Chromium, PDFium, and jxl-rs*
+*115+ merged contributions across Chromium, PDFium, and jxl-rs*
 
 ---
 
@@ -14,10 +14,10 @@ tech: "C++ / Rust"
 
 | Project | Merged | In Progress |
 |---------|--------|-------------|
-| Chromium | 73 CLs | 20 CLs |
+| Chromium | 78 CLs | 15 CLs |
 | PDFium | 9 CLs | - |
 | jxl-rs | 28 PRs | 5 PRs |
-| **Total** | **110** | **25** |
+| **Total** | **115** | **20** |
 
 ## 2025 Milestones
 
@@ -79,8 +79,8 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add accuracy parameter to geolocation emulation**](https://crrev.com/c/6559109)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix unused accuracyError variable in SensorsView**](https://crrev.com/c/6828850)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Enable reversible pretty-print for editable JSON**](https://crrev.com/c/7366856)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Update iframe document URL in Elements panel after document.open()**](https://crrev.com/c/7363995)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Enable reversible pretty-print for editable JSON**](https://crrev.com/c/7366856)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Update iframe document URL in Elements panel after document.open()**](https://crrev.com/c/7363995)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Preserve edits and add prefix filtering to console history**](https://crrev.com/c/7363772)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add user-agent-metadata to iOS devices for mobile emulation**](https://crrev.com/c/7362609)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Connect storage checkbox to Emulation.setStorageAccessBlocked CDP**](https://crrev.com/c/7352729)
@@ -160,8 +160,8 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.1.5 => 0.2.0**](https://crrev.com/c/7296289)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.2.0 => 0.2.1**](https://crrev.com/c/7300607)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Roll jxl: 0.2.1 => 0.2.2**](https://crrev.com/c/7313560)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add JXL image decoder using jxl-rs**](https://crrev.com/c/7319379)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Wire up JXL decoder**](https://crrev.com/c/7184969)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add JXL image decoder using jxl-rs**](https://crrev.com/c/7319379)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Wire up JXL decoder**](https://crrev.com/c/7184969)
 
 ## Chromium CLs In Progress
 
@@ -170,7 +170,7 @@ Active CLs currently under review:
 **Web Platform / Network:**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add user-select: none to button, meter, progress, select**](https://crrev.com/c/7231959)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add Request.isReloadNavigation attribute**](https://crrev.com/c/7137783)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Preserve MIME type in URL parser**](https://crrev.com/c/7135039)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Preserve MIME type in URL parser**](https://crrev.com/c/7135039)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Preserve %2E encoding in URL paths**](https://crrev.com/c/7054663)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Allow data: URL redirects in manual mode**](https://crrev.com/c/7131545)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Complete HTTPS-RR support**](https://crrev.com/c/6938248)
@@ -178,7 +178,7 @@ Active CLs currently under review:
 
 **Accessibility:**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Always return kForm for native form elements**](https://crrev.com/c/7257274)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Expose named forms as ATK_ROLE_LANDMARK**](https://crrev.com/c/7232474)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Expose named forms as ATK_ROLE_LANDMARK**](https://crrev.com/c/7232474)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Fix crash on profile-dependent flags**](https://crrev.com/c/7186763)
 
 **Linux/Ozone:**
@@ -198,7 +198,7 @@ Active CLs currently under review:
 
 ## Other Open Source
 
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add tui.alternate_screen config and --no-alt-screen CLI flag for Zellij scrollback**](https://github.com/openai/codex/pull/8555) - OpenAI Codex
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add tui.alternate_screen config and --no-alt-screen CLI flag for Zellij scrollback**](https://github.com/openai/codex/pull/8555) - OpenAI Codex
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add plan mode for safe code analysis**](https://github.com/badlogic/pi-mono/pull/416) - Pi Coding Agent
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add configurable keybindings system**](https://github.com/badlogic/pi-mono/pull/405) - Pi Coding Agent
 
