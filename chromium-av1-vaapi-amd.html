@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Chrome Themes: Building DHH's Vision for Omarchy - Helmut Januschka</title>
-  <meta name="description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <title>Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management - Helmut Januschka</title>
+  <meta name="description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Dynamic Chrome Themes: Building DHH's Vision for Omarchy",
-    "description": "How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming",
+    "headline": "Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management",
+    "description": "When the GPU crashes encoding a keyframe, you know youre in for a wild ride",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-omarchy.html"
+      "@id": "https://januschka.com/chromium-av1-vaapi-amd.html"
     },
-    "keywords": "Chromium, C++, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / VA-API / Video Encoding, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-omarchy.html"
+      "target": "https://januschka.com/chromium-av1-vaapi-amd.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta property="og:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta property="og:title" content="Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management">
+  <meta property="og:description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-omarchy.html">
+  <meta property="og:url" content="https://januschka.com/chromium-av1-vaapi-amd.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta name="twitter:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta name="twitter:title" content="Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management">
+  <meta name="twitter:description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -833,10 +833,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Dynamic Chrome Themes: Building DHH's Vision for Omarchy</h1>
+      <h1 class="blog-title">Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++</span>
+        <span>🔧 C++ / VA-API / Video Encoding</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -845,268 +845,110 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming</em></p>
-<h2>🎉 Update: September 14, 2025 - MERGED &amp; LANDED! A Better Way Through Managed Policies</h2>
-<h3>The Golden Nugget Discovery</h3>
-<p>Google initially rejected our CLI approach, but working closely with friends at Brave, a crucial insight emerged: <strong>Chrome&#39;s managed policies could set theme colors!</strong> This was a game-changer - policies are an officially supported Chrome feature used by enterprises worldwide.</p>
-<p>However, there was a catch: applying policies took 5+ seconds to take effect. This wasn&#39;t the instant response Omarchy users expected.</p>
-<h3>Making It Instant</h3>
-<p>I dug deeper into Chrome&#39;s policy system and discovered we could add a new flag:</p>
-<pre><code class="language-sh"># Instantly refresh and apply platform policies
-chromium --refresh-platform-policy
-</code></pre>
-<p>This flag forces Chrome to immediately reload and apply managed policies without the usual delay. The implications go far beyond just theming - it enables instant policy updates for any managed Chrome setting!</p>
-<h3>The Implementation Journey</h3>
-<p>After much discussion and collaboration with Chrome&#39;s policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>--refresh-platform-policy flag</strong></a>) adds:</p>
-<pre><code class="language-cpp">// chrome/common/chrome_switches.cc
-const char kRefreshPlatformPolicy[] = &quot;refresh-platform-policy&quot;;
-
-// chrome/browser/ui/startup/startup_browser_creator.cc
-// Trigger immediate policy refresh when Chrome is already running
-if (command_line.HasSwitch(switches::kRefreshPlatformPolicy)) {
-  g_browser_process-&gt;browser_policy_connector()-&gt;RefreshPlatformPolicies();
-  // Return early to prevent opening a new browser window
-  return;
+<p><em>When the GPU crashes encoding a keyframe, you know you&#39;re in for a wild ride</em></p>
+<p><strong>Status:</strong> 🚧 In Review</p>
+<h2>The Problem</h2>
+<p>AV1 hardware video encoding on AMD GPUs with Mesa drivers has been broken in Chromium for a long time. The GPU process crashes (exit code 8) when initializing the AV1 VA-API encoder - not during complex operations, but right at the start when encoding a simple keyframe.</p>
+<p>The crash affected anyone trying to use hardware-accelerated AV1 encoding for WebRTC video calls on AMD Linux systems. Users had to fall back to software encoding (libaom), which hammers the CPU during video calls.</p>
+<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/471780477">471780477</a><br><strong>CL</strong>: <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7380014"><strong>Fix AV1 VA-API encoder crash on AMD/Mesa</strong></a></p>
+<h2>The Investigation</h2>
+<p>The root cause was subtle: AMD&#39;s stateless AV1 encoder driver is sensitive to the DPB (Decoded Picture Buffer) state and may access reference frame slots even when encoding a keyframe - where you&#39;d normally expect no references to be needed.</p>
+<p>This is a quirk of how AMD/Mesa implements the VA-API encoder interface. Intel&#39;s drivers are more forgiving, but Mesa&#39;s implementation expects the DPB to be properly initialized from frame zero.</p>
+<h2>The Fix (That Took 21 Patchsets)</h2>
+<p>This wasn&#39;t a simple one-liner. The fix evolved through 21 patchsets with extensive community testing from a user with an AMD RX 7900 GRE running Nextcloud Talk.</p>
+<h3>Key Changes</h3>
+<p><strong>1. DPB Initialization for Keyframes</strong></p>
+<p>For AMD/Mesa, we now properly initialize all reference frame slots even for keyframes:</p>
+<pre><code class="language-cpp">// AMD/Mesa is sensitive to DPB state - initialize all slots
+// to the reconstruct surface for keyframes
+if (is_amd_mesa_driver_) {
+  for (size_t i = 0; i &lt; kAV1NumRefFrames; ++i) {
+    pic_param.ref_frame_idx[i] = reconstruct_surface_id;
+  }
 }
 </code></pre>
-<p>The beauty of this implementation is its simplicity - just a few lines of code that unlock powerful functionality!</p>
-<h3>Official Chrome Release</h3>
-<p>This change has landed and will be released in <strong>Chrome Stable 142</strong>! This means:</p>
+<p><strong>2. Smart Default Handling for Bitrate/Framerate</strong></p>
+<p>WebRTC sometimes sends zero bitrate/framerate during initialization when the actual values aren&#39;t known yet. Instead of enforcing arbitrary minimums, we now treat zero as &quot;use sensible defaults&quot;:</p>
 <ul>
-<li>Official support for instant policy updates</li>
-<li>No more waiting for policy refresh intervals</li>
-<li>Works with any managed policy, not just themes</li>
+<li>Framerate defaults to <code>VideoEncodeAccelerator::kDefaultFramerate</code> (30fps)</li>
+<li>Bitrate defaults to 100 kbps</li>
+<li>Explicitly requested low values are respected</li>
 </ul>
-<h3>Omarchy&#39;s Lightning-Fast Integration</h3>
-<p>I quickly assembled <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/basecamp/omarchy/pull/1251"><strong>Omarchy theme integration</strong></a> that integrates the new flag with JSON policy updates. Here&#39;s how it works in practice:</p>
-<pre><code class="language-sh"># Set theme via managed policy (Linux example)
-sudo mkdir -p /etc/chromium/policies/managed
-echo &#39;{
-  &quot;BrowserThemeColor&quot;: &quot;#ff6b35&quot;
-}&#39; | sudo tee /etc/chromium/policies/managed/theme.json
-
-# Instantly apply to running Chrome instances
-chromium --refresh-platform-policy --no-startup-window
+<p>This allows WebRTC to signal &quot;encoder&#39;s choice&quot; while still supporting explicit low-bitrate WebCodecs configurations.</p>
+<p><strong>3. Resolution Change Handling</strong></p>
+<p>The fix tracks resolution changes and handles the warm-up period that AMD drivers need after a resolution switch in WebRTC streams.</p>
+<h2>The Testing Journey</h2>
+<p>The real heroes here are the community testers. One user (<a href="mailto:sv...@gmail.com">sv...@gmail.com</a>) provided extraordinary feedback across 50+ issue comments, testing each patchset iteration:</p>
+<p><strong>Early Patchsets (1-12)</strong>: GPU crashes with <code>amdgpu ring vcn_unified_0 timeout</code><br><strong>Patchset 13</strong>: No crashes, but severe visual artifacts and &quot;smearing&quot;<br><strong>Patchset 14</strong>: Better, but Simulcast mode still broken<br><strong>Patchsets 15-20</strong>: Iterating on reviewer feedback about integer types, comments, default value handling<br><strong>Patchset 21</strong>: <strong>Success!</strong> - Both single stream and Simulcast working perfectly</p>
+<p>From the tester&#39;s final report:</p>
+<blockquote>
+<p>&quot;I tested it both in single stream and simulcast and it hasn&#39;t crashed, shown any artifacts or smearing. Even ramping up and down with resolution and bitrate doesn&#39;t cause any problem anymore! It seems perfectly stable in my environment.&quot;</p>
+</blockquote>
+<p>After days of production testing in real video calls:</p>
+<blockquote>
+<p>&quot;After some days of using the feature IN PRODUCTION, it works perfectly (no issue so far).&quot;</p>
+</blockquote>
+<h2>The Technical Deep Dive</h2>
+<h3>Why DPB Matters</h3>
+<p>The Decoded Picture Buffer holds reference frames that the encoder uses for inter-frame prediction. Even for a keyframe (I-frame), where you&#39;re not referencing previous frames for encoding, the VA-API driver on AMD/Mesa still validates the DPB structure.</p>
+<p>When the DPB slots contain invalid surface IDs, the VCN (Video Core Next) firmware on AMD GPUs times out and triggers a full GPU reset:</p>
+<pre><code>amdgpu: ring vcn_unified_0 timeout, signaled seq=605909, emitted seq=605912
+amdgpu: GPU reset begin!
+[drm] VRAM is lost due to GPU reset!
 </code></pre>
-<p>For macOS users:</p>
-<pre><code class="language-sh"># Create policy directory
-sudo mkdir -p /Library/Managed\ Preferences/com.google.Chrome
-
-# Set theme color policy
-sudo defaults write /Library/Managed\ Preferences/com.google.Chrome BrowserThemeColor -string &quot;#ff6b35&quot;
-
-# Apply instantly
-open -a &quot;Google Chrome&quot; --args --refresh-platform-policy --no-startup-window
+<h3>The OBU Structure Issue</h3>
+<p>AV1 uses OBUs (Open Bitstream Units) for packaging. We also had to adjust <code>enable_frame_obu</code> handling for AMD:</p>
+<pre><code class="language-cpp">// AMD/Mesa prefers Frame Header OBU (Type 3) over Frame OBU
+seq_param.seq_fields.bits.enable_frame_obu = is_amd_mesa_driver_ ? 0 : 1;
 </code></pre>
-<p>This approach is <strong>even faster than our original CLI implementation</strong> because:</p>
+<p>This ensures the bitstream structure is compatible with Mesa&#39;s expectations.</p>
+<h2>Collaboration in Action</h2>
+<p>This fix showcases open source collaboration at its best:</p>
 <ol>
-<li>Policies are read directly from disk (no IPC overhead)</li>
-<li>The refresh flag bypasses all delays</li>
-<li>Chrome&#39;s native policy system handles the theme application</li>
-<li>Works with existing enterprise policy infrastructure</li>
+<li><strong>User reports</strong> detailed crash logs with GPU driver output</li>
+<li><strong>Community testing</strong> with real hardware I don&#39;t have access to</li>
+<li><strong>Reviewer feedback</strong> from Ted Meyer on Chromium style, integer types, and API design</li>
+<li><strong>Iterative refinement</strong> through 21 patchsets based on real-world testing</li>
 </ol>
-<h3>Brave Ships It Early</h3>
-<p>Brave has cherry-picked this change and will ship it even faster with their release based on Chrome 141! This shows the power of open-source collaboration - features can reach users through multiple channels.</p>
-<h3>The Bigger Picture</h3>
-<p>The <code>--refresh-platform-policy</code> flag opens up new possibilities beyond theming:</p>
+<p>The reviewer discussion was particularly valuable. Ted&#39;s concerns about default value handling led to a much cleaner design:</p>
+<blockquote>
+<p>&quot;My gut feeling here is that &#39;zero -&gt; 100&#39; is better than &#39;max(value, 100)&#39;, since webrtc isn&#39;t the only thing using this file, and undocumented codec/platform specific combinations are going to be a debugging nightmare later.&quot;</p>
+</blockquote>
+<h2>Current Status</h2>
+<p>The CL is currently in review with positive signals from initial reviewers. Eugene has been added as a reviewer since he has extensive encoder experience.</p>
+<p><strong>Files Changed:</strong></p>
 <ul>
-<li>Instant enterprise policy updates without browser restart</li>
-<li>Dynamic security policy adjustments</li>
-<li>Real-time configuration changes for managed deployments</li>
-<li>Scriptable policy management for power users</li>
+<li><code>media/gpu/vaapi/av1_vaapi_video_encoder_delegate.cc</code> (+285 -43 lines)</li>
+<li><code>media/gpu/vaapi/av1_vaapi_video_encoder_delegate.h</code> (+8 lines)</li>
 </ul>
-<p>This is a perfect example of how solving one problem (theme switching) led to a more general solution that benefits the entire Chrome ecosystem.</p>
+<h2>Impact</h2>
+<p>When merged, this fix will enable:</p>
+<ul>
+<li><strong>Hardware AV1 encoding</strong> on AMD GPUs with Mesa drivers</li>
+<li><strong>WebRTC video calls</strong> with AV1 codec on AMD Linux systems</li>
+<li><strong>CPU offloading</strong> - no more libaom software encoding</li>
+<li><strong>Simulcast support</strong> - multiple resolution layers for adaptive streaming</li>
+</ul>
+<p>For users running Nextcloud Talk, Jitsi, or any WebRTC-based video conferencing on AMD Linux systems, this is a significant improvement in performance and power efficiency.</p>
+<h2>The Linux Support Question</h2>
+<p>During the bug discussion, there was an important exchange about Linux support:</p>
+<blockquote>
+<p><strong>Chrome team</strong>: &quot;We currently only support VA-API for video decoding on limited Intel devices. Linux unfortunately generates a high support demand, so we&#39;re very cautious about what we enable by default.&quot;</p>
+</blockquote>
+<p>The fix doesn&#39;t change what&#39;s enabled by default - it fixes the underlying code for users who opt into hardware acceleration via flags. The feature remains behind <code>--enable-features=AcceleratedVideoEncode</code>.</p>
+<h2>Try It</h2>
+<p>If you have an AMD GPU and want to test:</p>
+<pre><code class="language-bash"># Build Chromium from source with the patch, then:
+chromium --enable-features=AcceleratedVideoEncode \
+         --enable-features=VaapiVideoEncoder
+</code></pre>
+<p>Or wait for the CL to merge and try a tip-of-tree Chromium build.</p>
 <hr>
-<h2>The Tweet That Started Everything</h2>
-<p>It began with <a href="https://x.com/hjanuschka/status/1954552977814855845">a challenge from DHH</a> (David Heinemeier Hansson, creator of Ruby on Rails). He wanted something that seemed simple but revealed an interesting gap: the ability to change Chrome&#39;s theme colors dynamically from the command line.</p>
-<p>The context was important - when Chrome uses GTK/Qt themes, this already works automatically. But when using Chrome&#39;s &quot;Classic&quot; theme (which many prefer for consistency across platforms), there was no CLI way to control colors. While you could manually change themes through settings for each instance, Omarchy needed scriptable control - just like it has for other applications.</p>
-<p>His vision was clear:</p>
-<pre><code class="language-sh"># Change theme when using Chrome&#39;s Classic theme
-chrome --set-user-color=&quot;255,0,0&quot;
-</code></pre>
-<p>This wasn&#39;t just about aesthetics. For DHH&#39;s new <a href="https://omarchy.org">Omarchy Linux distribution</a>, this represented a core philosophy: giving power users complete control over their environment through simple, scriptable interfaces.</p>
-<h2>Why This Matters</h2>
-<p>The gap in Chrome&#39;s theming:</p>
-<ul>
-<li><strong>GTK/Qt themes</strong>: Work great, update automatically</li>
-<li><strong>Classic theme</strong>: No CLI control, must use GUI per instance</li>
-<li><strong>Omarchy&#39;s need</strong>: Scriptable theming like other apps have</li>
-</ul>
-<p>DHH&#39;s request highlighted this inconsistency. Why shouldn&#39;t the Classic theme be as flexible as GTK/Qt integration?</p>
-<h2>The Pleasant Surprise</h2>
-<p>The implementation turned out to be easier than expected - the code was already in Chromium! The theme system was robust and well-designed. It just wasn&#39;t exposed via command-line interface.</p>
-<p>My task was essentially plumbing: connecting existing functionality to a new entry point.</p>
-<h2>The Implementation</h2>
-<h3>Finding the Existing Code</h3>
-<p>Chrome&#39;s theme system was already sophisticated:</p>
-<pre><code class="language-cpp">// Theme colors are defined in the ThemeService
-class ThemeService : public KeyedService {
-  // Material Design 3 (GM3) color generation
-  ui::ColorProviderManager::Key GetColorProviderKey();
-  
-  // This notifies observers when theme changes
-  void NotifyThemeChanged();
-};
-</code></pre>
-<p>The Material Design 3 (GM3) theming logic was all there - it just needed a CLI entry point.</p>
-<h3>Adding Command-Line Support</h3>
-<p>The implementation added several switches that work together:</p>
-<pre><code class="language-cpp">// Core theme switches in chrome_switches.cc
-const char kSetDefaultTheme[] = &quot;set-default-theme&quot;;      // Reset to system
-const char kSetUserColor[] = &quot;set-user-color&quot;;            // GM3 seed color
-const char kSetColorScheme[] = &quot;set-color-scheme&quot;;        // light/dark/system
-const char kSetColorVariant[] = &quot;set-color-variant&quot;;      // Material variants
-const char kSetGrayscaleTheme[] = &quot;set-grayscale-theme&quot;;  // Grayscale overlay
-</code></pre>
-<p>These switches can be combined for complete control:</p>
-<pre><code class="language-sh"># Dark blue vibrant theme
-chrome --set-user-color=&quot;100,150,200&quot; \
-       --set-color-scheme=&quot;dark&quot; \
-       --set-color-variant=&quot;vibrant&quot;
-
-# Light neutral theme with custom color
-chrome --set-user-color=&quot;255,107,53&quot; \
-       --set-color-scheme=&quot;light&quot; \
-       --set-color-variant=&quot;neutral&quot;
-
-# System theme with grayscale
-chrome --set-color-scheme=&quot;system&quot; \
-       --set-grayscale-theme=&quot;true&quot;
-</code></pre>
-<h3>Leveraging Chrome&#39;s Theme System</h3>
-<p>The beauty was that Chrome already had:</p>
-<ul>
-<li>Material Design 3 (GM3) dynamic color generation</li>
-<li>ProcessSingleton IPC for notifying running instances</li>
-<li>ThemeService infrastructure for applying changes</li>
-<li>Support for all Material color variants</li>
-</ul>
-<p>Combined with <code>--no-startup-window</code>, themes update without opening new windows!</p>
-<h2>Plan B: The GTK Theme Generator</h2>
-<p>While working on the Chrome patch, I also explored an alternative approach: what if we could generate GTK themes using Chrome&#39;s Material Design 3 logic?</p>
-<p>This led to <a href="https://github.com/hjanuschka/material-gtk-generator">material-gtk-generator</a>:</p>
-<pre><code class="language-sh"># Generate a GTK theme from Chrome&#39;s GM3 colors
-material-gtk-generator --seed-color=&quot;#FF6B6B&quot; --output-dir=~/.themes/
-</code></pre>
-<p>This was Plan B - if the Chromium CL didn&#39;t land, we could:</p>
-<ol>
-<li>Generate GTK themes matching Chrome&#39;s GM3 palette</li>
-<li>Apply them system-wide</li>
-<li>Chrome would pick them up automatically</li>
-</ol>
-<p>It&#39;s still useful for creating cohesive desktop themes!</p>
-<h2>The Micro Fork: Getting It to Users Fast</h2>
-<p>DHH didn&#39;t want to wait for Google&#39;s review process. He made a decisive move: <strong>invest in build infrastructure</strong> to ship a micro fork immediately.</p>
-<h3>What Happened</h3>
-<ol>
-<li><strong>DHH&#39;s Decision</strong>: &quot;Let&#39;s ship this NOW to Omarchy users&quot;</li>
-<li><strong>Build Infrastructure</strong>: DHH funded dedicated build servers</li>
-<li><strong>The Micro Fork</strong>: <a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium</a> was born</li>
-<li><strong>Immediate Availability</strong>: Users got the feature within days, not months</li>
-</ol>
-<p>There&#39;s an excellent <a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">YouTube video by DHH</a> about the power of open source - showing how we went from idea to fork at incredible speed.</p>
-<h3>The Patch</h3>
-<p>The entire feature is contained in a single CL (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a> - superseded by policy approach):</p>
-<ul>
-<li>Minimal, focused changes</li>
-<li>Clean integration with existing code</li>
-<li>Easy to maintain and rebase</li>
-<li>No invasive modifications</li>
-</ul>
-<h2>Real-World Usage</h2>
-<h3>For Omarchy Users</h3>
-<p>Omarchy users just use the built-in theme switcher - it all happens automatically in the background! The system handles the Chrome theming seamlessly alongside other applications.</p>
-<h3>For Power Users and Scripters</h3>
-<p>The CLI switches enable powerful automation:</p>
-<pre><code class="language-sh"># Match browser to terminal theme (Classic theme only)
-chromium --set-user-color=&quot;$(get-terminal-color-rgb)&quot;
-
-# Different themes for different workspaces with variants
-workspace-1: chromium --set-user-color=&quot;26,26,26&quot; \
-                      --set-color-variant=&quot;neutral&quot;
-workspace-2: chromium --set-user-color=&quot;0,43,54&quot; \
-                      --set-color-variant=&quot;tonal_spot&quot;
-
-# Time-based theming with color schemes
-if [[ $(date +%H) -gt 18 ]]; then
-  chromium --set-color-scheme=&quot;dark&quot; \
-           --set-user-color=&quot;0,0,0&quot;
-else
-  chromium --set-color-scheme=&quot;light&quot; \
-           --set-user-color=&quot;255,255,255&quot;
-fi
-
-# Update running instances without opening new window
-chromium --no-startup-window \
-         --set-user-color=&quot;100,200,150&quot; \
-         --set-color-variant=&quot;expressive&quot;
-</code></pre>
-<p>Note: This works specifically with Chrome&#39;s Classic theme. If you&#39;re using GTK/Qt themes, Chrome already responds to system theme changes automatically.</p>
-<h3>Integration with Window Managers</h3>
-<p>Window managers can now theme browsers to match the desktop:</p>
-<pre><code class="language-python"># Example i3wm integration
-import i3ipc
-import subprocess
-
-def on_workspace_focus(i3, event):
-    workspace = event.current.name
-    themes = {
-        &quot;1: term&quot;: (&quot;0,0,0&quot;, &quot;dark&quot;, &quot;neutral&quot;),
-        &quot;2: web&quot;: (&quot;26,26,46&quot;, &quot;dark&quot;, &quot;tonal_spot&quot;), 
-        &quot;3: code&quot;: (&quot;15,52,96&quot;, &quot;dark&quot;, &quot;vibrant&quot;)
-    }
-    if workspace in themes:
-        color, scheme, variant = themes[workspace]
-        subprocess.run([
-            &quot;chromium&quot;,
-            &quot;--no-startup-window&quot;,
-            f&quot;--set-user-color={color}&quot;,
-            f&quot;--set-color-scheme={scheme}&quot;,
-            f&quot;--set-color-variant={variant}&quot;
-        ])
-
-i3 = i3ipc.Connection()
-i3.on(&quot;workspace::focus&quot;, on_workspace_focus)
-i3.main()
-</code></pre>
-<h2>What&#39;s Next?</h2>
-<h3>Upstream Progress</h3>
-<p>The direct CLI approach (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>CL 6832165</strong></a>) was superseded by the policy-based solution (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>CL 6900896</strong></a>), which landed in Chrome 142.</p>
-<h3>Extended Features</h3>
-<p>The complete feature set includes:</p>
-<ul>
-<li><strong>Material variants</strong>: tonal_spot, neutral, vibrant, expressive</li>
-<li><strong>Color schemes</strong>: light, dark, system</li>
-<li><strong>Grayscale mode</strong>: For accessibility</li>
-<li><strong>No startup window</strong>: Update running instances silently</li>
-<li><strong>GM3 color generation</strong>: Full Material Design 3 palette from seed color</li>
-</ul>
-<h3>Other Browsers</h3>
-<p>Brave has shown interest in downstream landing our patch.</p>
-<h2>Try It Yourself</h2>
-<h3>For Arch/Omarchy Users</h3>
-<p>The AUR package is available (replaces the standard Chromium):</p>
-<pre><code class="language-sh">yay -S omarchy-chromium-bin
-
-# Teal expressive theme
-chromium --set-user-color=&quot;78,205,196&quot; \
-         --set-color-variant=&quot;expressive&quot;
-
-# Reset to default
-chromium --set-default-theme
-</code></pre>
-<hr>
-<p><em>Sometimes the best features are already there, waiting to be exposed. Thanks to DHH&#39;s vision and investment, Omarchy users don&#39;t have to wait.</em></p>
 <p><strong>Links:</strong></p>
 <ul>
-<li><a href="https://x.com/hjanuschka/status/1954552977814855845">Original Tweet</a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>Policy refresh flag</strong></a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a></li>
-<li><a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium Fork</a></li>
-<li><a href="https://github.com/hjanuschka/material-gtk-generator">Material GTK Generator (Plan B)</a></li>
-<li><a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">DHH&#39;s Video: Power of OSS - Idea to Fork</a></li>
-<li><a href="https://omarchy.org">Omarchy.org</a></li>
-<li><a href="https://world.hey.com/dhh/omarchy-micro-forks-chromium-1287486d">DHH&#39;s Blog Post</a></li>
+<li><a href="https://issues.chromium.org/issues/471780477">Chromium Bug 471780477</a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7380014"><strong>Fix AV1 VA-API encoder crash on AMD/Mesa</strong></a></li>
+<li><a href="https://source.chromium.org/chromium/chromium/src/+/main:media/gpu/vaapi/av1_vaapi_video_encoder_delegate.h">VA-API AV1 Encoder Documentation</a></li>
 </ul>
     </div>
   </article>

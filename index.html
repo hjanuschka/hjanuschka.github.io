@@ -834,6 +834,39 @@
         <div class="ascii-box-header">Blog Posts</div>
         <div class="ascii-box-content">
           <div class="grid grid-1" style="gap: 20px;">
+            <a href="/chromium-devtools-speculation-filter.html" style="text-decoration: none; color: inherit;">
+              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
+                <span style="position: absolute; top: 15px; right: 15px; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🚧 IN REVIEW</span>
+                <h3 style="margin-top: 0;">DevTools: Speculation Rules Filter for krone.at</h3>
+                <p>Testing Chrome's "Prerender Until Script" origin trial at krone.at revealed DevTools pain points. So I fixed them - adding text filtering to the Speculation Rules panel with help from Barry Pollard.</p>
+                <div class="project-badges">
+                  <span class="project-badge">Read Post →</span>
+                </div>
+              </div>
+            </a>
+
+            <a href="/chromium-av1-vaapi-amd.html" style="text-decoration: none; color: inherit;">
+              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
+                <span style="position: absolute; top: 15px; right: 15px; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🚧 IN REVIEW</span>
+                <h3 style="margin-top: 0;">Fixing AV1 Hardware Encoding on AMD/Mesa</h3>
+                <p>Deep dive into DPB management: fixing GPU crashes when encoding AV1 video on AMD GPUs with Mesa drivers. 21 patchsets, community testing, and WebRTC video calls finally working.</p>
+                <div class="project-badges">
+                  <span class="project-badge">Read Post →</span>
+                </div>
+              </div>
+            </a>
+
+            <a href="/chromium-video-lazy-loading.html" style="text-decoration: none; color: inherit;">
+              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
+                <span style="position: absolute; top: 15px; right: 15px; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🚧 IN PROGRESS</span>
+                <h3 style="margin-top: 0;">Lazy Loading for Video & Audio Elements</h3>
+                <p>Contributing the Chromium implementation for loading="lazy" on media elements. Cross-browser collaboration with Squarespace's standardization effort.</p>
+                <div class="project-badges">
+                  <span class="project-badge">Read Post →</span>
+                </div>
+              </div>
+            </a>
+
             <a href="/2025-chromium-contributions.html" style="text-decoration: none; color: inherit;">
               <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
                 <span style="position: absolute; top: 15px; right: 15px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🎉 2025 WRAP-UP</span>
@@ -1288,6 +1321,9 @@
         { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
         { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
         { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
+        { icon: '📄', name: 'Blog: Video/Audio Lazy Loading', keywords: ['blog', 'video', 'audio', 'lazy', 'loading', 'media', 'squarespace'], action: () => window.location.href = '/chromium-video-lazy-loading.html' },
+        { icon: '📄', name: 'Blog: AV1 Hardware Encoding AMD/Mesa', keywords: ['blog', 'av1', 'vaapi', 'amd', 'mesa', 'encoding', 'gpu', 'webrtc', 'dpb'], action: () => window.location.href = '/chromium-av1-vaapi-amd.html' },
+        { icon: '📄', name: 'Blog: DevTools Speculation Rules Filter', keywords: ['blog', 'devtools', 'speculation', 'prerender', 'prefetch', 'krone', 'filter', 'barry'], action: () => window.location.href = '/chromium-devtools-speculation-filter.html' },
       ];
 
       function openPalette() {
