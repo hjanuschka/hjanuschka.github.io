@@ -831,112 +831,561 @@
   <section id="blog" style="margin-top: 40px;">
     <div class="container">
       <div class="ascii-box">
-        <div class="ascii-box-header">Blog Posts</div>
-        <div class="ascii-box-content">
-          <div class="grid grid-1" style="gap: 20px;">
-            <a href="/chromium-devtools-speculation-filter.html" style="text-decoration: none; color: inherit;">
-              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
-                <span style="position: absolute; top: 15px; right: 15px; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🚧 IN REVIEW</span>
-                <h3 style="margin-top: 0;">DevTools: Speculation Rules Filter for krone.at</h3>
-                <p>Testing Chrome's "Prerender Until Script" origin trial at krone.at revealed DevTools pain points. So I fixed them - adding text filtering to the Speculation Rules panel with help from Barry Pollard.</p>
-                <div class="project-badges">
-                  <span class="project-badge">Read Post →</span>
+        <div class="ascii-box-header">Blog</div>
+        <div class="ascii-box-content" style="padding: 0;">
+          
+          <!-- Filter Tabs -->
+          <div class="blog-filters">
+            <button class="blog-filter-btn active" data-filter="all">All</button>
+            <button class="blog-filter-btn" data-filter="landed">Landed</button>
+            <button class="blog-filter-btn" data-filter="progress">In Progress</button>
+            <button class="blog-filter-btn" data-filter="tools">Tools</button>
+          </div>
+
+          <!-- Featured Post -->
+          <a href="/2025-chromium-contributions.html" class="blog-featured" data-status="landed">
+            <div class="blog-featured-badge">FEATURED</div>
+            <div class="blog-featured-content">
+              <div class="blog-featured-text">
+                <span class="blog-date">January 2026</span>
+                <h3>2025: The Year I Became a Chromium OWNER</h3>
+                <p>95+ merged contributions across Chromium, PDFium, and jxl-rs. From Tab Focus to JPEG XL revival, and working towards the browser trinity.</p>
+                <div class="blog-tags">
+                  <span class="blog-tag">Chromium</span>
+                  <span class="blog-tag">Year Review</span>
+                  <span class="blog-tag">Open Source</span>
                 </div>
+              </div>
+              <div class="blog-featured-arrow">→</div>
+            </div>
+          </a>
+
+          <!-- Blog Grid -->
+          <div class="blog-grid">
+            
+            <!-- In Progress Section -->
+            <div class="blog-section-header" data-filter="progress">
+              <span class="blog-section-dot blog-dot-progress"></span>
+              <span>In Progress</span>
+            </div>
+
+            <a href="/chromium-devtools-speculation-filter.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-review">IN REVIEW</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">January 2026</span>
+                <h4>DevTools: Speculation Rules Filter</h4>
+                <p>Adding text filtering to Chrome's Speculation Rules panel after real-world testing at krone.at.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">DevTools</span>
+                  <span class="blog-tag">Chrome</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
               </div>
             </a>
 
-            <a href="/chromium-av1-vaapi-amd.html" style="text-decoration: none; color: inherit;">
-              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
-                <span style="position: absolute; top: 15px; right: 15px; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🚧 IN REVIEW</span>
-                <h3 style="margin-top: 0;">Fixing AV1 Hardware Encoding on AMD/Mesa</h3>
-                <p>Deep dive into DPB management: fixing GPU crashes when encoding AV1 video on AMD GPUs with Mesa drivers. 21 patchsets, community testing, and WebRTC video calls finally working.</p>
-                <div class="project-badges">
-                  <span class="project-badge">Read Post →</span>
+            <a href="/chromium-av1-vaapi-amd.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-review">IN REVIEW</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">January 2026</span>
+                <h4>Fixing AV1 Hardware Encoding on AMD/Mesa</h4>
+                <p>Deep dive into DPB management: fixing GPU crashes for WebRTC video calls. 21 patchsets later...</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">AV1</span>
+                  <span class="blog-tag">GPU</span>
+                  <span class="blog-tag">Mesa</span>
                 </div>
+                <span class="blog-read-more">Read →</span>
               </div>
             </a>
 
-            <a href="/chromium-video-lazy-loading.html" style="text-decoration: none; color: inherit;">
-              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
-                <span style="position: absolute; top: 15px; right: 15px; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🚧 IN PROGRESS</span>
-                <h3 style="margin-top: 0;">Lazy Loading for Video & Audio Elements</h3>
-                <p>Contributing the Chromium implementation for loading="lazy" on media elements. Cross-browser collaboration with Squarespace's standardization effort.</p>
-                <div class="project-badges">
-                  <span class="project-badge">Read Post →</span>
+            <a href="/chromium-video-lazy-loading.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-progress">IN PROGRESS</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">December 2025</span>
+                <h4>Lazy Loading for Video & Audio</h4>
+                <p>Implementing loading="lazy" for media elements. Cross-browser collaboration with Squarespace.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Web Standards</span>
+                  <span class="blog-tag">Performance</span>
                 </div>
+                <span class="blog-read-more">Read →</span>
               </div>
             </a>
 
-            <a href="/2025-chromium-contributions.html" style="text-decoration: none; color: inherit;">
-              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
-                <span style="position: absolute; top: 15px; right: 15px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🎉 2025 WRAP-UP</span>
-                <h3 style="margin-top: 0;">2025: The Year I Became a Chromium OWNER</h3>
-                <p>95+ merged contributions across Chromium, PDFium, and jxl-rs. From Tab Focus to JPEG XL revival, and working towards the browser trinity - contributions to all three major browser engines.</p>
-                <div class="project-badges">
-                  <span class="project-badge">Read Post →</span>
+            <a href="/chromium-pseudonymization-salt.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-review">IN REVIEW</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">January 2026</span>
+                <h4>Fixing a 3.5-Year-Old Race Condition</h4>
+                <p>Pseudonymization salt via shared memory. When the bug report is older than some interns.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">IPC</span>
+                  <span class="blog-tag">Shared Memory</span>
+                  <span class="blog-tag">Race Condition</span>
                 </div>
+                <span class="blog-read-more">Read →</span>
               </div>
             </a>
 
-            <a href="/chromium-jxl-resurrection.html" style="text-decoration: none; color: inherit;">
-              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
-                <span style="position: absolute; top: 15px; right: 15px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🎉 LANDED</span>
-                <h3 style="margin-top: 0;">JPEG XL Returns to Chrome: From Obsolete to the Future</h3>
-                <p>How JPEG XL went from "obsolete" in 2022 to welcomed back in 2025. Implementing JXL support in Chromium with Rust for memory safety, bringing performance within 4% of C++, and why format diversity matters for the open web.</p>
-                <div class="project-badges">
-                  <span class="project-badge">Read Post →</span>
+            <!-- Landed Section -->
+            <div class="blog-section-header" data-filter="landed">
+              <span class="blog-section-dot blog-dot-landed"></span>
+              <span>Landed</span>
+            </div>
+
+            <a href="/chromium-jxl-resurrection.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">November 2025</span>
+                <h4>JPEG XL Returns to Chrome</h4>
+                <p>From "obsolete" in 2022 to welcomed back in 2025. Rust implementation within 4% of C++ performance.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">JPEG XL</span>
+                  <span class="blog-tag">Rust</span>
+                  <span class="blog-tag">Images</span>
                 </div>
+                <span class="blog-read-more">Read →</span>
               </div>
             </a>
 
-            <a href="/chromium-focus-feature.html" style="text-decoration: none; color: inherit;">
-              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
-                <span style="position: absolute; top: 15px; right: 15px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🎉 LANDED</span>
-                <h3 style="margin-top: 0;">From Tweet to Chrome: Tab Focus Feature</h3>
-                <p>How a tweet from Tobi Lütke (Shopify CEO) led to implementing a major new feature in Chromium. The --focus flag lets Chrome focus existing tabs instead of creating duplicates, solving a problem every developer faces.</p>
-                <div class="project-badges">
-                  <span class="project-badge">Read Post →</span>
+            <a href="/chromium-focus-feature.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">October 2025</span>
+                <h4>From Tweet to Chrome: Tab Focus</h4>
+                <p>A tweet from Tobi Lütke led to --focus flag. Focus existing tabs instead of creating duplicates.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Chrome</span>
+                  <span class="blog-tag">UX</span>
+                  <span class="blog-tag">CLI</span>
                 </div>
+                <span class="blog-read-more">Read →</span>
               </div>
             </a>
 
-            <a href="/chromium-omarchy.html" style="text-decoration: none; color: inherit;">
-              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
-                <span style="position: absolute; top: 15px; right: 15px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🎉 LANDED</span>
-                <h3 style="margin-top: 0;">Dynamic Chrome Themes for Omarchy</h3>
-                <p>DHH needed CLI control for Chrome's Classic theme in Omarchy Linux. The solution? Expose Chrome's existing Material Design theming via command-line switches. From idea to micro fork in record time.</p>
-                <div class="project-badges">
-                  <span class="project-badge">Read Post →</span>
+            <a href="/chromium-omarchy.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">September 2025</span>
+                <h4>Dynamic Chrome Themes for Omarchy</h4>
+                <p>DHH needed CLI theming for Omarchy Linux. CLI switches for Material Design themes in record time.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Omarchy</span>
+                  <span class="blog-tag">Themes</span>
+                  <span class="blog-tag">DHH</span>
                 </div>
+                <span class="blog-read-more">Read →</span>
               </div>
             </a>
 
-            <a href="/chromium-wayland-crash.html" style="text-decoration: none; color: inherit;">
-              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
-                <span style="position: absolute; top: 15px; right: 15px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🎉 LANDED</span>
-                <h3 style="margin-top: 0;">Wayland Crash: Community Debugging</h3>
-                <p>When Chrome started crashing on multi-monitor Wayland setups, the community came together. From bug report to upstream fix in 72 hours - this is open source collaboration at its best.</p>
-                <div class="project-badges">
-                  <span class="project-badge">Read Post →</span>
+            <a href="/chromium-wayland-crash.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2025</span>
+                <h4>Wayland Crash: Community Debugging</h4>
+                <p>Chrome crashing on multi-monitor Wayland. Bug report to upstream fix in 72 hours.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Wayland</span>
+                  <span class="blog-tag">Linux</span>
+                  <span class="blog-tag">Debugging</span>
                 </div>
+                <span class="blog-read-more">Read →</span>
               </div>
             </a>
 
-            <a href="/pi-coding-agent.html" style="text-decoration: none; color: inherit;">
-              <div class="project-card" style="cursor: pointer; position: relative; padding-top: 35px;">
-                <span style="position: absolute; top: 15px; right: 15px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">🛠️ TOOLS</span>
-                <h3 style="margin-top: 0;">Why I Switched to Pi: A Terminal-First Coding Agent</h3>
-                <p>From Claude Code to Pi - multi-model switching, session trees, and extensible hooks. Plus my contributions: plan mode and configurable keybindings.</p>
-                <div class="project-badges">
-                  <span class="project-badge">Read Post →</span>
+            <!-- Tools Section -->
+            <div class="blog-section-header" data-filter="tools">
+              <span class="blog-section-dot blog-dot-tools"></span>
+              <span>Tools & Workflow</span>
+            </div>
+
+            <a href="/pi-coding-agent.html" class="blog-card" data-status="tools">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-tools">TOOLS</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">July 2025</span>
+                <h4>Why I Switched to Pi</h4>
+                <p>Terminal-first coding agent. Multi-model switching, session trees, extensible hooks.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">AI</span>
+                  <span class="blog-tag">Terminal</span>
+                  <span class="blog-tag">Workflow</span>
                 </div>
+                <span class="blog-read-more">Read →</span>
               </div>
             </a>
+
           </div>
         </div>
       </div>
     </div>
   </section>
+
+  <style>
+    /* Blog Section Styles */
+    .blog-filters {
+      display: flex;
+      gap: 8px;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .blog-filter-btn {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-dim);
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .blog-filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .blog-filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+    }
+
+    /* Featured Post */
+    .blog-featured {
+      display: block;
+      position: relative;
+      background: linear-gradient(135deg, var(--bg-light), var(--bg-lighter));
+      margin: 20px;
+      border-radius: 16px;
+      border: 2px solid var(--accent);
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .blog-featured:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 20px var(--accent);
+    }
+
+    .blog-featured-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--accent);
+      color: var(--bg);
+      padding: 8px 20px;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 0 14px 0 16px;
+    }
+
+    .blog-featured-content {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 30px;
+    }
+
+    .blog-featured-text {
+      flex: 1;
+    }
+
+    .blog-featured-text h3 {
+      color: var(--accent);
+      font-size: 22px;
+      margin: 8px 0 12px 0;
+    }
+
+    .blog-featured-text p {
+      color: var(--text-dim);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .blog-featured-arrow {
+      font-size: 32px;
+      color: var(--accent);
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .blog-featured:hover .blog-featured-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Blog Date */
+    .blog-date {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Blog Tags */
+    .blog-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .blog-tag {
+      background: var(--bg);
+      color: var(--text-dim);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .blog-card:hover .blog-tag {
+      border-color: var(--accent);
+    }
+
+    /* Blog Section Headers */
+    .blog-section-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 0 10px 0;
+      font-weight: bold;
+      color: var(--text-dim);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1px dashed var(--border);
+      margin-bottom: 10px;
+    }
+
+    .blog-section-header:first-of-type {
+      padding-top: 0;
+    }
+
+    .blog-section-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .blog-dot-landed {
+      background: #22c55e;
+    }
+
+    .blog-dot-progress {
+      background: #f59e0b;
+    }
+
+    .blog-dot-tools {
+      background: #8b5cf6;
+    }
+
+    /* Blog Grid */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    /* Blog Card */
+    .blog-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .blog-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .blog-card-header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 16px 16px 0 16px;
+    }
+
+    .blog-status {
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    .blog-status-landed {
+      background: #22c55e;
+      color: white;
+    }
+
+    .blog-status-review {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .blog-status-progress {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .blog-status-tools {
+      background: #8b5cf6;
+      color: white;
+    }
+
+    .blog-card-body {
+      flex: 1;
+      padding: 12px 16px;
+    }
+
+    .blog-card-body h4 {
+      color: var(--text);
+      font-size: 15px;
+      margin: 8px 0;
+      line-height: 1.4;
+    }
+
+    .blog-card:hover .blog-card-body h4 {
+      color: var(--accent);
+    }
+
+    .blog-card-body p {
+      color: var(--text-dim);
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .blog-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-light);
+    }
+
+    .blog-read-more {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: bold;
+      opacity: 0;
+      transform: translateX(-5px);
+      transition: all 0.2s ease;
+    }
+
+    .blog-card:hover .blog-read-more {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Hide sections based on filter */
+    .blog-grid.filter-landed .blog-card:not([data-status="landed"]),
+    .blog-grid.filter-landed .blog-section-header:not([data-filter="landed"]),
+    .blog-grid.filter-progress .blog-card:not([data-status="progress"]),
+    .blog-grid.filter-progress .blog-section-header:not([data-filter="progress"]),
+    .blog-grid.filter-tools .blog-card:not([data-status="tools"]),
+    .blog-grid.filter-tools .blog-section-header:not([data-filter="tools"]) {
+      display: none;
+    }
+
+    .blog-grid.filter-landed .blog-featured:not([data-status="landed"]),
+    .blog-grid.filter-progress .blog-featured:not([data-status="progress"]),
+    .blog-grid.filter-tools .blog-featured:not([data-status="tools"]) {
+      display: none;
+    }
+
+    /* Filter active states for featured */
+    #blog .ascii-box-content.filter-landed .blog-featured:not([data-status="landed"]),
+    #blog .ascii-box-content.filter-progress .blog-featured:not([data-status="progress"]),
+    #blog .ascii-box-content.filter-tools .blog-featured:not([data-status="tools"]) {
+      display: none;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .blog-featured-content {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .blog-featured-text h3 {
+        font-size: 18px;
+      }
+
+      .blog-featured-arrow {
+        display: none;
+      }
+
+      .blog-featured-badge {
+        position: static;
+        display: inline-block;
+        margin-bottom: 10px;
+        border-radius: 10px;
+      }
+
+      .blog-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .blog-filters {
+        justify-content: center;
+      }
+    }
+  </style>
 
   <!-- About Section -->
   <section id="about" style="margin-top: 40px;">
@@ -1046,7 +1495,7 @@
           <div class="grid grid-1" style="gap: 20px;">
             <div class="project-card">
               <h3>Chromium</h3>
-              <p>Major contributor to Google's open-source web browser project. Led modernization efforts including StringPiece to std::string_view migration and GoogleTest naming convention improvements across multiple modules.</p>
+              <p>Chromium Committer. Key contributions include reviving JPEG XL support with a Rust decoder, the --focus flag for tab reuse, dynamic theming for Omarchy, and fixing long-standing bugs in tracing, DevTools, and media encoding.</p>
               <div class="project-badges">
                 <a href="https://github.com/chromium/chromium" target="_blank">
                   <span class="project-badge">C++</span>
@@ -1054,8 +1503,11 @@
                 <a href="https://chromium.googlesource.com/chromium/src/+log/main?author=hjanuschka" target="_blank">
                   <span class="project-badge">Committer</span>
                 </a>
-                <a href="https://chromium.org" target="_blank">
-                  <span class="project-badge">Web Browser</span>
+                <a href="https://crrev.com/c/7201443" target="_blank">
+                  <span class="project-badge">JPEG XL</span>
+                </a>
+                <a href="https://crrev.com/c/6215498" target="_blank">
+                  <span class="project-badge">Tab Focus</span>
                 </a>
               </div>
             </div>
@@ -1324,6 +1776,7 @@
         { icon: '📄', name: 'Blog: Video/Audio Lazy Loading', keywords: ['blog', 'video', 'audio', 'lazy', 'loading', 'media', 'squarespace'], action: () => window.location.href = '/chromium-video-lazy-loading.html' },
         { icon: '📄', name: 'Blog: AV1 Hardware Encoding AMD/Mesa', keywords: ['blog', 'av1', 'vaapi', 'amd', 'mesa', 'encoding', 'gpu', 'webrtc', 'dpb'], action: () => window.location.href = '/chromium-av1-vaapi-amd.html' },
         { icon: '📄', name: 'Blog: DevTools Speculation Rules Filter', keywords: ['blog', 'devtools', 'speculation', 'prerender', 'prefetch', 'krone', 'filter', 'barry'], action: () => window.location.href = '/chromium-devtools-speculation-filter.html' },
+        { icon: '📄', name: 'Blog: Pseudonymization Salt Race Condition', keywords: ['blog', 'pseudonymization', 'salt', 'race', 'shared', 'memory', 'ipc', '3.5', 'years'], action: () => window.location.href = '/chromium-pseudonymization-salt.html' },
       ];
 
       function openPalette() {
@@ -1409,6 +1862,39 @@
 
       // Click backdrop to close
       palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
+
+      // Blog Filter Functionality
+      const blogFilters = document.querySelectorAll('.blog-filter-btn');
+      const blogGrid = document.querySelector('.blog-grid');
+      const blogContent = document.querySelector('#blog .ascii-box-content');
+      const blogFeatured = document.querySelector('.blog-featured');
+
+      blogFilters.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Update active state
+          blogFilters.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          const filter = this.getAttribute('data-filter');
+
+          // Remove all filter classes
+          blogGrid.classList.remove('filter-landed', 'filter-progress', 'filter-tools');
+          blogContent.classList.remove('filter-landed', 'filter-progress', 'filter-tools');
+
+          // Apply filter
+          if (filter !== 'all') {
+            blogGrid.classList.add('filter-' + filter);
+            blogContent.classList.add('filter-' + filter);
+          }
+
+          // Handle featured visibility
+          if (filter === 'all' || filter === 'landed') {
+            blogFeatured.style.display = 'block';
+          } else {
+            blogFeatured.style.display = 'none';
+          }
+        });
+      });
     });
   </script>
 </body>
