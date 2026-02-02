@@ -137,15 +137,6 @@ Animated RGBA JPEG XL. PDFium decodes only the first frame.
 
 <span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**CL 142070**](https://pdfium-review.googlesource.com/c/pdfium/+/142070) — Add experimental JXLDecode support via Rust jxl-rs
 
-**Key files:**
-
-| File | Purpose |
-|------|---------|
-| `pdfium.gni` | `pdf_enable_rust_jxl` build flag |
-| `core/fxcodec/jxl/*` | Decoder glue using jxl-rs |
-| `core/fpdfapi/page/cpdf_dib.cpp` | Integration point for `/JXLDecode` |
-| `fpdfsdk/fpdf_jxl_decode_embeddertest.cpp` | Pixel tests |
-
 ## Building
 
 To build PDFium with JXL support:

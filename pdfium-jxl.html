@@ -940,31 +940,6 @@ bool CPDF_DIB::LoadJxlBitmap(pdfium::span&lt;const uint8_t&gt; data) {
 
 <h2>Code Changes</h2>
 <p><span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/142070"><strong>CL 142070</strong></a> — Add experimental JXLDecode support via Rust jxl-rs</p>
-<p><strong>Key files:</strong></p>
-<table>
-<thead>
-<tr>
-<th>File</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>pdfium.gni</code></td>
-<td><code>pdf_enable_rust_jxl</code> build flag</td>
-</tr>
-<tr>
-<td><code>core/fxcodec/jxl/*</code></td>
-<td>Decoder glue using jxl-rs</td>
-</tr>
-<tr>
-<td><code>core/fpdfapi/page/cpdf_dib.cpp</code></td>
-<td>Integration point for <code>/JXLDecode</code></td>
-</tr>
-<tr>
-<td><code>fpdfsdk/fpdf_jxl_decode_embeddertest.cpp</code></td>
-<td>Pixel tests</td>
-</tr>
-</tbody></table>
 <h2>Building</h2>
 <p>To build PDFium with JXL support:</p>
 <pre><code class="language-bash"># In args.gn
