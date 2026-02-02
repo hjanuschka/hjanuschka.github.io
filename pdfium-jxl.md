@@ -4,14 +4,12 @@ category: "PDFium"
 tech: "Rust / C++"
 ---
 
-*Experimental support for decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs*
-
-**Status:** 🔬 **EXPERIMENTAL** — Proof-of-concept for standalone PDFium builds
+*Decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs*
 
 ```snippet
 <div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(211, 95, 95, 0.1); border: 2px solid #D35F5F; border-radius: 12px;">
-  <h3 style="color: #D35F5F; margin: 0 0 10px 0;">🧪 EXPERIMENTAL FEATURE</h3>
-  <p style="margin: 0;">JXL-in-PDF decoding via <code>jxl-rs</code> — not yet upstream</p>
+  <h3 style="color: #D35F5F; margin: 0 0 10px 0;">🧪 PROOF OF CONCEPT</h3>
+  <p style="margin: 0;">JXL-in-PDF decoding for standalone PDFium builds</p>
   <p style="font-size: 13px; opacity: 0.8; margin-top: 5px;">CL: <a href="https://pdfium-review.googlesource.com/c/pdfium/+/142070">pdfium-review.googlesource.com/c/pdfium/+/142070</a></p>
 </div>
 ```
