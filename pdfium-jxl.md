@@ -152,9 +152,8 @@ pdf_enable_rust_jxl = true
 ## Next Steps
 
 1. **Standardization**: Wait for PDF spec to formalize JXL filter name
-2. **Chromium integration**: Currently standalone-only; Chromium uses its own PDF pipeline
-3. **Performance**: Profile and optimize for large images
-4. **Fuzzing**: Add fuzzer targets for the new decode path
+2. **Performance**: Profile and optimize for large images
+3. **Fuzzing**: Add fuzzer targets for the new decode path
 
 ## Related
 
