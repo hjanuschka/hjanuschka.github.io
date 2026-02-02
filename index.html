@@ -840,6 +840,7 @@
             <button class="blog-filter-btn" data-filter="landed">Landed</button>
             <button class="blog-filter-btn" data-filter="progress">In Progress</button>
             <button class="blog-filter-btn" data-filter="tools">Tools</button>
+            <button class="blog-filter-btn" data-filter="experiments">Experiments</button>
           </div>
 
           <!-- Featured Post -->
@@ -1050,6 +1051,31 @@
               </div>
             </a>
 
+            <!-- Experiments Section -->
+            <div class="blog-section-header" data-filter="experiments">
+              <span class="blog-section-dot blog-dot-experiments"></span>
+              <span>Experiments</span>
+            </div>
+
+            <a href="/pdfium-jxl.html" class="blog-card" data-status="experiments">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-experiments">EXPERIMENT</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">February 2026</span>
+                <h4>JPEG XL in PDF via PDFium</h4>
+                <p>Experimental JXL-in-PDF decoding using jxl-rs. Alpha via synthesized /SMask, animation → frame 0.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">PDFium</span>
+                  <span class="blog-tag">Rust</span>
+                  <span class="blog-tag">JXL</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
           </div>
         </div>
       </div>
@@ -1223,6 +1249,10 @@
       background: #8b5cf6;
     }
 
+    .blog-dot-experiments {
+      background: #D35F5F;
+    }
+
     /* Blog Grid */
     .blog-grid {
       display: grid;
@@ -1282,6 +1312,11 @@
 
     .blog-status-tools {
       background: #8b5cf6;
+      color: white;
+    }
+
+    .blog-status-experiments {
+      background: #D35F5F;
       color: white;
     }
 

@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JPEG XL in PDF: Bringing JXL to PDFium with Rust - Helmut Januschka</title>
+  <meta name="description" content="Experimental support for decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "JPEG XL in PDF: Bringing JXL to PDFium with Rust",
+    "description": "Experimental support for decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs",
+    "author": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com",
+      "sameAs": [
+        "https://github.com/hjanuschka",
+        "https://twitter.com/hjanuschka",
+        "https://linkedin.com/in/hjanuschka"
+      ]
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com"
+    },
+    "datePublished": "2024-08-01",
+    "dateModified": "2026-02-02",
+    "image": "https://januschka.com/og-image.png",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://januschka.com/pdfium-jxl.html"
+    },
+    "keywords": "PDFium, Rust / C++, Chromium, Open Source, Browser Development",
+    "articleSection": "Technology",
+    "inLanguage": "en-US",
+    "potentialAction": {
+      "@type": "ReadAction",
+      "target": "https://januschka.com/pdfium-jxl.html"
+    }
+  }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="JPEG XL in PDF: Bringing JXL to PDFium with Rust">
+  <meta property="og:description" content="Experimental support for decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://januschka.com/pdfium-jxl.html">
+  <meta property="og:site_name" content="Helmut Januschka">
+  <meta property="article:author" content="Helmut Januschka">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@hjanuschka">
+  <meta name="twitter:title" content="JPEG XL in PDF: Bringing JXL to PDFium with Rust">
+  <meta name="twitter:description" content="Experimental support for decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"></noscript>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #121212;
+      --bg-light: #1e1e1e;
+      --bg-lighter: #333333;
+      --text: #bebebe;
+      --text-dim: #8a8a8d;
+      --accent: #FFC107;
+      --accent-dim: #e68e0d;
+      --border: #333333;
+      --orange: #D35F5F;
+    }
+
+    /* GitHub Blue Theme */
+    [data-theme="blue"] {
+      --bg: #0d1117;
+      --bg-light: #161b22;
+      --bg-lighter: #21262d;
+      --text: #ffffff;
+      --text-dim: #7d8590;
+      --accent: #58a6ff;
+      --accent-dim: #1f6feb;
+      --border: #30363d;
+      --orange: #ff7b72;
+    }
+
+    /* Osaka Jade Theme (from Omarchy) */
+    [data-theme="osaka-jade"] {
+      --bg: #111c18;
+      --bg-light: #23372B;
+      --bg-lighter: #53685B;
+      --text: #C1C497;
+      --text-dim: #9eebb3;
+      --accent: #2DD5B7;
+      --accent-dim: #549e6a;
+      --border: #509475;
+      --orange: #FF5345;
+    }
+
+    /* Purple Moon Theme */
+    [data-theme="purple-moon"] {
+      --bg: #020007;
+      --bg-light: #37277d;
+      --bg-lighter: #643aad;
+      --text: #ffffff;
+      --text-dim: #b895dd;
+      --accent: #9b49c8;
+      --accent-dim: #9845c6;
+      --border: #9865cf;
+      --orange: #cd9ce1;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Navigation */
+    .nav {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 15px 0;
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 16px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+
+    /* Theme Switcher */
+    .theme-switcher {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .theme-dropdown {
+      position: relative;
+    }
+
+    .theme-button {
+      background: var(--bg-light);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .theme-button:hover {
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+
+    .theme-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #1a1a1a;
+      border: 2px solid #333333;
+      border-radius: 8px;
+      margin-top: 5px;
+      min-width: 150px;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .theme-menu.show {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .theme-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 12px;
+      transition: background 0.2s ease;
+      border: none;
+      width: 100%;
+      text-align: left;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .theme-option:hover {
+      background: #2a2a2a;
+      color: #ffffff;
+    }
+
+    .theme-option:first-child {
+      border-radius: 6px 6px 0 0;
+    }
+
+    .theme-option:last-child {
+      border-radius: 0 0 6px 6px;
+    }
+
+    .theme-preview {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid #666666;
+      flex-shrink: 0;
+    }
+
+    /* Blog Post Styles */
+    .blog-header {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 40px 0;
+      margin-bottom: 40px;
+    }
+
+    .blog-title {
+      font-size: 32px;
+      color: var(--accent);
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+
+    .blog-meta {
+      display: flex;
+      gap: 20px;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    .blog-content {
+      background: var(--bg-light);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      margin-bottom: 40px;
+    }
+
+    /* Markdown Content Styles */
+    .blog-content h1 {
+      color: var(--accent);
+      font-size: 28px;
+      margin: 30px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content h2 {
+      color: var(--orange);
+      font-size: 24px;
+      margin: 30px 0 15px;
+    }
+
+    .blog-content h3 {
+      color: var(--accent);
+      font-size: 20px;
+      margin: 25px 0 15px;
+    }
+
+    .blog-content p {
+      margin: 15px 0;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .blog-content a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .blog-content a:hover {
+      color: var(--orange);
+      border-bottom-color: var(--orange);
+    }
+
+    .blog-content ul, .blog-content ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+
+    .blog-content li {
+      margin: 8px 0;
+      line-height: 1.8;
+    }
+
+    .blog-content code {
+      background: var(--bg);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .blog-content pre {
+      background: #1d1f21 !important;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 20px !important;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    .blog-content pre code {
+      background: none !important;
+      color: #c5c8c6 !important;
+      padding: 0;
+      text-shadow: none !important;
+    }
+
+    /* Override Prism theme colors for better integration */
+    .token.comment,
+    .token.prolog,
+    .token.doctype,
+    .token.cdata {
+      color: #969896 !important;
+    }
+
+    .token.punctuation {
+      color: #c5c8c6 !important;
+    }
+
+    .token.property,
+    .token.tag,
+    .token.boolean,
+    .token.number,
+    .token.constant,
+    .token.symbol,
+    .token.deleted {
+      color: #cc6666 !important;
+    }
+
+    .token.selector,
+    .token.attr-name,
+    .token.string,
+    .token.char,
+    .token.builtin,
+    .token.inserted {
+      color: #b5bd68 !important;
+    }
+
+    .token.operator,
+    .token.entity,
+    .token.url,
+    .language-css .token.string,
+    .style .token.string {
+      color: #8abeb7 !important;
+    }
+
+    .token.atrule,
+    .token.attr-value,
+    .token.keyword {
+      color: #b294bb !important;
+    }
+
+    .token.function,
+    .token.class-name {
+      color: #81a2be !important;
+    }
+
+    .token.regex,
+    .token.important,
+    .token.variable {
+      color: #de935f !important;
+    }
+
+    .blog-content blockquote {
+      border-left: 4px solid var(--accent);
+      padding-left: 20px;
+      margin: 20px 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content em {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content strong {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* Table styles */
+    .blog-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .blog-content thead,
+    .blog-content tbody,
+    .blog-content tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .blog-content th {
+      background: var(--bg-lighter);
+      color: var(--accent);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .blog-content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .blog-content tr:hover {
+      background: var(--bg-light);
+    }
+
+    /* Mobile table responsiveness */
+    @media (max-width: 768px) {
+      .blog-content table {
+        font-size: 11px;
+        border: none;
+      }
+
+      .blog-content thead {
+        display: none;
+      }
+
+      .blog-content tbody,
+      .blog-content tr {
+        display: block;
+        width: 100%;
+      }
+
+      .blog-content tr {
+        margin-bottom: 15px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--bg);
+      }
+
+      .blog-content td {
+        display: block;
+        text-align: left;
+        padding: 8px 0;
+        border: none;
+        position: relative;
+        padding-left: 40%;
+      }
+
+      .blog-content td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 38%;
+        padding-right: 10px;
+        font-weight: bold;
+        color: var(--accent);
+        text-align: left;
+      }
+
+      /* First column (Image name) */
+      .blog-content td:nth-of-type(1):before {
+        content: "Image";
+      }
+
+      /* Second column (Size) */
+      .blog-content td:nth-of-type(2):before {
+        content: "Size";
+      }
+
+      /* Third column (Before) */
+      .blog-content td:nth-of-type(3):before {
+        content: "Before";
+      }
+
+      /* Fourth column (After) */
+      .blog-content td:nth-of-type(4):before {
+        content: "After";
+      }
+
+      /* Fifth column (C++) */
+      .blog-content td:nth-of-type(5):before {
+        content: "C++";
+      }
+
+      /* Sixth column (Speedup) */
+      .blog-content td:nth-of-type(6):before {
+        content: "Speedup";
+      }
+    }
+
+    /* Snippet blocks for inline HTML */
+    .snippet-block {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .snippet-block img {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    /* YouTube embed container */
+    .youtube-embed {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      margin: 30px 0;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .youtube-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Gravatar in nav */
+    .gravatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    /* Status indicator */
+    .status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-light);
+      border-top: 3px solid var(--accent);
+      padding: 30px 0;
+      margin-top: 60px;
+      text-align: center;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-dim);
+    }
+
+    .badge {
+      background: var(--bg-lighter);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    /* Command Palette */
+    .command-palette {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+    .command-palette.hidden { display: none; }
+    .command-palette-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+    .command-palette-modal {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 20px;
+      background: var(--bg-light);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent);
+      overflow: hidden;
+    }
+    .command-palette-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .command-palette-header .prompt {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .command-palette-header input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+    }
+    .command-palette-header input::placeholder { color: var(--text-dim); }
+    .command-palette-header kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-results {
+      list-style: none;
+      max-height: 320px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 8px;
+    }
+    .command-result {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+    .command-result:hover, .command-result.selected {
+      background: var(--bg-lighter);
+    }
+    .command-result .icon { font-size: 16px; }
+    .command-result .name { flex: 1; color: var(--text); }
+    .command-palette-footer {
+      display: flex;
+      gap: 20px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-palette-footer kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 5px;
+      margin-right: 4px;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .blog-title {
+        font-size: 24px;
+      }
+      
+      .nav-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .nav-content > div {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-links {
+        gap: 15px;
+      }
+      
+      .theme-switcher {
+        justify-content: center;
+      }
+      
+      .blog-content {
+        padding: 20px;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-content">
+        <div class="nav-brand">
+          <img src="https://gravatar.com/avatar/7f3d8f25d208327860bdfebf145e481b?s=64"
+               alt="Helmut Januschka"
+               class="gravatar"
+               width="32" height="32">
+          <span class="status"></span>
+          hjanuschka@world
+        </div>
+        <div style="display: flex; align-items: center; gap: 30px;">
+          <div class="nav-links">
+            <a href="/">← Back to Home</a>
+            <a href="/#projects">Projects</a>
+            <a href="/#contact">Contact</a>
+          </div>
+          <div class="theme-switcher">
+            <div class="theme-dropdown">
+              <button class="theme-button" id="themeButton">
+                <span class="theme-preview" style="background: var(--accent);"></span>
+                Themes ▼
+              </button>
+              <div class="theme-menu" id="themeMenu">
+                <button class="theme-option" data-theme="matte-black">
+                  <span class="theme-preview" style="background: #FFC107;"></span>
+                  Matte Black
+                </button>
+                <button class="theme-option" data-theme="osaka-jade">
+                  <span class="theme-preview" style="background: #2DD5B7;"></span>
+                  Osaka Jade
+                </button>
+                <button class="theme-option" data-theme="purple-moon">
+                  <span class="theme-preview" style="background: #9b49c8;"></span>
+                  Purple Moon
+                </button>
+                <button class="theme-option" data-theme="blue">
+                  <span class="theme-preview" style="background: #58a6ff;"></span>
+                  GitHub Blue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Blog Header -->
+  <div class="blog-header">
+    <div class="container">
+      <h1 class="blog-title">JPEG XL in PDF: Bringing JXL to PDFium with Rust</h1>
+      <div class="blog-meta">
+        <span>⚡ PDFium</span>
+        <span>🔧 Rust / C++</span>
+        <span>👤 Helmut Januschka</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Content -->
+  <article class="container">
+    <div class="blog-content">
+<p><em>Experimental support for decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs</em></p>
+<p><strong>Status:</strong> 🔬 <strong>EXPERIMENTAL</strong> — Proof-of-concept for standalone PDFium builds</p>
+<div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(211, 95, 95, 0.1); border: 2px solid #D35F5F; border-radius: 12px;">
+  <h3 style="color: #D35F5F; margin: 0 0 10px 0;">🧪 EXPERIMENTAL FEATURE</h3>
+  <p style="margin: 0;">JXL-in-PDF decoding via <code>jxl-rs</code> — not yet upstream</p>
+  <p style="font-size: 13px; opacity: 0.8; margin-top: 5px;">CL: <a href="https://pdfium-review.googlesource.com/c/pdfium/+/142070">pdfium-review.googlesource.com/c/pdfium/+/142070</a></p>
+</div>
+
+<h2>Background</h2>
+<p>With <a href="/chromium-jxl-resurrection.html">JPEG XL landing in Chromium</a> via the Rust decoder <code>jxl-rs</code>, it&#39;s natural to ask: what about <strong>PDF</strong>?</p>
+<p>JPEG XL is poised to become the preferred format for HDR images in PDF (per ISO 32000-2:2020 discussions). While the PDF spec doesn&#39;t yet have a standardized filter name, this experiment uses <code>/JXLDecode</code> as a bring-up name to prove the concept works.</p>
+<h2>The Challenge</h2>
+<p>PDFium is Chromium&#39;s PDF renderer, but it&#39;s also used <strong>standalone</strong> (e.g., in other browsers, document viewers, server-side rendering). The challenge:</p>
+<ol>
+<li><strong>Rust integration</strong> — PDFium&#39;s standalone build needed Rust toolchain support</li>
+<li><strong>Alpha handling</strong> — JXL images can have alpha, but PDF expects a separate <code>/SMask</code></li>
+<li><strong>Animation</strong> — JXL supports animation, but PDF image XObjects are static</li>
+</ol>
+<h2>Implementation</h2>
+<h3>Approach</h3>
+<ul>
+<li><strong>Rust-only decoder</strong>: Uses <code>jxl-rs</code> via Chromium&#39;s CXX bridge wrapper</li>
+<li><strong>No C++ libjxl</strong>: Memory-safe by design, aligns with Chromium&#39;s direction</li>
+<li><strong>Synthesized SMask</strong>: Decoder extracts alpha and creates an internal soft mask</li>
+<li><strong>Frame 0 only</strong>: For animated JXL, only the first frame is rendered</li>
+</ul>
+<h3>Build Integration</h3>
+<p>Added a new GN flag for standalone builds:</p>
+<pre><code class="language-gn"># In pdfium.gni
+declare_args() {
+  pdf_enable_rust_jxl = false
+}
+</code></pre>
+<p>The decoder glue lives in <code>core/fxcodec/jxl/</code>:</p>
+<pre><code>core/fxcodec/jxl/
+├── BUILD.gn
+├── DEPS
+├── jxl_decoder.cc
+├── jxl_decoder.h
+└── jxl_rs_stub.cc
+</code></pre>
+<h3>Decoder Flow</h3>
+<pre><code class="language-cpp">// In cpdf_dib.cpp
+bool CPDF_DIB::LoadJxlBitmap(pdfium::span&lt;const uint8_t&gt; data) {
+  auto info = pdfium::jxl::ParseInfo(data);
+  if (!info) return false;
+
+  auto decoded = pdfium::jxl::DecodeFrame0(data, info-&gt;width, info-&gt;height);
+  if (!decoded) return false;
+
+  // Extract RGB
+  // If has_alpha: synthesize SMask via jpx_inline_data_ mechanism
+
+  return true;
+}
+</code></pre>
+<p>The integration hooks into <code>CreateDecoder()</code> to handle the <code>/JXLDecode</code> filter:</p>
+<pre><code class="language-cpp">if (decoder == &quot;JXLDecode&quot;) {
+  return LoadJxlBitmap(src_span) ? LoadState::kSuccess : LoadState::kFail;
+}
+</code></pre>
+<h2>Demo Artifacts</h2>
+<p>Sample PDFs with embedded JXL images, rendered by the patched PDFium:</p>
+<h3>Zoltan (RGB Photo)</h3>
+<p>Large RGB JPEG XL embedded in PDF.</p>
+<div style="text-align: center; margin: 20px 0;">
+  <img src="/assets/pdfium-jxl/zoltan-jxldecode.pdf.0.png" alt="Zoltan rendered" style="max-width: 100%; border: 2px solid var(--border); border-radius: 8px;" />
+</div>
+<div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0; flex-wrap: wrap;">
+  <a href="/assets/pdfium-jxl/zoltan-jxldecode.pdf" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">📄 Download PDF</a>
+  <a href="/assets/pdfium-jxl/zoltan-jxldecode.pdf.0.png" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">🖼️ Rendered PNG</a>
+</div>
+
+<h3>Dice (Alpha)</h3>
+<p>RGBA JPEG XL with transparency. PDFium synthesizes an <code>/SMask</code> and composites over a checkerboard background (baked into the PDF to visualize alpha).</p>
+<div style="text-align: center; margin: 20px 0;">
+  <img src="/assets/pdfium-jxl/dice-jxldecode.pdf.0.png" alt="Dice rendered with alpha" style="max-width: 100%; border: 2px solid var(--border); border-radius: 8px;" />
+</div>
+<div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0; flex-wrap: wrap;">
+  <a href="/assets/pdfium-jxl/dice-jxldecode.pdf" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">📄 Download PDF</a>
+  <a href="/assets/pdfium-jxl/dice-jxldecode.pdf.0.png" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">🖼️ Rendered PNG</a>
+</div>
+
+<h3>Animated Icons (Frame 0)</h3>
+<p>Animated RGBA JPEG XL. PDFium decodes only the first frame.</p>
+<div style="text-align: center; margin: 20px 0;">
+  <img src="/assets/pdfium-jxl/anim-icos-jxldecode.pdf.0.png" alt="Animated icons frame 0" style="max-width: 200px; border: 2px solid var(--border); border-radius: 8px;" />
+</div>
+<div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0; flex-wrap: wrap;">
+  <a href="/assets/pdfium-jxl/anim-icos-jxldecode.pdf" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">📄 Download PDF</a>
+  <a href="/assets/pdfium-jxl/anim-icos-jxldecode.pdf.0.png" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">🖼️ Rendered PNG</a>
+</div>
+
+<h2>Code Changes</h2>
+<p><span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/142070"><strong>CL 142070</strong></a> — Add experimental JXLDecode support via Rust jxl-rs</p>
+<p><strong>Key files:</strong></p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>pdfium.gni</code></td>
+<td><code>pdf_enable_rust_jxl</code> build flag</td>
+</tr>
+<tr>
+<td><code>core/fxcodec/jxl/*</code></td>
+<td>Decoder glue using jxl-rs</td>
+</tr>
+<tr>
+<td><code>core/fpdfapi/page/cpdf_dib.cpp</code></td>
+<td>Integration point for <code>/JXLDecode</code></td>
+</tr>
+<tr>
+<td><code>fpdfsdk/fpdf_jxl_decode_embeddertest.cpp</code></td>
+<td>Pixel tests</td>
+</tr>
+</tbody></table>
+<h2>Building</h2>
+<p>To build PDFium with JXL support:</p>
+<pre><code class="language-bash"># In args.gn
+enable_rust = true
+pdf_enable_rust_jxl = true
+
+# Requires rust_revision pointing to a version with jxl-rs v0.3 wrapper
+</code></pre>
+<h2>Next Steps</h2>
+<ol>
+<li><strong>Standardization</strong>: Wait for PDF spec to formalize JXL filter name</li>
+<li><strong>Chromium integration</strong>: Currently standalone-only; Chromium uses its own PDF pipeline</li>
+<li><strong>Performance</strong>: Profile and optimize for large images</li>
+<li><strong>Fuzzing</strong>: Add fuzzer targets for the new decode path</li>
+</ol>
+<h2>Related</h2>
+<ul>
+<li><a href="/chromium-jxl-resurrection.html">JPEG XL Returns to Chrome</a> — The Chromium/Blink implementation</li>
+<li><a href="https://github.com/libjxl/jxl-rs">jxl-rs</a> — The pure Rust JPEG XL decoder</li>
+<li><a href="https://pdfium.googlesource.com/pdfium/">PDFium</a> — Google&#39;s PDF rendering library</li>
+</ul>
+<hr>
+<p><em>This is an experimental feature exploring JXL-in-PDF before standardization. The filter name <code>/JXLDecode</code> is a placeholder and may change.</em></p>
+    </div>
+  </article>
+
+  <!-- Command Palette -->
+  <div id="commandPalette" class="command-palette hidden">
+    <div class="command-palette-backdrop"></div>
+    <div class="command-palette-modal">
+      <div class="command-palette-header">
+        <span class="prompt">❯</span>
+        <input type="text" id="commandInput" placeholder="Type a command..." autocomplete="off">
+        <kbd>ESC</kbd>
+      </div>
+      <ul id="commandResults" class="command-results"></ul>
+      <div class="command-palette-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <span>© 2025 Helmut Januschka</span>
+        <span class="badge">Powered by marked.js + Terminal Vibes</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme switcher functionality
+    const themeButton = document.getElementById('themeButton');
+    const themeMenu = document.getElementById('themeMenu');
+    const themeOptions = document.querySelectorAll('.theme-option');
+
+    // Toggle theme menu
+    themeButton.addEventListener('click', function() {
+      themeMenu.classList.toggle('show');
+    });
+
+    // Close theme menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!themeButton.contains(e.target) && !themeMenu.contains(e.target)) {
+        themeMenu.classList.remove('show');
+      }
+    });
+
+    // Theme selection
+    themeOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        const theme = this.getAttribute('data-theme');
+
+        if (theme === 'matte-black') {
+          document.documentElement.removeAttribute('data-theme');
+        } else {
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        // Save theme preference
+        localStorage.setItem('theme', theme);
+
+        // Close menu
+        themeMenu.classList.remove('show');
+      });
+    });
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme && savedTheme !== 'matte-black') {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    // Command Palette
+    const palette = document.getElementById('commandPalette');
+    const paletteInput = document.getElementById('commandInput');
+    const paletteResults = document.getElementById('commandResults');
+    let selectedIndex = 0;
+
+    const commands = [
+      { icon: '🏠', name: 'Go to Home', keywords: ['home', 'top', 'start'], action: () => window.location.href = '/' },
+      { icon: '👤', name: 'Go to About', keywords: ['about', 'bio', 'me'], action: () => window.location.href = '/#about' },
+      { icon: '💼', name: 'Go to Experience', keywords: ['experience', 'work', 'career'], action: () => window.location.href = '/#experience' },
+      { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => window.location.href = '/#projects' },
+      { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => window.location.href = '/#blog' },
+      { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => window.location.href = '/#contact' },
+      { icon: '🎨', name: 'Theme: Matte Black', keywords: ['theme', 'matte', 'black', 'dark'], action: () => { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme', 'matte-black'); } },
+      { icon: '🌿', name: 'Theme: Osaka Jade', keywords: ['theme', 'osaka', 'jade', 'green'], action: () => { document.documentElement.setAttribute('data-theme', 'osaka-jade'); localStorage.setItem('theme', 'osaka-jade'); } },
+      { icon: '🌙', name: 'Theme: Purple Moon', keywords: ['theme', 'purple', 'moon'], action: () => { document.documentElement.setAttribute('data-theme', 'purple-moon'); localStorage.setItem('theme', 'purple-moon'); } },
+      { icon: '💙', name: 'Theme: GitHub Blue', keywords: ['theme', 'github', 'blue'], action: () => { document.documentElement.setAttribute('data-theme', 'blue'); localStorage.setItem('theme', 'blue'); } },
+      { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
+      { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
+      { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
+      { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
+    ];
+
+    function openPalette() {
+      palette.classList.remove('hidden');
+      paletteInput.value = '';
+      selectedIndex = 0;
+      renderResults(commands);
+      setTimeout(() => paletteInput.focus(), 10);
+    }
+
+    function closePalette() {
+      palette.classList.add('hidden');
+      paletteInput.value = '';
+    }
+
+    function filterCommands(query) {
+      if (!query) return commands;
+      const q = query.toLowerCase();
+      return commands.filter(cmd =>
+        cmd.name.toLowerCase().includes(q) ||
+        cmd.keywords.some(k => k.includes(q))
+      );
+    }
+
+    function renderResults(results) {
+      paletteResults.innerHTML = results.map((cmd, i) =>
+        '<li class="command-result' + (i === selectedIndex ? ' selected' : '') + '" data-index="' + i + '">' +
+          '<span class="icon">' + cmd.icon + '</span>' +
+          '<span class="name">' + cmd.name + '</span>' +
+        '</li>'
+      ).join('');
+    }
+
+    function executeCommand(results) {
+      if (results[selectedIndex]) {
+        results[selectedIndex].action();
+        closePalette();
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+      if (e.key === 'Escape' && !palette.classList.contains('hidden')) {
+        closePalette();
+      }
+    });
+
+    paletteInput.addEventListener('input', function() {
+      const results = filterCommands(this.value);
+      selectedIndex = 0;
+      renderResults(results);
+    });
+
+    paletteInput.addEventListener('keydown', function(e) {
+      const results = filterCommands(this.value);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+        renderResults(results);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        renderResults(results);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        executeCommand(results);
+      }
+    });
+
+    paletteResults.addEventListener('click', function(e) {
+      const item = e.target.closest('.command-result');
+      if (item) {
+        selectedIndex = parseInt(item.dataset.index);
+        executeCommand(filterCommands(paletteInput.value));
+      }
+    });
+
+    palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+  
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script>
+    // Highlight all code blocks
+    Prism.highlightAll();
+  </script>
+</body>
+</html>
