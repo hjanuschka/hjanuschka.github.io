@@ -149,12 +149,6 @@ pdf_enable_rust_jxl = true
 # Requires rust_revision pointing to a version with jxl-rs v0.3 wrapper
 ```
 
-## Next Steps
-
-1. **Standardization**: Wait for PDF spec to formalize JXL filter name
-2. **Performance**: Profile and optimize for large images
-3. **Fuzzing**: Add fuzzer targets for the new decode path
-
 ## Related
 
 - [JPEG XL Returns to Chrome](/chromium-jxl-resurrection.html) — The Chromium/Blink implementation
