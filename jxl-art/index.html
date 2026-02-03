@@ -8,16 +8,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/jxl-art/assets/index-CcMqoFap.js"></script>
-    <link rel="stylesheet" crossorigin href="/jxl-art/assets/index-BV7DhRth.css">
+    <script type="module" crossorigin src="/jxl-art/assets/index-Zy5b5nQs.js"></script>
+    <link rel="stylesheet" crossorigin href="/jxl-art/assets/index-Bc3kB66Q.css">
   </head>
   <body>
     <div id="app">
       <header>
         <h1>JXL Art</h1>
-        <a href="https://github.com/libjxl/libjxl" target="_blank" class="powered-by">
-          Powered by libjxl
-        </a>
+        <div class="header-right">
+          <span id="jxl-support" class="jxl-support hidden" title="Your browser supports JXL natively!">
+            <span class="status-dot"></span>
+            JXL Native
+          </span>
+          <a href="https://github.com/libjxl/libjxl" target="_blank" class="powered-by">
+            Powered by libjxl
+          </a>
+        </div>
       </header>
 
       <main id="main">
@@ -41,6 +47,9 @@ if y > 256
 </textarea>
           <div class="controls">
             <button id="run" class="primary">Run ▶️</button>
+            <select id="presets" title="Load a preset example">
+              <option value="">Presets...</option>
+            </select>
             <button id="share">Share 🔗</button>
             <button id="prettier">Prettify ✨</button>
             <button id="help">Help 📖</button>
