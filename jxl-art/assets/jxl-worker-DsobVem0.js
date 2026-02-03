@@ -1,6 +1,6 @@
 (async ()=>{
-    const j = Symbol("Comlink.proxy"), _ = Symbol("Comlink.endpoint"), z = Symbol("Comlink.releaseProxy"), P = Symbol("Comlink.finalizer"), p = Symbol("Comlink.thrown"), T = (e)=>typeof e == "object" && e !== null || typeof e == "function", D = {
-        canHandle: (e)=>T(e) && e[j],
+    const T = Symbol("Comlink.proxy"), D = Symbol("Comlink.endpoint"), H = Symbol("Comlink.releaseProxy"), S = Symbol("Comlink.finalizer"), p = Symbol("Comlink.thrown"), j = (e)=>typeof e == "object" && e !== null || typeof e == "function", N = {
+        canHandle: (e)=>j(e) && e[T],
         serialize (e) {
             const { port1: r, port2: t } = new MessageChannel;
             return C(e, r), [
@@ -13,8 +13,8 @@
         deserialize (e) {
             return e.start(), F(e);
         }
-    }, W = {
-        canHandle: (e)=>T(e) && p in e,
+    }, z = {
+        canHandle: (e)=>j(e) && p in e,
         serialize ({ value: e }) {
             let r;
             return e instanceof Error ? r = {
@@ -38,14 +38,14 @@
     }, O = new Map([
         [
             "proxy",
-            D
+            N
         ],
         [
             "throw",
-            W
+            z
         ]
     ]);
-    function H(e, r) {
+    function W(e, r) {
         for (const t of e)if (r === t || t === "*" || t instanceof RegExp && t.test(r)) return !0;
         return !1;
     }
@@ -54,7 +54,7 @@
     ]) {
         r.addEventListener("message", function o(s) {
             if (!s || !s.data) return;
-            if (!H(t, s.origin)) {
+            if (!W(t, s.origin)) {
                 console.warn(`Invalid origin '${s.origin}' for comlink proxy`);
                 return;
             }
@@ -63,7 +63,7 @@
             }, s.data), l = (s.data.argumentList || []).map(y);
             let i;
             try {
-                const u = n.slice(0, -1).reduce((f, h)=>f[h], e), g = n.reduce((f, h)=>f[h], e);
+                const u = n.slice(0, -1).reduce((f, E)=>f[E], e), g = n.reduce((f, E)=>f[E], e);
                 switch(c){
                     case "GET":
                         i = g;
@@ -82,8 +82,8 @@
                         break;
                     case "ENDPOINT":
                         {
-                            const { port1: f, port2: h } = new MessageChannel;
-                            C(e, h), i = v(f, [
+                            const { port1: f, port2: E } = new MessageChannel;
+                            C(e, E), i = v(f, [
                                 f
                             ]);
                         }
@@ -107,7 +107,7 @@
                 const [g, f] = A(u);
                 r.postMessage(Object.assign(Object.assign({}, g), {
                     id: a
-                }), f), c === "RELEASE" && (r.removeEventListener("message", o), $(r), P in e && typeof e[P] == "function" && e[P]());
+                }), f), c === "RELEASE" && (r.removeEventListener("message", o), $(r), S in e && typeof e[S] == "function" && e[S]());
             }).catch((u)=>{
                 const [g, f] = A({
                     value: new TypeError("Unserializable return value"),
@@ -136,9 +136,9 @@
             } finally{
                 t.delete(a.id);
             }
-        }), S(e, t, [], r);
+        }), P(e, t, [], r);
     }
-    function E(e) {
+    function h(e) {
         if (e) throw new Error("Proxy has been released and is not useable");
     }
     function L(e) {
@@ -156,15 +156,15 @@
         const t = (x.get(r) || 0) + 1;
         x.set(r, t), k && k.register(e, r, e);
     }
-    function I(e) {
+    function G(e) {
         k && k.unregister(e);
     }
-    function S(e, r, t = [], o = function() {}) {
+    function P(e, r, t = [], o = function() {}) {
         let s = !1;
         const a = new Proxy(o, {
             get (c, n) {
-                if (E(s), n === z) return ()=>{
-                    I(a), L(e), r.clear(), s = !0;
+                if (h(s), n === H) return ()=>{
+                    G(a), L(e), r.clear(), s = !0;
                 };
                 if (n === "then") {
                     if (t.length === 0) return {
@@ -176,13 +176,13 @@
                     }).then(y);
                     return l.then.bind(l);
                 }
-                return S(e, r, [
+                return P(e, r, [
                     ...t,
                     n
                 ]);
             },
             set (c, n, l) {
-                E(s);
+                h(s);
                 const [i, u] = A(l);
                 return m(e, r, {
                     type: "SET",
@@ -194,12 +194,12 @@
                 }, u).then(y);
             },
             apply (c, n, l) {
-                E(s);
+                h(s);
                 const i = t[t.length - 1];
-                if (i === _) return m(e, r, {
+                if (i === D) return m(e, r, {
                     type: "ENDPOINT"
                 }).then(y);
-                if (i === "bind") return S(e, r, t.slice(0, -1));
+                if (i === "bind") return P(e, r, t.slice(0, -1));
                 const [u, g] = M(l);
                 return m(e, r, {
                     type: "APPLY",
@@ -208,7 +208,7 @@
                 }, g).then(y);
             },
             construct (c, n) {
-                E(s);
+                h(s);
                 const [l, i] = M(n);
                 return m(e, r, {
                     type: "CONSTRUCT",
@@ -219,23 +219,23 @@
         });
         return V(a, e), a;
     }
-    function G(e) {
+    function I(e) {
         return Array.prototype.concat.apply([], e);
     }
     function M(e) {
         const r = e.map(A);
         return [
             r.map((t)=>t[0]),
-            G(r.map((t)=>t[1]))
+            I(r.map((t)=>t[1]))
         ];
     }
-    const N = new WeakMap;
+    const _ = new WeakMap;
     function v(e, r) {
-        return N.set(e, r), e;
+        return _.set(e, r), e;
     }
     function q(e) {
         return Object.assign(e, {
-            [j]: !0
+            [T]: !0
         });
     }
     function A(e) {
@@ -255,7 +255,7 @@
                 type: "RAW",
                 value: e
             },
-            N.get(e) || []
+            _.get(e) || []
         ];
     }
     function y(e) {
@@ -282,20 +282,24 @@
         "xyb",
         "cbycr",
         "alpha",
-        "notlast"
+        "notlast",
+        "16bitbuffers",
+        "gaborish"
     ], J = [
         "framepos"
+    ], Z = [
+        "xybfactors"
     ];
-    function Z(e) {
+    function B(e) {
         const r = e.toLowerCase();
-        return Y.includes(r) ? 0 : J.includes(r) ? 2 : 1;
+        return Y.includes(r) ? 0 : J.includes(r) ? 2 : Z.includes(r) ? 3 : 1;
     }
     function w(e) {
         const { value: r, done: t } = e.next();
         if (t) throw new Error("Unexpected end of input");
         return r;
     }
-    function B(e) {
+    function K(e) {
         const t = e.split(/\s+/).filter((o)=>o)[Symbol.iterator]();
         return b(t, 0);
     }
@@ -320,7 +324,7 @@
                 continue;
             }
             t += o;
-            let n = Z(c);
+            let n = B(c);
             for(; n > 0;)t += ` ${w(e)}`, n--;
             t += `
 `, a = !0;
@@ -340,7 +344,7 @@
 `, t += b(e, 0)), t;
     }
     let R = null, d = [];
-    async function K() {
+    async function Q() {
         if (R) return;
         const e = (await import("./jxl-Cf-87UZE.js")).default;
         R = await e({
@@ -353,9 +357,9 @@
             }
         }), console.log("[Worker] libjxl loaded");
     }
-    const Q = {
+    const ee = {
         async render (e, r) {
-            await K(), d = [];
+            await Q(), d = [];
             const t = r?.skipPng ?? !1;
             let o;
             try {
@@ -402,8 +406,8 @@
             };
         },
         prettier (e) {
-            return B(e);
+            return K(e);
         }
     };
-    C(Q);
+    C(ee);
 })();
