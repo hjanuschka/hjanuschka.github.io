@@ -1,5 +1,5 @@
 (async ()=>{
-    const T = Symbol("Comlink.proxy"), D = Symbol("Comlink.endpoint"), H = Symbol("Comlink.releaseProxy"), S = Symbol("Comlink.finalizer"), p = Symbol("Comlink.thrown"), j = (e)=>typeof e == "object" && e !== null || typeof e == "function", N = {
+    const T = Symbol("Comlink.proxy"), z = Symbol("Comlink.endpoint"), H = Symbol("Comlink.releaseProxy"), S = Symbol("Comlink.finalizer"), p = Symbol("Comlink.thrown"), j = (e)=>typeof e == "object" && e !== null || typeof e == "function", N = {
         canHandle: (e)=>j(e) && e[T],
         serialize (e) {
             const { port1: r, port2: t } = new MessageChannel;
@@ -13,7 +13,7 @@
         deserialize (e) {
             return e.start(), F(e);
         }
-    }, z = {
+    }, W = {
         canHandle: (e)=>j(e) && p in e,
         serialize ({ value: e }) {
             let r;
@@ -42,10 +42,10 @@
         ],
         [
             "throw",
-            z
+            W
         ]
     ]);
-    function W(e, r) {
+    function D(e, r) {
         for (const t of e)if (r === t || t === "*" || t instanceof RegExp && t.test(r)) return !0;
         return !1;
     }
@@ -54,7 +54,7 @@
     ]) {
         r.addEventListener("message", function o(s) {
             if (!s || !s.data) return;
-            if (!W(t, s.origin)) {
+            if (!D(t, s.origin)) {
                 console.warn(`Invalid origin '${s.origin}' for comlink proxy`);
                 return;
             }
@@ -152,7 +152,7 @@
         const r = (x.get(e) || 0) - 1;
         x.set(e, r), r === 0 && L(e);
     });
-    function V(e, r) {
+    function I(e, r) {
         const t = (x.get(r) || 0) + 1;
         x.set(r, t), k && k.register(e, r, e);
     }
@@ -196,7 +196,7 @@
             apply (c, n, l) {
                 h(s);
                 const i = t[t.length - 1];
-                if (i === D) return m(e, r, {
+                if (i === z) return m(e, r, {
                     type: "ENDPOINT"
                 }).then(y);
                 if (i === "bind") return P(e, r, t.slice(0, -1));
@@ -217,16 +217,16 @@
                 }, i).then(y);
             }
         });
-        return V(a, e), a;
+        return I(a, e), a;
     }
-    function I(e) {
+    function V(e) {
         return Array.prototype.concat.apply([], e);
     }
     function M(e) {
         const r = e.map(A);
         return [
             r.map((t)=>t[0]),
-            I(r.map((t)=>t[1]))
+            V(r.map((t)=>t[1]))
         ];
     }
     const _ = new WeakMap;
@@ -346,9 +346,9 @@
     let R = null, d = [];
     async function Q() {
         if (R) return;
-        const e = (await import("./jxl-Cf-87UZE.js")).default;
+        const e = (await import("./jxl-DGzUj951.js")).default;
         R = await e({
-            locateFile: (r)=>r.endsWith(".wasm") ? new URL("/jxl-art/assets/jxl-DkxV83-1.wasm", import.meta.url).href : r,
+            locateFile: (r)=>r.endsWith(".wasm") ? new URL("/jxl-art/assets/jxl--z72W-fI.wasm", import.meta.url).href : r,
             printErr: (r)=>{
                 console.error("[libjxl]", r), d.push(r);
             },
