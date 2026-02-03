@@ -1,5 +1,5 @@
 (async ()=>{
-    const T = Symbol("Comlink.proxy"), z = Symbol("Comlink.endpoint"), H = Symbol("Comlink.releaseProxy"), S = Symbol("Comlink.finalizer"), p = Symbol("Comlink.thrown"), j = (e)=>typeof e == "object" && e !== null || typeof e == "function", N = {
+    const T = Symbol("Comlink.proxy"), D = Symbol("Comlink.endpoint"), H = Symbol("Comlink.releaseProxy"), P = Symbol("Comlink.finalizer"), p = Symbol("Comlink.thrown"), j = (e)=>typeof e == "object" && e !== null || typeof e == "function", N = {
         canHandle: (e)=>j(e) && e[T],
         serialize (e) {
             const { port1: t, port2: r } = new MessageChannel;
@@ -13,7 +13,7 @@
         deserialize (e) {
             return e.start(), F(e);
         }
-    }, W = {
+    }, z = {
         canHandle: (e)=>j(e) && p in e,
         serialize ({ value: e }) {
             let t;
@@ -42,10 +42,10 @@
         ],
         [
             "throw",
-            W
+            z
         ]
     ]);
-    function D(e, t) {
+    function W(e, t) {
         for (const r of e)if (t === r || r === "*" || r instanceof RegExp && r.test(t)) return !0;
         return !1;
     }
@@ -54,7 +54,7 @@
     ]) {
         t.addEventListener("message", function c(s) {
             if (!s || !s.data) return;
-            if (!D(r, s.origin)) {
+            if (!W(r, s.origin)) {
                 console.warn(`Invalid origin '${s.origin}' for comlink proxy`);
                 return;
             }
@@ -107,7 +107,7 @@
                 const [g, f] = A(u);
                 t.postMessage(Object.assign(Object.assign({}, g), {
                     id: i
-                }), f), l === "RELEASE" && (t.removeEventListener("message", c), $(t), S in e && typeof e[S] == "function" && e[S]());
+                }), f), l === "RELEASE" && (t.removeEventListener("message", c), $(t), P in e && typeof e[P] == "function" && e[P]());
             }).catch((u)=>{
                 const [g, f] = A({
                     value: new TypeError("Unserializable return value"),
@@ -136,7 +136,7 @@
             } finally{
                 r.delete(i.id);
             }
-        }), P(e, r, [], t);
+        }), S(e, r, [], t);
     }
     function h(e) {
         if (e) throw new Error("Proxy has been released and is not useable");
@@ -152,14 +152,14 @@
         const t = (x.get(e) || 0) - 1;
         x.set(e, t), t === 0 && L(e);
     });
-    function I(e, t) {
+    function V(e, t) {
         const r = (x.get(t) || 0) + 1;
         x.set(t, r), k && k.register(e, t, e);
     }
     function G(e) {
         k && k.unregister(e);
     }
-    function P(e, t, r = [], c = function() {}) {
+    function S(e, t, r = [], c = function() {}) {
         let s = !1;
         const i = new Proxy(c, {
             get (l, o) {
@@ -176,7 +176,7 @@
                     }).then(y);
                     return n.then.bind(n);
                 }
-                return P(e, t, [
+                return S(e, t, [
                     ...r,
                     o
                 ]);
@@ -196,10 +196,10 @@
             apply (l, o, n) {
                 h(s);
                 const a = r[r.length - 1];
-                if (a === z) return m(e, t, {
+                if (a === D) return m(e, t, {
                     type: "ENDPOINT"
                 }).then(y);
-                if (a === "bind") return P(e, t, r.slice(0, -1));
+                if (a === "bind") return S(e, t, r.slice(0, -1));
                 const [u, g] = M(n);
                 return m(e, t, {
                     type: "APPLY",
@@ -217,16 +217,16 @@
                 }, a).then(y);
             }
         });
-        return I(i, e), i;
+        return V(i, e), i;
     }
-    function V(e) {
+    function I(e) {
         return Array.prototype.concat.apply([], e);
     }
     function M(e) {
         const t = e.map(A);
         return [
             t.map((r)=>r[0]),
-            V(t.map((r)=>r[1]))
+            I(t.map((r)=>r[1]))
         ];
     }
     const _ = new WeakMap;
@@ -346,9 +346,9 @@
     let R = null, d = [];
     async function Q() {
         if (R) return;
-        const e = (await import("./jxl-DGzUj951.js")).default;
+        const e = (await import("./jxl-C28KHjPU.js")).default;
         R = await e({
-            locateFile: (t)=>t.endsWith(".wasm") ? new URL("/jxl-art/assets/jxl--z72W-fI.wasm", import.meta.url).href : t,
+            locateFile: (t)=>t.endsWith(".wasm") ? new URL("/jxl-art/assets/jxl-D440PmfV.wasm", import.meta.url).href : t,
             printErr: (t)=>{
                 console.error("[libjxl]", t), d.push(t);
             },
