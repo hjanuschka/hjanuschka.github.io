@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/jxl-art/assets/index-CAp3Mgsn.js"></script>
-    <link rel="stylesheet" crossorigin href="/jxl-art/assets/index-Bc3kB66Q.css">
+    <script type="module" crossorigin src="/jxl-art/assets/index-BwE_Ei8Y.js"></script>
+    <link rel="stylesheet" crossorigin href="/jxl-art/assets/index-Cbrr4dsP.css">
   </head>
   <body>
     <div id="app">
@@ -47,9 +47,7 @@ if y > 256
 </textarea>
           <div class="controls">
             <button id="run" class="primary">Run ▶️</button>
-            <select id="presets" title="Load a preset example">
-              <option value="">Presets...</option>
-            </select>
+            <button id="presets-btn">Presets 🎨</button>
             <button id="share">Share 🔗</button>
             <button id="prettier">Prettify ✨</button>
             <button id="help">Help 📖</button>
@@ -84,6 +82,12 @@ if y > 256
       <dialog id="help-dialog">
         <article id="help-content"></article>
         <button id="close-help">Close</button>
+      </dialog>
+
+      <dialog id="presets-dialog">
+        <h2>Presets</h2>
+        <div id="presets-grid" class="presets-grid"></div>
+        <button id="close-presets">Close</button>
       </dialog>
     </div>
   </body>
