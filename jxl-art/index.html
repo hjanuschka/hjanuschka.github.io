@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/jxl-art/assets/index-sAG4ofcs.js"></script>
-    <link rel="stylesheet" crossorigin href="/jxl-art/assets/index-Cbrr4dsP.css">
+    <script type="module" crossorigin src="/jxl-art/assets/index-lILI4yld.js"></script>
+    <link rel="stylesheet" crossorigin href="/jxl-art/assets/index-DzyDc7XU.css">
   </head>
   <body>
     <div id="app">
@@ -28,7 +28,9 @@
 
       <main id="main">
         <div class="editor-panel">
-          <textarea id="code" spellcheck="false">Bitdepth 8
+          <div class="code-editor">
+            <div class="line-numbers" id="line-numbers"></div>
+            <textarea id="code" spellcheck="false">Bitdepth 8
 Width 512
 Height 512
 
@@ -45,12 +47,13 @@ if y > 256
   - W + 30
   - Set 180
 </textarea>
+          </div>
           <div class="controls">
-            <button id="run" class="primary">Run ▶️</button>
-            <button id="presets-btn">Presets 🎨</button>
-            <button id="share">Share 🔗</button>
-            <button id="prettier">Prettify ✨</button>
-            <button id="help">Help 📖</button>
+            <button id="run" class="primary" title="Run (Ctrl+Enter)">Run ▶️</button>
+            <button id="presets-btn" title="Load preset examples">Presets 🎨</button>
+            <button id="share" title="Copy share URL (Ctrl+S)">Share 🔗</button>
+            <button id="prettier" title="Format code (Ctrl+Shift+F)">Prettify ✨</button>
+            <button id="help" title="Show help">Help 📖</button>
           </div>
           <pre id="log"></pre>
         </div>
