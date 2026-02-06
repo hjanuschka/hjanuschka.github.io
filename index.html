@@ -870,6 +870,26 @@
               <span>In Progress</span>
             </div>
 
+            <a href="/reviving-hev3-https-rr.html" class="blog-card" data-status="progress experiments">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-progress">IN PROGRESS</span>
+                <span class="blog-status blog-status-experiments" style="margin-left: 8px;">EXPERIMENT</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">February 2026</span>
+                <h4>Reviving HEv3 & HTTPS-RR in Chromium</h4>
+                <p>Taking matters into my own hands to pursue RFC 9460 support in Chrome. 70+ steps to unblock the network stack.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Chromium</span>
+                  <span class="blog-tag">DNS</span>
+                  <span class="blog-tag">Networking</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
             <a href="/chromium-devtools-speculation-filter.html" class="blog-card" data-status="progress">
               <div class="blog-card-header">
                 <span class="blog-status blog-status-review">IN REVIEW</span>
@@ -1367,29 +1387,29 @@
     }
 
     /* Hide sections based on filter */
-    .blog-grid.filter-landed .blog-card:not([data-status="landed"]),
+    .blog-grid.filter-landed .blog-card:not([data-status~="landed"]),
     .blog-grid.filter-landed .blog-section-header:not([data-filter="landed"]),
-    .blog-grid.filter-progress .blog-card:not([data-status="progress"]),
+    .blog-grid.filter-progress .blog-card:not([data-status~="progress"]),
     .blog-grid.filter-progress .blog-section-header:not([data-filter="progress"]),
-    .blog-grid.filter-tools .blog-card:not([data-status="tools"]),
+    .blog-grid.filter-tools .blog-card:not([data-status~="tools"]),
     .blog-grid.filter-tools .blog-section-header:not([data-filter="tools"]),
-    .blog-grid.filter-experiments .blog-card:not([data-status="experiments"]),
+    .blog-grid.filter-experiments .blog-card:not([data-status~="experiments"]),
     .blog-grid.filter-experiments .blog-section-header:not([data-filter="experiments"]) {
       display: none;
     }
 
-    .blog-grid.filter-landed .blog-featured:not([data-status="landed"]),
-    .blog-grid.filter-progress .blog-featured:not([data-status="progress"]),
-    .blog-grid.filter-tools .blog-featured:not([data-status="tools"]),
-    .blog-grid.filter-experiments .blog-featured:not([data-status="experiments"]) {
+    .blog-grid.filter-landed .blog-featured:not([data-status~="landed"]),
+    .blog-grid.filter-progress .blog-featured:not([data-status~="progress"]),
+    .blog-grid.filter-tools .blog-featured:not([data-status~="tools"]),
+    .blog-grid.filter-experiments .blog-featured:not([data-status~="experiments"]) {
       display: none;
     }
 
     /* Filter active states for featured */
-    #blog .ascii-box-content.filter-landed .blog-featured:not([data-status="landed"]),
-    #blog .ascii-box-content.filter-progress .blog-featured:not([data-status="progress"]),
-    #blog .ascii-box-content.filter-tools .blog-featured:not([data-status="tools"]),
-    #blog .ascii-box-content.filter-experiments .blog-featured:not([data-status="experiments"]) {
+    #blog .ascii-box-content.filter-landed .blog-featured:not([data-status~="landed"]),
+    #blog .ascii-box-content.filter-progress .blog-featured:not([data-status~="progress"]),
+    #blog .ascii-box-content.filter-tools .blog-featured:not([data-status~="tools"]),
+    #blog .ascii-box-content.filter-experiments .blog-featured:not([data-status~="experiments"]) {
       display: none;
     }
 
@@ -1917,8 +1937,8 @@
           const filter = this.getAttribute('data-filter');
 
           // Remove all filter classes
-          blogGrid.classList.remove('filter-landed', 'filter-progress', 'filter-tools');
-          blogContent.classList.remove('filter-landed', 'filter-progress', 'filter-tools');
+          blogGrid.classList.remove('filter-landed', 'filter-progress', 'filter-tools', 'filter-experiments');
+          blogContent.classList.remove('filter-landed', 'filter-progress', 'filter-tools', 'filter-experiments');
 
           // Apply filter
           if (filter !== 'all') {

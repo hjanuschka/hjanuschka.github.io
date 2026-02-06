@@ -4,6 +4,8 @@ category: "Chromium"
 tech: "C++ / DNS / Networking"
 ---
 
+**This post is a work in progress -- it will be updated as CLs land and the project evolves.**
+
 *Taking matters into my own hands to pursue RFC 9460 support in Chrome.*
 
 ## The Beginning: HTTPS Resource Records
