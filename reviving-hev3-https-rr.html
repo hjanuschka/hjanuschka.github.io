@@ -1,195 +1,18 @@
-#!/bin/bash
-
-# Blog Static Site Generator
-# Converts markdown blog posts to static HTML with syntax highlighting
-# 
-# Posts are auto-discovered from *.md files with front matter:
-#   ---
-#   title: "Your Post Title"
-#   category: "Chromium"
-#   tech: "C++"
-#   ---
-
-# NOTE: Not using set -e because grep/description extraction can fail on some posts
-# set -e
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[0;33m'
-NC='\033[0m' # No Color
-
-echo -e "${BLUE}Building static blog posts...${NC}"
-
-# Check if required commands exist
-command -v node >/dev/null 2>&1 || { echo -e "${RED}Error: Node.js is required but not installed.${NC}" >&2; exit 1; }
-
-# Install dependencies if needed
-if [ ! -d "node_modules" ] || [ ! -d "node_modules/marked" ]; then
-    echo -e "${BLUE}Installing dependencies...${NC}"
-    npm init -y >/dev/null 2>&1 || true
-    npm install marked prismjs prism-themes js-yaml --save-dev
-fi
-
-# Create build directory if it doesn't exist
-mkdir -p build
-
-# Create Node.js script for markdown processing
-cat > build-markdown.js << 'EOF'
-const fs = require('fs');
-const path = require('path');
-const { marked } = require('marked');
-const Prism = require('prismjs');
-const yaml = require('js-yaml');
-
-// Load additional languages
-require('prismjs/components/prism-bash');
-require('prismjs/components/prism-c');
-require('prismjs/components/prism-cpp');
-require('prismjs/components/prism-python');
-require('prismjs/components/prism-json');
-require('prismjs/components/prism-rust');
-require('prismjs/components/prism-shell-session');
-
-// Custom renderer for code blocks
-const renderer = new marked.Renderer();
-const originalCode = renderer.code.bind(renderer);
-
-renderer.code = function(code, lang, escaped) {
-  // Handle custom snippet blocks - render as raw HTML
-  if (lang === 'snippet') {
-    return code + '\n';
-  }
-
-  // Default code block handling
-  return originalCode(code, lang, escaped);
-};
-
-// Configure marked to use Prism for syntax highlighting
-marked.setOptions({
-  renderer: renderer,
-  highlight: function(code, lang) {
-    // Skip highlighting for snippet blocks
-    if (lang === 'snippet') return code;
-
-    // Map 'sh' to 'bash' for Prism
-    if (lang === 'sh') lang = 'bash';
-
-    if (Prism.languages[lang]) {
-      return Prism.highlight(code, Prism.languages[lang], lang);
-    }
-    return code;
-  },
-  breaks: true,
-  gfm: true
-});
-
-// Parse front matter from markdown
-function parseFrontMatter(content) {
-  const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-  const match = content.match(frontMatterRegex);
-  
-  if (match) {
-    try {
-      const metadata = yaml.load(match[1]);
-      return {
-        metadata,
-        content: match[2]
-      };
-    } catch (e) {
-      console.error('Error parsing front matter:', e.message);
-      return { metadata: {}, content };
-    }
-  }
-  
-  return { metadata: {}, content };
-}
-
-// Read command line arguments
-const mdFile = process.argv[2];
-const mode = process.argv[3]; // 'metadata' or 'content'
-
-if (!mdFile) {
-  console.error('Usage: node build-markdown.js <markdown-file> [metadata|content]');
-  process.exit(1);
-}
-
-// Read markdown file
-const fileContent = fs.readFileSync(mdFile, 'utf8');
-const { metadata, content } = parseFrontMatter(fileContent);
-
-if (mode === 'metadata') {
-  // Output metadata as JSON
-  console.log(JSON.stringify(metadata));
-} else {
-  // Convert to HTML
-  let htmlContent = marked.parse(content);
-
-  // Post-process: convert snippet code blocks to raw HTML
-  htmlContent = htmlContent.replace(
-    /<pre><code class="language-snippet">(.+?)<\/code><\/pre>/gs,
-    (match, content) => {
-      // Unescape HTML entities
-      let unescaped = content
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&amp;/g, '&');
-
-      // Process markdown inside <details> blocks
-      unescaped = unescaped.replace(
-        /(<details[\s\S]*?>)([\s\S]*?)(<\/details>)/gi,
-        (detailsMatch, openTag, innerContent, closeTag) => {
-          // Process the inner content as markdown
-          let processedInner = marked.parse(innerContent);
-          return openTag + processedInner + closeTag;
-        }
-      );
-
-      return unescaped;
-    }
-  );
-
-  // Output the HTML content
-  console.log(htmlContent);
-}
-EOF
-
-# HTML template function
-generate_html() {
-    local md_file="$1"
-    local output_file="$2"
-    local title="$3"
-    local category="${4:-Chromium}"
-    local tech="${5:-C++}"
-    
-    echo -e "${BLUE}Processing: $md_file -> $output_file${NC}"
-    
-    # Generate HTML content from markdown
-    local content=$(node build-markdown.js "$md_file" content)
-    
-    # Extract first paragraph for description (remove HTML tags)
-    local description=$(echo "$content" | grep -m1 "<p><em>" | sed 's/<[^>]*>//g' | sed 's/&[^;]*;//g' | cut -c1-160 || true)
-    
-    # Create full HTML page
-    cat > "$output_file" << EOF
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>$title - Helmut Januschka</title>
-  <meta name="description" content="${description:-$title}">
+  <title>Reviving HEv3 & HTTPS-RR in Chromium - Helmut Januschka</title>
+  <meta name="description" content="Taking matters into my own hands to pursue RFC 9460 support in Chrome.">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "$title",
-    "description": "${description:-$title}",
+    "headline": "Reviving HEv3 & HTTPS-RR in Chromium",
+    "description": "Taking matters into my own hands to pursue RFC 9460 support in Chrome.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -206,35 +29,35 @@ generate_html() {
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "$(date -u +%Y-%m-%d)",
+    "dateModified": "2026-02-06",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/$output_file"
+      "@id": "https://januschka.com/reviving-hev3-https-rr.html"
     },
-    "keywords": "$category, $tech, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / DNS / Networking, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/$output_file"
+      "target": "https://januschka.com/reviving-hev3-https-rr.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="$title">
-  <meta property="og:description" content="${description:-$title}">
+  <meta property="og:title" content="Reviving HEv3 & HTTPS-RR in Chromium">
+  <meta property="og:description" content="Taking matters into my own hands to pursue RFC 9460 support in Chrome.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/$output_file">
+  <meta property="og:url" content="https://januschka.com/reviving-hev3-https-rr.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="$title">
-  <meta name="twitter:description" content="${description:-$title}">
+  <meta name="twitter:title" content="Reviving HEv3 & HTTPS-RR in Chromium">
+  <meta name="twitter:description" content="Taking matters into my own hands to pursue RFC 9460 support in Chrome.">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1010,10 +833,10 @@ generate_html() {
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">$title</h1>
+      <h1 class="blog-title">Reviving HEv3 & HTTPS-RR in Chromium</h1>
       <div class="blog-meta">
-        <span>⚡ $category</span>
-        <span>🔧 $tech</span>
+        <span>⚡ Chromium</span>
+        <span>🔧 C++ / DNS / Networking</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -1022,7 +845,122 @@ generate_html() {
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-$content
+<p><em>Taking matters into my own hands to pursue RFC 9460 support in Chrome.</em></p>
+<h2>The Beginning: HTTPS Resource Records</h2>
+<p>It all started with a simple goal: I wanted to implement full support for <strong>HTTPS Resource Records</strong> (HTTPS-RR) in Chromium, specifically RFC 9460. This includes proper handling of <code>AliasMode</code> and <code>ServiceMode</code> with different target names—features crucial for the modern web&#39;s evolution towards more flexible and secure service discovery.</p>
+<p>I picked up <a href="https://issues.chromium.org/issues/40257146">Issue 40257146</a> and went to work. I put together a CL that successfully implemented the logic. It worked! I was ready to land it.</p>
+<h2>The Block: &quot;Wait for HEv3&quot;</h2>
+<p>But then, the code review feedback came in. It wasn&#39;t about the correctness of my specific logic, but about the <em>architecture</em>. The Chromium team was in the middle of a major network stack refactor known as <strong>Happy Eyeballs v3 (HEv3)</strong>.</p>
+<p>My approach was flagged as conflicting with this new direction:</p>
+<blockquote>
+<p>&quot;My preference would be &#39;Wait until HEv3 lands and then revisit with proper integration.&#39; At this point I don&#39;t have concrete ideas about how we should implement aliases and different target names so I&#39;m not sure we keep or abandon this CL. I think marking this as work in progress... is a reasonable action for now.&quot;</p>
+</blockquote>
+<p>It made sense. HEv3 is designed to allow connection attempts to race without waiting for all DNS results—a huge performance win. My implementation, based on the legacy path, might have blocked this optimization. So, I parked the CL and waited.</p>
+<h2>The Twist: &quot;We might not do HEv3&quot;</h2>
+<p>Time passed. HEv3 development dragged on. Then came the update that flipped everything:</p>
+<blockquote>
+<p>&quot;The HEv3 development has been prolonged and it&#39;s difficult to predict when it will be completed. The team are moving towards not implementing HEv3 (that&#39;s unfortunate). We may consider supporting HTTPS RR aliases and different target names without HEv3, nothing has been decided yet.&quot;</p>
+</blockquote>
+<p>So, the shiny new architecture I was waiting for—the one that blocked my feature—was potentially being abandoned? And we might go back to a non-HEv3 implementation anyway?</p>
+<h2>The Revival</h2>
+<p>That was my &quot;WTF&quot; moment. Instead of waiting for a compromise or abandoning the architectural improvements of HEv3, I decided to <strong>revive the effort myself</strong>. If HEv3 was stalled, I would help unblock it to get my HTTPS-RR features landed <em>properly</em>.</p>
+<p>I dove deep into the HEv3 design docs and the codebase. I mapped out a detailed plan and started working through a 70+ step checklist to:</p>
+<ol>
+<li>Become a regular contributor to the HEv3 codepath (<code>net/dns</code>, <code>net/http</code>).</li>
+<li>Implement HTTPS-RR follow-ups (AliasMode/ServiceMode) <em>within</em> the HEv3 model.</li>
+<li>Ensure no performance regressions (the whole point of HEv3!).</li>
+<li>Ship it.</li>
+</ol>
+<h2>Current Status</h2>
+<p>I&#39;ve already landed several preparatory CLs and have a stack of 63 changes in flight to completely overhaul the HEv3 codepath for HTTPS-RR support. <strong>The core functionality is now working end-to-end!</strong></p>
+<details><summary style="cursor: pointer; color: var(--accent); font-weight: bold; margin-bottom: 10px;">View all 63 CLs (Progress: 2 Merged, 61 In Review) →</summary>
+
+<div>
+
+<p><strong>Landed / Merged:</strong></p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7532178"><strong>Fix HEv3 intermediate update behavior</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7535202"><strong>Ignore H2 sessions for non-SSL in AttemptManager</strong></a></li>
+</ul>
+<p><strong>In Review (DNS &amp; Normalization):</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7532080"><strong>DnsTaskResultsManager target-name behavior</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7532105"><strong>Canonicalize domain-name matching</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7534958"><strong>Apply HTTPS metadata via alias targets</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7531547"><strong>Deduplicate endpoints in DnsTaskResultsManager</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7531548"><strong>Allow multiple HTTPS completions</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7532007"><strong>Avoid adding HTTPS query names to DNS aliases</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7531967"><strong>Surface HTTPS alias records</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7545367"><strong>Normalize DNS names for endpoint keying</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7543470"><strong>Normalize HTTPS target names in extractor</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7548052"><strong>Propagate stale DNS aliases</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7549124"><strong>Normalize canonical name matching in HostCache</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7549523"><strong>Log DNS aliases with endpoint updates</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7546723"><strong>Normalize canonical names in HostCache entries</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7548494"><strong>HostCache normalization coverage</strong></a></li>
+</ul>
+<p><strong>In Review (Followups &amp; ServiceMode):</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550310"><strong>Extend DnsTaskResultsManager tests</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7548608"><strong>Prototype AliasMode followup resolution</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7548495"><strong>Add bounded recursion + cycle detection</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7543652"><strong>Extend DnsTaskResultsManager to accept followups</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550314"><strong>Add ServiceMode TargetName followup query handling</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550430"><strong>Extend tests for ServiceMode multi-target followups</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7543703"><strong>Validate IsMetadataReady semantics</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550411"><strong>Plumb target name through connection layer</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7545973"><strong>Add connection-layer tests for multi-target ServiceMode</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550437"><strong>NetLog or UMA for followup query timing</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7545968"><strong>ServiceMode multi-target test coverage</strong></a></li>
+</ul>
+<p><strong>In Review (Connection Layer &amp; Plumbing):</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7543527"><strong>Add ServiceEndpointConnectionAttempt representation</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7551690"><strong>Plumb ServiceEndpointConnectionAttempt through connect jobs</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7551870"><strong>Add TCPServiceEndpointConnectJob and wire SSLConnectJob</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7551990"><strong>Update QuicSessionPool::Job for pre-resolved endpoints</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552050"><strong>Add preconnect support in HttpStreamPool</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552250"><strong>Add HEv3 ECH fallback handling</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552390"><strong>Add idle socket lookup or bypass mode</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552510"><strong>Move proxy resolution to HttpStreamFactory</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552512"><strong>Cancel in-flight QUIC attempts on session activation</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552570"><strong>Align HEv3 TCP/TLS timeout error codes</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552650"><strong>Add UMA for HEv3 TCP-based and QUIC attempt outcomes</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552670"><strong>Add HEv3 dual-stack TLS fallback test</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552730"><strong>Add HEv3 incremental DNS endpoint update test</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552870"><strong>Add HEv3 DNS error fallback and multi-endpoint tests</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552950"><strong>Add NetLog event for HEv3 SPDY throttle delay</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552392"><strong>Record QUIC failure in connection_attempts_</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552931"><strong>Convert CHECK to DCHECK in MaybeAttemptTcpBased</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552951"><strong>Test preconnect with HTTPS RR metadata endpoints</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552051"><strong>Test cancellation mid-followup</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7545376"><strong>Integration cleanup</strong></a></li>
+</ul>
+<p><strong>In Review (HTTPS-RR Core - The Key Gate!):</strong></p>
+<ul>
+<li><span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">KEY CL</span> <a href="https://crrev.com/c/7552252"><strong>Remove TargetName filter in DnsResponseResultExtractor</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552773"><strong>End-to-end HTTPS RR different TargetName followup test</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552933"><strong>Followup recursion limit + cycle detection test</strong></a></li>
+</ul>
+<p><strong>In Review (Metrics &amp; Flag Flip):</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7551954"><strong>UMA for HEv3 vs legacy path selection</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552052"><strong>UMA for DNS resolution time in HttpStreamPool</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7551955"><strong>UMA for intermediate vs final endpoint usage</strong></a></li>
+<li><span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">FLAG FLIP</span> <a href="https://crrev.com/c/7552932"><strong>Enable kHappyEyeballsV3 by default</strong></a></li>
+</ul>
+</div>
+</details>
+
+<p>It&#39;s a deep dive into Chromium&#39;s networking internals—<code>HostResolver</code>, <code>HttpStreamPool</code>, <code>DnsTaskResultsManager</code>—but we&#39;re getting there. The goal remains: <strong>Full RFC 9460 support in Chrome, backed by the performance of Happy Eyeballs v3.</strong></p>
+<p>Stay tuned for updates as I work through the checklist.</p>
+<h2>A Note on Reality</h2>
+<p>Will this work? I don&#39;t know yet. I&#39;m one contributor with a vision, navigating a codebase shaped by many hands over many years. There will be tough reviews, architectural debates, and probably surprises I haven&#39;t anticipated. That&#39;s the nature of working in a project as complex as Chromium.</p>
+<p>But here&#39;s what I do know: the best way to make something happen is to start. Every merged CL is one step closer. Every review comment is an opportunity to learn. And even if the path changes--even if we discover the way forward looks different than what I&#39;ve mapped out--the effort itself moves the needle.</p>
+<p>If there&#39;s a will, there&#39;s a way. We just might not know the way today.</p>
+<blockquote>
+<p><em>&quot;Only those who will risk going too far can possibly find out how far one can go.&quot;</em><br>— <a href="https://en.wikipedia.org/wiki/T._S._Eliot">T.S. Eliot</a></p>
+</blockquote>
     </div>
   </article>
 
@@ -1230,85 +1168,3 @@ $content
   </script>
 </body>
 </html>
-EOF
-    
-    echo -e "${GREEN}✓ Generated: $output_file${NC}"
-}
-
-# Files to exclude from blog processing (not blog posts)
-EXCLUDE_PATTERNS="README|OSAKA_JADE|osaka-jade-theme-report"
-
-# Counter for processed files
-PROCESSED=0
-SKIPPED=0
-
-echo -e "${BLUE}Scanning for blog posts...${NC}"
-
-# Find all markdown files and process them
-for md_file in *.md; do
-    # Skip if no markdown files found
-    [ -e "$md_file" ] || continue
-    
-    # Skip excluded files
-    if echo "$md_file" | grep -qE "$EXCLUDE_PATTERNS"; then
-        echo -e "${YELLOW}⏭ Skipping (excluded): $md_file${NC}"
-        ((SKIPPED++))
-        continue
-    fi
-    
-    # Check if file has front matter
-    if ! head -1 "$md_file" | grep -q "^---$"; then
-        echo -e "${YELLOW}⚠ Skipping (no front matter): $md_file${NC}"
-        echo -e "${YELLOW}  Add front matter to include this file:${NC}"
-        echo -e "${YELLOW}  ---${NC}"
-        echo -e "${YELLOW}  title: \"Your Title\"${NC}"
-        echo -e "${YELLOW}  category: \"Category\"${NC}"
-        echo -e "${YELLOW}  tech: \"Tech Stack\"${NC}"
-        echo -e "${YELLOW}  ---${NC}"
-        ((SKIPPED++))
-        continue
-    fi
-    
-    # Extract metadata from front matter
-    metadata=$(node build-markdown.js "$md_file" metadata 2>/dev/null)
-    
-    if [ -z "$metadata" ] || [ "$metadata" = "{}" ]; then
-        echo -e "${YELLOW}⚠ Skipping (empty front matter): $md_file${NC}"
-        ((SKIPPED++))
-        continue
-    fi
-    
-    # Parse metadata
-    title=$(echo "$metadata" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin').toString()).title || ''")
-    category=$(echo "$metadata" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin').toString()).category || 'Chromium'")
-    tech=$(echo "$metadata" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin').toString()).tech || 'C++'")
-    
-    if [ -z "$title" ]; then
-        echo -e "${YELLOW}⚠ Skipping (no title in front matter): $md_file${NC}"
-        ((SKIPPED++))
-        continue
-    fi
-    
-    # Generate output filename (replace .md with .html)
-    output_file="${md_file%.md}.html"
-    
-    # Generate the HTML
-    generate_html "$md_file" "$output_file" "$title" "$category" "$tech"
-    ((PROCESSED++))
-done
-
-# Clean up temporary files
-rm -f build-markdown.js
-
-echo ""
-echo -e "${GREEN}✓ Build complete!${NC}"
-echo -e "${BLUE}  Processed: $PROCESSED files${NC}"
-echo -e "${YELLOW}  Skipped: $SKIPPED files${NC}"
-echo ""
-echo -e "${BLUE}To add a new blog post, create a .md file with front matter:${NC}"
-echo -e "${BLUE}  ---${NC}"
-echo -e "${BLUE}  title: \"Your Post Title\"${NC}"
-echo -e "${BLUE}  category: \"Chromium\"${NC}"
-echo -e "${BLUE}  tech: \"C++ / Rust\"${NC}"
-echo -e "${BLUE}  ---${NC}"
-echo -e "${BLUE}  Your markdown content here...${NC}"
