@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Chrome Themes: Building DHH's Vision for Omarchy - Helmut Januschka</title>
-  <meta name="description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <title>Lazy Loading for Video & Audio in Chrome - Helmut Januschka</title>
+  <meta name="description" content="The missing piece for video-heavy pages">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Dynamic Chrome Themes: Building DHH's Vision for Omarchy",
-    "description": "How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming",
+    "headline": "Lazy Loading for Video & Audio in Chrome",
+    "description": "The missing piece for video-heavy pages",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,35 +29,35 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-02-11",
+    "dateModified": "2026-01-30",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-omarchy.html"
+      "@id": "https://januschka.com/chromium-video-lazy-loading.html"
     },
-    "keywords": "Chromium, C++, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Blink, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-omarchy.html"
+      "target": "https://januschka.com/chromium-video-lazy-loading.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta property="og:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta property="og:title" content="Lazy Loading for Video & Audio in Chrome">
+  <meta property="og:description" content="The missing piece for video-heavy pages">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-omarchy.html">
+  <meta property="og:url" content="https://januschka.com/chromium-video-lazy-loading.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta name="twitter:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta name="twitter:title" content="Lazy Loading for Video & Audio in Chrome">
+  <meta name="twitter:description" content="The missing piece for video-heavy pages">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -833,10 +833,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Dynamic Chrome Themes: Building DHH's Vision for Omarchy</h1>
+      <h1 class="blog-title">Lazy Loading for Video & Audio in Chrome</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++</span>
+        <span>🔧 C++ / Blink</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -845,269 +845,120 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming</em></p>
-<h2>🎉 Update: September 14, 2025 - MERGED &amp; LANDED! A Better Way Through Managed Policies</h2>
-<h3>The Golden Nugget Discovery</h3>
-<p>Google initially rejected our CLI approach, but working closely with friends at Brave, a crucial insight emerged: <strong>Chrome&#39;s managed policies could set theme colors!</strong> This was a game-changer - policies are an officially supported Chrome feature used by enterprises worldwide.</p>
-<p>However, there was a catch: applying policies took 5+ seconds to take effect. This wasn&#39;t the instant response Omarchy users expected.</p>
-<h3>Making It Instant</h3>
-<p>I dug deeper into Chrome&#39;s policy system and discovered we could add a new flag:</p>
-<pre><code class="language-sh"># Instantly refresh and apply platform policies
-chromium --refresh-platform-policy
-</code></pre>
-<p>This flag forces Chrome to immediately reload and apply managed policies without the usual delay. The implications go far beyond just theming - it enables instant policy updates for any managed Chrome setting!</p>
-<h3>The Implementation Journey</h3>
-<p>After much discussion and collaboration with Chrome&#39;s policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>--refresh-platform-policy flag</strong></a>) adds:</p>
-<pre><code class="language-cpp">// chrome/common/chrome_switches.cc
-const char kRefreshPlatformPolicy[] = &quot;refresh-platform-policy&quot;;
-
-// chrome/browser/ui/startup/startup_browser_creator.cc
-// Trigger immediate policy refresh when Chrome is already running
-if (command_line.HasSwitch(switches::kRefreshPlatformPolicy)) {
-  g_browser_process-&gt;browser_policy_connector()-&gt;RefreshPlatformPolicies();
-  // Return early to prevent opening a new browser window
-  return;
-}
-</code></pre>
-<p>The beauty of this implementation is its simplicity - just a few lines of code that unlock powerful functionality!</p>
-<h3>Official Chrome Release</h3>
-<p>This change has landed and will be released in <strong>Chrome Stable 142</strong>! This means:</p>
-<ul>
-<li>Official support for instant policy updates</li>
-<li>No more waiting for policy refresh intervals</li>
-<li>Works with any managed policy, not just themes</li>
-</ul>
-<h3>Omarchy&#39;s Lightning-Fast Integration</h3>
-<p>I quickly assembled <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/basecamp/omarchy/pull/1251"><strong>Omarchy theme integration</strong></a> that integrates the new flag with JSON policy updates. Here&#39;s how it works in practice:</p>
-<pre><code class="language-sh"># Set theme via managed policy (Linux example)
-sudo mkdir -p /etc/chromium/policies/managed
-echo &#39;{
-  &quot;BrowserThemeColor&quot;: &quot;#ff6b35&quot;
-}&#39; | sudo tee /etc/chromium/policies/managed/theme.json
-
-# Instantly apply to running Chrome instances
-chromium --refresh-platform-policy --no-startup-window
-</code></pre>
-<p>For macOS users:</p>
-<pre><code class="language-sh"># Create policy directory
-sudo mkdir -p /Library/Managed\ Preferences/com.google.Chrome
-
-# Set theme color policy
-sudo defaults write /Library/Managed\ Preferences/com.google.Chrome BrowserThemeColor -string &quot;#ff6b35&quot;
-
-# Apply instantly
-open -a &quot;Google Chrome&quot; --args --refresh-platform-policy --no-startup-window
-</code></pre>
-<p>This approach is <strong>even faster than our original CLI implementation</strong> because:</p>
-<ol>
-<li>Policies are read directly from disk (no IPC overhead)</li>
-<li>The refresh flag bypasses all delays</li>
-<li>Chrome&#39;s native policy system handles the theme application</li>
-<li>Works with existing enterprise policy infrastructure</li>
-</ol>
-<h3>Brave Ships It Early</h3>
-<p>Brave has cherry-picked this change and will ship it even faster with their release based on Chrome 141! This shows the power of open-source collaboration - features can reach users through multiple channels.</p>
-<h3>The Bigger Picture</h3>
-<p>The <code>--refresh-platform-policy</code> flag opens up new possibilities beyond theming:</p>
-<ul>
-<li>Instant enterprise policy updates without browser restart</li>
-<li>Dynamic security policy adjustments</li>
-<li>Real-time configuration changes for managed deployments</li>
-<li>Scriptable policy management for power users</li>
-</ul>
-<p>This is a perfect example of how solving one problem (theme switching) led to a more general solution that benefits the entire Chrome ecosystem.</p>
+<p><em>The missing piece for video-heavy pages</em></p>
+<p><strong>Status:</strong> 🚧 In Progress</p>
 <hr>
-<h2>The Tweet That Started Everything</h2>
-<p>It began with <a href="https://x.com/hjanuschka/status/1954552977814855845">a challenge from DHH</a> (David Heinemeier Hansson, creator of Ruby on Rails). He wanted something that seemed simple but revealed an interesting gap: the ability to change Chrome&#39;s theme colors dynamically from the command line.</p>
-<p>The context was important - when Chrome uses GTK/Qt themes, this already works automatically. But when using Chrome&#39;s &quot;Classic&quot; theme (which many prefer for consistency across platforms), there was no CLI way to control colors. While you could manually change themes through settings for each instance, Omarchy needed scriptable control - just like it has for other applications.</p>
-<p>His vision was clear:</p>
-<pre><code class="language-sh"># Change theme when using Chrome&#39;s Classic theme
-chrome --set-user-color=&quot;255,0,0&quot;
+<h2>The Gap</h2>
+<p>Since 2019, we&#39;ve had this:</p>
+<pre><code class="language-html">&lt;img src=&quot;photo.jpg&quot; loading=&quot;lazy&quot;&gt;
 </code></pre>
-<p>This wasn&#39;t just about aesthetics. For DHH&#39;s new <a href="https://omarchy.org">Omarchy Linux distribution</a>, this represented a core philosophy: giving power users complete control over their environment through simple, scriptable interfaces.</p>
-<h2>Why This Matters</h2>
-<p>The gap in Chrome&#39;s theming:</p>
+<p>But not this:</p>
+<pre><code class="language-html">&lt;video src=&quot;hero.mp4&quot; loading=&quot;lazy&quot;&gt;  &lt;!-- Nope --&gt;
+&lt;audio src=&quot;podcast.mp3&quot; loading=&quot;lazy&quot;&gt;  &lt;!-- Nope --&gt;
+</code></pre>
+<p>Six years later, that&#39;s finally changing.</p>
+<h2>Why It Matters</h2>
+<p>Think about:</p>
 <ul>
-<li><strong>GTK/Qt themes</strong>: Work great, update automatically</li>
-<li><strong>Classic theme</strong>: No CLI control, must use GUI per instance</li>
-<li><strong>Omarchy&#39;s need</strong>: Scriptable theming like other apps have</li>
+<li><strong>Podcast platforms</strong> — 50+ audio players on a single page</li>
+<li><strong>E-commerce</strong> — Product videos below the fold</li>
+<li><strong>Landing pages</strong> — Hero video plus 3 more sections with video</li>
+<li><strong>Documentation</strong> — Embedded tutorial videos throughout</li>
 </ul>
-<p>DHH&#39;s request highlighted this inconsistency. Why shouldn&#39;t the Classic theme be as flexible as GTK/Qt integration?</p>
-<h2>The Pleasant Surprise</h2>
-<p>The implementation turned out to be easier than expected - the code was already in Chromium! The theme system was robust and well-designed. It just wasn&#39;t exposed via command-line interface.</p>
-<p>My task was essentially plumbing: connecting existing functionality to a new entry point.</p>
-<h2>The Implementation</h2>
-<h3>Finding the Existing Code</h3>
-<p>Chrome&#39;s theme system was already sophisticated:</p>
-<pre><code class="language-cpp">// Theme colors are defined in the ThemeService
-class ThemeService : public KeyedService {
-  // Material Design 3 (GM3) color generation
-  ui::ColorProviderManager::Key GetColorProviderKey();
-  
-  // This notifies observers when theme changes
-  void NotifyThemeChanged();
-};
-</code></pre>
-<p>The Material Design 3 (GM3) theming logic was all there - it just needed a CLI entry point.</p>
-<h3>Adding Command-Line Support</h3>
-<p>The implementation added several switches that work together:</p>
-<pre><code class="language-cpp">// Core theme switches in chrome_switches.cc
-const char kSetDefaultTheme[] = &quot;set-default-theme&quot;;      // Reset to system
-const char kSetUserColor[] = &quot;set-user-color&quot;;            // GM3 seed color
-const char kSetColorScheme[] = &quot;set-color-scheme&quot;;        // light/dark/system
-const char kSetColorVariant[] = &quot;set-color-variant&quot;;      // Material variants
-const char kSetGrayscaleTheme[] = &quot;set-grayscale-theme&quot;;  // Grayscale overlay
-</code></pre>
-<p>These switches can be combined for complete control:</p>
-<pre><code class="language-sh"># Dark blue vibrant theme
-chrome --set-user-color=&quot;100,150,200&quot; \
-       --set-color-scheme=&quot;dark&quot; \
-       --set-color-variant=&quot;vibrant&quot;
-
-# Light neutral theme with custom color
-chrome --set-user-color=&quot;255,107,53&quot; \
-       --set-color-scheme=&quot;light&quot; \
-       --set-color-variant=&quot;neutral&quot;
-
-# System theme with grayscale
-chrome --set-color-scheme=&quot;system&quot; \
-       --set-grayscale-theme=&quot;true&quot;
-</code></pre>
-<h3>Leveraging Chrome&#39;s Theme System</h3>
-<p>The beauty was that Chrome already had:</p>
+<p>All of these eagerly load every media file upfront. Bandwidth wasted on content users might never scroll to.</p>
+<h2>The Effort</h2>
+<p>This isn&#39;t a solo project. <a href="https://scottjehl.com/">Scott Jehl</a> and the Squarespace team have been driving a proper cross-browser standardization effort:</p>
 <ul>
-<li>Material Design 3 (GM3) dynamic color generation</li>
-<li>ProcessSingleton IPC for notifying running instances</li>
-<li>ThemeService infrastructure for applying changes</li>
-<li>Support for all Material color variants</li>
+<li><strong>HTML Spec proposal</strong> written and submitted</li>
+<li><strong>Firefox patch</strong> in review</li>
+<li><strong>WebKit patch</strong> ready</li>
+<li><strong>Web Platform Tests</strong> contributed (15+ tests)</li>
+<li><strong>Mozilla</strong> has an official positive standards position</li>
 </ul>
-<p>Combined with <code>--no-startup-window</code>, themes update without opening new windows!</p>
-<h2>Plan B: The GTK Theme Generator</h2>
-<p>While working on the Chrome patch, I also explored an alternative approach: what if we could generate GTK themes using Chrome&#39;s Material Design 3 logic?</p>
-<p>This led to <a href="https://github.com/hjanuschka/material-gtk-generator">material-gtk-generator</a>:</p>
-<pre><code class="language-sh"># Generate a GTK theme from Chrome&#39;s GM3 colors
-material-gtk-generator --seed-color=&quot;#FF6B6B&quot; --output-dir=~/.themes/
+<p>When Yoav Weiss posted in Chromium Slack that they needed someone for the Chrome side, I figured the Firefox patch and WPTs would make it straightforward to port. They did.</p>
+<div style="text-align: center; margin: 20px 0;">
+  <video controls playsinline style="max-width: 100%; border: 2px solid var(--border); border-radius: 8px;">
+    <source src="/lazy-loading-demo.mp4" type="video/mp4">
+  </video>
+  <p style="color: var(--text-dim); font-size: 12px; margin-top: 10px;">WPTs passing in patched Chromium</p>
+</div>
+
+<h2>The Behavior</h2>
+<pre><code class="language-html">&lt;video loading=&quot;lazy&quot; poster=&quot;thumb.jpg&quot; autoplay muted&gt;
+  &lt;source src=&quot;video.mp4&quot; type=&quot;video/mp4&quot;&gt;
+  &lt;track src=&quot;captions.vtt&quot; kind=&quot;subtitles&quot;&gt;
+&lt;/video&gt;
 </code></pre>
-<p>This was Plan B - if the Chromium CL didn&#39;t land, we could:</p>
-<ol>
-<li>Generate GTK themes matching Chrome&#39;s GM3 palette</li>
-<li>Apply them system-wide</li>
-<li>Chrome would pick them up automatically</li>
-</ol>
-<p>It&#39;s still useful for creating cohesive desktop themes!</p>
-<h2>The Micro Fork: Getting It to Users Fast</h2>
-<p>DHH didn&#39;t want to wait for Google&#39;s review process. He made a decisive move: <strong>invest in build infrastructure</strong> to ship a micro fork immediately.</p>
-<h3>What Happened</h3>
-<ol>
-<li><strong>DHH&#39;s Decision</strong>: &quot;Let&#39;s ship this NOW to Omarchy users&quot;</li>
-<li><strong>Build Infrastructure</strong>: DHH funded dedicated build servers</li>
-<li><strong>The Micro Fork</strong>: <a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium</a> was born</li>
-<li><strong>Immediate Availability</strong>: Users got the feature within days, not months</li>
-</ol>
-<p>There&#39;s an excellent <a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">YouTube video by DHH</a> about the power of open source - showing how we went from idea to fork at incredible speed.</p>
-<h3>The Patch</h3>
-<p>The entire feature is contained in a single CL (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a> - superseded by policy approach):</p>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>When <code>loading=&quot;lazy&quot;</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Video/audio source</td>
+<td>Waits for viewport</td>
+</tr>
+<tr>
+<td>Poster image</td>
+<td>Waits for viewport</td>
+</tr>
+<tr>
+<td>Track elements (captions)</td>
+<td>Waits for viewport</td>
+</tr>
+<tr>
+<td>Autoplay</td>
+<td>Queued until visible</td>
+</tr>
+</tbody></table>
+<p>Changes from <code>lazy</code> to <code>eager</code>? Triggers immediate load.</p>
+<p>The implementation reuses Chromium&#39;s existing lazy load infrastructure—same intersection observer as images, same network-aware margins.</p>
+<h2>Status</h2>
+<table>
+<thead>
+<tr>
+<th>Browser</th>
+<th>Patch</th>
+<th>Standards Position</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Chromium</td>
+<td><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7511253">CL 7511253</a></td>
+<td><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">POSITIVE</span></td>
+</tr>
+<tr>
+<td>Firefox</td>
+<td><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://phabricator.services.mozilla.com/D278547">D278547</a></td>
+<td><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">POSITIVE</span></td>
+</tr>
+<tr>
+<td>WebKit</td>
+<td>Ready (not submitted)</td>
+<td><span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">PENDING</span></td>
+</tr>
+</tbody></table>
+<h2>Links</h2>
+<p><strong>Spec:</strong></p>
 <ul>
-<li>Minimal, focused changes</li>
-<li>Clean integration with existing code</li>
-<li>Easy to maintain and rebase</li>
-<li>No invasive modifications</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/whatwg/html/pull/11980"><strong>HTML Spec PR #11980</strong></a></li>
 </ul>
-<h2>Real-World Usage</h2>
-<h3>For Omarchy Users</h3>
-<p>Omarchy users just use the built-in theme switcher - it all happens automatically in the background! The system handles the Chrome theming seamlessly alongside other applications.</p>
-<h3>For Power Users and Scripters</h3>
-<p>The CLI switches enable powerful automation:</p>
-<pre><code class="language-sh"># Match browser to terminal theme (Classic theme only)
-chromium --set-user-color=&quot;$(get-terminal-color-rgb)&quot;
-
-# Different themes for different workspaces with variants
-workspace-1: chromium --set-user-color=&quot;26,26,26&quot; \
-                      --set-color-variant=&quot;neutral&quot;
-workspace-2: chromium --set-user-color=&quot;0,43,54&quot; \
-                      --set-color-variant=&quot;tonal_spot&quot;
-
-# Time-based theming with color schemes
-if [[ $(date +%H) -gt 18 ]]; then
-  chromium --set-color-scheme=&quot;dark&quot; \
-           --set-user-color=&quot;0,0,0&quot;
-else
-  chromium --set-color-scheme=&quot;light&quot; \
-           --set-user-color=&quot;255,255,255&quot;
-fi
-
-# Update running instances without opening new window
-chromium --no-startup-window \
-         --set-user-color=&quot;100,200,150&quot; \
-         --set-color-variant=&quot;expressive&quot;
-</code></pre>
-<p>Note: This works specifically with Chrome&#39;s Classic theme. If you&#39;re using GTK/Qt themes, Chrome already responds to system theme changes automatically.</p>
-<h3>Integration with Window Managers</h3>
-<p>Window managers can now theme browsers to match the desktop:</p>
-<pre><code class="language-python"># Example i3wm integration
-import i3ipc
-import subprocess
-
-def on_workspace_focus(i3, event):
-    workspace = event.current.name
-    themes = {
-        &quot;1: term&quot;: (&quot;0,0,0&quot;, &quot;dark&quot;, &quot;neutral&quot;),
-        &quot;2: web&quot;: (&quot;26,26,46&quot;, &quot;dark&quot;, &quot;tonal_spot&quot;), 
-        &quot;3: code&quot;: (&quot;15,52,96&quot;, &quot;dark&quot;, &quot;vibrant&quot;)
-    }
-    if workspace in themes:
-        color, scheme, variant = themes[workspace]
-        subprocess.run([
-            &quot;chromium&quot;,
-            &quot;--no-startup-window&quot;,
-            f&quot;--set-user-color={color}&quot;,
-            f&quot;--set-color-scheme={scheme}&quot;,
-            f&quot;--set-color-variant={variant}&quot;
-        ])
-
-i3 = i3ipc.Connection()
-i3.on(&quot;workspace::focus&quot;, on_workspace_focus)
-i3.main()
-</code></pre>
-<h2>What&#39;s Next?</h2>
-<h3>Upstream Progress</h3>
-<p>The direct CLI approach (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>CL 6832165</strong></a>) was superseded by the policy-based solution (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>CL 6900896</strong></a>), which landed in Chrome 142.</p>
-<h3>Extended Features</h3>
-<p>The complete feature set includes:</p>
+<p><strong>Tests:</strong></p>
 <ul>
-<li><strong>Material variants</strong>: tonal_spot, neutral, vibrant, expressive</li>
-<li><strong>Color schemes</strong>: light, dark, system</li>
-<li><strong>Grayscale mode</strong>: For accessibility</li>
-<li><strong>No startup window</strong>: Update running instances silently</li>
-<li><strong>GM3 color generation</strong>: Full Material Design 3 palette from seed color</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/web-platform-tests/wpt/pull/57051"><strong>WPT PR #57051</strong></a></li>
 </ul>
-<h3>Other Browsers</h3>
-<p>Brave has shown interest in downstream landing our patch.</p>
-<h2>Try It Yourself</h2>
-<h3>For Arch/Omarchy Users</h3>
-<p>The AUR package is available (replaces the standard Chromium):</p>
-<pre><code class="language-sh">yay -S omarchy-chromium-bin
-
-# Teal expressive theme
-chromium --set-user-color=&quot;78,205,196&quot; \
-         --set-color-variant=&quot;expressive&quot;
-
-# Reset to default
-chromium --set-default-theme
-</code></pre>
+<p><strong>Tracking:</strong></p>
+<ul>
+<li><a href="https://issues.chromium.org/issues/469111735">Chromium 469111735</a> · <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2005072">Firefox 2005072</a> · <a href="https://bugs.webkit.org/show_bug.cgi?id=303995">WebKit 303995</a></li>
+</ul>
+<p><strong>Standards Positions:</strong></p>
+<ul>
+<li><a href="https://github.com/mozilla/standards-positions/issues/1325">Mozilla</a> · <a href="https://github.com/WebKit/standards-positions/issues/586">WebKit</a></li>
+</ul>
 <hr>
-<p><em>Sometimes the best features are already there, waiting to be exposed. Thanks to DHH&#39;s vision and investment, Omarchy users don&#39;t have to wait.</em></p>
-<p><strong>Links:</strong></p>
-<ul>
-<li><a href="https://x.com/hjanuschka/status/1954552977814855845">Original Tweet</a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>Policy refresh flag</strong></a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a></li>
-<li><a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium Fork</a></li>
-<li><a href="https://github.com/hjanuschka/material-gtk-generator">Material GTK Generator (Plan B)</a></li>
-<li><a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">DHH&#39;s Video: Power of OSS - Idea to Fork</a></li>
-<li><a href="https://omarchy.org">Omarchy.org</a></li>
-<li><a href="https://world.hey.com/dhh/omarchy-micro-forks-chromium-1287486d">DHH&#39;s Blog Post</a></li>
-</ul>
+<p><em>Thanks to Scott Jehl, Brad Frost, Zach Lisobey, and Credo Duarte at Squarespace for driving this. And as always, <a href="https://blog.yoav.ws/">Yoav Weiss</a> for connecting people and pushing the web platform forward.</em></p>
     </div>
   </article>
 
