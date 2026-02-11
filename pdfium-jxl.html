@@ -1,195 +1,18 @@
-#!/bin/bash
-
-# Blog Static Site Generator
-# Converts markdown blog posts to static HTML with syntax highlighting
-# 
-# Posts are auto-discovered from *.md files with front matter:
-#   ---
-#   title: "Your Post Title"
-#   category: "Chromium"
-#   tech: "C++"
-#   ---
-
-# NOTE: Not using set -e because grep/description extraction can fail on some posts
-# set -e
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[0;33m'
-NC='\033[0m' # No Color
-
-echo -e "${BLUE}Building static blog posts...${NC}"
-
-# Check if required commands exist
-command -v node >/dev/null 2>&1 || { echo -e "${RED}Error: Node.js is required but not installed.${NC}" >&2; exit 1; }
-
-# Install dependencies if needed
-if [ ! -d "node_modules" ] || [ ! -d "node_modules/marked" ]; then
-    echo -e "${BLUE}Installing dependencies...${NC}"
-    npm init -y >/dev/null 2>&1 || true
-    npm install marked prismjs prism-themes js-yaml --save-dev
-fi
-
-# Create build directory if it doesn't exist
-mkdir -p build
-
-# Create Node.js script for markdown processing
-cat > build-markdown.js << 'EOF'
-const fs = require('fs');
-const path = require('path');
-const { marked } = require('marked');
-const Prism = require('prismjs');
-const yaml = require('js-yaml');
-
-// Load additional languages
-require('prismjs/components/prism-bash');
-require('prismjs/components/prism-c');
-require('prismjs/components/prism-cpp');
-require('prismjs/components/prism-python');
-require('prismjs/components/prism-json');
-require('prismjs/components/prism-rust');
-require('prismjs/components/prism-shell-session');
-
-// Custom renderer for code blocks
-const renderer = new marked.Renderer();
-const originalCode = renderer.code.bind(renderer);
-
-renderer.code = function(code, lang, escaped) {
-  // Handle custom snippet blocks - render as raw HTML
-  if (lang === 'snippet') {
-    return code + '\n';
-  }
-
-  // Default code block handling
-  return originalCode(code, lang, escaped);
-};
-
-// Configure marked to use Prism for syntax highlighting
-marked.setOptions({
-  renderer: renderer,
-  highlight: function(code, lang) {
-    // Skip highlighting for snippet blocks
-    if (lang === 'snippet') return code;
-
-    // Map 'sh' to 'bash' for Prism
-    if (lang === 'sh') lang = 'bash';
-
-    if (Prism.languages[lang]) {
-      return Prism.highlight(code, Prism.languages[lang], lang);
-    }
-    return code;
-  },
-  breaks: true,
-  gfm: true
-});
-
-// Parse front matter from markdown
-function parseFrontMatter(content) {
-  const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-  const match = content.match(frontMatterRegex);
-  
-  if (match) {
-    try {
-      const metadata = yaml.load(match[1]);
-      return {
-        metadata,
-        content: match[2]
-      };
-    } catch (e) {
-      console.error('Error parsing front matter:', e.message);
-      return { metadata: {}, content };
-    }
-  }
-  
-  return { metadata: {}, content };
-}
-
-// Read command line arguments
-const mdFile = process.argv[2];
-const mode = process.argv[3]; // 'metadata' or 'content'
-
-if (!mdFile) {
-  console.error('Usage: node build-markdown.js <markdown-file> [metadata|content]');
-  process.exit(1);
-}
-
-// Read markdown file
-const fileContent = fs.readFileSync(mdFile, 'utf8');
-const { metadata, content } = parseFrontMatter(fileContent);
-
-if (mode === 'metadata') {
-  // Output metadata as JSON
-  console.log(JSON.stringify(metadata));
-} else {
-  // Convert to HTML
-  let htmlContent = marked.parse(content);
-
-  // Post-process: convert snippet code blocks to raw HTML
-  htmlContent = htmlContent.replace(
-    /<pre><code class="language-snippet">(.+?)<\/code><\/pre>/gs,
-    (match, content) => {
-      // Unescape HTML entities
-      let unescaped = content
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&amp;/g, '&');
-
-      // Process markdown inside <details> blocks
-      unescaped = unescaped.replace(
-        /(<details[\s\S]*?>)([\s\S]*?)(<\/details>)/gi,
-        (detailsMatch, openTag, innerContent, closeTag) => {
-          // Process the inner content as markdown
-          let processedInner = marked.parse(innerContent);
-          return openTag + processedInner + closeTag;
-        }
-      );
-
-      return unescaped;
-    }
-  );
-
-  // Output the HTML content
-  console.log(htmlContent);
-}
-EOF
-
-# HTML template function
-generate_html() {
-    local md_file="$1"
-    local output_file="$2"
-    local title="$3"
-    local category="${4:-Chromium}"
-    local tech="${5:-C++}"
-    
-    echo -e "${BLUE}Processing: $md_file -> $output_file${NC}"
-    
-    # Generate HTML content from markdown
-    local content=$(node build-markdown.js "$md_file" content)
-    
-    # Extract first paragraph for description (remove HTML tags)
-    local description=$(echo "$content" | grep -m1 "<p><em>" | sed 's/<[^>]*>//g' | sed 's/&[^;]*;//g' | cut -c1-160 || true)
-    
-    # Create full HTML page
-    cat > "$output_file" << EOF
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>$title - Helmut Januschka</title>
-  <meta name="description" content="${description:-$title}">
+  <title>JPEG XL in PDF: Bringing JXL to PDFium with Rust - Helmut Januschka</title>
+  <meta name="description" content="Decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "$title",
-    "description": "${description:-$title}",
+    "headline": "JPEG XL in PDF: Bringing JXL to PDFium with Rust",
+    "description": "Decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -206,35 +29,35 @@ generate_html() {
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "$(date -u +%Y-%m-%d)",
+    "dateModified": "2026-02-02",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/$output_file"
+      "@id": "https://januschka.com/pdfium-jxl.html"
     },
-    "keywords": "$category, $tech, Chromium, Open Source, Browser Development",
+    "keywords": "PDFium, Rust / C++, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/$output_file"
+      "target": "https://januschka.com/pdfium-jxl.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="$title">
-  <meta property="og:description" content="${description:-$title}">
+  <meta property="og:title" content="JPEG XL in PDF: Bringing JXL to PDFium with Rust">
+  <meta property="og:description" content="Decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/$output_file">
+  <meta property="og:url" content="https://januschka.com/pdfium-jxl.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="$title">
-  <meta name="twitter:description" content="${description:-$title}">
+  <meta name="twitter:title" content="JPEG XL in PDF: Bringing JXL to PDFium with Rust">
+  <meta name="twitter:description" content="Decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1010,10 +833,10 @@ generate_html() {
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">$title</h1>
+      <h1 class="blog-title">JPEG XL in PDF: Bringing JXL to PDFium with Rust</h1>
       <div class="blog-meta">
-        <span>⚡ $category</span>
-        <span>🔧 $tech</span>
+        <span>⚡ PDFium</span>
+        <span>🔧 Rust / C++</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -1022,7 +845,116 @@ generate_html() {
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-$content
+<p><em>Decoding JPEG XL images embedded in PDF documents using the pure Rust decoder jxl-rs</em></p>
+<div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(211, 95, 95, 0.1); border: 2px solid #D35F5F; border-radius: 12px;">
+  <h3 style="color: #D35F5F; margin: 0 0 10px 0;">🧪 PROOF OF CONCEPT</h3>
+  <p style="margin: 0;">JXL-in-PDF decoding for standalone PDFium builds</p>
+  <p style="font-size: 13px; opacity: 0.8; margin-top: 5px;">CL: <a href="https://pdfium-review.googlesource.com/c/pdfium/+/142070">pdfium-review.googlesource.com/c/pdfium/+/142070</a></p>
+</div>
+
+<h2>Background</h2>
+<p>With <a href="/chromium-jxl-resurrection.html">JPEG XL landing in Chromium</a> via the Rust decoder <code>jxl-rs</code>, it&#39;s natural to ask: what about <strong>PDF</strong>?</p>
+<p>JPEG XL is poised to become the preferred format for HDR images in PDF (per ISO 32000-2:2020 discussions). While the PDF spec doesn&#39;t yet have a standardized filter name, this experiment uses <code>/JXLDecode</code> as a bring-up name to prove the concept works.</p>
+<h2>The Challenge</h2>
+<p>PDFium is Chromium&#39;s PDF renderer, but it&#39;s also used <strong>standalone</strong> (e.g., in other browsers, document viewers, server-side rendering). The challenge:</p>
+<ol>
+<li><strong>Rust integration</strong> — PDFium&#39;s standalone build needed Rust toolchain support</li>
+<li><strong>Alpha handling</strong> — JXL images can have alpha, but PDF expects a separate <code>/SMask</code></li>
+<li><strong>Animation</strong> — JXL supports animation, but PDF image XObjects are static</li>
+</ol>
+<h2>Implementation</h2>
+<h3>Approach</h3>
+<ul>
+<li><strong>Rust-only decoder</strong>: Uses <code>jxl-rs</code> via Chromium&#39;s CXX bridge wrapper</li>
+<li><strong>No C++ libjxl</strong>: Memory-safe by design, aligns with Chromium&#39;s direction</li>
+<li><strong>Synthesized SMask</strong>: Decoder extracts alpha and creates an internal soft mask</li>
+<li><strong>Frame 0 only</strong>: For animated JXL, only the first frame is rendered</li>
+</ul>
+<h3>Build Integration</h3>
+<p>Added a new GN flag for standalone builds:</p>
+<pre><code class="language-gn"># In pdfium.gni
+declare_args() {
+  pdf_enable_rust_jxl = false
+}
+</code></pre>
+<p>The decoder glue lives in <code>core/fxcodec/jxl/</code>:</p>
+<pre><code>core/fxcodec/jxl/
+├── BUILD.gn
+├── DEPS
+├── jxl_decoder.cc
+├── jxl_decoder.h
+└── jxl_rs_stub.cc
+</code></pre>
+<h3>Decoder Flow</h3>
+<pre><code class="language-cpp">// In cpdf_dib.cpp
+bool CPDF_DIB::LoadJxlBitmap(pdfium::span&lt;const uint8_t&gt; data) {
+  auto info = pdfium::jxl::ParseInfo(data);
+  if (!info) return false;
+
+  auto decoded = pdfium::jxl::DecodeFrame0(data, info-&gt;width, info-&gt;height);
+  if (!decoded) return false;
+
+  // Extract RGB
+  // If has_alpha: synthesize SMask via jpx_inline_data_ mechanism
+
+  return true;
+}
+</code></pre>
+<p>The integration hooks into <code>CreateDecoder()</code> to handle the <code>/JXLDecode</code> filter:</p>
+<pre><code class="language-cpp">if (decoder == &quot;JXLDecode&quot;) {
+  return LoadJxlBitmap(src_span) ? LoadState::kSuccess : LoadState::kFail;
+}
+</code></pre>
+<h2>Demo Artifacts</h2>
+<p>Sample PDFs with embedded JXL images, rendered by the patched PDFium:</p>
+<h3>Zoltan (RGB Photo)</h3>
+<p>Large RGB JPEG XL embedded in PDF.</p>
+<div style="text-align: center; margin: 20px 0;">
+  <img src="/assets/pdfium-jxl/zoltan-jxldecode.pdf.0.png" alt="Zoltan rendered" style="max-width: 100%; border: 2px solid var(--border); border-radius: 8px;" />
+</div>
+<div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0; flex-wrap: wrap;">
+  <a href="/assets/pdfium-jxl/zoltan-jxldecode.pdf" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">📄 Download PDF</a>
+  <a href="/assets/pdfium-jxl/zoltan-jxldecode.pdf.0.png" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">🖼️ Rendered PNG</a>
+</div>
+
+<h3>Dice (Alpha)</h3>
+<p>RGBA JPEG XL with transparency. PDFium synthesizes an <code>/SMask</code> and composites over a checkerboard background (baked into the PDF to visualize alpha).</p>
+<div style="text-align: center; margin: 20px 0;">
+  <img src="/assets/pdfium-jxl/dice-jxldecode.pdf.0.png" alt="Dice rendered with alpha" style="max-width: 100%; border: 2px solid var(--border); border-radius: 8px;" />
+</div>
+<div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0; flex-wrap: wrap;">
+  <a href="/assets/pdfium-jxl/dice-jxldecode.pdf" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">📄 Download PDF</a>
+  <a href="/assets/pdfium-jxl/dice-jxldecode.pdf.0.png" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">🖼️ Rendered PNG</a>
+</div>
+
+<h3>Animated Icons (Frame 0)</h3>
+<p>Animated RGBA JPEG XL. PDFium decodes only the first frame.</p>
+<div style="text-align: center; margin: 20px 0;">
+  <img src="/assets/pdfium-jxl/anim-icos-jxldecode.pdf.0.png" alt="Animated icons frame 0" style="max-width: 200px; border: 2px solid var(--border); border-radius: 8px;" />
+</div>
+<div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0; flex-wrap: wrap;">
+  <a href="/assets/pdfium-jxl/anim-icos-jxldecode.pdf" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">📄 Download PDF</a>
+  <a href="/assets/pdfium-jxl/anim-icos-jxldecode.pdf.0.png" class="btn" style="background: var(--bg-lighter); padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); text-decoration: none; color: var(--text);">🖼️ Rendered PNG</a>
+</div>
+
+<h2>Code Changes</h2>
+<p><span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/142070"><strong>CL 142070</strong></a> — Add experimental JXLDecode support via Rust jxl-rs</p>
+<h2>Building</h2>
+<p>To build PDFium with JXL support:</p>
+<pre><code class="language-bash"># In args.gn
+enable_rust = true
+pdf_enable_rust_jxl = true
+
+# Requires rust_revision pointing to a version with jxl-rs v0.3 wrapper
+</code></pre>
+<h2>Related</h2>
+<ul>
+<li><a href="/chromium-jxl-resurrection.html">JPEG XL Returns to Chrome</a> — The Chromium/Blink implementation</li>
+<li><a href="https://github.com/libjxl/jxl-rs">jxl-rs</a> — The pure Rust JPEG XL decoder</li>
+<li><a href="https://pdfium.googlesource.com/pdfium/">PDFium</a> — Google&#39;s PDF rendering library</li>
+</ul>
+<hr>
+<p><em>This is an experimental feature exploring JXL-in-PDF before standardization. The filter name <code>/JXLDecode</code> is a placeholder and may change.</em></p>
     </div>
   </article>
 
@@ -1230,85 +1162,3 @@ $content
   </script>
 </body>
 </html>
-EOF
-    
-    echo -e "${GREEN}✓ Generated: $output_file${NC}"
-}
-
-# Files to exclude from blog processing (not blog posts)
-EXCLUDE_PATTERNS="README|OSAKA_JADE|osaka-jade-theme-report"
-
-# Counter for processed files
-PROCESSED=0
-SKIPPED=0
-
-echo -e "${BLUE}Scanning for blog posts...${NC}"
-
-# Find all markdown files and process them
-for md_file in *.md; do
-    # Skip if no markdown files found
-    [ -e "$md_file" ] || continue
-    
-    # Skip excluded files
-    if echo "$md_file" | grep -qE "$EXCLUDE_PATTERNS"; then
-        echo -e "${YELLOW}⏭ Skipping (excluded): $md_file${NC}"
-        ((SKIPPED++))
-        continue
-    fi
-    
-    # Check if file has front matter
-    if ! head -1 "$md_file" | grep -q "^---$"; then
-        echo -e "${YELLOW}⚠ Skipping (no front matter): $md_file${NC}"
-        echo -e "${YELLOW}  Add front matter to include this file:${NC}"
-        echo -e "${YELLOW}  ---${NC}"
-        echo -e "${YELLOW}  title: \"Your Title\"${NC}"
-        echo -e "${YELLOW}  category: \"Category\"${NC}"
-        echo -e "${YELLOW}  tech: \"Tech Stack\"${NC}"
-        echo -e "${YELLOW}  ---${NC}"
-        ((SKIPPED++))
-        continue
-    fi
-    
-    # Extract metadata from front matter
-    metadata=$(node build-markdown.js "$md_file" metadata 2>/dev/null)
-    
-    if [ -z "$metadata" ] || [ "$metadata" = "{}" ]; then
-        echo -e "${YELLOW}⚠ Skipping (empty front matter): $md_file${NC}"
-        ((SKIPPED++))
-        continue
-    fi
-    
-    # Parse metadata
-    title=$(echo "$metadata" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin').toString()).title || ''")
-    category=$(echo "$metadata" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin').toString()).category || 'Chromium'")
-    tech=$(echo "$metadata" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin').toString()).tech || 'C++'")
-    
-    if [ -z "$title" ]; then
-        echo -e "${YELLOW}⚠ Skipping (no title in front matter): $md_file${NC}"
-        ((SKIPPED++))
-        continue
-    fi
-    
-    # Generate output filename (replace .md with .html)
-    output_file="${md_file%.md}.html"
-    
-    # Generate the HTML
-    generate_html "$md_file" "$output_file" "$title" "$category" "$tech"
-    ((PROCESSED++))
-done
-
-# Clean up temporary files
-rm -f build-markdown.js
-
-echo ""
-echo -e "${GREEN}✓ Build complete!${NC}"
-echo -e "${BLUE}  Processed: $PROCESSED files${NC}"
-echo -e "${YELLOW}  Skipped: $SKIPPED files${NC}"
-echo ""
-echo -e "${BLUE}To add a new blog post, create a .md file with front matter:${NC}"
-echo -e "${BLUE}  ---${NC}"
-echo -e "${BLUE}  title: \"Your Post Title\"${NC}"
-echo -e "${BLUE}  category: \"Chromium\"${NC}"
-echo -e "${BLUE}  tech: \"C++ / Rust\"${NC}"
-echo -e "${BLUE}  ---${NC}"
-echo -e "${BLUE}  Your markdown content here...${NC}"
