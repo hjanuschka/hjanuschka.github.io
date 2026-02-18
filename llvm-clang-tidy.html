@@ -1,0 +1,1149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviving Old Ideas: My clang-tidy Contributions to LLVM - Helmut Januschka</title>
+  <meta name="description" content="Invest in tooling once, reap the benefits forever">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Reviving Old Ideas: My clang-tidy Contributions to LLVM",
+    "description": "Invest in tooling once, reap the benefits forever",
+    "author": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com",
+      "sameAs": [
+        "https://github.com/hjanuschka",
+        "https://twitter.com/hjanuschka",
+        "https://linkedin.com/in/hjanuschka"
+      ]
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com"
+    },
+    "datePublished": "2024-08-01",
+    "dateModified": "2026-02-18",
+    "image": "https://januschka.com/og-image.png",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://januschka.com/llvm-clang-tidy.html"
+    },
+    "keywords": "LLVM, C++ / Clang, Chromium, Open Source, Browser Development",
+    "articleSection": "Technology",
+    "inLanguage": "en-US",
+    "potentialAction": {
+      "@type": "ReadAction",
+      "target": "https://januschka.com/llvm-clang-tidy.html"
+    }
+  }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Reviving Old Ideas: My clang-tidy Contributions to LLVM">
+  <meta property="og:description" content="Invest in tooling once, reap the benefits forever">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://januschka.com/llvm-clang-tidy.html">
+  <meta property="og:site_name" content="Helmut Januschka">
+  <meta property="article:author" content="Helmut Januschka">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@hjanuschka">
+  <meta name="twitter:title" content="Reviving Old Ideas: My clang-tidy Contributions to LLVM">
+  <meta name="twitter:description" content="Invest in tooling once, reap the benefits forever">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"></noscript>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #121212;
+      --bg-light: #1e1e1e;
+      --bg-lighter: #333333;
+      --text: #bebebe;
+      --text-dim: #8a8a8d;
+      --accent: #FFC107;
+      --accent-dim: #e68e0d;
+      --border: #333333;
+      --orange: #D35F5F;
+    }
+
+    /* GitHub Blue Theme */
+    [data-theme="blue"] {
+      --bg: #0d1117;
+      --bg-light: #161b22;
+      --bg-lighter: #21262d;
+      --text: #ffffff;
+      --text-dim: #7d8590;
+      --accent: #58a6ff;
+      --accent-dim: #1f6feb;
+      --border: #30363d;
+      --orange: #ff7b72;
+    }
+
+    /* Osaka Jade Theme (from Omarchy) */
+    [data-theme="osaka-jade"] {
+      --bg: #111c18;
+      --bg-light: #23372B;
+      --bg-lighter: #53685B;
+      --text: #C1C497;
+      --text-dim: #9eebb3;
+      --accent: #2DD5B7;
+      --accent-dim: #549e6a;
+      --border: #509475;
+      --orange: #FF5345;
+    }
+
+    /* Purple Moon Theme */
+    [data-theme="purple-moon"] {
+      --bg: #020007;
+      --bg-light: #37277d;
+      --bg-lighter: #643aad;
+      --text: #ffffff;
+      --text-dim: #b895dd;
+      --accent: #9b49c8;
+      --accent-dim: #9845c6;
+      --border: #9865cf;
+      --orange: #cd9ce1;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Navigation */
+    .nav {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 15px 0;
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 16px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+
+    /* Theme Switcher */
+    .theme-switcher {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .theme-dropdown {
+      position: relative;
+    }
+
+    .theme-button {
+      background: var(--bg-light);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .theme-button:hover {
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+
+    .theme-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #1a1a1a;
+      border: 2px solid #333333;
+      border-radius: 8px;
+      margin-top: 5px;
+      min-width: 150px;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .theme-menu.show {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .theme-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 12px;
+      transition: background 0.2s ease;
+      border: none;
+      width: 100%;
+      text-align: left;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .theme-option:hover {
+      background: #2a2a2a;
+      color: #ffffff;
+    }
+
+    .theme-option:first-child {
+      border-radius: 6px 6px 0 0;
+    }
+
+    .theme-option:last-child {
+      border-radius: 0 0 6px 6px;
+    }
+
+    .theme-preview {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid #666666;
+      flex-shrink: 0;
+    }
+
+    /* Blog Post Styles */
+    .blog-header {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 40px 0;
+      margin-bottom: 40px;
+    }
+
+    .blog-title {
+      font-size: 32px;
+      color: var(--accent);
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+
+    .blog-meta {
+      display: flex;
+      gap: 20px;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    .blog-content {
+      background: var(--bg-light);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      margin-bottom: 40px;
+    }
+
+    /* Markdown Content Styles */
+    .blog-content h1 {
+      color: var(--accent);
+      font-size: 28px;
+      margin: 30px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content h2 {
+      color: var(--orange);
+      font-size: 24px;
+      margin: 30px 0 15px;
+    }
+
+    .blog-content h3 {
+      color: var(--accent);
+      font-size: 20px;
+      margin: 25px 0 15px;
+    }
+
+    .blog-content p {
+      margin: 15px 0;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .blog-content a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .blog-content a:hover {
+      color: var(--orange);
+      border-bottom-color: var(--orange);
+    }
+
+    .blog-content ul, .blog-content ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+
+    .blog-content li {
+      margin: 8px 0;
+      line-height: 1.8;
+    }
+
+    .blog-content code {
+      background: var(--bg);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .blog-content pre {
+      background: #1d1f21 !important;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 20px !important;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    .blog-content pre code {
+      background: none !important;
+      color: #c5c8c6 !important;
+      padding: 0;
+      text-shadow: none !important;
+    }
+
+    /* Override Prism theme colors for better integration */
+    .token.comment,
+    .token.prolog,
+    .token.doctype,
+    .token.cdata {
+      color: #969896 !important;
+    }
+
+    .token.punctuation {
+      color: #c5c8c6 !important;
+    }
+
+    .token.property,
+    .token.tag,
+    .token.boolean,
+    .token.number,
+    .token.constant,
+    .token.symbol,
+    .token.deleted {
+      color: #cc6666 !important;
+    }
+
+    .token.selector,
+    .token.attr-name,
+    .token.string,
+    .token.char,
+    .token.builtin,
+    .token.inserted {
+      color: #b5bd68 !important;
+    }
+
+    .token.operator,
+    .token.entity,
+    .token.url,
+    .language-css .token.string,
+    .style .token.string {
+      color: #8abeb7 !important;
+    }
+
+    .token.atrule,
+    .token.attr-value,
+    .token.keyword {
+      color: #b294bb !important;
+    }
+
+    .token.function,
+    .token.class-name {
+      color: #81a2be !important;
+    }
+
+    .token.regex,
+    .token.important,
+    .token.variable {
+      color: #de935f !important;
+    }
+
+    .blog-content blockquote {
+      border-left: 4px solid var(--accent);
+      padding-left: 20px;
+      margin: 20px 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content em {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content strong {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* Table styles */
+    .blog-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .blog-content thead,
+    .blog-content tbody,
+    .blog-content tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .blog-content th {
+      background: var(--bg-lighter);
+      color: var(--accent);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .blog-content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .blog-content tr:hover {
+      background: var(--bg-light);
+    }
+
+    /* Mobile table responsiveness */
+    @media (max-width: 768px) {
+      .blog-content table {
+        font-size: 11px;
+        border: none;
+      }
+
+      .blog-content thead {
+        display: none;
+      }
+
+      .blog-content tbody,
+      .blog-content tr {
+        display: block;
+        width: 100%;
+      }
+
+      .blog-content tr {
+        margin-bottom: 15px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--bg);
+      }
+
+      .blog-content td {
+        display: block;
+        text-align: left;
+        padding: 8px 0;
+        border: none;
+        position: relative;
+        padding-left: 40%;
+      }
+
+      .blog-content td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 38%;
+        padding-right: 10px;
+        font-weight: bold;
+        color: var(--accent);
+        text-align: left;
+      }
+
+      /* First column (Image name) */
+      .blog-content td:nth-of-type(1):before {
+        content: "Image";
+      }
+
+      /* Second column (Size) */
+      .blog-content td:nth-of-type(2):before {
+        content: "Size";
+      }
+
+      /* Third column (Before) */
+      .blog-content td:nth-of-type(3):before {
+        content: "Before";
+      }
+
+      /* Fourth column (After) */
+      .blog-content td:nth-of-type(4):before {
+        content: "After";
+      }
+
+      /* Fifth column (C++) */
+      .blog-content td:nth-of-type(5):before {
+        content: "C++";
+      }
+
+      /* Sixth column (Speedup) */
+      .blog-content td:nth-of-type(6):before {
+        content: "Speedup";
+      }
+    }
+
+    /* Snippet blocks for inline HTML */
+    .snippet-block {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .snippet-block img {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    /* YouTube embed container */
+    .youtube-embed {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      margin: 30px 0;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .youtube-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Gravatar in nav */
+    .gravatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    /* Status indicator */
+    .status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-light);
+      border-top: 3px solid var(--accent);
+      padding: 30px 0;
+      margin-top: 60px;
+      text-align: center;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-dim);
+    }
+
+    .badge {
+      background: var(--bg-lighter);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    /* Command Palette */
+    .command-palette {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+    .command-palette.hidden { display: none; }
+    .command-palette-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+    .command-palette-modal {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 20px;
+      background: var(--bg-light);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent);
+      overflow: hidden;
+    }
+    .command-palette-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .command-palette-header .prompt {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .command-palette-header input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+    }
+    .command-palette-header input::placeholder { color: var(--text-dim); }
+    .command-palette-header kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-results {
+      list-style: none;
+      max-height: 320px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 8px;
+    }
+    .command-result {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+    .command-result:hover, .command-result.selected {
+      background: var(--bg-lighter);
+    }
+    .command-result .icon { font-size: 16px; }
+    .command-result .name { flex: 1; color: var(--text); }
+    .command-palette-footer {
+      display: flex;
+      gap: 20px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-palette-footer kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 5px;
+      margin-right: 4px;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .blog-title {
+        font-size: 24px;
+      }
+      
+      .nav-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .nav-content > div {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-links {
+        gap: 15px;
+      }
+      
+      .theme-switcher {
+        justify-content: center;
+      }
+      
+      .blog-content {
+        padding: 20px;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-content">
+        <div class="nav-brand">
+          <img src="https://gravatar.com/avatar/7f3d8f25d208327860bdfebf145e481b?s=64"
+               alt="Helmut Januschka"
+               class="gravatar"
+               width="32" height="32">
+          <span class="status"></span>
+          hjanuschka@world
+        </div>
+        <div style="display: flex; align-items: center; gap: 30px;">
+          <div class="nav-links">
+            <a href="/">← Back to Home</a>
+            <a href="/#projects">Projects</a>
+            <a href="/#contact">Contact</a>
+          </div>
+          <div class="theme-switcher">
+            <div class="theme-dropdown">
+              <button class="theme-button" id="themeButton">
+                <span class="theme-preview" style="background: var(--accent);"></span>
+                Themes ▼
+              </button>
+              <div class="theme-menu" id="themeMenu">
+                <button class="theme-option" data-theme="matte-black">
+                  <span class="theme-preview" style="background: #FFC107;"></span>
+                  Matte Black
+                </button>
+                <button class="theme-option" data-theme="osaka-jade">
+                  <span class="theme-preview" style="background: #2DD5B7;"></span>
+                  Osaka Jade
+                </button>
+                <button class="theme-option" data-theme="purple-moon">
+                  <span class="theme-preview" style="background: #9b49c8;"></span>
+                  Purple Moon
+                </button>
+                <button class="theme-option" data-theme="blue">
+                  <span class="theme-preview" style="background: #58a6ff;"></span>
+                  GitHub Blue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Blog Header -->
+  <div class="blog-header">
+    <div class="container">
+      <h1 class="blog-title">Reviving Old Ideas: My clang-tidy Contributions to LLVM</h1>
+      <div class="blog-meta">
+        <span>⚡ LLVM</span>
+        <span>🔧 C++ / Clang</span>
+        <span>👤 Helmut Januschka</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Content -->
+  <article class="container">
+    <div class="blog-content">
+<p><em>Invest in tooling once, reap the benefits forever</em></p>
+<p><strong>Status:</strong> Ongoing | <strong>First Merged PR:</strong> <a href="https://github.com/llvm/llvm-project/pull/116033">#116033</a></p>
+<hr>
+<h2>The Origin Story</h2>
+<p>Years ago, while working on Chromium, Peter Kasting introduced me to clang-tidy. During code reviews he&#39;d point out patterns that could be automated - things he&#39;d seen hundreds of times, anti-patterns that kept appearing, modernization opportunities too tedious to do by hand.</p>
+<p>I started keeping my own scratchpad, jotting down his suggestions and ideas. That document sat there for years - until I recently picked it back up.</p>
+<h2>Why clang-tidy Matters for Large Codebases</h2>
+<p>When you&#39;re working on a codebase with millions of lines of C++ - like Chromium - modernization isn&#39;t optional, it&#39;s survival. New C++ standards bring better performance, safer patterns, and clearer intent. But manually updating millions of lines? Impossible.</p>
+<p>That&#39;s where clang-tidy comes in. Write a check once, run it across the entire codebase, get automated fixes. A single check can identify thousands of modernization opportunities and fix them automatically.</p>
+<p>Chromium actively uses clang-tidy for ongoing modernization. The <code>base::StringPiece</code> to <code>std::string_view</code> migration, the adoption of <code>std::optional</code>, the move to <code>starts_with</code>/<code>ends_with</code> - all of these are driven by clang-tidy checks that find patterns and transform them at scale.</p>
+<h2>My First Contribution: substr to starts_with</h2>
+<p>My first merged PR enhanced an existing check to detect a common anti-pattern:</p>
+<pre><code class="language-cpp">// Before: Creates a temporary string, then compares
+if (str.substr(0, 5) == &quot;hello&quot;) { ... }
+
+// After: Direct comparison, no allocation
+if (str.starts_with(&quot;hello&quot;)) { ... }
+</code></pre>
+<p>The <code>starts_with</code> method was added in C++20. It&#39;s clearer, faster (no temporary string), and expresses intent better.</p>
+<p>The PR (<a href="https://github.com/llvm/llvm-project/pull/116033">#116033</a>) extended <code>modernize-use-starts-ends-with</code> to catch substr patterns. The review process was educational - the LLVM community suggested integrating it into the existing check rather than creating a new one.</p>
+<p>Key patterns now detected:</p>
+<ul>
+<li><code>str.substr(0, n) == &quot;prefix&quot;</code> → <code>str.starts_with(&quot;prefix&quot;)</code></li>
+<li><code>str.substr(0, prefix.size()) == prefix</code> → <code>str.starts_with(prefix)</code></li>
+<li><code>str.substr(0, strlen(&quot;foo&quot;)) == &quot;foo&quot;</code> → <code>str.starts_with(&quot;foo&quot;)</code></li>
+</ul>
+<h2>The Scratchpad Comes Alive</h2>
+<p>After that first merge, I went back to my old scratchpad. Many of Peter&#39;s ideas that seemed far-fetched years ago are now practical with C++20 and C++23 features available. I started working through them one by one.</p>
+<p>Currently open PRs:</p>
+<p><strong>Modernization checks:</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/182027"><strong>modernize-use-span-param</strong></a> - Suggest <code>std::span</code> for pointer+size parameter pairs</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/182061"><strong>modernize-use-aggregate</strong></a> - Use aggregate initialization where possible</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/182065"><strong>modernize-use-algorithm</strong></a> - Replace raw loops with standard algorithms</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/182023"><strong>modernize-use-size-type</strong></a> - Use proper size types for container indices</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/182085"><strong>modernize-pointer-to-span</strong></a> - Convert pointer arithmetic to span operations</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/182081"><strong>modernize-use-return-value</strong></a> - Use <code>[[nodiscard]]</code> return values properly</li>
+</ul>
+<p><strong>Readability checks:</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/118074"><strong>readability-use-span-first-last</strong></a> - Use <code>span.first(n)</code> instead of <code>span.subspan(0, n)</code></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/120055"><strong>readability-stringview-substr</strong></a> - Prefer <code>string_view</code> substr patterns</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/182068"><strong>readability-pointer-to-ref</strong></a> - Prefer references over pointers when appropriate</li>
+</ul>
+<p><strong>Enhancements:</strong></p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/182024"><strong>modernize-pass-by-value extension</strong></a> - Handle function body local copies</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/117529"><strong>modernize-make-shared options</strong></a> - Configurable smart pointer types</li>
+</ul>
+<h2>The Chromium Connection</h2>
+<p>The loop closes here: a small contribution to clang-tidy becomes a massive lever for Chromium cleanups. One check can identify thousands of instances across the codebase, generate automated fixes, and make follow-up CLs trivial.</p>
+<p>Quick search across Chromium for the actual patterns these checks catch:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Check</th>
+<th>Instances</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.substr(0, n) ==</code></td>
+<td><code>modernize-use-starts-ends-with</code></td>
+<td>~730</td>
+</tr>
+<tr>
+<td><code>.find(x) == 0</code></td>
+<td><code>modernize-use-starts-ends-with</code></td>
+<td>~1,100</td>
+</tr>
+<tr>
+<td><code>.compare(0, n)</code></td>
+<td><code>modernize-use-starts-ends-with</code></td>
+<td>~50</td>
+</tr>
+<tr>
+<td><code>.subspan(0, n)</code></td>
+<td><code>readability-use-span-first-last</code></td>
+<td>~10</td>
+</tr>
+</tbody></table>
+<p>That&#39;s nearly 2,000 <code>starts_with</code>/<code>ends_with</code> candidates alone - each one a clearer, faster replacement. And that&#39;s just one family of checks.</p>
+<h2>Links</h2>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/llvm/llvm-project/pull/116033"><strong>Enhance modernize-use-starts-ends-with for substr patterns</strong></a></li>
+<li><a href="https://github.com/llvm/llvm-project/pulls?q=author%3Ahjanuschka">View all my LLVM contributions →</a></li>
+</ul>
+<hr>
+<p><em>Sometimes the best ideas need time to mature. That scratchpad waited years - but Peter&#39;s suggestions are now becoming real tools that help developers write better C++.</em></p>
+<p>Thanks to:</p>
+<ul>
+<li><strong>Peter Kasting</strong> for the original ideas and introducing me to clang-tidy</li>
+<li><strong>Nicolas van Kempen</strong> for patient review and guidance on my first PR  </li>
+<li><strong>Eugene Zelenko</strong>, <strong>HerrCai0907</strong>, <strong>5chmidti</strong>, and <strong>PiotrZSL</strong> for thorough code reviews</li>
+</ul>
+    </div>
+  </article>
+
+  <!-- Command Palette -->
+  <div id="commandPalette" class="command-palette hidden">
+    <div class="command-palette-backdrop"></div>
+    <div class="command-palette-modal">
+      <div class="command-palette-header">
+        <span class="prompt">❯</span>
+        <input type="text" id="commandInput" placeholder="Type a command..." autocomplete="off">
+        <kbd>ESC</kbd>
+      </div>
+      <ul id="commandResults" class="command-results"></ul>
+      <div class="command-palette-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <span>© 2025 Helmut Januschka</span>
+        <span class="badge">Powered by marked.js + Terminal Vibes</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme switcher functionality
+    const themeButton = document.getElementById('themeButton');
+    const themeMenu = document.getElementById('themeMenu');
+    const themeOptions = document.querySelectorAll('.theme-option');
+
+    // Toggle theme menu
+    themeButton.addEventListener('click', function() {
+      themeMenu.classList.toggle('show');
+    });
+
+    // Close theme menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!themeButton.contains(e.target) && !themeMenu.contains(e.target)) {
+        themeMenu.classList.remove('show');
+      }
+    });
+
+    // Theme selection
+    themeOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        const theme = this.getAttribute('data-theme');
+
+        if (theme === 'matte-black') {
+          document.documentElement.removeAttribute('data-theme');
+        } else {
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        // Save theme preference
+        localStorage.setItem('theme', theme);
+
+        // Close menu
+        themeMenu.classList.remove('show');
+      });
+    });
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme && savedTheme !== 'matte-black') {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    // Command Palette
+    const palette = document.getElementById('commandPalette');
+    const paletteInput = document.getElementById('commandInput');
+    const paletteResults = document.getElementById('commandResults');
+    let selectedIndex = 0;
+
+    const commands = [
+      { icon: '🏠', name: 'Go to Home', keywords: ['home', 'top', 'start'], action: () => window.location.href = '/' },
+      { icon: '👤', name: 'Go to About', keywords: ['about', 'bio', 'me'], action: () => window.location.href = '/#about' },
+      { icon: '💼', name: 'Go to Experience', keywords: ['experience', 'work', 'career'], action: () => window.location.href = '/#experience' },
+      { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => window.location.href = '/#projects' },
+      { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => window.location.href = '/#blog' },
+      { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => window.location.href = '/#contact' },
+      { icon: '🎨', name: 'Theme: Matte Black', keywords: ['theme', 'matte', 'black', 'dark'], action: () => { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme', 'matte-black'); } },
+      { icon: '🌿', name: 'Theme: Osaka Jade', keywords: ['theme', 'osaka', 'jade', 'green'], action: () => { document.documentElement.setAttribute('data-theme', 'osaka-jade'); localStorage.setItem('theme', 'osaka-jade'); } },
+      { icon: '🌙', name: 'Theme: Purple Moon', keywords: ['theme', 'purple', 'moon'], action: () => { document.documentElement.setAttribute('data-theme', 'purple-moon'); localStorage.setItem('theme', 'purple-moon'); } },
+      { icon: '💙', name: 'Theme: GitHub Blue', keywords: ['theme', 'github', 'blue'], action: () => { document.documentElement.setAttribute('data-theme', 'blue'); localStorage.setItem('theme', 'blue'); } },
+      { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
+      { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
+      { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
+      { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
+    ];
+
+    function openPalette() {
+      palette.classList.remove('hidden');
+      paletteInput.value = '';
+      selectedIndex = 0;
+      renderResults(commands);
+      setTimeout(() => paletteInput.focus(), 10);
+    }
+
+    function closePalette() {
+      palette.classList.add('hidden');
+      paletteInput.value = '';
+    }
+
+    function filterCommands(query) {
+      if (!query) return commands;
+      const q = query.toLowerCase();
+      return commands.filter(cmd =>
+        cmd.name.toLowerCase().includes(q) ||
+        cmd.keywords.some(k => k.includes(q))
+      );
+    }
+
+    function renderResults(results) {
+      paletteResults.innerHTML = results.map((cmd, i) =>
+        '<li class="command-result' + (i === selectedIndex ? ' selected' : '') + '" data-index="' + i + '">' +
+          '<span class="icon">' + cmd.icon + '</span>' +
+          '<span class="name">' + cmd.name + '</span>' +
+        '</li>'
+      ).join('');
+    }
+
+    function executeCommand(results) {
+      if (results[selectedIndex]) {
+        results[selectedIndex].action();
+        closePalette();
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+      if (e.key === 'Escape' && !palette.classList.contains('hidden')) {
+        closePalette();
+      }
+    });
+
+    paletteInput.addEventListener('input', function() {
+      const results = filterCommands(this.value);
+      selectedIndex = 0;
+      renderResults(results);
+    });
+
+    paletteInput.addEventListener('keydown', function(e) {
+      const results = filterCommands(this.value);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+        renderResults(results);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        renderResults(results);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        executeCommand(results);
+      }
+    });
+
+    paletteResults.addEventListener('click', function(e) {
+      const item = e.target.closest('.command-result');
+      if (item) {
+        selectedIndex = parseInt(item.dataset.index);
+        executeCommand(filterCommands(paletteInput.value));
+      }
+    });
+
+    palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+  
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script>
+    // Highlight all code blocks
+    Prism.highlightAll();
+  </script>
+</body>
+</html>
