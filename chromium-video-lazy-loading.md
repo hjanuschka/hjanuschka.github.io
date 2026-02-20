@@ -6,7 +6,7 @@ tech: "C++ / Blink"
 
 *The missing piece for video-heavy pages*
 
-**Status:** 🚧 In Progress
+**Status:** ✅ Landed in Chromium ([CL 7511253](https://crrev.com/c/7511253) merged Feb 20, 2026)
 
 ---
 
@@ -83,7 +83,7 @@ The implementation reuses Chromium's existing lazy load infrastructure—same in
 
 | Browser | Patch | Standards Position |
 |---------|-------|-------------------|
-| Chromium | <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [CL 7511253](https://crrev.com/c/7511253) | <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">POSITIVE</span> |
+| Chromium | <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [CL 7511253](https://crrev.com/c/7511253) | <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">POSITIVE</span> |
 | Firefox | <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [D278547](https://phabricator.services.mozilla.com/D278547) | <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">POSITIVE</span> |
 | WebKit | Ready (not submitted) | <span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">PENDING</span> |
 
