@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Chrome Themes: Building DHH's Vision for Omarchy - Helmut Januschka</title>
-  <meta name="description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <title>Camera Capture on Desktop: Closing a 12-Year-Old Gap - Helmut Januschka</title>
+  <meta name="description" content="Bringing input type=file capture to Windows, Mac, and Linux">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Dynamic Chrome Themes: Building DHH's Vision for Omarchy",
-    "description": "How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming",
+    "headline": "Camera Capture on Desktop: Closing a 12-Year-Old Gap",
+    "description": "Bringing input type=file capture to Windows, Mac, and Linux",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-omarchy.html"
+      "@id": "https://januschka.com/chromium-camera-capture.html"
     },
     "keywords": "Chromium, C++, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-omarchy.html"
+      "target": "https://januschka.com/chromium-camera-capture.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta property="og:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta property="og:title" content="Camera Capture on Desktop: Closing a 12-Year-Old Gap">
+  <meta property="og:description" content="Bringing input type=file capture to Windows, Mac, and Linux">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-omarchy.html">
+  <meta property="og:url" content="https://januschka.com/chromium-camera-capture.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta name="twitter:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta name="twitter:title" content="Camera Capture on Desktop: Closing a 12-Year-Old Gap">
+  <meta name="twitter:description" content="Bringing input type=file capture to Windows, Mac, and Linux">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -833,7 +833,7 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Dynamic Chrome Themes: Building DHH's Vision for Omarchy</h1>
+      <h1 class="blog-title">Camera Capture on Desktop: Closing a 12-Year-Old Gap</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
         <span>🔧 C++</span>
@@ -845,269 +845,127 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming</em></p>
-<h2>🎉 Update: September 14, 2025 - MERGED &amp; LANDED! A Better Way Through Managed Policies</h2>
-<h3>The Golden Nugget Discovery</h3>
-<p>Google initially rejected our CLI approach, but working closely with friends at Brave, a crucial insight emerged: <strong>Chrome&#39;s managed policies could set theme colors!</strong> This was a game-changer - policies are an officially supported Chrome feature used by enterprises worldwide.</p>
-<p>However, there was a catch: applying policies took 5+ seconds to take effect. This wasn&#39;t the instant response Omarchy users expected.</p>
-<h3>Making It Instant</h3>
-<p>I dug deeper into Chrome&#39;s policy system and discovered we could add a new flag:</p>
-<pre><code class="language-sh"># Instantly refresh and apply platform policies
-chromium --refresh-platform-policy
+<p><em>Bringing <code>&lt;input type=file capture&gt;</code> to Windows, Mac, and Linux</em></p>
+<p><strong>Status:</strong> 🚧 In Progress</p>
+<hr>
+<h2>The 12-Year-Old Feature Request</h2>
+<p>In October 2012, a feature request was filed: bring camera capture to desktop browsers. On Android, developers could already do this:</p>
+<pre><code class="language-html">&lt;input type=&quot;file&quot; accept=&quot;image/*&quot; capture=&quot;camera&quot;&gt;
 </code></pre>
-<p>This flag forces Chrome to immediately reload and apply managed policies without the usual delay. The implications go far beyond just theming - it enables instant policy updates for any managed Chrome setting!</p>
-<h3>The Implementation Journey</h3>
-<p>After much discussion and collaboration with Chrome&#39;s policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>--refresh-platform-policy flag</strong></a>) adds:</p>
-<pre><code class="language-cpp">// chrome/common/chrome_switches.cc
-const char kRefreshPlatformPolicy[] = &quot;refresh-platform-policy&quot;;
-
-// chrome/browser/ui/startup/startup_browser_creator.cc
-// Trigger immediate policy refresh when Chrome is already running
-if (command_line.HasSwitch(switches::kRefreshPlatformPolicy)) {
-  g_browser_process-&gt;browser_policy_connector()-&gt;RefreshPlatformPolicies();
-  // Return early to prevent opening a new browser window
+<p>Click the input, and Android opens the camera app. Take a photo, and it&#39;s submitted as a file. Simple, elegant, and completely unavailable on desktop platforms for over a decade.</p>
+<p><strong>Bug:</strong> <a href="https://issues.chromium.org/issues/40291635">40291635</a></p>
+<h2>Why It Matters</h2>
+<p>Think about the use cases:</p>
+<ul>
+<li><strong>ID verification</strong> - Upload a photo of your passport or driver&#39;s license</li>
+<li><strong>Profile pictures</strong> - Take a selfie directly instead of hunting through files</li>
+<li><strong>Document scanning</strong> - Capture receipts, forms, or notes</li>
+<li><strong>Support tickets</strong> - Show the problem via webcam</li>
+<li><strong>Video messages</strong> - Record a quick video response</li>
+</ul>
+<p>Today, web developers have to build custom camera UIs using <code>getUserMedia()</code> - non-trivial work that most sites skip entirely. With native capture support, it&#39;s a single HTML attribute.</p>
+<h2>The Implementation</h2>
+<p>The solution is a cross-platform <code>CameraCaptureDialog</code> that intercepts file inputs with the <code>capture</code> attribute:</p>
+<pre><code class="language-cpp">// In file_select_helper.cc - intercept capture requests
+if (params.capture &amp;&amp; ShouldShowCameraCaptureDialog(params)) {
+  CameraCaptureDialog::Show(web_contents, params, callback);
   return;
 }
 </code></pre>
-<p>The beauty of this implementation is its simplicity - just a few lines of code that unlock powerful functionality!</p>
-<h3>Official Chrome Release</h3>
-<p>This change has landed and will be released in <strong>Chrome Stable 142</strong>! This means:</p>
-<ul>
-<li>Official support for instant policy updates</li>
-<li>No more waiting for policy refresh intervals</li>
-<li>Works with any managed policy, not just themes</li>
-</ul>
-<h3>Omarchy&#39;s Lightning-Fast Integration</h3>
-<p>I quickly assembled <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/basecamp/omarchy/pull/1251"><strong>Omarchy theme integration</strong></a> that integrates the new flag with JSON policy updates. Here&#39;s how it works in practice:</p>
-<pre><code class="language-sh"># Set theme via managed policy (Linux example)
-sudo mkdir -p /etc/chromium/policies/managed
-echo &#39;{
-  &quot;BrowserThemeColor&quot;: &quot;#ff6b35&quot;
-}&#39; | sudo tee /etc/chromium/policies/managed/theme.json
+<h3>Features</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Photo capture</strong></td>
+<td>Single image capture with preview</td>
+</tr>
+<tr>
+<td><strong>Video recording</strong></td>
+<td>Record video with live preview</td>
+</tr>
+<tr>
+<td><strong>Audio recording</strong></td>
+<td>Voice memos and audio messages</td>
+</tr>
+<tr>
+<td><strong>Device selection</strong></td>
+<td>Choose between multiple cameras/mics</td>
+</tr>
+<tr>
+<td><strong>Playback preview</strong></td>
+<td>Review before submitting</td>
+</tr>
+<tr>
+<td><strong>WebM metadata</strong></td>
+<td>Proper duration headers for video files</td>
+</tr>
+</tbody></table>
+<h3>Demo</h3>
+<p><strong>Image Capture:</strong></p>
+<div class="youtube-embed">
+  <iframe src="https://www.youtube.com/embed/t5561A1SHks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
-# Instantly apply to running Chrome instances
-chromium --refresh-platform-policy --no-startup-window
+<p><strong>Video Recording:</strong></p>
+<div class="youtube-embed">
+  <iframe src="https://www.youtube.com/embed/80-0PNMpYHM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<p><strong>Audio Recording:</strong></p>
+<div class="youtube-embed">
+  <iframe src="https://www.youtube.com/embed/CkbsyqdDNBM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<h2>Try It</h2>
+<p><strong><a href="https://static.januschka.com/i-40291635/">Live Demo →</a></strong></p>
+<p>Test the feature yourself with a patched Chromium build.</p>
+<h2>The HTML API</h2>
+<p>The <code>capture</code> attribute on file inputs tells the browser to prefer media capture:</p>
+<pre><code class="language-html">&lt;!-- Prefer camera for images --&gt;
+&lt;input type=&quot;file&quot; accept=&quot;image/*&quot; capture&gt;
+
+&lt;!-- Prefer user-facing camera --&gt;
+&lt;input type=&quot;file&quot; accept=&quot;image/*&quot; capture=&quot;user&quot;&gt;
+
+&lt;!-- Prefer environment-facing camera --&gt;
+&lt;input type=&quot;file&quot; accept=&quot;image/*&quot; capture=&quot;environment&quot;&gt;
+
+&lt;!-- Video capture --&gt;
+&lt;input type=&quot;file&quot; accept=&quot;video/*&quot; capture&gt;
+
+&lt;!-- Audio capture --&gt;
+&lt;input type=&quot;file&quot; accept=&quot;audio/*&quot; capture&gt;
 </code></pre>
-<p>For macOS users:</p>
-<pre><code class="language-sh"># Create policy directory
-sudo mkdir -p /Library/Managed\ Preferences/com.google.Chrome
-
-# Set theme color policy
-sudo defaults write /Library/Managed\ Preferences/com.google.Chrome BrowserThemeColor -string &quot;#ff6b35&quot;
-
-# Apply instantly
-open -a &quot;Google Chrome&quot; --args --refresh-platform-policy --no-startup-window
+<p>The spec is defined in <a href="https://w3c.github.io/html-media-capture/">HTML Media Capture</a>, and this implementation brings Chrome desktop in line with Android and mobile Safari.</p>
+<h2>Architecture</h2>
+<p>The implementation lives in <code>chrome/browser/ui/views/media_capture/</code>:</p>
+<pre><code>camera_capture_dialog.h      # Dialog interface and state machine
+camera_capture_dialog.cc     # Cross-platform UI implementation
+camera_capture_dialog_unittest.cc
 </code></pre>
-<p>This approach is <strong>even faster than our original CLI implementation</strong> because:</p>
-<ol>
-<li>Policies are read directly from disk (no IPC overhead)</li>
-<li>The refresh flag bypasses all delays</li>
-<li>Chrome&#39;s native policy system handles the theme application</li>
-<li>Works with existing enterprise policy infrastructure</li>
-</ol>
-<h3>Brave Ships It Early</h3>
-<p>Brave has cherry-picked this change and will ship it even faster with their release based on Chrome 141! This shows the power of open-source collaboration - features can reach users through multiple channels.</p>
-<h3>The Bigger Picture</h3>
-<p>The <code>--refresh-platform-policy</code> flag opens up new possibilities beyond theming:</p>
+<p>Key components:</p>
 <ul>
-<li>Instant enterprise policy updates without browser restart</li>
-<li>Dynamic security policy adjustments</li>
-<li>Real-time configuration changes for managed deployments</li>
-<li>Scriptable policy management for power users</li>
+<li><strong>Live preview</strong> using <code>media::VideoCaptureDevice</code></li>
+<li><strong>Recording</strong> via <code>MediaRecorder</code> API internally</li>
+<li><strong>Device enumeration</strong> through <code>media::AudioDeviceDescription</code></li>
+<li><strong>Views-based UI</strong> for cross-platform consistency</li>
 </ul>
-<p>This is a perfect example of how solving one problem (theme switching) led to a more general solution that benefits the entire Chrome ecosystem.</p>
+<h2>Current Status</h2>
+<p><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7594822"><strong>CL 7594822</strong></a> - Support camera capture for <code>&lt;input type=file capture&gt;</code> on desktop</p>
+<h2>Links</h2>
+<ul>
+<li><a href="https://issues.chromium.org/issues/40291635">Chromium Bug 40291635</a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7594822"><strong>CL 7594822</strong></a></li>
+<li><a href="https://docs.google.com/document/d/1p2QlRMDbHUc-GneEUuf-yHXRCqWqJijZSFD_KErqdnQ/edit">Design Doc</a></li>
+<li><a href="https://w3c.github.io/html-media-capture/">HTML Media Capture Spec</a></li>
+</ul>
 <hr>
-<h2>The Tweet That Started Everything</h2>
-<p>It began with <a href="https://x.com/hjanuschka/status/1954552977814855845">a challenge from DHH</a> (David Heinemeier Hansson, creator of Ruby on Rails). He wanted something that seemed simple but revealed an interesting gap: the ability to change Chrome&#39;s theme colors dynamically from the command line.</p>
-<p>The context was important - when Chrome uses GTK/Qt themes, this already works automatically. But when using Chrome&#39;s &quot;Classic&quot; theme (which many prefer for consistency across platforms), there was no CLI way to control colors. While you could manually change themes through settings for each instance, Omarchy needed scriptable control - just like it has for other applications.</p>
-<p>His vision was clear:</p>
-<pre><code class="language-sh"># Change theme when using Chrome&#39;s Classic theme
-chrome --set-user-color=&quot;255,0,0&quot;
-</code></pre>
-<p>This wasn&#39;t just about aesthetics. For DHH&#39;s new <a href="https://omarchy.org">Omarchy Linux distribution</a>, this represented a core philosophy: giving power users complete control over their environment through simple, scriptable interfaces.</p>
-<h2>Why This Matters</h2>
-<p>The gap in Chrome&#39;s theming:</p>
-<ul>
-<li><strong>GTK/Qt themes</strong>: Work great, update automatically</li>
-<li><strong>Classic theme</strong>: No CLI control, must use GUI per instance</li>
-<li><strong>Omarchy&#39;s need</strong>: Scriptable theming like other apps have</li>
-</ul>
-<p>DHH&#39;s request highlighted this inconsistency. Why shouldn&#39;t the Classic theme be as flexible as GTK/Qt integration?</p>
-<h2>The Pleasant Surprise</h2>
-<p>The implementation turned out to be easier than expected - the code was already in Chromium! The theme system was robust and well-designed. It just wasn&#39;t exposed via command-line interface.</p>
-<p>My task was essentially plumbing: connecting existing functionality to a new entry point.</p>
-<h2>The Implementation</h2>
-<h3>Finding the Existing Code</h3>
-<p>Chrome&#39;s theme system was already sophisticated:</p>
-<pre><code class="language-cpp">// Theme colors are defined in the ThemeService
-class ThemeService : public KeyedService {
-  // Material Design 3 (GM3) color generation
-  ui::ColorProviderManager::Key GetColorProviderKey();
-  
-  // This notifies observers when theme changes
-  void NotifyThemeChanged();
-};
-</code></pre>
-<p>The Material Design 3 (GM3) theming logic was all there - it just needed a CLI entry point.</p>
-<h3>Adding Command-Line Support</h3>
-<p>The implementation added several switches that work together:</p>
-<pre><code class="language-cpp">// Core theme switches in chrome_switches.cc
-const char kSetDefaultTheme[] = &quot;set-default-theme&quot;;      // Reset to system
-const char kSetUserColor[] = &quot;set-user-color&quot;;            // GM3 seed color
-const char kSetColorScheme[] = &quot;set-color-scheme&quot;;        // light/dark/system
-const char kSetColorVariant[] = &quot;set-color-variant&quot;;      // Material variants
-const char kSetGrayscaleTheme[] = &quot;set-grayscale-theme&quot;;  // Grayscale overlay
-</code></pre>
-<p>These switches can be combined for complete control:</p>
-<pre><code class="language-sh"># Dark blue vibrant theme
-chrome --set-user-color=&quot;100,150,200&quot; \
-       --set-color-scheme=&quot;dark&quot; \
-       --set-color-variant=&quot;vibrant&quot;
-
-# Light neutral theme with custom color
-chrome --set-user-color=&quot;255,107,53&quot; \
-       --set-color-scheme=&quot;light&quot; \
-       --set-color-variant=&quot;neutral&quot;
-
-# System theme with grayscale
-chrome --set-color-scheme=&quot;system&quot; \
-       --set-grayscale-theme=&quot;true&quot;
-</code></pre>
-<h3>Leveraging Chrome&#39;s Theme System</h3>
-<p>The beauty was that Chrome already had:</p>
-<ul>
-<li>Material Design 3 (GM3) dynamic color generation</li>
-<li>ProcessSingleton IPC for notifying running instances</li>
-<li>ThemeService infrastructure for applying changes</li>
-<li>Support for all Material color variants</li>
-</ul>
-<p>Combined with <code>--no-startup-window</code>, themes update without opening new windows!</p>
-<h2>Plan B: The GTK Theme Generator</h2>
-<p>While working on the Chrome patch, I also explored an alternative approach: what if we could generate GTK themes using Chrome&#39;s Material Design 3 logic?</p>
-<p>This led to <a href="https://github.com/hjanuschka/material-gtk-generator">material-gtk-generator</a>:</p>
-<pre><code class="language-sh"># Generate a GTK theme from Chrome&#39;s GM3 colors
-material-gtk-generator --seed-color=&quot;#FF6B6B&quot; --output-dir=~/.themes/
-</code></pre>
-<p>This was Plan B - if the Chromium CL didn&#39;t land, we could:</p>
-<ol>
-<li>Generate GTK themes matching Chrome&#39;s GM3 palette</li>
-<li>Apply them system-wide</li>
-<li>Chrome would pick them up automatically</li>
-</ol>
-<p>It&#39;s still useful for creating cohesive desktop themes!</p>
-<h2>The Micro Fork: Getting It to Users Fast</h2>
-<p>DHH didn&#39;t want to wait for Google&#39;s review process. He made a decisive move: <strong>invest in build infrastructure</strong> to ship a micro fork immediately.</p>
-<h3>What Happened</h3>
-<ol>
-<li><strong>DHH&#39;s Decision</strong>: &quot;Let&#39;s ship this NOW to Omarchy users&quot;</li>
-<li><strong>Build Infrastructure</strong>: DHH funded dedicated build servers</li>
-<li><strong>The Micro Fork</strong>: <a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium</a> was born</li>
-<li><strong>Immediate Availability</strong>: Users got the feature within days, not months</li>
-</ol>
-<p>There&#39;s an excellent <a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">YouTube video by DHH</a> about the power of open source - showing how we went from idea to fork at incredible speed.</p>
-<h3>The Patch</h3>
-<p>The entire feature is contained in a single CL (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a> - superseded by policy approach):</p>
-<ul>
-<li>Minimal, focused changes</li>
-<li>Clean integration with existing code</li>
-<li>Easy to maintain and rebase</li>
-<li>No invasive modifications</li>
-</ul>
-<h2>Real-World Usage</h2>
-<h3>For Omarchy Users</h3>
-<p>Omarchy users just use the built-in theme switcher - it all happens automatically in the background! The system handles the Chrome theming seamlessly alongside other applications.</p>
-<h3>For Power Users and Scripters</h3>
-<p>The CLI switches enable powerful automation:</p>
-<pre><code class="language-sh"># Match browser to terminal theme (Classic theme only)
-chromium --set-user-color=&quot;$(get-terminal-color-rgb)&quot;
-
-# Different themes for different workspaces with variants
-workspace-1: chromium --set-user-color=&quot;26,26,26&quot; \
-                      --set-color-variant=&quot;neutral&quot;
-workspace-2: chromium --set-user-color=&quot;0,43,54&quot; \
-                      --set-color-variant=&quot;tonal_spot&quot;
-
-# Time-based theming with color schemes
-if [[ $(date +%H) -gt 18 ]]; then
-  chromium --set-color-scheme=&quot;dark&quot; \
-           --set-user-color=&quot;0,0,0&quot;
-else
-  chromium --set-color-scheme=&quot;light&quot; \
-           --set-user-color=&quot;255,255,255&quot;
-fi
-
-# Update running instances without opening new window
-chromium --no-startup-window \
-         --set-user-color=&quot;100,200,150&quot; \
-         --set-color-variant=&quot;expressive&quot;
-</code></pre>
-<p>Note: This works specifically with Chrome&#39;s Classic theme. If you&#39;re using GTK/Qt themes, Chrome already responds to system theme changes automatically.</p>
-<h3>Integration with Window Managers</h3>
-<p>Window managers can now theme browsers to match the desktop:</p>
-<pre><code class="language-python"># Example i3wm integration
-import i3ipc
-import subprocess
-
-def on_workspace_focus(i3, event):
-    workspace = event.current.name
-    themes = {
-        &quot;1: term&quot;: (&quot;0,0,0&quot;, &quot;dark&quot;, &quot;neutral&quot;),
-        &quot;2: web&quot;: (&quot;26,26,46&quot;, &quot;dark&quot;, &quot;tonal_spot&quot;), 
-        &quot;3: code&quot;: (&quot;15,52,96&quot;, &quot;dark&quot;, &quot;vibrant&quot;)
-    }
-    if workspace in themes:
-        color, scheme, variant = themes[workspace]
-        subprocess.run([
-            &quot;chromium&quot;,
-            &quot;--no-startup-window&quot;,
-            f&quot;--set-user-color={color}&quot;,
-            f&quot;--set-color-scheme={scheme}&quot;,
-            f&quot;--set-color-variant={variant}&quot;
-        ])
-
-i3 = i3ipc.Connection()
-i3.on(&quot;workspace::focus&quot;, on_workspace_focus)
-i3.main()
-</code></pre>
-<h2>What&#39;s Next?</h2>
-<h3>Upstream Progress</h3>
-<p>The direct CLI approach (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>CL 6832165</strong></a>) was superseded by the policy-based solution (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>CL 6900896</strong></a>), which landed in Chrome 142.</p>
-<h3>Extended Features</h3>
-<p>The complete feature set includes:</p>
-<ul>
-<li><strong>Material variants</strong>: tonal_spot, neutral, vibrant, expressive</li>
-<li><strong>Color schemes</strong>: light, dark, system</li>
-<li><strong>Grayscale mode</strong>: For accessibility</li>
-<li><strong>No startup window</strong>: Update running instances silently</li>
-<li><strong>GM3 color generation</strong>: Full Material Design 3 palette from seed color</li>
-</ul>
-<h3>Other Browsers</h3>
-<p>Brave has shown interest in downstream landing our patch.</p>
-<h2>Try It Yourself</h2>
-<h3>For Arch/Omarchy Users</h3>
-<p>The AUR package is available (replaces the standard Chromium):</p>
-<pre><code class="language-sh">yay -S omarchy-chromium-bin
-
-# Teal expressive theme
-chromium --set-user-color=&quot;78,205,196&quot; \
-         --set-color-variant=&quot;expressive&quot;
-
-# Reset to default
-chromium --set-default-theme
-</code></pre>
-<hr>
-<p><em>Sometimes the best features are already there, waiting to be exposed. Thanks to DHH&#39;s vision and investment, Omarchy users don&#39;t have to wait.</em></p>
-<p><strong>Links:</strong></p>
-<ul>
-<li><a href="https://x.com/hjanuschka/status/1954552977814855845">Original Tweet</a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>Policy refresh flag</strong></a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a></li>
-<li><a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium Fork</a></li>
-<li><a href="https://github.com/hjanuschka/material-gtk-generator">Material GTK Generator (Plan B)</a></li>
-<li><a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">DHH&#39;s Video: Power of OSS - Idea to Fork</a></li>
-<li><a href="https://omarchy.org">Omarchy.org</a></li>
-<li><a href="https://world.hey.com/dhh/omarchy-micro-forks-chromium-1287486d">DHH&#39;s Blog Post</a></li>
-</ul>
+<p><em>Sometimes the best features are the ones that should have existed all along. After 12 years, desktop Chrome is finally catching up to mobile.</em></p>
     </div>
   </article>
 
