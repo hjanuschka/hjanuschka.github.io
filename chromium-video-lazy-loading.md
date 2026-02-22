@@ -89,6 +89,9 @@ The implementation reuses Chromium's existing lazy load infrastructure—same in
 
 ## Links
 
+**Coverage:**
+- [Lazy Loading for Video and Audio](https://scottjehl.com/posts/lazy-media/) - Scott Jehl's deep dive on the feature
+
 **Spec:**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> [**HTML Spec PR #11980**](https://github.com/whatwg/html/pull/11980)
 
