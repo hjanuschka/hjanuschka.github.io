@@ -1048,7 +1048,7 @@ $content
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
-        <span>© 2025 Helmut Januschka</span>
+        <span>© 2025 Helmut Januschka · <a href="http://www.rununtil.com/impressum.html" style="color: var(--text-dim);">Imprint</a></span>
         <span class="badge">Powered by marked.js + Terminal Vibes</span>
       </div>
     </div>
