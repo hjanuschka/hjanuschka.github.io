@@ -8,6 +8,14 @@ tech: "C++ / Blink"
 
 **Status:** ✅ Landed in Chromium ([CL 7511253](https://crrev.com/c/7511253) merged Feb 20, 2026)
 
+```snippet
+<div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid #22c55e; border-radius: 12px;">
+  <h3 style="color: #22c55e; margin: 0 0 10px 0;">🎉 UPDATE: Shipping in Chrome 148</h3>
+  <p style="margin: 0;">The feature landed default-enabled and is expected to ship with Chrome 148 stable.</p>
+  <p style="font-size: 13px; opacity: 0.8; margin-top: 5px;">HTML Spec and Web Platform Tests also merged!</p>
+</div>
+```
+
 ---
 
 ## The Gap
@@ -93,10 +101,10 @@ The implementation reuses Chromium's existing lazy load infrastructure—same in
 - [Lazy Loading for Video and Audio](https://scottjehl.com/posts/lazy-media/) - Scott Jehl's deep dive on the feature
 
 **Spec:**
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> [**HTML Spec PR #11980**](https://github.com/whatwg/html/pull/11980)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**HTML Spec PR #11980**](https://github.com/whatwg/html/pull/11980)
 
 **Tests:**
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> [**WPT PR #57051**](https://github.com/web-platform-tests/wpt/pull/57051)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**WPT PR #57051**](https://github.com/web-platform-tests/wpt/pull/57051)
 
 **Tracking:**
 - [Chromium 469111735](https://issues.chromium.org/issues/469111735) · [Firefox 2005072](https://bugzilla.mozilla.org/show_bug.cgi?id=2005072) · [WebKit 303995](https://bugs.webkit.org/show_bug.cgi?id=303995)
