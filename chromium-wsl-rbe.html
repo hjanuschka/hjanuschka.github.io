@@ -1068,10 +1068,10 @@ netsh interface portproxy delete v4tov4 listenport=2222 listenaddress=0.0.0.0
 netsh interface portproxy add v4tov4 listenport=2222 listenaddress=0.0.0.0 connectport=2222 connectaddress=$ip
 New-NetFirewallRule -DisplayName WSL-SSH-2222 -Direction Inbound -Action Allow -Protocol TCP -LocalPort 2222
 </code></pre>
-<p>Connect:</p>
-<pre><code class="language-bash">ssh -p 2222 &lt;user&gt;@&lt;windows-host-or-ip&gt;
+<p>From a machine with your FIDO key (e.g. your Mac), connect using <code>luci-auth-ssh-helper</code>:</p>
+<pre><code class="language-bash">luci-auth-ssh-helper -ssh -port=2222 &lt;user&gt;@&lt;windows-host-or-ip&gt;
 </code></pre>
-<p>Once inside WSL via SSH, your FIDO key works for ReAuth and RBE builds stop hanging on authentication.</p>
+<p>Once inside WSL, ReAuth just works and RBE builds stop hanging on authentication.</p>
 <hr>
 <h2>9. Install and run the Windows build</h2>
 <p>Do not run <code>chrome.exe</code> directly from <code>\\wsl$</code>. Windows side-by-side assembly activation does not like the WSL network filesystem. Build and run through <code>mini_installer.exe</code> instead.</p>
