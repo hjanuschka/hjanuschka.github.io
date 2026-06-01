@@ -32,6 +32,28 @@ Replace `<user>`, `<host>`, `<wsl-ip>`, and paths as needed.
 
 ---
 
+```snippet
+<div style="margin: 30px 0; padding: 20px; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px;">
+  <h3 style="margin: 0 0 15px 0; color: #a78bfa; font-size: 1.1em;">📑 Table of Contents</h3>
+  <ol style="margin: 0; padding-left: 20px; line-height: 1.8;">
+    <li><a href="#1-start-with-a-normal-windows-chromium-setup" style="color: #c4b5fd; text-decoration: none;">Start with a normal Windows Chromium setup</a></li>
+    <li><a href="#2-install-wsl2-and-give-it-enough-memory" style="color: #c4b5fd; text-decoration: none;">Install WSL2 and give it enough memory</a></li>
+    <li><a href="#3-create-the-linux-checkout-on-wsl-ext4" style="color: #c4b5fd; text-decoration: none;">Create the Linux checkout on WSL ext4</a></li>
+    <li><a href="#4-package-the-windows-sdktoolchain-for-linux" style="color: #c4b5fd; text-decoration: none;">Package the Windows SDK/toolchain for Linux</a></li>
+    <li><a href="#5-the-windows-sdk-mount-ciopfs" style="color: #c4b5fd; text-decoration: none;">The Windows SDK mount: ciopfs</a></li>
+    <li><a href="#6-generate-outwin-cross" style="color: #c4b5fd; text-decoration: none;">Generate out/Win-Cross</a></li>
+    <li><a href="#7-rbe-auth-for-external-contributors" style="color: #c4b5fd; text-decoration: none;">RBE auth for external contributors</a></li>
+    <li><a href="#8-ssh-into-wsl2-for-fido-reauth" style="color: #c4b5fd; text-decoration: none;">SSH into WSL2 for FIDO ReAuth</a></li>
+    <li><a href="#9-install-and-run-the-windows-build" style="color: #c4b5fd; text-decoration: none;">Install and run the Windows build</a></li>
+  </ol>
+  <p style="margin: 15px 0 0 0; padding-top: 10px; border-top: 1px solid rgba(139, 92, 246, 0.2); font-size: 0.9em;">
+    <a href="#the-workflow" style="color: #a78bfa; text-decoration: none;">→ The Workflow (TL;DR)</a>
+  </p>
+</div>
+```
+
+---
+
 ## 1. Start with a normal Windows Chromium setup
 
 Do this first. Follow the [official Windows build instructions](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/windows_build_instructions.md) and get a regular Windows checkout/build working before adding WSL2:
