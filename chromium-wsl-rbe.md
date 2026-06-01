@@ -341,27 +341,7 @@ Connect:
 ssh -p 2222 <user>@<windows-host-or-ip>
 ```
 
-For Windows client → WSL2, run the LUCI helper on the client with the FIDO key:
-
-```cmd
-luci-auth-ssh-helper -mode=daemon -port=10899
-```
-
-Then SSH with reverse forwarding:
-
-```bash
-ssh -p 2222 -R 10899:localhost:10899 <user>@<windows-host-or-ip>
-```
-
-Inside WSL:
-
-```bash
-export SSH_AUTH_SOCK=localhost:10899
-git credential-luci reauth
-git credential-luci info
-```
-
-Once ReAuth is valid, RBE builds stop hanging on authentication.
+Once inside WSL via SSH, your FIDO key works for ReAuth and RBE builds stop hanging on authentication.
 
 ---
 
