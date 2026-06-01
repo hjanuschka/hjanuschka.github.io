@@ -4,7 +4,7 @@ category: "Chromium"
 tech: "C++ / Build Systems"
 ---
 
-*A sane way to cross-compile Windows Chromium using Linux RBE from WSL2*
+*It's alive! Stitching together WSL2, Linux RBE, and Windows SDK to build Chrome faster than nature intended.*
 
 **Status:** 🛠️ Guide
 
