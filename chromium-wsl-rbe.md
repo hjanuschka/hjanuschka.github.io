@@ -319,6 +319,8 @@ gcloud auth application-default login
 
 That is only the RBE/build credential. Gerrit upload/review actions also need **ReAuth** with a physical security key.
 
+Note: ReAuth is only needed when you interact with Gerrit - e.g. `git cl upload` or `git cl patch XXXX --force` to pull down a CL. You could also just download and apply diffs manually from the Gerrit web UI if you want to skip this section entirely.
+
 Inside WSL2 the key often is not visible, especially over RDP. The practical solution is: expose SSH into WSL2, then SSH in from a machine/session that can use the FIDO key.
 
 ---
