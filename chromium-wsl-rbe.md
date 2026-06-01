@@ -10,6 +10,8 @@ tech: "C++ / Build Systems"
 
 ---
 
+External RBE for Windows is not a thing. But don't panic -- as long as you have a towel, you can make your way.
+
 Chromium on Windows is a monster build. If you have **Linux RBE** access but no Windows RBE, you can still build Windows Chrome fast: use **WSL2 as the Linux host** and cross-compile `target_os="win"`.
 
 The end result:
