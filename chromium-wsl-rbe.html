@@ -904,7 +904,7 @@ sparseVhd=true
 <p>Apply it:</p>
 <pre><code class="language-powershell">wsl --shutdown
 </code></pre>
-<p>The big swap file is intentional. It is much better for a compile to slow down than for the OOM killer to murder <code>clang</code> halfway through the build.</p>
+<p>The big swap file is intentional. SSD is cheaper than RAM, and it is much better for a compile to slow down than for the OOM killer to murder <code>clang</code> halfway through the build.</p>
 <hr>
 <h2>3. Create the Linux checkout on WSL ext4</h2>
 <p>Do <strong>not</strong> build under <code>/mnt/c</code>. It works, but it is painfully slow. Put the checkout in WSL&#39;s Linux filesystem:</p>

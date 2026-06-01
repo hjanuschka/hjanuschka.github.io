@@ -89,7 +89,7 @@ Apply it:
 wsl --shutdown
 ```
 
-The big swap file is intentional. It is much better for a compile to slow down than for the OOM killer to murder `clang` halfway through the build.
+The big swap file is intentional. SSD is cheaper than RAM, and it is much better for a compile to slow down than for the OOM killer to murder `clang` halfway through the build.
 
 ---
 
