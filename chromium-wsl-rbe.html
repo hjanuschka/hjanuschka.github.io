@@ -1045,6 +1045,11 @@ use_remoteexec=true
 <p>Inside WSL2 the key often is not visible, especially over RDP. The practical solution is: expose SSH into WSL2, then SSH in from a machine/session that can use the FIDO key.</p>
 <hr>
 <h2>8. SSH into WSL2 for FIDO ReAuth</h2>
+<div style="text-align: center; margin: 20px 0; padding: 20px; background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 12px;">
+  <h3 style="color: #ef4444; margin: 0 0 10px 0;">⚠️ Security Warning</h3>
+  <p style="margin: 0;">Exposing SSH is dangerous. Read this section carefully. Consider using key-only authentication and turning off SSH when not in use.</p>
+</div>
+
 <p>Install and start SSH in WSL:</p>
 <pre><code class="language-bash">sudo apt install -y openssh-server
 sudo tee /etc/ssh/sshd_config.d/99-wsl.conf &gt;/dev/null &lt;&lt;&#39;EOF&#39;

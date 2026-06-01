@@ -303,6 +303,13 @@ Inside WSL2 the key often is not visible, especially over RDP. The practical sol
 
 ## 8. SSH into WSL2 for FIDO ReAuth
 
+```snippet
+<div style="text-align: center; margin: 20px 0; padding: 20px; background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 12px;">
+  <h3 style="color: #ef4444; margin: 0 0 10px 0;">⚠️ Security Warning</h3>
+  <p style="margin: 0;">Exposing SSH is dangerous. Read this section carefully. Consider using key-only authentication and turning off SSH when not in use.</p>
+</div>
+```
+
 Install and start SSH in WSL:
 
 ```bash
