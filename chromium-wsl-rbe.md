@@ -1,5 +1,5 @@
 ---
-title: "Building Windows Chromium with Linux RBE via WSL2"
+title: "Franken-RBE: Windows Chromium with Linux RBE via WSL2"
 category: "Chromium"
 tech: "C++ / Build Systems"
 ---
