@@ -69,7 +69,7 @@ Reboot, then install Ubuntu:
 wsl --install -d Ubuntu-24.04 --no-launch
 ```
 
-Chromium will OOM with WSL defaults on smaller machines. Create `C:\Users\<user>\.wslconfig`:
+Chromium will OOM with WSL defaults on smaller machines. I run this on a $300 mini PC because RAM is expensive these dAIs. Create `C:\Users\<user>\.wslconfig`:
 
 ```ini
 [wsl2]
