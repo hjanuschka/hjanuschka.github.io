@@ -847,13 +847,13 @@
     <div class="blog-content">
 <p><em>How a Twitter conversation led to adding a major new feature to Chromium</em></p>
 <p><strong>Update 16.10.2025:</strong> ✅ Feature landed in Chromium main branch (Chrome 143)</p>
-<h2>The Origin Story</h2>
+<h2 id="the-origin-story">The Origin Story</h2>
 <p>It started with <a href="https://x.com/tobi/status/1957195479361438142">a tweet from Tobi Lütke</a> (CEO of Shopify). He proposed an elegant solution to a problem every developer faces: tab proliferation. His idea was simple but powerful - Chrome should focus existing tabs instead of blindly creating new ones.</p>
 <p>His proposed CLI syntax was clean:</p>
 <pre><code class="language-sh">chrome --focus=https://github.com/user/repo
 </code></pre>
 <p>I saw the tweet, loved the idea, and thought: &quot;Why wait? Let&#39;s build this into Chrome right now.&quot;</p>
-<h2>From Concept to Implementation</h2>
+<h2 id="from-concept-to-implementation">From Concept to Implementation</h2>
 <p>The vision was clear:</p>
 <ul>
 <li>If a matching tab exists, focus it</li>
@@ -862,8 +862,8 @@
 <li>Make it scriptable for automation</li>
 </ul>
 <p>This became my north star for the implementation.</p>
-<h2>The Technical Journey</h2>
-<h3>Turning Ideas into Architecture</h3>
+<h2 id="the-technical-journey">The Technical Journey</h2>
+<h3 id="turning-ideas-into-architecture">Turning Ideas into Architecture</h3>
 <p>The spec translated into several technical challenges:</p>
 <ol>
 <li><strong>Selector Parsing</strong>: Supporting exact URLs, wildcards, and app IDs</li>
@@ -871,7 +871,7 @@
 <li><strong>Cross-Window Search</strong>: Looking across all Chrome windows</li>
 <li><strong>Result Reporting</strong>: JSON output for automation scripts</li>
 </ol>
-<h3>The Implementation</h3>
+<h3 id="the-implementation">The Implementation</h3>
 <p>The implementation follows Chrome&#39;s architecture patterns:</p>
 <pre><code class="language-cpp">// Parse the selector syntax
 std::vector&lt;Selector&gt; ParseSelectors(const std::string&amp; input);
@@ -884,7 +884,7 @@ std::vector&lt;MatchCandidate&gt; CollectMatchingTabs(
 // MRU selection - the heart of the feature
 void SortCandidatesByMRU(std::vector&lt;MatchCandidate&gt;&amp; candidates);
 </code></pre>
-<h3>Making MRU Work</h3>
+<h3 id="making-mru-work">Making MRU Work</h3>
 <p>The most challenging part was &quot;pick the most recently used.&quot; Chrome doesn&#39;t directly track this, so I had to be creative:</p>
 <pre><code class="language-cpp">// Leverage Chrome&#39;s SessionID ordering as a proxy for recency
 bool CompareMRU(const MatchCandidate&amp; a, const MatchCandidate&amp; b) {
@@ -892,9 +892,9 @@ bool CompareMRU(const MatchCandidate&amp; a, const MatchCandidate&amp; b) {
 }
 </code></pre>
 <p>SessionIDs increase monotonically, so higher IDs = more recently created. Not perfect MRU, but a pragmatic solution that works.</p>
-<h2>The Result</h2>
+<h2 id="the-result">The Result</h2>
 <p>The feature now supports:</p>
-<h3>Basic Usage</h3>
+<h3 id="basic-usage">Basic Usage</h3>
 <pre><code class="language-sh"># Focus a specific URL
 chrome --focus=&quot;https://github.com/chromium/chromium&quot;
 
@@ -904,7 +904,7 @@ chrome --focus=&quot;*github.com/chromium/*&quot;
 # Multiple selectors (first match wins)
 chrome --focus=&quot;*github.com/*,*gitlab.com/*&quot;
 </code></pre>
-<h3>Advanced Features</h3>
+<h3 id="advanced-features">Advanced Features</h3>
 <pre><code class="language-sh"># JSON output for scripting
 chrome --focus=&quot;*github.com/*&quot; --output-json
 
@@ -914,7 +914,7 @@ chrome --focus=&quot;https://example.com&quot; --allow-create
 # App ID matching
 chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
 </code></pre>
-<h2>Real-World Impact</h2>
+<h2 id="real-world-impact">Real-World Impact</h2>
 <p>This feature changes how developers interact with Chrome:</p>
 <ol>
 <li><strong>Shell Integration</strong>: Bind keys to focus specific tabs</li>
@@ -922,7 +922,7 @@ chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
 <li><strong>Workflow Automation</strong>: Scripts can intelligently manage browser state</li>
 <li><strong>Reduced Memory</strong>: Fewer duplicate tabs = less RAM usage</li>
 </ol>
-<h2>Acknowledgments</h2>
+<h2 id="acknowledgments">Acknowledgments</h2>
 <blockquote>
 <p>Getting a feature into Chromium is a journey, not a sprint. The review process pushed me to think deeper about edge cases, performance implications, and API design. Every piece of feedback made this feature better. Huge thanks to all the reviewers who invested their time and expertise to make this happen.</p>
 </blockquote>
@@ -933,7 +933,7 @@ chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
 <li><strong>Daniel Murphy, Kaan Alsan, Erik Chen, Jan Keitel</strong> for thorough code reviews and valuable feedback</li>
 <li><strong>The entire Chromium community</strong> for the collaborative review process</li>
 </ul>
-<h2>Implementation Details</h2>
+<h2 id="implementation-details">Implementation Details</h2>
 <p><strong>Status:</strong> ✅ All CLs merged to Chromium main branch</p>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6850334"><strong>Foundation: Core infrastructure</strong></a></li>

@@ -886,7 +886,7 @@
 </div>
 
 <hr>
-<h2>1. Start with a normal Windows Chromium setup</h2>
+<h2 id="1-start-with-a-normal-windows-chromium-setup">1. Start with a normal Windows Chromium setup</h2>
 <p>Do this first. Follow the <a href="https://chromium.googlesource.com/chromium/src/+/HEAD/docs/windows_build_instructions.md">official Windows build instructions</a> and get a regular Windows checkout/build working before adding WSL2:</p>
 <pre><code class="language-text">C:\src\chromium\src
 C:\src\chromium\src\out\Default
@@ -902,7 +902,7 @@ C:\src\chromium\src\out\Default
 <p>Why? Because the cross-build reuses your real locally-installed <strong>Visual Studio + Windows SDK</strong>. Later we package that toolchain and feed it to Linux.</p>
 <p>Keep this checkout separate. The WSL cross-build gets its own checkout and does not touch <code>out\Default</code>.</p>
 <hr>
-<h2>2. Install WSL2 and give it enough memory</h2>
+<h2 id="2-install-wsl2-and-give-it-enough-memory">2. Install WSL2 and give it enough memory</h2>
 <p>Install WSL2 from elevated PowerShell:</p>
 <pre><code class="language-powershell">wsl --install --no-distribution
 </code></pre>
@@ -925,7 +925,7 @@ sparseVhd=true
 </code></pre>
 <p>The big swap file is intentional. SSD is cheaper than RAM, and it is much better for a compile to slow down than for the OOM killer to murder <code>clang</code> halfway through the build.</p>
 <hr>
-<h2>3. Create the Linux checkout on WSL ext4</h2>
+<h2 id="3-create-the-linux-checkout-on-wsl-ext4">3. Create the Linux checkout on WSL ext4</h2>
 <p>Do <strong>not</strong> build under <code>/mnt/c</code>. It works, but it is painfully slow. Put the checkout in WSL&#39;s Linux filesystem:</p>
 <pre><code class="language-bash">sudo apt update
 sudo apt install -y git python3 python-is-python3 curl lsb-release \
@@ -969,7 +969,7 @@ gclient sync --nohooks --no-history
 ./build/install-build-deps.sh --no-prompt --no-chromeos-fonts --no-arm --no-syms
 </code></pre>
 <hr>
-<h2>4. Package the Windows SDK/toolchain for Linux</h2>
+<h2 id="4-package-the-windows-sdktoolchain-for-linux">4. Package the Windows SDK/toolchain for Linux</h2>
 <p>On Windows, package the installed Visual Studio + Windows SDK:</p>
 <pre><code class="language-bash"># Git Bash on Windows
 mkdir -p /c/src/chromium/win_toolchain_pkg
@@ -991,7 +991,7 @@ export GCLIENT_SUPPRESS_GIT_VERSION_WARNING=1
 gclient runhooks
 </code></pre>
 <hr>
-<h2>5. The Windows SDK mount: ciopfs</h2>
+<h2 id="5-the-windows-sdk-mount-ciopfs">5. The Windows SDK mount: ciopfs</h2>
 <p>The Windows SDK contains filenames that conflict on a case-sensitive Linux filesystem. Chromium solves that with a <strong>ciopfs FUSE mount</strong>:</p>
 <pre><code class="language-text">real data:    ~/chromium/src/third_party/depot_tools/win_toolchain/vs_files.ciopfs
 mount point:  ~/chromium/src/third_party/depot_tools/win_toolchain/vs_files
@@ -1028,7 +1028,7 @@ command=/usr/local/sbin/mount-winsdk.sh
 </code></pre>
 <p>If root sees <code>Permission denied</code>, that usually means the user-owned FUSE mount is actually active.</p>
 <hr>
-<h2>6. Generate <code>out/Win-Cross</code></h2>
+<h2 id="6-generate-outwin-cross">6. Generate `out/Win-Cross`</h2>
 <p>This is the working <code>args.gn</code> shape:</p>
 <pre><code class="language-bash">cd ~/chromium/src
 
@@ -1056,14 +1056,14 @@ use_remoteexec=true
 </code></pre>
 <p>Use a modest <code>-j</code>; WSL still has limited RAM even with swap. But this setup is mainly for <strong>Linux RBE-backed cross-builds</strong>. If you want a fully local Windows build, do that in the normal native Windows checkout (<code>C:\src\chromium\src</code>), not in WSL2.</p>
 <hr>
-<h2>7. RBE auth for external contributors</h2>
+<h2 id="7-rbe-auth-for-external-contributors">7. RBE auth for external contributors</h2>
 <p>For external RBE access, Chromium uses Google Cloud application-default credentials for SISO/reclient:</p>
 <pre><code class="language-bash">gcloud auth application-default login
 </code></pre>
 <p>That is only the RBE/build credential. Gerrit upload/review actions also need <strong>ReAuth</strong> with a physical security key.</p>
 <p>Inside WSL2 the key often is not visible, especially over RDP. The practical solution is: expose SSH into WSL2, then SSH in from a machine/session that can use the FIDO key.</p>
 <hr>
-<h2>8. SSH into WSL2 for FIDO ReAuth</h2>
+<h2 id="8-ssh-into-wsl2-for-fido-reauth">8. SSH into WSL2 for FIDO ReAuth</h2>
 <div style="text-align: center; margin: 20px 0; padding: 20px; background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 12px;">
   <h3 style="color: #ef4444; margin: 0 0 10px 0;">⚠️ Security Warning</h3>
   <p style="margin: 0;">Exposing SSH is dangerous. Read this section carefully. Consider using key-only authentication and turning off SSH when not in use.</p>
@@ -1097,7 +1097,7 @@ New-NetFirewallRule -DisplayName WSL-SSH-2222 -Direction Inbound -Action Allow -
 </code></pre>
 <p>Once inside WSL, ReAuth just works and RBE builds stop hanging on authentication.</p>
 <hr>
-<h2>9. Install and run the Windows build</h2>
+<h2 id="9-install-and-run-the-windows-build">9. Install and run the Windows build</h2>
 <p>Do not run <code>chrome.exe</code> directly from <code>\\wsl$</code>. Windows side-by-side assembly activation does not like the WSL network filesystem. Build and run through <code>mini_installer.exe</code> instead.</p>
 <p>I keep the Windows helper scripts in a small repo so they are not copy-pasted into every write-up:</p>
 <blockquote>
@@ -1127,7 +1127,7 @@ set WSL_CHROMIUM_SRC=chromium\src
 set WINX_PROFILE=C:\tmp\winxprofile
 </code></pre>
 <hr>
-<h2>The Workflow</h2>
+<h2 id="the-workflow">The Workflow</h2>
 <pre><code class="language-bash"># WSL2
 git credential-luci reauth        # if needed
 autoninja -C out/Win-Cross -j 6 mini_installer
@@ -1138,7 +1138,7 @@ install-and-run-winx-chrome.bat --your-flags-here
 <p>That is the loop: Linux RBE does the build, WSL2 emits a Windows installer, Windows installs and runs it.</p>
 <p>🐧 builds it. 🪟 runs it.</p>
 <hr>
-<h2>Links</h2>
+<h2 id="links">Links</h2>
 <ul>
 <li><a href="https://github.com/hjanuschka/wsl-rbe">Helper scripts: wsl-rbe</a></li>
 <li><a href="https://chromium.googlesource.com/chromium/src/+/HEAD/docs/windows_build_instructions.md">Windows build prerequisites</a></li>

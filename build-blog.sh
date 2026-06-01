@@ -52,7 +52,7 @@ require('prismjs/components/prism-json');
 require('prismjs/components/prism-rust');
 require('prismjs/components/prism-shell-session');
 
-// Custom renderer for code blocks
+// Custom renderer for code blocks and headings with IDs
 const renderer = new marked.Renderer();
 const originalCode = renderer.code.bind(renderer);
 
@@ -64,6 +64,30 @@ renderer.code = function(code, lang, escaped) {
 
   // Default code block handling
   return originalCode(code, lang, escaped);
+};
+
+// Generate slug for heading IDs
+function slugify(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/<[^>]*>/g, '')  // Remove HTML tags
+    .replace(/[^\w\s-]/g, '') // Remove special chars
+    .replace(/\s+/g, '-')     // Replace spaces with hyphens
+    .replace(/-+/g, '-')      // Replace multiple hyphens
+    .replace(/^-+|-+$/g, '')  // Trim leading/trailing hyphens
+    .trim();
+}
+
+// Add IDs to headings for anchor links (marked v4+ API)
+renderer.heading = function(text, level, raw, slugger) {
+  // Handle both old API (text, level, raw) and new API (object)
+  if (typeof text === 'object') {
+    const { text: t, depth } = text;
+    const id = slugify(t);
+    return '<h' + depth + ' id="' + id + '">' + t + '</h' + depth + '>\n';
+  }
+  const id = slugify(raw || text);
+  return '<h' + level + ' id="' + id + '">' + text + '</h' + level + '>\n';
 };
 
 // Configure marked to use Prism for syntax highlighting
