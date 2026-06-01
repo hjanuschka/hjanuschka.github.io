@@ -34,7 +34,7 @@ Replace `<user>`, `<host>`, `<wsl-ip>`, and paths as needed.
 
 ## 1. Start with a normal Windows Chromium setup
 
-Do this first. Follow the official Windows build instructions and get a regular Windows checkout/build working before adding WSL2:
+Do this first. Follow the [official Windows build instructions](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/windows_build_instructions.md) and get a regular Windows checkout/build working before adding WSL2:
 
 ```text
 C:\src\chromium\src
