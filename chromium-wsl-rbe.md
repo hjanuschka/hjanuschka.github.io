@@ -12,7 +12,13 @@ tech: "C++ / Build Systems"
 
 External RBE for Windows is not a thing. But don't panic -- as long as you have a towel, you can make your way.
 
-Setup takes about 1-3 hours depending on your machine and internet speed. I did this on a cheap $300 mini PC (16GB RAM, Ryzen 5, 2TB SSD). Or just give the [pi.dev](https://pi.dev) agent the link to this blog post and let it do the work for you.
+```snippet
+<div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid #22c55e; border-radius: 12px;">
+  <h3 style="color: #22c55e; margin: 0 0 10px 0;">⏱️ Setup Time: 1-3 hours</h3>
+  <p style="margin: 0;">Depending on your machine and internet speed. I did this on a cheap $300 mini PC (16GB RAM, Ryzen 5, 2TB SSD).</p>
+  <p style="font-size: 13px; opacity: 0.8; margin-top: 10px;">Or just give the <a href="https://pi.dev" style="color: #22c55e;">pi.dev</a> agent the link to this blog post and let it do the work for you.</p>
+</div>
+```
 
 Chromium on Windows is a monster build. If you have **Linux RBE** access but no Windows RBE, you can still build Windows Chrome fast: use **WSL2 as the Linux host** and cross-compile `target_os="win"`.
 
