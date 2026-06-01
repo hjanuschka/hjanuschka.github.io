@@ -123,7 +123,7 @@ solutions = [
     "managed"     : True,
     "custom_deps" : {},
     "custom_vars" : {
-      "download_remoteexec_cfg": True,
+      "rbe_instance": "projects/rbe-chromium-untrusted/instances/default_instance",
     },
   },
 ]
@@ -133,7 +133,7 @@ target_os = ["win"]
 Two important lines:
 
 - `target_os = ["win"]` downloads Windows cross-build deps.
-- `download_remoteexec_cfg = True` lets hooks generate SISO/RBE config for the Chromium external RBE instance.
+- `rbe_instance` points to the Chromium external RBE instance for SISO/reclient.
 
 Now sync:
 

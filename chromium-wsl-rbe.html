@@ -930,7 +930,7 @@ gclient config --name=src https://chromium.googlesource.com/chromium/src.git
     &quot;managed&quot;     : True,
     &quot;custom_deps&quot; : {},
     &quot;custom_vars&quot; : {
-      &quot;download_remoteexec_cfg&quot;: True,
+      &quot;rbe_instance&quot;: &quot;projects/rbe-chromium-untrusted/instances/default_instance&quot;,
     },
   },
 ]
@@ -939,7 +939,7 @@ target_os = [&quot;win&quot;]
 <p>Two important lines:</p>
 <ul>
 <li><code>target_os = [&quot;win&quot;]</code> downloads Windows cross-build deps.</li>
-<li><code>download_remoteexec_cfg = True</code> lets hooks generate SISO/RBE config for the Chromium external RBE instance.</li>
+<li><code>rbe_instance</code> points to the Chromium external RBE instance for SISO/reclient.</li>
 </ul>
 <p>Now sync:</p>
 <pre><code class="language-bash">cd ~/chromium
