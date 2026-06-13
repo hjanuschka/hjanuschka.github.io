@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management - Helmut Januschka</title>
-  <meta name="description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
+  <title>Touch Drag-and-Drop on Linux - Helmut Januschka</title>
+  <meta name="description" content="Why a long-press on Linux opens a menu instead of picking up the thing you wanted to drag">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management",
-    "description": "When the GPU crashes encoding a keyframe, you know youre in for a wild ride",
+    "headline": "Touch Drag-and-Drop on Linux",
+    "description": "Why a long-press on Linux opens a menu instead of picking up the thing you wanted to drag",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-av1-vaapi-amd.html"
+      "@id": "https://januschka.com/chromium-touch-drag-drop-linux.html"
     },
-    "keywords": "Chromium, C++ / VA-API / Video Encoding, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Linux / Input, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-av1-vaapi-amd.html"
+      "target": "https://januschka.com/chromium-touch-drag-drop-linux.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management">
-  <meta property="og:description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
+  <meta property="og:title" content="Touch Drag-and-Drop on Linux">
+  <meta property="og:description" content="Why a long-press on Linux opens a menu instead of picking up the thing you wanted to drag">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-av1-vaapi-amd.html">
+  <meta property="og:url" content="https://januschka.com/chromium-touch-drag-drop-linux.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management">
-  <meta name="twitter:description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
+  <meta name="twitter:title" content="Touch Drag-and-Drop on Linux">
+  <meta name="twitter:description" content="Why a long-press on Linux opens a menu instead of picking up the thing you wanted to drag">
   
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -858,10 +858,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management</h1>
+      <h1 class="blog-title">Touch Drag-and-Drop on Linux</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++ / VA-API / Video Encoding</span>
+        <span>🔧 C++ / Linux / Input</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -870,115 +870,76 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>When the GPU crashes encoding a keyframe, you know you&#39;re in for a wild ride</em></p>
-<p><strong>Status:</strong> 🛑 Stopped</p>
-<div style="margin: 24px 0; padding: 16px 20px; background: rgba(177, 75, 75, 0.12); border: 1px solid #b14b4b; border-radius: 8px;">
-  <strong style="color: #b14b4b;">Update: work on this fix has been stopped.</strong>
-  <p style="margin: 8px 0 0 0;">The CL is no longer being pursued. See the tracking bug <a href="https://issues.chromium.org/issues/471780477">471780477</a> for the current state and discussion.</p>
+<p><em>Why a long-press on Linux opens a menu instead of picking up the thing you wanted to drag</em></p>
+<p><strong>Status:</strong> 🚧 In Review</p>
+<h2 id="the-problem">The Problem</h2>
+<p>Touch drag-and-drop behaves differently depending on the platform.</p>
+<p>On Windows, you long-press an image with your finger and it starts a drag - the intuitive gesture. On Linux, the same long-press triggers the context menu instead, while a short press appears to start a drag. The result is that dragging by touch on Linux is inconsistent and surprising, and the context menu fights the drag gesture.</p>
+<p>There is already a knob for this in the codebase - <code>touch_dragend_context_menu</code> - meant to control whether the context menu shows at the end of a touch drag. On Linux it was not wired to the touch drag-and-drop feature, so setting it had no useful effect.</p>
+<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/451651623">451651623</a></p>
+<h2 id="the-investigation">The Investigation</h2>
+<p>Two pieces decide what happens when your finger lifts after a long press:</p>
+<ul>
+<li><code>touch_dragend_context_menu</code> in <a href="https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/chrome_content_browser_client.cc?q=touch_dragend_context_menu"><code>chrome_content_browser_client.cc</code></a> - the browser-side preference that says whether a touch drag should end in a context menu.</li>
+<li><code>GetTouchDragEndContextMenu()</code> in <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/input/gesture_manager.cc?q=GetTouchDragEndContextMenu"><code>gesture_manager.cc</code></a> - the Blink side that consumes it.</li>
+</ul>
+<p>On Windows the preference tracks the touch drag-and-drop feature, so long-press drag works and the context menu stays out of the way. On Linux the two were decoupled, which is why the gesture felt broken.</p>
+<h2 id="the-fix">The Fix</h2>
+<p><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7824980"><strong>Enable touch drag-and-drop defaults on Linux</strong></a></p>
+<p>Make <code>touch_dragend_context_menu</code> follow <code>kTouchDragAndDrop</code> on Linux, matching the Windows behavior, so a long-press drag does what you expect instead of popping the context menu. The change adds coverage in <code>ChromeContentBrowserClientAIPrefsTest</code> so the Linux default stays tied to the feature flag and does not silently regress.</p>
+<h2 id="the-demo">The Demo</h2>
+<p>Long-press an image, drag it, drop it - on Linux, with the change in place. From the <a href="https://static.januschka.com/i-451651623/index.html">interactive sampler</a>, which also has a live drag link, drag image, and drop zone you can try yourself.</p>
+<div class="youtube-embed">
+  <iframe src="https://www.youtube.com/embed/y5j1Oq66eqQ" title="Touch drag-and-drop on Linux" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 
-<h2 id="the-problem">The Problem</h2>
-<p>AV1 hardware video encoding on AMD GPUs with Mesa drivers has been broken in Chromium for a long time. The GPU process crashes (exit code 8) when initializing the AV1 VA-API encoder - not during complex operations, but right at the start when encoding a simple keyframe.</p>
-<p>The crash affected anyone trying to use hardware-accelerated AV1 encoding for WebRTC video calls on AMD Linux systems. Users had to fall back to software encoding (libaom), which hammers the CPU during video calls.</p>
-<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/471780477">471780477</a><br><strong>CL</strong>: <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">STOPPED</span> <a href="https://crrev.com/c/7380014"><strong>Fix AV1 VA-API encoder crash on AMD/Mesa</strong></a></p>
-<h2 id="the-investigation">The Investigation</h2>
-<p>The root cause was subtle: AMD&#39;s stateless AV1 encoder driver is sensitive to the DPB (Decoded Picture Buffer) state and may access reference frame slots even when encoding a keyframe - where you&#39;d normally expect no references to be needed.</p>
-<p>This is a quirk of how AMD/Mesa implements the VA-API encoder interface. Intel&#39;s drivers are more forgiving, but Mesa&#39;s implementation expects the DPB to be properly initialized from frame zero.</p>
-<h2 id="the-fix-that-took-21-patchsets">The Fix (That Took 21 Patchsets)</h2>
-<p>This wasn&#39;t a simple one-liner. The fix evolved through 21 patchsets with extensive community testing from a user with an AMD RX 7900 GRE running Nextcloud Talk.</p>
-<h3 id="key-changes">Key Changes</h3>
-<p><strong>1. DPB Initialization for Keyframes</strong></p>
-<p>For AMD/Mesa, we now properly initialize all reference frame slots even for keyframes:</p>
-<pre><code class="language-cpp">// AMD/Mesa is sensitive to DPB state - initialize all slots
-// to the reconstruct surface for keyframes
-if (is_amd_mesa_driver_) {
-  for (size_t i = 0; i &lt; kAV1NumRefFrames; ++i) {
-    pic_param.ref_frame_idx[i] = reconstruct_surface_id;
-  }
-}
-</code></pre>
-<p><strong>2. Smart Default Handling for Bitrate/Framerate</strong></p>
-<p>WebRTC sometimes sends zero bitrate/framerate during initialization when the actual values aren&#39;t known yet. Instead of enforcing arbitrary minimums, we now treat zero as &quot;use sensible defaults&quot;:</p>
+<h2 id="support-matrix">Support Matrix</h2>
+<p>The browser-side change is only half the story. Chromium asks for touch drag-and-drop, but the compositor still has to forward touch focus correctly while a drag is in flight. On X11 and the major Wayland compositors this works; the wlroots-based compositors needed their own fixes (see below).</p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Touch drag-and-drop</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>X11 (Xorg)</td>
+<td>Supported</td>
+<td>Works with the Chromium change</td>
+</tr>
+<tr>
+<td>Wayland - GNOME (Mutter)</td>
+<td>Supported</td>
+<td>Works with the Chromium change</td>
+</tr>
+<tr>
+<td>Wayland - Hyprland</td>
+<td>Needs compositor fix</td>
+<td>Upstream Hyprland patch below</td>
+</tr>
+<tr>
+<td>Wayland - Sway (wlroots)</td>
+<td>Needs compositor fix</td>
+<td>Upstream Sway patch below</td>
+</tr>
+</tbody></table>
+<h2 id="upstream-compositor-fixes">Upstream Compositor Fixes</h2>
+<p>wlroots-based compositors were dropping or not updating touch focus mid-drag, so the drop never reached the right surface. I sent fixes upstream so touch drag-and-drop works there too:</p>
 <ul>
-<li>Framerate defaults to <code>VideoEncodeAccelerator::kDefaultFramerate</code> (30fps)</li>
-<li>Bitrate defaults to 100 kbps</li>
-<li>Explicitly requested low values are respected</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/hyprwm/Hyprland/pull/15077"><strong>Hyprland: dnd - fix touch-driven drag-and-drop</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/swaywm/sway/pull/9182"><strong>Sway: input/seatop_down - update touch drag focus while dragging</strong></a></li>
 </ul>
-<p>This allows WebRTC to signal &quot;encoder&#39;s choice&quot; while still supporting explicit low-bitrate WebCodecs configurations.</p>
-<p><strong>3. Resolution Change Handling</strong></p>
-<p>The fix tracks resolution changes and handles the warm-up period that AMD drivers need after a resolution switch in WebRTC streams.</p>
-<h2 id="the-testing-journey">The Testing Journey</h2>
-<p>The real heroes here are the community testers. One user (<a href="mailto:sv...@gmail.com">sv...@gmail.com</a>) provided extraordinary feedback across 50+ issue comments, testing each patchset iteration:</p>
-<p><strong>Early Patchsets (1-12)</strong>: GPU crashes with <code>amdgpu ring vcn_unified_0 timeout</code><br><strong>Patchset 13</strong>: No crashes, but severe visual artifacts and &quot;smearing&quot;<br><strong>Patchset 14</strong>: Better, but Simulcast mode still broken<br><strong>Patchsets 15-20</strong>: Iterating on reviewer feedback about integer types, comments, default value handling<br><strong>Patchset 21</strong>: <strong>Success!</strong> - Both single stream and Simulcast working perfectly</p>
-<p>From the tester&#39;s final report:</p>
-<blockquote>
-<p>&quot;I tested it both in single stream and simulcast and it hasn&#39;t crashed, shown any artifacts or smearing. Even ramping up and down with resolution and bitrate doesn&#39;t cause any problem anymore! It seems perfectly stable in my environment.&quot;</p>
-</blockquote>
-<p>After days of production testing in real video calls:</p>
-<blockquote>
-<p>&quot;After some days of using the feature IN PRODUCTION, it works perfectly (no issue so far).&quot;</p>
-</blockquote>
-<h2 id="the-technical-deep-dive">The Technical Deep Dive</h2>
-<h3 id="why-dpb-matters">Why DPB Matters</h3>
-<p>The Decoded Picture Buffer holds reference frames that the encoder uses for inter-frame prediction. Even for a keyframe (I-frame), where you&#39;re not referencing previous frames for encoding, the VA-API driver on AMD/Mesa still validates the DPB structure.</p>
-<p>When the DPB slots contain invalid surface IDs, the VCN (Video Core Next) firmware on AMD GPUs times out and triggers a full GPU reset:</p>
-<pre><code>amdgpu: ring vcn_unified_0 timeout, signaled seq=605909, emitted seq=605912
-amdgpu: GPU reset begin!
-[drm] VRAM is lost due to GPU reset!
-</code></pre>
-<h3 id="the-obu-structure-issue">The OBU Structure Issue</h3>
-<p>AV1 uses OBUs (Open Bitstream Units) for packaging. We also had to adjust <code>enable_frame_obu</code> handling for AMD:</p>
-<pre><code class="language-cpp">// AMD/Mesa prefers Frame Header OBU (Type 3) over Frame OBU
-seq_param.seq_fields.bits.enable_frame_obu = is_amd_mesa_driver_ ? 0 : 1;
-</code></pre>
-<p>This ensures the bitstream structure is compatible with Mesa&#39;s expectations.</p>
-<h2 id="collaboration-in-action">Collaboration in Action</h2>
-<p>This fix showcases open source collaboration at its best:</p>
-<ol>
-<li><strong>User reports</strong> detailed crash logs with GPU driver output</li>
-<li><strong>Community testing</strong> with real hardware I don&#39;t have access to</li>
-<li><strong>Reviewer feedback</strong> from Ted Meyer on Chromium style, integer types, and API design</li>
-<li><strong>Iterative refinement</strong> through 21 patchsets based on real-world testing</li>
-</ol>
-<p>The reviewer discussion was particularly valuable. Ted&#39;s concerns about default value handling led to a much cleaner design:</p>
-<blockquote>
-<p>&quot;My gut feeling here is that &#39;zero -&gt; 100&#39; is better than &#39;max(value, 100)&#39;, since webrtc isn&#39;t the only thing using this file, and undocumented codec/platform specific combinations are going to be a debugging nightmare later.&quot;</p>
-</blockquote>
-<h2 id="current-status">Current Status</h2>
-<p>The CL is currently in review with positive signals from initial reviewers. Eugene has been added as a reviewer since he has extensive encoder experience.</p>
-<p><strong>Files Changed:</strong></p>
+<h2 id="why-it-is-worth-doing">Why It Is Worth Doing</h2>
+<p>Touch on Linux desktops is increasingly common - convertibles, touchscreens, kiosk setups. Matching the established Windows gesture means one less platform-specific surprise for users and for web authors who rely on HTML5 drag-and-drop. The honest caveat in the bug still stands: Linux touch conventions are not as settled as Windows, so this aligns the obvious case (long-press to drag) while leaving room to refine the edges.</p>
+<h2 id="links">Links</h2>
 <ul>
-<li><code>media/gpu/vaapi/av1_vaapi_video_encoder_delegate.cc</code> (+285 -43 lines)</li>
-<li><code>media/gpu/vaapi/av1_vaapi_video_encoder_delegate.h</code> (+8 lines)</li>
-</ul>
-<h2 id="impact">Impact</h2>
-<p>When merged, this fix will enable:</p>
-<ul>
-<li><strong>Hardware AV1 encoding</strong> on AMD GPUs with Mesa drivers</li>
-<li><strong>WebRTC video calls</strong> with AV1 codec on AMD Linux systems</li>
-<li><strong>CPU offloading</strong> - no more libaom software encoding</li>
-<li><strong>Simulcast support</strong> - multiple resolution layers for adaptive streaming</li>
-</ul>
-<p>For users running Nextcloud Talk, Jitsi, or any WebRTC-based video conferencing on AMD Linux systems, this is a significant improvement in performance and power efficiency.</p>
-<h2 id="the-linux-support-question">The Linux Support Question</h2>
-<p>During the bug discussion, there was an important exchange about Linux support:</p>
-<blockquote>
-<p><strong>Chrome team</strong>: &quot;We currently only support VA-API for video decoding on limited Intel devices. Linux unfortunately generates a high support demand, so we&#39;re very cautious about what we enable by default.&quot;</p>
-</blockquote>
-<p>The fix doesn&#39;t change what&#39;s enabled by default - it fixes the underlying code for users who opt into hardware acceleration via flags. The feature remains behind <code>--enable-features=AcceleratedVideoEncode</code>.</p>
-<h2 id="try-it">Try It</h2>
-<p>If you have an AMD GPU and want to test:</p>
-<pre><code class="language-bash"># Build Chromium from source with the patch, then:
-chromium --enable-features=AcceleratedVideoEncode \
-         --enable-features=VaapiVideoEncoder
-</code></pre>
-<p>Or wait for the CL to merge and try a tip-of-tree Chromium build.</p>
-<hr>
-<p><strong>Links:</strong></p>
-<ul>
-<li><a href="https://issues.chromium.org/issues/471780477">Chromium Bug 471780477</a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">STOPPED</span> <a href="https://crrev.com/c/7380014"><strong>Fix AV1 VA-API encoder crash on AMD/Mesa</strong></a></li>
-<li><a href="https://source.chromium.org/chromium/chromium/src/+/main:media/gpu/vaapi/av1_vaapi_video_encoder_delegate.h">VA-API AV1 Encoder Documentation</a></li>
+<li><a href="https://issues.chromium.org/issues/451651623">Chromium Bug 451651623</a></li>
+<li><a href="https://static.januschka.com/i-451651623/index.html">Interactive sampler + demo video</a></li>
+<li><a href="https://github.com/hyprwm/Hyprland/pull/15077">Hyprland PR 15077 - touch drag-and-drop fix</a></li>
+<li><a href="https://github.com/swaywm/sway/pull/9182">Sway PR 9182 - update touch drag focus while dragging</a></li>
+<li><a href="https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/chrome_content_browser_client.cc?q=touch_dragend_context_menu">chrome_content_browser_client.cc - touch_dragend_context_menu</a></li>
+<li><a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/input/gesture_manager.cc?q=GetTouchDragEndContextMenu">gesture_manager.cc - GetTouchDragEndContextMenu</a></li>
 </ul>
 
     </div>

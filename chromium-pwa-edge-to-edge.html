@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management - Helmut Januschka</title>
-  <meta name="description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
+  <title>Edge-to-Edge for Fullscreen PWAs on Android - Helmut Januschka</title>
+  <meta name="description" content="Getting installed fullscreen PWAs to actually reach into the notch">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management",
-    "description": "When the GPU crashes encoding a keyframe, you know youre in for a wild ride",
+    "headline": "Edge-to-Edge for Fullscreen PWAs on Android",
+    "description": "Getting installed fullscreen PWAs to actually reach into the notch",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-av1-vaapi-amd.html"
+      "@id": "https://januschka.com/chromium-pwa-edge-to-edge.html"
     },
-    "keywords": "Chromium, C++ / VA-API / Video Encoding, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Java / Android, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-av1-vaapi-amd.html"
+      "target": "https://januschka.com/chromium-pwa-edge-to-edge.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management">
-  <meta property="og:description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
+  <meta property="og:title" content="Edge-to-Edge for Fullscreen PWAs on Android">
+  <meta property="og:description" content="Getting installed fullscreen PWAs to actually reach into the notch">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-av1-vaapi-amd.html">
+  <meta property="og:url" content="https://januschka.com/chromium-pwa-edge-to-edge.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management">
-  <meta name="twitter:description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
+  <meta name="twitter:title" content="Edge-to-Edge for Fullscreen PWAs on Android">
+  <meta name="twitter:description" content="Getting installed fullscreen PWAs to actually reach into the notch">
   
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -858,10 +858,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management</h1>
+      <h1 class="blog-title">Edge-to-Edge for Fullscreen PWAs on Android</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++ / VA-API / Video Encoding</span>
+        <span>🔧 C++ / Java / Android</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -870,115 +870,74 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>When the GPU crashes encoding a keyframe, you know you&#39;re in for a wild ride</em></p>
-<p><strong>Status:</strong> 🛑 Stopped</p>
-<div style="margin: 24px 0; padding: 16px 20px; background: rgba(177, 75, 75, 0.12); border: 1px solid #b14b4b; border-radius: 8px;">
-  <strong style="color: #b14b4b;">Update: work on this fix has been stopped.</strong>
-  <p style="margin: 8px 0 0 0;">The CL is no longer being pursued. See the tracking bug <a href="https://issues.chromium.org/issues/471780477">471780477</a> for the current state and discussion.</p>
+<p><em>Getting installed fullscreen PWAs to actually reach into the notch</em></p>
+<p><strong>Status:</strong> 🚧 In Review (almost landing)</p>
+<h2 id="the-problem">The Problem</h2>
+<p>Install a PWA that asks for the whole screen and it still does not get the whole screen.</p>
+<p>The canonical repro is the <a href="https://interop-2022-viewport.netlify.app/individual/pwa/cover">interop viewport demo</a>. It is a PWA with:</p>
+<ul>
+<li><code>viewport-fit=cover</code> in the viewport meta tag</li>
+<li><code>display: fullscreen</code> in the web app manifest</li>
+</ul>
+<p>Install it, launch it, and on Android it stops short of the status-bar / camera-notch region instead of drawing under it. A regular web page that calls <code>document.documentElement.requestFullscreen()</code> goes truly edge-to-edge, but the installed PWA does not.</p>
+<p>This had been reported by authors repeatedly - the expectation is simple: a fullscreen PWA with <code>viewport-fit=cover</code> should cover the cutout area just like native fullscreen does.</p>
+<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/407420295">407420295</a></p>
+<h2 id="the-investigation">The Investigation</h2>
+<p>Android exposes <code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</code> to let a window lay out into the display cutout on the short edges of the screen. Native fullscreen paths use it; the web app / activity flow did not opt in, so the PWA window was laid out with the default cutout mode and stayed below the notch.</p>
+<p>Getting from &quot;default&quot; to &quot;short edges&quot; was not a one-line change. The edge-to-edge state on Android is plumbed through several layers - an edge-to-edge manager, a display cutout controller, and the token bookkeeping that decides when the decor fits system windows. The cutout mode had to be threaded through all of them, gated behind a flag, without disturbing the existing edge-to-edge behavior that other surfaces rely on.</p>
+<h2 id="the-fix">The Fix</h2>
+<p>The change landed as a stack so each layer could be reviewed and de-risked on its own:</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7842853"><strong>Android: refactor edge-to-edge manager plumbing</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7792833"><strong>Hide top-toolbar hairline when content offset includes it</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7864521"><strong>Android: add WebApp short-edges cutout mode flag</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7864522"><strong>Android: add short-edges plumbing to display cutout controller</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7689791"><strong>Android: enable short-edges cutout mode in webapp and activity flows</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7900354"><strong>Android: rename releaseSetDecorFitsSystemWindowToken callers to releaseEdgeToEdgeToken</strong></a></li>
+</ul>
+<p>The controller-side CL adds support for <code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</code> behind a delegate bit that defaults to false - a no-op on its own. The webapp/activity-flow CL is the one that actually flips fullscreen PWAs into short-edges mode. The rename CL is mechanical cleanup, moving callers off the deprecated <code>releaseSetDecorFitsSystemWindowToken</code> shim to the canonical <code>releaseEdgeToEdgeToken</code>.</p>
+<h2 id="before-and-after">Before and After</h2>
+<p>Captured on-device from the <a href="https://static.januschka.com/i-407420295/index.html">APK sampler</a>. The notch row is the interesting one: unpatched stops below the cutout, patched draws under it.</p>
+<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin:24px 0;">
+  <figure style="margin:0;text-align:center;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Case 1: Fullscreen - Before</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case1-unpatched-notch.png" alt="Case 1 fullscreen unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
+  </figure>
+  <figure style="margin:0;text-align:center;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Case 1: Fullscreen - After</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case1-patched-withnotch.png" alt="Case 1 fullscreen patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
+  </figure>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin:24px 0;">
+  <figure style="margin:0;text-align:center;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Case 2: Standalone - Before</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case2-unpatched-notch.png" alt="Case 2 standalone unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
+  </figure>
+  <figure style="margin:0;text-align:center;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Case 2: Standalone - After</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case2-patched-withnotch.png" alt="Case 2 standalone patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
+  </figure>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin:24px 0;">
+  <figure style="margin:0;text-align:center;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Case 3: Backswipe - Before</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case3-unpatched-notch.png" alt="Case 3 backswipe unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
+  </figure>
+  <figure style="margin:0;text-align:center;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Case 3: Backswipe - After</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case3-patched-withnotch.png" alt="Case 3 backswipe patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
+  </figure>
 </div>
 
-<h2 id="the-problem">The Problem</h2>
-<p>AV1 hardware video encoding on AMD GPUs with Mesa drivers has been broken in Chromium for a long time. The GPU process crashes (exit code 8) when initializing the AV1 VA-API encoder - not during complex operations, but right at the start when encoding a simple keyframe.</p>
-<p>The crash affected anyone trying to use hardware-accelerated AV1 encoding for WebRTC video calls on AMD Linux systems. Users had to fall back to software encoding (libaom), which hammers the CPU during video calls.</p>
-<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/471780477">471780477</a><br><strong>CL</strong>: <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">STOPPED</span> <a href="https://crrev.com/c/7380014"><strong>Fix AV1 VA-API encoder crash on AMD/Mesa</strong></a></p>
-<h2 id="the-investigation">The Investigation</h2>
-<p>The root cause was subtle: AMD&#39;s stateless AV1 encoder driver is sensitive to the DPB (Decoded Picture Buffer) state and may access reference frame slots even when encoding a keyframe - where you&#39;d normally expect no references to be needed.</p>
-<p>This is a quirk of how AMD/Mesa implements the VA-API encoder interface. Intel&#39;s drivers are more forgiving, but Mesa&#39;s implementation expects the DPB to be properly initialized from frame zero.</p>
-<h2 id="the-fix-that-took-21-patchsets">The Fix (That Took 21 Patchsets)</h2>
-<p>This wasn&#39;t a simple one-liner. The fix evolved through 21 patchsets with extensive community testing from a user with an AMD RX 7900 GRE running Nextcloud Talk.</p>
-<h3 id="key-changes">Key Changes</h3>
-<p><strong>1. DPB Initialization for Keyframes</strong></p>
-<p>For AMD/Mesa, we now properly initialize all reference frame slots even for keyframes:</p>
-<pre><code class="language-cpp">// AMD/Mesa is sensitive to DPB state - initialize all slots
-// to the reconstruct surface for keyframes
-if (is_amd_mesa_driver_) {
-  for (size_t i = 0; i &lt; kAV1NumRefFrames; ++i) {
-    pic_param.ref_frame_idx[i] = reconstruct_surface_id;
-  }
-}
-</code></pre>
-<p><strong>2. Smart Default Handling for Bitrate/Framerate</strong></p>
-<p>WebRTC sometimes sends zero bitrate/framerate during initialization when the actual values aren&#39;t known yet. Instead of enforcing arbitrary minimums, we now treat zero as &quot;use sensible defaults&quot;:</p>
+<p>Case 4 (<code>requestFullscreen()</code>) already worked before the change and is unchanged - it is the control case. The sampler also has the no-notch gallery and downloadable APKs for each case.</p>
+<h2 id="thanks">Thanks</h2>
+<p>Big thanks to my reviewers <strong>Dan Murphy</strong> and <strong>Charles Hager</strong> for the patient back-and-forth across the stack - the layered, flag-gated approach is a direct result of their guidance on keeping a shared Android codepath safe.</p>
+<h2 id="links">Links</h2>
 <ul>
-<li>Framerate defaults to <code>VideoEncodeAccelerator::kDefaultFramerate</code> (30fps)</li>
-<li>Bitrate defaults to 100 kbps</li>
-<li>Explicitly requested low values are respected</li>
-</ul>
-<p>This allows WebRTC to signal &quot;encoder&#39;s choice&quot; while still supporting explicit low-bitrate WebCodecs configurations.</p>
-<p><strong>3. Resolution Change Handling</strong></p>
-<p>The fix tracks resolution changes and handles the warm-up period that AMD drivers need after a resolution switch in WebRTC streams.</p>
-<h2 id="the-testing-journey">The Testing Journey</h2>
-<p>The real heroes here are the community testers. One user (<a href="mailto:sv...@gmail.com">sv...@gmail.com</a>) provided extraordinary feedback across 50+ issue comments, testing each patchset iteration:</p>
-<p><strong>Early Patchsets (1-12)</strong>: GPU crashes with <code>amdgpu ring vcn_unified_0 timeout</code><br><strong>Patchset 13</strong>: No crashes, but severe visual artifacts and &quot;smearing&quot;<br><strong>Patchset 14</strong>: Better, but Simulcast mode still broken<br><strong>Patchsets 15-20</strong>: Iterating on reviewer feedback about integer types, comments, default value handling<br><strong>Patchset 21</strong>: <strong>Success!</strong> - Both single stream and Simulcast working perfectly</p>
-<p>From the tester&#39;s final report:</p>
-<blockquote>
-<p>&quot;I tested it both in single stream and simulcast and it hasn&#39;t crashed, shown any artifacts or smearing. Even ramping up and down with resolution and bitrate doesn&#39;t cause any problem anymore! It seems perfectly stable in my environment.&quot;</p>
-</blockquote>
-<p>After days of production testing in real video calls:</p>
-<blockquote>
-<p>&quot;After some days of using the feature IN PRODUCTION, it works perfectly (no issue so far).&quot;</p>
-</blockquote>
-<h2 id="the-technical-deep-dive">The Technical Deep Dive</h2>
-<h3 id="why-dpb-matters">Why DPB Matters</h3>
-<p>The Decoded Picture Buffer holds reference frames that the encoder uses for inter-frame prediction. Even for a keyframe (I-frame), where you&#39;re not referencing previous frames for encoding, the VA-API driver on AMD/Mesa still validates the DPB structure.</p>
-<p>When the DPB slots contain invalid surface IDs, the VCN (Video Core Next) firmware on AMD GPUs times out and triggers a full GPU reset:</p>
-<pre><code>amdgpu: ring vcn_unified_0 timeout, signaled seq=605909, emitted seq=605912
-amdgpu: GPU reset begin!
-[drm] VRAM is lost due to GPU reset!
-</code></pre>
-<h3 id="the-obu-structure-issue">The OBU Structure Issue</h3>
-<p>AV1 uses OBUs (Open Bitstream Units) for packaging. We also had to adjust <code>enable_frame_obu</code> handling for AMD:</p>
-<pre><code class="language-cpp">// AMD/Mesa prefers Frame Header OBU (Type 3) over Frame OBU
-seq_param.seq_fields.bits.enable_frame_obu = is_amd_mesa_driver_ ? 0 : 1;
-</code></pre>
-<p>This ensures the bitstream structure is compatible with Mesa&#39;s expectations.</p>
-<h2 id="collaboration-in-action">Collaboration in Action</h2>
-<p>This fix showcases open source collaboration at its best:</p>
-<ol>
-<li><strong>User reports</strong> detailed crash logs with GPU driver output</li>
-<li><strong>Community testing</strong> with real hardware I don&#39;t have access to</li>
-<li><strong>Reviewer feedback</strong> from Ted Meyer on Chromium style, integer types, and API design</li>
-<li><strong>Iterative refinement</strong> through 21 patchsets based on real-world testing</li>
-</ol>
-<p>The reviewer discussion was particularly valuable. Ted&#39;s concerns about default value handling led to a much cleaner design:</p>
-<blockquote>
-<p>&quot;My gut feeling here is that &#39;zero -&gt; 100&#39; is better than &#39;max(value, 100)&#39;, since webrtc isn&#39;t the only thing using this file, and undocumented codec/platform specific combinations are going to be a debugging nightmare later.&quot;</p>
-</blockquote>
-<h2 id="current-status">Current Status</h2>
-<p>The CL is currently in review with positive signals from initial reviewers. Eugene has been added as a reviewer since he has extensive encoder experience.</p>
-<p><strong>Files Changed:</strong></p>
-<ul>
-<li><code>media/gpu/vaapi/av1_vaapi_video_encoder_delegate.cc</code> (+285 -43 lines)</li>
-<li><code>media/gpu/vaapi/av1_vaapi_video_encoder_delegate.h</code> (+8 lines)</li>
-</ul>
-<h2 id="impact">Impact</h2>
-<p>When merged, this fix will enable:</p>
-<ul>
-<li><strong>Hardware AV1 encoding</strong> on AMD GPUs with Mesa drivers</li>
-<li><strong>WebRTC video calls</strong> with AV1 codec on AMD Linux systems</li>
-<li><strong>CPU offloading</strong> - no more libaom software encoding</li>
-<li><strong>Simulcast support</strong> - multiple resolution layers for adaptive streaming</li>
-</ul>
-<p>For users running Nextcloud Talk, Jitsi, or any WebRTC-based video conferencing on AMD Linux systems, this is a significant improvement in performance and power efficiency.</p>
-<h2 id="the-linux-support-question">The Linux Support Question</h2>
-<p>During the bug discussion, there was an important exchange about Linux support:</p>
-<blockquote>
-<p><strong>Chrome team</strong>: &quot;We currently only support VA-API for video decoding on limited Intel devices. Linux unfortunately generates a high support demand, so we&#39;re very cautious about what we enable by default.&quot;</p>
-</blockquote>
-<p>The fix doesn&#39;t change what&#39;s enabled by default - it fixes the underlying code for users who opt into hardware acceleration via flags. The feature remains behind <code>--enable-features=AcceleratedVideoEncode</code>.</p>
-<h2 id="try-it">Try It</h2>
-<p>If you have an AMD GPU and want to test:</p>
-<pre><code class="language-bash"># Build Chromium from source with the patch, then:
-chromium --enable-features=AcceleratedVideoEncode \
-         --enable-features=VaapiVideoEncoder
-</code></pre>
-<p>Or wait for the CL to merge and try a tip-of-tree Chromium build.</p>
-<hr>
-<p><strong>Links:</strong></p>
-<ul>
-<li><a href="https://issues.chromium.org/issues/471780477">Chromium Bug 471780477</a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">STOPPED</span> <a href="https://crrev.com/c/7380014"><strong>Fix AV1 VA-API encoder crash on AMD/Mesa</strong></a></li>
-<li><a href="https://source.chromium.org/chromium/chromium/src/+/main:media/gpu/vaapi/av1_vaapi_video_encoder_delegate.h">VA-API AV1 Encoder Documentation</a></li>
+<li><a href="https://issues.chromium.org/issues/407420295">Chromium Bug 407420295</a></li>
+<li><a href="https://static.januschka.com/i-407420295/index.html">APK sampler: all cases, notch + no-notch, downloads</a></li>
+<li><a href="https://interop-2022-viewport.netlify.app/individual/pwa/cover">Live repro: interop viewport PWA cover demo</a></li>
+<li><a href="https://developer.android.com/reference/android/view/WindowManager.LayoutParams#LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES">Android LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</a></li>
 </ul>
 
     </div>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -88,55 +88,101 @@
       box-sizing: border-box;
     }
 
-    :root {
+    :root,
+    [data-theme="dark"] {
       --bg: #121212;
       --bg-light: #1e1e1e;
-      --bg-lighter: #333333;
+      --bg-lighter: #2a2a2a;
+      --bg-bar: #2a2a2a;
       --text: #bebebe;
       --text-dim: #8a8a8d;
       --accent: #FFC107;
       --accent-dim: #e68e0d;
+      --accent-glow: rgba(255, 193, 7, 0.35);
+      --accent-grid: rgba(255, 193, 7, 0.06);
       --border: #333333;
       --orange: #D35F5F;
+      --green: #6ec06e;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* GitHub Blue Theme */
+    [data-theme="light"] {
+      --bg: #f6f5f0;
+      --bg-light: #ffffff;
+      --bg-lighter: #ececec;
+      --bg-bar: #ececec;
+      --text: #1f1f1f;
+      --text-dim: #6a6a6a;
+      --accent: #c98a00;
+      --accent-dim: #a36d00;
+      --accent-glow: rgba(201, 138, 0, 0.30);
+      --accent-grid: rgba(201, 138, 0, 0.10);
+      --border: #d8d4c8;
+      --orange: #b14b4b;
+      --green: #2f8f3f;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+      --scan: rgba(0, 0, 0, 0.06);
+      --scan-blend: multiply;
+    }
+
+    /* Legacy accent themes */
     [data-theme="blue"] {
       --bg: #0d1117;
       --bg-light: #161b22;
       --bg-lighter: #21262d;
+      --bg-bar: #21262d;
       --text: #ffffff;
       --text-dim: #7d8590;
       --accent: #58a6ff;
       --accent-dim: #1f6feb;
+      --accent-glow: rgba(88, 166, 255, 0.30);
+      --accent-grid: rgba(88, 166, 255, 0.08);
       --border: #30363d;
       --orange: #ff7b72;
+      --green: #56d364;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* Osaka Jade Theme (from Omarchy) */
     [data-theme="osaka-jade"] {
       --bg: #111c18;
       --bg-light: #23372B;
       --bg-lighter: #53685B;
+      --bg-bar: #1b2b23;
       --text: #C1C497;
       --text-dim: #9eebb3;
       --accent: #2DD5B7;
       --accent-dim: #549e6a;
+      --accent-glow: rgba(45, 213, 183, 0.30);
+      --accent-grid: rgba(45, 213, 183, 0.08);
       --border: #509475;
       --orange: #FF5345;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* Purple Moon Theme */
     [data-theme="purple-moon"] {
       --bg: #020007;
       --bg-light: #37277d;
       --bg-lighter: #643aad;
+      --bg-bar: #211650;
       --text: #ffffff;
       --text-dim: #b895dd;
       --accent: #9b49c8;
       --accent-dim: #9845c6;
+      --accent-glow: rgba(155, 73, 200, 0.35);
+      --accent-grid: rgba(155, 73, 200, 0.08);
       --border: #9865cf;
       --orange: #cd9ce1;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
     /* Fallback font for FOUT prevention */
@@ -241,99 +287,6 @@
     .nav-links a:hover {
       border-color: var(--accent);
       background: var(--bg);
-    }
-
-    /* Theme Switcher */
-    .theme-switcher {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .theme-dropdown {
-      position: relative;
-    }
-
-    .theme-button {
-      background: var(--bg-light);
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      padding: 8px 12px;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: border-color 0.3s ease, background-color 0.3s ease;
-    }
-
-    .theme-button:hover {
-      border-color: var(--accent);
-      background: var(--bg);
-    }
-
-    .theme-menu {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: #1a1a1a;
-      border: 2px solid #333333;
-      border-radius: 8px;
-      margin-top: 5px;
-      min-width: 150px;
-      z-index: 1000;
-      display: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    }
-
-    .theme-menu.show {
-      display: block;
-      animation: fadeIn 0.2s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .theme-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 12px;
-      transition: background-color 0.2s ease;
-      border: none;
-      width: 100%;
-      text-align: left;
-      background: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .theme-option:hover {
-      background: #2a2a2a;
-      color: #ffffff;
-    }
-
-    .theme-option:first-child {
-      border-radius: 6px 6px 0 0;
-    }
-
-    .theme-option:last-child {
-      border-radius: 0 0 6px 6px;
-    }
-
-    .theme-preview {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 1px solid #666666;
-      flex-shrink: 0;
     }
 
     /* Hero Section */
@@ -598,6 +551,167 @@
       }
     }
 
+
+    /* RunUntil-inspired refresh */
+    body {
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--accent-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -160px;
+      left: 50%;
+      width: min(900px, 120vw);
+      height: 520px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+      filter: blur(50px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* RunUntil mouse-trail glyphs */
+    .glyph {
+      position: fixed;
+      pointer-events: none;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      opacity: 0.9;
+      z-index: 5;
+      animation: fadeglyph 900ms ease-out forwards;
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    @keyframes fadeglyph {
+      0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0;   transform: translate(-50%, -150%) scale(0.6); }
+    }
+
+    .nav, .hero, section, .footer, .command-palette {
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav {
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .terminal-window {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      position: relative;
+      justify-content: center;
+      background: var(--bg-bar);
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      padding: 0.65rem 1rem;
+    }
+
+    .terminal-header::before {
+      content: '';
+      position: absolute;
+      left: 16px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff5f56;
+      box-shadow: 20px 0 #ffbd2e, 40px 0 #27c93f;
+    }
+
+    .terminal-header span:last-child {
+      display: none;
+    }
+
+    .terminal-content {
+      background: var(--bg-light);
+    }
+
+    .hero h1 {
+      text-shadow: 0 0 22px var(--accent-glow);
+    }
+
+    .ascii-box, .card, .project-card, .blog-card, .blog-featured {
+      border: 1px solid var(--border);
+      background: var(--bg-light);
+      box-shadow: var(--shadow);
+    }
+
+    .ascii-box-header {
+      background: var(--bg-bar);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+      margin: -1px -1px 16px -1px;
+    }
+
+    .blog-featured {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, var(--bg-light), var(--bg));
+    }
+
+    .blog-card {
+      background: var(--bg-light);
+    }
+
+    .blog-card-footer, .theme-menu, .command-palette-modal {
+      background: var(--bg-bar);
+      border-color: var(--border);
+    }
+
+    .blog-card:hover, .project-card:hover, .card:hover, .blog-featured:hover {
+      box-shadow: var(--shadow), 0 0 24px var(--accent-glow);
+    }
+
+    .badge, .project-badge, .blog-tag {
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .badge.primary, .blog-filter-btn.active {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .badge.secondary {
+      background: var(--orange);
+      color: var(--bg);
+    }
+
+    .footer {
+      border-top: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .status { animation: none; }
+      * { scroll-behavior: auto !important; }
+    }
+
     /* Print styles */
     @media print {
       .nav, .theme-switcher, .footer { display: none; }
@@ -775,32 +889,6 @@
             <a href="#blog">blog</a>
             <a href="#contact">contact</a>
           </div>
-          <div class="theme-switcher">
-            <div class="theme-dropdown">
-              <button class="theme-button" id="themeButton">
-                <span class="theme-preview" style="background: var(--accent);"></span>
-                Themes ▼
-              </button>
-              <div class="theme-menu" id="themeMenu">
-                <button class="theme-option" data-theme="matte-black">
-                  <span class="theme-preview" style="background: #FFC107;"></span>
-                  Matte Black
-                </button>
-                <button class="theme-option" data-theme="osaka-jade">
-                  <span class="theme-preview" style="background: #2DD5B7;"></span>
-                  Osaka Jade
-                </button>
-                <button class="theme-option" data-theme="purple-moon">
-                  <span class="theme-preview" style="background: #9b49c8;"></span>
-                  Purple Moon
-                </button>
-                <button class="theme-option" data-theme="blue">
-                  <span class="theme-preview" style="background: #58a6ff;"></span>
-                  GitHub Blue
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -841,6 +929,7 @@
             <button class="blog-filter-btn" data-filter="progress">In Progress</button>
             <button class="blog-filter-btn" data-filter="tools">Tools</button>
             <button class="blog-filter-btn" data-filter="experiments">Experiments</button>
+            <button class="blog-filter-btn" data-filter="shelved">Shelved</button>
           </div>
 
           <!-- Featured Post -->
@@ -871,6 +960,78 @@
             </div>
 
 
+            <a href="/chromium-pwa-edge-to-edge.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-review">IN REVIEW</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">June 2026</span>
+                <h4>Edge-to-Edge for Fullscreen PWAs</h4>
+                <p>Getting installed fullscreen PWAs on Android to draw under the notch via short-edges cutout mode.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Android</span>
+                  <span class="blog-tag">PWA</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-touch-drag-drop-linux.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-review">IN REVIEW</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">June 2026</span>
+                <h4>Touch Drag-and-Drop on Linux</h4>
+                <p>Making long-press drag work on Linux instead of popping the context menu, matching Windows.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Linux</span>
+                  <span class="blog-tag">Input</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-webbluetooth-mtu.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-progress">IN PROGRESS</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">June 2026</span>
+                <h4>Web Bluetooth: Negotiated ATT MTU</h4>
+                <p>Exposing getNegotiatedMTU() to break past the 20-byte wall across Windows, Linux, Android, macOS.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Web Bluetooth</span>
+                  <span class="blog-tag">GATT</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-webbluetooth-cancel-connect.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-progress">IN PROGRESS</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">June 2026</span>
+                <h4>Cancelling a Pending Web Bluetooth Connect</h4>
+                <p>disconnect() should abort an in-flight connect - from Chromium down to my first AOSP patch.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Web Bluetooth</span>
+                  <span class="blog-tag">AOSP</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
             <a href="/chromium-camera-capture.html" class="blog-card" data-status="progress">
               <div class="blog-card-header">
                 <span class="blog-status blog-status-review">IN REVIEW</span>
@@ -889,63 +1050,6 @@
               </div>
             </a>
 
-            <a href="/reviving-hev3-https-rr.html" class="blog-card" data-status="progress experiments">
-              <div class="blog-card-header">
-                <span class="blog-status blog-status-progress">IN PROGRESS</span>
-                <span class="blog-status blog-status-experiments" style="margin-left: 8px;">EXPERIMENT</span>
-              </div>
-              <div class="blog-card-body">
-                <span class="blog-date">February 2026</span>
-                <h4>Reviving HEv3 & HTTPS-RR in Chromium</h4>
-                <p>Taking matters into my own hands to pursue RFC 9460 support in Chrome. 70+ steps to unblock the network stack.</p>
-              </div>
-              <div class="blog-card-footer">
-                <div class="blog-tags">
-                  <span class="blog-tag">Chromium</span>
-                  <span class="blog-tag">DNS</span>
-                  <span class="blog-tag">Networking</span>
-                </div>
-                <span class="blog-read-more">Read →</span>
-              </div>
-            </a>
-
-            <a href="/chromium-devtools-speculation-filter.html" class="blog-card" data-status="progress">
-              <div class="blog-card-header">
-                <span class="blog-status blog-status-review">IN REVIEW</span>
-              </div>
-              <div class="blog-card-body">
-                <span class="blog-date">January 2026</span>
-                <h4>DevTools: Speculation Rules Filter</h4>
-                <p>Adding text filtering to Chrome's Speculation Rules panel after real-world testing at krone.at.</p>
-              </div>
-              <div class="blog-card-footer">
-                <div class="blog-tags">
-                  <span class="blog-tag">DevTools</span>
-                  <span class="blog-tag">Chrome</span>
-                </div>
-                <span class="blog-read-more">Read →</span>
-              </div>
-            </a>
-
-            <a href="/chromium-av1-vaapi-amd.html" class="blog-card" data-status="progress">
-              <div class="blog-card-header">
-                <span class="blog-status blog-status-review">IN REVIEW</span>
-              </div>
-              <div class="blog-card-body">
-                <span class="blog-date">January 2026</span>
-                <h4>Fixing AV1 Hardware Encoding on AMD/Mesa</h4>
-                <p>Deep dive into DPB management: fixing GPU crashes for WebRTC video calls. 21 patchsets later...</p>
-              </div>
-              <div class="blog-card-footer">
-                <div class="blog-tags">
-                  <span class="blog-tag">AV1</span>
-                  <span class="blog-tag">GPU</span>
-                  <span class="blog-tag">Mesa</span>
-                </div>
-                <span class="blog-read-more">Read →</span>
-              </div>
-            </a>
-
             <a href="/chromium-video-lazy-loading.html" class="blog-card" data-status="landed">
               <div class="blog-card-header">
                 <span class="blog-status blog-status-landed">LANDED</span>
@@ -959,25 +1063,6 @@
                 <div class="blog-tags">
                   <span class="blog-tag">Web Standards</span>
                   <span class="blog-tag">Performance</span>
-                </div>
-                <span class="blog-read-more">Read →</span>
-              </div>
-            </a>
-
-            <a href="/chromium-pseudonymization-salt.html" class="blog-card" data-status="progress">
-              <div class="blog-card-header">
-                <span class="blog-status blog-status-review">IN REVIEW</span>
-              </div>
-              <div class="blog-card-body">
-                <span class="blog-date">January 2026</span>
-                <h4>Fixing a 3.5-Year-Old Race Condition</h4>
-                <p>Pseudonymization salt via shared memory. When the bug report is older than some interns.</p>
-              </div>
-              <div class="blog-card-footer">
-                <div class="blog-tags">
-                  <span class="blog-tag">IPC</span>
-                  <span class="blog-tag">Shared Memory</span>
-                  <span class="blog-tag">Race Condition</span>
                 </div>
                 <span class="blog-read-more">Read →</span>
               </div>
@@ -1007,6 +1092,43 @@
               <span class="blog-section-dot blog-dot-landed"></span>
               <span>Landed</span>
             </div>
+
+            <a href="/chromium-pseudonymization-salt.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">January 2026</span>
+                <h4>Fixing a 3.5-Year-Old Race Condition</h4>
+                <p>Pseudonymization salt via shared memory. When the bug report is older than some interns.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">IPC</span>
+                  <span class="blog-tag">Shared Memory</span>
+                  <span class="blog-tag">Race Condition</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-devtools-speculation-filter.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">January 2026</span>
+                <h4>DevTools: Speculation Rules Filter</h4>
+                <p>Adding text filtering to Chrome's Speculation Rules panel after real-world testing at krone.at.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">DevTools</span>
+                  <span class="blog-tag">Chrome</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
 
             <a href="/chromium-jxl-resurrection.html" class="blog-card" data-status="landed">
               <div class="blog-card-header">
@@ -1129,6 +1251,50 @@
                   <span class="blog-tag">PDFium</span>
                   <span class="blog-tag">Rust</span>
                   <span class="blog-tag">JXL</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <!-- Shelved Section -->
+            <div class="blog-section-header" data-filter="shelved">
+              <span class="blog-section-dot blog-dot-shelved"></span>
+              <span>Shelved</span>
+            </div>
+
+            <a href="/chromium-av1-vaapi-amd.html" class="blog-card" data-status="shelved">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-stopped">STOPPED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">January 2026</span>
+                <h4>Fixing AV1 Hardware Encoding on AMD/Mesa</h4>
+                <p>Deep dive into DPB management: fixing GPU crashes for WebRTC video calls. Work stopped; see the tracking bug.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">AV1</span>
+                  <span class="blog-tag">GPU</span>
+                  <span class="blog-tag">Mesa</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/reviving-hev3-https-rr.html" class="blog-card" data-status="shelved">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-rejected">REJECTED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">February 2026</span>
+                <h4>Reviving HEv3 & HTTPS-RR in Chromium</h4>
+                <p>Pursuing RFC 9460 support in Chrome. Rejected in favor of the team's ongoing network-stack refactor.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Chromium</span>
+                  <span class="blog-tag">DNS</span>
+                  <span class="blog-tag">Networking</span>
                 </div>
                 <span class="blog-read-more">Read →</span>
               </div>
@@ -1311,6 +1477,10 @@
       background: #D35F5F;
     }
 
+    .blog-dot-shelved {
+      background: #6b7280;
+    }
+
     /* Blog Grid */
     .blog-grid {
       display: grid;
@@ -1378,6 +1548,16 @@
       color: white;
     }
 
+    .blog-status-stopped {
+      background: #6b7280;
+      color: white;
+    }
+
+    .blog-status-rejected {
+      background: #b14b4b;
+      color: white;
+    }
+
     .blog-card-body {
       flex: 1;
       padding: 12px 16px;
@@ -1432,7 +1612,9 @@
     .blog-grid.filter-tools .blog-card:not([data-status~="tools"]),
     .blog-grid.filter-tools .blog-section-header:not([data-filter="tools"]),
     .blog-grid.filter-experiments .blog-card:not([data-status~="experiments"]),
-    .blog-grid.filter-experiments .blog-section-header:not([data-filter="experiments"]) {
+    .blog-grid.filter-experiments .blog-section-header:not([data-filter="experiments"]),
+    .blog-grid.filter-shelved .blog-card:not([data-status~="shelved"]),
+    .blog-grid.filter-shelved .blog-section-header:not([data-filter="shelved"]) {
       display: none;
     }
 
@@ -1805,49 +1987,7 @@
       });
     });
 
-    // Theme switcher functionality
     document.addEventListener('DOMContentLoaded', function() {
-      const themeButton = document.getElementById('themeButton');
-      const themeMenu = document.getElementById('themeMenu');
-      const themeOptions = document.querySelectorAll('.theme-option');
-
-      // Toggle theme menu
-      themeButton.addEventListener('click', function() {
-        themeMenu.classList.toggle('show');
-      });
-
-      // Close theme menu when clicking outside
-      document.addEventListener('click', function(e) {
-        if (!themeButton.contains(e.target) && !themeMenu.contains(e.target)) {
-          themeMenu.classList.remove('show');
-        }
-      });
-
-      // Theme selection
-      themeOptions.forEach(option => {
-        option.addEventListener('click', function() {
-          const theme = this.getAttribute('data-theme');
-
-          if (theme === 'matte-black') {
-            document.documentElement.removeAttribute('data-theme');
-          } else {
-            document.documentElement.setAttribute('data-theme', theme);
-          }
-
-          // Save theme preference
-          localStorage.setItem('theme', theme);
-
-          // Close menu
-          themeMenu.classList.remove('show');
-        });
-      });
-
-      // Load saved theme
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme && savedTheme !== 'matte-black') {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-      }
-
       // Command Palette
       const palette = document.getElementById('commandPalette');
       const paletteInput = document.getElementById('commandInput');
@@ -1861,14 +2001,14 @@
         { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => document.querySelector('#projects').scrollIntoView({ behavior: 'smooth' }) },
         { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => document.querySelector('#blog').scrollIntoView({ behavior: 'smooth' }) },
         { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' }) },
-        { icon: '🎨', name: 'Theme: Matte Black', keywords: ['theme', 'matte', 'black', 'dark'], action: () => { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme', 'matte-black'); } },
-        { icon: '🌿', name: 'Theme: Osaka Jade', keywords: ['theme', 'osaka', 'jade', 'green'], action: () => { document.documentElement.setAttribute('data-theme', 'osaka-jade'); localStorage.setItem('theme', 'osaka-jade'); } },
-        { icon: '🌙', name: 'Theme: Purple Moon', keywords: ['theme', 'purple', 'moon'], action: () => { document.documentElement.setAttribute('data-theme', 'purple-moon'); localStorage.setItem('theme', 'purple-moon'); } },
-        { icon: '💙', name: 'Theme: GitHub Blue', keywords: ['theme', 'github', 'blue'], action: () => { document.documentElement.setAttribute('data-theme', 'blue'); localStorage.setItem('theme', 'blue'); } },
         { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
         { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
         { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
         { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+        { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch', 'fullscreen'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
+        { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux', 'input'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
+        { icon: '📄', name: 'Blog: Web Bluetooth Negotiated MTU', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'web', 'ble'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
+        { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android', 'disconnect'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
         { icon: '📄', name: 'Blog: Camera Capture on Desktop', keywords: ['blog', 'camera', 'capture', 'input', 'file', 'media', 'webcam'], action: () => window.location.href = '/chromium-camera-capture.html' },
         { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
         { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
@@ -1981,8 +2121,8 @@
           const filter = this.getAttribute('data-filter');
 
           // Remove all filter classes
-          blogGrid.classList.remove('filter-landed', 'filter-progress', 'filter-tools', 'filter-experiments');
-          blogContent.classList.remove('filter-landed', 'filter-progress', 'filter-tools', 'filter-experiments');
+          blogGrid.classList.remove('filter-landed', 'filter-progress', 'filter-tools', 'filter-experiments', 'filter-shelved');
+          blogContent.classList.remove('filter-landed', 'filter-progress', 'filter-tools', 'filter-experiments', 'filter-shelved');
 
           // Apply filter
           if (filter !== 'all') {
@@ -1999,6 +2139,27 @@
         });
       });
     });
+  </script>
+  <script>
+    // RunUntil mouse-trail glyphs
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(pointer: coarse)').matches) return;
+      var chars = '01{}<>/$;=>_*+#';
+      var last = 0;
+      window.addEventListener('mousemove', function (e) {
+        var now = performance.now();
+        if (now - last < 45) return;
+        last = now;
+        var g = document.createElement('span');
+        g.className = 'glyph';
+        g.textContent = chars[Math.floor(Math.random() * chars.length)];
+        g.style.left = e.clientX + 'px';
+        g.style.top = e.clientY + 'px';
+        document.body.appendChild(g);
+        setTimeout(function () { g.remove(); }, 900);
+      }, { passive: true });
+    })();
   </script>
 </body>
 </html>

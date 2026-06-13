@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-02-25",
+    "dateModified": "2026-06-13",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -59,6 +59,8 @@
   <meta name="twitter:title" content="2025 Chromium Contributions Wrap-Up">
   <meta name="twitter:description" content="115+ merged contributions across Chromium, PDFium, and jxl-rs">
   
+  <meta name="color-scheme" content="dark light">
+  <meta name="color-scheme" content="dark light">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -72,55 +74,100 @@
       box-sizing: border-box;
     }
 
-    :root {
+    :root,
+    [data-theme="dark"] {
       --bg: #121212;
       --bg-light: #1e1e1e;
-      --bg-lighter: #333333;
+      --bg-lighter: #2a2a2a;
+      --bg-bar: #2a2a2a;
       --text: #bebebe;
       --text-dim: #8a8a8d;
       --accent: #FFC107;
       --accent-dim: #e68e0d;
+      --accent-glow: rgba(255, 193, 7, 0.35);
+      --accent-grid: rgba(255, 193, 7, 0.06);
       --border: #333333;
       --orange: #D35F5F;
+      --green: #6ec06e;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* GitHub Blue Theme */
+    [data-theme="light"] {
+      --bg: #f6f5f0;
+      --bg-light: #ffffff;
+      --bg-lighter: #ececec;
+      --bg-bar: #ececec;
+      --text: #1f1f1f;
+      --text-dim: #6a6a6a;
+      --accent: #c98a00;
+      --accent-dim: #a36d00;
+      --accent-glow: rgba(201, 138, 0, 0.30);
+      --accent-grid: rgba(201, 138, 0, 0.10);
+      --border: #d8d4c8;
+      --orange: #b14b4b;
+      --green: #2f8f3f;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+      --scan: rgba(0, 0, 0, 0.06);
+      --scan-blend: multiply;
+    }
+
     [data-theme="blue"] {
       --bg: #0d1117;
       --bg-light: #161b22;
       --bg-lighter: #21262d;
+      --bg-bar: #21262d;
       --text: #ffffff;
       --text-dim: #7d8590;
       --accent: #58a6ff;
       --accent-dim: #1f6feb;
+      --accent-glow: rgba(88, 166, 255, 0.30);
+      --accent-grid: rgba(88, 166, 255, 0.08);
       --border: #30363d;
       --orange: #ff7b72;
+      --green: #56d364;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* Osaka Jade Theme (from Omarchy) */
     [data-theme="osaka-jade"] {
       --bg: #111c18;
       --bg-light: #23372B;
       --bg-lighter: #53685B;
+      --bg-bar: #1b2b23;
       --text: #C1C497;
       --text-dim: #9eebb3;
       --accent: #2DD5B7;
       --accent-dim: #549e6a;
+      --accent-glow: rgba(45, 213, 183, 0.30);
+      --accent-grid: rgba(45, 213, 183, 0.08);
       --border: #509475;
       --orange: #FF5345;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* Purple Moon Theme */
     [data-theme="purple-moon"] {
       --bg: #020007;
       --bg-light: #37277d;
       --bg-lighter: #643aad;
+      --bg-bar: #211650;
       --text: #ffffff;
       --text-dim: #b895dd;
       --accent: #9b49c8;
       --accent-dim: #9845c6;
+      --accent-glow: rgba(155, 73, 200, 0.35);
+      --accent-grid: rgba(155, 73, 200, 0.08);
       --border: #9865cf;
       --orange: #cd9ce1;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
     body {
@@ -173,99 +220,6 @@
     .nav-links a:hover {
       border-color: var(--accent);
       background: var(--bg);
-    }
-
-    /* Theme Switcher */
-    .theme-switcher {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .theme-dropdown {
-      position: relative;
-    }
-
-    .theme-button {
-      background: var(--bg-light);
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      padding: 8px 12px;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.3s ease;
-    }
-
-    .theme-button:hover {
-      border-color: var(--accent);
-      background: var(--bg);
-    }
-
-    .theme-menu {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: #1a1a1a;
-      border: 2px solid #333333;
-      border-radius: 8px;
-      margin-top: 5px;
-      min-width: 150px;
-      z-index: 1000;
-      display: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    }
-
-    .theme-menu.show {
-      display: block;
-      animation: fadeIn 0.2s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .theme-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 12px;
-      transition: background 0.2s ease;
-      border: none;
-      width: 100%;
-      text-align: left;
-      background: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .theme-option:hover {
-      background: #2a2a2a;
-      color: #ffffff;
-    }
-
-    .theme-option:first-child {
-      border-radius: 6px 6px 0 0;
-    }
-
-    .theme-option:last-child {
-      border-radius: 0 0 6px 6px;
-    }
-
-    .theme-preview {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 1px solid #666666;
-      flex-shrink: 0;
     }
 
     /* Blog Post Styles */
@@ -745,6 +699,104 @@
       margin-right: 4px;
     }
 
+
+    /* RunUntil-inspired refresh */
+    body {
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--accent-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -160px;
+      left: 50%;
+      width: min(900px, 120vw);
+      height: 520px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+      filter: blur(50px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* RunUntil mouse-trail glyphs */
+    .glyph {
+      position: fixed;
+      pointer-events: none;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      opacity: 0.9;
+      z-index: 5;
+      animation: fadeglyph 900ms ease-out forwards;
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    @keyframes fadeglyph {
+      0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0;   transform: translate(-50%, -150%) scale(0.6); }
+    }
+
+    .nav, .blog-header, article, .footer, .command-palette {
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav, .blog-header, .footer {
+      border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .nav { border-bottom-width: 1px; }
+
+    .blog-header {
+      border-bottom-width: 1px;
+      background: linear-gradient(180deg, var(--bg-light), rgba(0, 0, 0, 0));
+    }
+
+    .blog-title { text-shadow: 0 0 22px var(--accent-glow); }
+
+    .blog-content {
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      background: var(--bg-light);
+    }
+
+    .blog-content pre {
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .blog-content code { background: var(--bg); }
+
+    .theme-menu, .command-palette-modal {
+      background: var(--bg-bar);
+      border-color: var(--border);
+    }
+
+    .footer { border-top-width: 1px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .status { animation: none; }
+      * { scroll-behavior: auto !important; }
+    }
+
     /* Mobile Responsive */
     @media (max-width: 768px) {
       .blog-title {
@@ -781,7 +833,6 @@
   </style>
 </head>
 <body>
-  <!-- Navigation -->
   <nav class="nav">
     <div class="container">
       <div class="nav-content">
@@ -798,32 +849,6 @@
             <a href="/">← Back to Home</a>
             <a href="/#projects">Projects</a>
             <a href="/#contact">Contact</a>
-          </div>
-          <div class="theme-switcher">
-            <div class="theme-dropdown">
-              <button class="theme-button" id="themeButton">
-                <span class="theme-preview" style="background: var(--accent);"></span>
-                Themes ▼
-              </button>
-              <div class="theme-menu" id="themeMenu">
-                <button class="theme-option" data-theme="matte-black">
-                  <span class="theme-preview" style="background: #FFC107;"></span>
-                  Matte Black
-                </button>
-                <button class="theme-option" data-theme="osaka-jade">
-                  <span class="theme-preview" style="background: #2DD5B7;"></span>
-                  Osaka Jade
-                </button>
-                <button class="theme-option" data-theme="purple-moon">
-                  <span class="theme-preview" style="background: #9b49c8;"></span>
-                  Purple Moon
-                </button>
-                <button class="theme-option" data-theme="blue">
-                  <span class="theme-preview" style="background: #58a6ff;"></span>
-                  GitHub Blue
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -845,10 +870,10 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<h1>2025: The Year I Became a Chromium OWNER</h1>
+<h1 id="2025-the-year-i-became-a-chromium-owner">2025: The Year I Became a Chromium OWNER</h1>
 <p><em>115+ merged contributions across Chromium, PDFium, and jxl-rs</em></p>
 <hr>
-<h2>By the Numbers</h2>
+<h2 id="by-the-numbers">By the Numbers</h2>
 <table>
 <thead>
 <tr>
@@ -878,11 +903,11 @@
 <td><strong>20</strong></td>
 </tr>
 </tbody></table>
-<h2>2025 Milestones</h2>
+<h2 id="2025-milestones">2025 Milestones</h2>
 <p>🎉 <strong><a href="/chromium-focus-feature.html">Chromium OWNER</a></strong> - Earned OWNER status via the Tab Focus feature work. Now able to review and approve changes in that area.</p>
 <p>🚀 <strong><a href="/chromium-jxl-resurrection.html">JPEG XL Revival</a></strong> - Part of the team bringing JPEG XL back to Chromium, this time with a Rust decoder. Contributed 28 merged PRs to <a href="https://github.com/libjxl/jxl-rs">jxl-rs</a> for SIMD optimizations, HDR support, and Chromium integration.</p>
 <p>🔧 <strong><a href="/chromium-omarchy.html">omarchy-chromium Maintainer</a></strong> - Maintaining a <a href="https://github.com/basecamp/omarchy-chromium">custom Chromium build</a> for <a href="https://omarchy.basecamp.com/">Omarchy</a>. Provides ARM64 Linux builds not officially supported by Google.</p>
-<h2>The Browser Trinity ✅</h2>
+<h2 id="the-browser-trinity">The Browser Trinity ✅</h2>
 <p>Contributing to all three major browser engines! Ported Resource Timing Level 3 (interim response timestamps for HTTP 103 Early Hints) across the board:</p>
 <table>
 <thead>
@@ -909,7 +934,7 @@
 </tr>
 </tbody></table>
 <p>🎉 Browser trifecta complete!</p>
-<h2>Thank You</h2>
+<h2 id="thank-you">Thank You</h2>
 <ul>
 <li><strong><a href="https://github.com/yoavweiss">Yoav Weiss</a></strong> - for being an incredible mentor, answering endless questions, finding the right reviewers, pointing me to the right mailing lists, and all the guidance that goes way beyond code</li>
 <li><strong><a href="https://github.com/tobi">Tobi Lütke</a></strong> - for the original idea that became the <code>--focus</code> flag</li>
@@ -918,7 +943,7 @@
 <li><strong><a href="https://github.com/foolip">Philip Jägenstedt</a></strong> - for supporting the JPEG XL revival effort</li>
 </ul>
 <p>And to the countless Chromium developers on Slack - too many to name - who answered questions and provided feedback when I felt lost. Your patience and expertise made these contributions possible. 🙏</p>
-<h2>Major Features</h2>
+<h2 id="major-features">Major Features</h2>
 <table>
 <thead>
 <tr>
@@ -943,7 +968,7 @@
 <td>Bringing JPEG XL back to Chromium using the Rust-based jxl-rs decoder</td>
 </tr>
 </tbody></table>
-<h2>Chromium Bug Fixes</h2>
+<h2 id="chromium-bug-fixes">Chromium Bug Fixes</h2>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7191448"><strong>Fix use-after-free in OmniboxEditModel</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7181280"><strong>Fix styleSheets access for DOMParser-created documents</strong></a></li>
@@ -953,25 +978,25 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6509110"><strong>Fix modulepreload referrer headers</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6532305"><strong>Fix filter:invert on high-DPI displays</strong></a></li>
 </ul>
-<h2>Other Chromium Features</h2>
+<h2 id="other-chromium-features">Other Chromium Features</h2>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6993029"><strong>Expose Font Service for font enumeration</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7052723"><strong>PDFium v2 font matching feature flag</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6931651"><strong>Separate defer/module script execution</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7003545"><strong>ReportBody.toJSON() use counters</strong></a></li>
 </ul>
-<h2>DevTools</h2>
+<h2 id="devtools">DevTools</h2>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6559109"><strong>Add accuracy parameter to geolocation emulation</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6828850"><strong>Fix unused accuracyError variable in SensorsView</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7366856"><strong>Enable reversible pretty-print for editable JSON</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7363995"><strong>Update iframe document URL in Elements panel after document.open()</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7363772"><strong>Preserve edits and add prefix filtering to console history</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7363772"><strong>Preserve edits and add prefix filtering to console history</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7362609"><strong>Add user-agent-metadata to iOS devices for mobile emulation</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7352729"><strong>Connect storage checkbox to Emulation.setStorageAccessBlocked CDP</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7321564"><strong>Fix display of compressed request bodies in Network panel</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7321564"><strong>Fix display of compressed request bodies in Network panel</strong></a></li>
 </ul>
-<h2>PDFium</h2>
+<h2 id="pdfium">PDFium</h2>
 <p>9 merged CLs to PDFium in 2025:</p>
 <p><strong>New APIs:</strong></p>
 <ul>
@@ -988,7 +1013,7 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/132190"><strong>Fix Form XObject content regeneration</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://pdfium-review.googlesource.com/c/pdfium/+/132350"><strong>Fix undo counting for cut operations</strong></a></li>
 </ul>
-<h2>jxl-rs Contributions</h2>
+<h2 id="jxl-rs-contributions">jxl-rs Contributions</h2>
 <p>26 merged PRs to <a href="https://github.com/libjxl/jxl-rs">libjxl/jxl-rs</a> - the Rust JPEG XL decoder:</p>
 <p><strong>SIMD Optimizations:</strong></p>
 <ul>
@@ -1039,11 +1064,11 @@
 <ul>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/601"><strong>Add i16 sample type support for modular decoding</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/590"><strong>Add jbrd box support for JPEG reconstruction</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/580"><strong>Add SIMD optimization for int_to_float conversion</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/509"><strong>Add WebAssembly decoder with browser demo</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/580"><strong>Add SIMD optimization for int_to_float conversion</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://github.com/libjxl/jxl-rs/pull/509"><strong>Add WebAssembly decoder with browser demo</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/libjxl/jxl-rs/pull/504"><strong>Add ISO 21496-1 gain map support</strong></a></li>
 </ul>
-<h2>JPEG XL Chromium Integration</h2>
+<h2 id="jpeg-xl-chromium-integration">JPEG XL Chromium Integration</h2>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7201443"><strong>Add jxl-rs to third_party</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7320482"><strong>Add JXL infrastructure: enums and build flag</strong></a></li>
@@ -1053,21 +1078,21 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7319379"><strong>Add JXL image decoder using jxl-rs</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7184969"><strong>Wire up JXL decoder</strong></a></li>
 </ul>
-<h2>Chromium CLs In Progress</h2>
+<h2 id="chromium-cls-in-progress">Chromium CLs In Progress</h2>
 <p>Active CLs currently under review:</p>
 <p><strong>Web Platform / Network:</strong></p>
 <ul>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7231959"><strong>Add user-select: none to button, meter, progress, select</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7137783"><strong>Add Request.isReloadNavigation attribute</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7137783"><strong>Add Request.isReloadNavigation attribute</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7135039"><strong>Preserve MIME type in URL parser</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7054663"><strong>Preserve %2E encoding in URL paths</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7131545"><strong>Allow data: URL redirects in manual mode</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/6938248"><strong>Complete HTTPS-RR support</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7054663"><strong>Preserve %2E encoding in URL paths</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7131545"><strong>Allow data: URL redirects in manual mode</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6938248"><strong>Complete HTTPS-RR support</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7073877"><strong>Fix document.activeElement stuck after programmatic iframe focus</strong></a></li>
 </ul>
 <p><strong>Accessibility:</strong></p>
 <ul>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7257274"><strong>Always return kForm for native form elements</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7257274"><strong>Always return kForm for native form elements</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7232474"><strong>Expose named forms as ATK_ROLE_LANDMARK</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7186763"><strong>Fix crash on profile-dependent flags</strong></a></li>
 </ul>
@@ -1079,7 +1104,7 @@
 <ul>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/6927310"><strong>Add theme.getCurrent() WebExtensions API</strong></a></li>
 </ul>
-<h2>Code Modernization</h2>
+<h2 id="code-modernization">Code Modernization</h2>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <strong>Environment::GetVar series</strong> (9 CLs) - Modernized to std::optional</li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6760418"><strong>Move PseudoTcp to remoting/protocol</strong></a></li>
@@ -1087,14 +1112,14 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6632732"><strong>Replace WTF::NotNullTag with base::NotNullTag</strong></a></li>
 </ul>
 <hr>
-<h2>Other Open Source</h2>
+<h2 id="other-open-source">Other Open Source</h2>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/openai/codex/pull/8555"><strong>Add tui.alternate_screen config and --no-alt-screen CLI flag for Zellij scrollback</strong></a> - OpenAI Codex</li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/416"><strong>Add plan mode for safe code analysis</strong></a> - Pi Coding Agent</li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/405"><strong>Add configurable keybindings system</strong></a> - Pi Coding Agent</li>
 </ul>
 <hr>
-<h2>Links</h2>
+<h2 id="links">Links</h2>
 <table>
 <thead>
 <tr>
@@ -1119,6 +1144,7 @@
 <td><a href="https://github.com/hjanuschka">github.com/hjanuschka</a></td>
 </tr>
 </tbody></table>
+
     </div>
   </article>
 
@@ -1140,7 +1166,7 @@
     </div>
   </div>
 
-  <!-- Footer -->
+
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -1151,48 +1177,6 @@
   </footer>
 
   <script>
-    // Theme switcher functionality
-    const themeButton = document.getElementById('themeButton');
-    const themeMenu = document.getElementById('themeMenu');
-    const themeOptions = document.querySelectorAll('.theme-option');
-
-    // Toggle theme menu
-    themeButton.addEventListener('click', function() {
-      themeMenu.classList.toggle('show');
-    });
-
-    // Close theme menu when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!themeButton.contains(e.target) && !themeMenu.contains(e.target)) {
-        themeMenu.classList.remove('show');
-      }
-    });
-
-    // Theme selection
-    themeOptions.forEach(option => {
-      option.addEventListener('click', function() {
-        const theme = this.getAttribute('data-theme');
-
-        if (theme === 'matte-black') {
-          document.documentElement.removeAttribute('data-theme');
-        } else {
-          document.documentElement.setAttribute('data-theme', theme);
-        }
-
-        // Save theme preference
-        localStorage.setItem('theme', theme);
-
-        // Close menu
-        themeMenu.classList.remove('show');
-      });
-    });
-
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme && savedTheme !== 'matte-black') {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-
     // Command Palette
     const palette = document.getElementById('commandPalette');
     const paletteInput = document.getElementById('commandInput');
@@ -1206,14 +1190,14 @@
       { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => window.location.href = '/#projects' },
       { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => window.location.href = '/#blog' },
       { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => window.location.href = '/#contact' },
-      { icon: '🎨', name: 'Theme: Matte Black', keywords: ['theme', 'matte', 'black', 'dark'], action: () => { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme', 'matte-black'); } },
-      { icon: '🌿', name: 'Theme: Osaka Jade', keywords: ['theme', 'osaka', 'jade', 'green'], action: () => { document.documentElement.setAttribute('data-theme', 'osaka-jade'); localStorage.setItem('theme', 'osaka-jade'); } },
-      { icon: '🌙', name: 'Theme: Purple Moon', keywords: ['theme', 'purple', 'moon'], action: () => { document.documentElement.setAttribute('data-theme', 'purple-moon'); localStorage.setItem('theme', 'purple-moon'); } },
-      { icon: '💙', name: 'Theme: GitHub Blue', keywords: ['theme', 'github', 'blue'], action: () => { document.documentElement.setAttribute('data-theme', 'blue'); localStorage.setItem('theme', 'blue'); } },
       { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+      { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
+      { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Negotiated MTU', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
       { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
       { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
       { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
@@ -1301,20 +1285,6 @@
     });
 
     palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
   </script>
   
   <!-- Prism.js for syntax highlighting -->
@@ -1323,6 +1293,27 @@
   <script>
     // Highlight all code blocks
     Prism.highlightAll();
+  </script>
+  <script>
+    // RunUntil mouse-trail glyphs
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(pointer: coarse)').matches) return;
+      var chars = '01{}<>/$;=>_*+#';
+      var last = 0;
+      window.addEventListener('mousemove', function (e) {
+        var now = performance.now();
+        if (now - last < 45) return;
+        last = now;
+        var g = document.createElement('span');
+        g.className = 'glyph';
+        g.textContent = chars[Math.floor(Math.random() * chars.length)];
+        g.style.left = e.clientX + 'px';
+        g.style.top = e.clientY + 'px';
+        document.body.appendChild(g);
+        setTimeout(function () { g.remove(); }, 900);
+      }, { passive: true });
+    })();
   </script>
 </body>
 </html>

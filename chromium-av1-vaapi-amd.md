@@ -6,7 +6,14 @@ tech: "C++ / VA-API / Video Encoding"
 
 *When the GPU crashes encoding a keyframe, you know you're in for a wild ride*
 
-**Status:** 🚧 In Review
+**Status:** 🛑 Stopped
+
+```snippet
+<div style="margin: 24px 0; padding: 16px 20px; background: rgba(177, 75, 75, 0.12); border: 1px solid #b14b4b; border-radius: 8px;">
+  <strong style="color: #b14b4b;">Update: work on this fix has been stopped.</strong>
+  <p style="margin: 8px 0 0 0;">The CL is no longer being pursued. See the tracking bug <a href="https://issues.chromium.org/issues/471780477">471780477</a> for the current state and discussion.</p>
+</div>
+```
 
 ## The Problem
 
@@ -15,7 +22,7 @@ AV1 hardware video encoding on AMD GPUs with Mesa drivers has been broken in Chr
 The crash affected anyone trying to use hardware-accelerated AV1 encoding for WebRTC video calls on AMD Linux systems. Users had to fall back to software encoding (libaom), which hammers the CPU during video calls.
 
 **Bug**: [471780477](https://issues.chromium.org/issues/471780477)
-**CL**: <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Fix AV1 VA-API encoder crash on AMD/Mesa**](https://crrev.com/c/7380014)
+**CL**: <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">STOPPED</span> [**Fix AV1 VA-API encoder crash on AMD/Mesa**](https://crrev.com/c/7380014)
 
 ## The Investigation
 
@@ -154,5 +161,5 @@ Or wait for the CL to merge and try a tip-of-tree Chromium build.
 
 **Links:**
 - [Chromium Bug 471780477](https://issues.chromium.org/issues/471780477)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Fix AV1 VA-API encoder crash on AMD/Mesa**](https://crrev.com/c/7380014)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">STOPPED</span> [**Fix AV1 VA-API encoder crash on AMD/Mesa**](https://crrev.com/c/7380014)
 - [VA-API AV1 Encoder Documentation](https://source.chromium.org/chromium/chromium/src/+/main:media/gpu/vaapi/av1_vaapi_video_encoder_delegate.h)

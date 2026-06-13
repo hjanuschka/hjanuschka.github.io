@@ -113,7 +113,7 @@ The salt adds randomness to trace hashing - without it, extension IDs in traces 
 
 ## Links
 
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**CL 7486913: Pass pseudonymization salt via shared memory**](https://crrev.com/c/7486913)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7486913: Pass pseudonymization salt via shared memory**](https://crrev.com/c/7486913)
 - [Bug 40850085: Chrome Crash - GetPseudonymizationSalt](https://issues.chromium.org/issues/40850085)
 - [Original salt introduction CL](https://crrev.com/c/3057922)
 - [2023 partial fix by wfh@](https://crrev.com/c/4143865)

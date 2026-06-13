@@ -34,7 +34,7 @@ When you're trying to debug why `/artikel/12345` isn't prerendering correctly, s
 I reached out to [Barry Pollard](https://github.com/tunetheweb) (author of the origin trial blog post and a Chrome performance hero) who helped shape the approach. The result: a proper text filter for the Speculations panel.
 
 **Bug**: [479524246](https://issues.chromium.org/issues/479524246)
-**CL**: <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add text filter to Speculation Rules panel**](https://chromium-review.googlesource.com/c/devtools/devtools-frontend/+/7520087)
+**CL**: <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add text filter to Speculation Rules panel**](https://chromium-review.googlesource.com/c/devtools/devtools-frontend/+/7520087)
 
 ## Why This Matters
 
@@ -75,7 +75,7 @@ And once this CL lands, you'll have better filtering to debug your implementatio
 
 **Links:**
 - [Chromium Bug 479524246](https://issues.chromium.org/issues/479524246)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add text filter to Speculation Rules panel**](https://chromium-review.googlesource.com/c/devtools/devtools-frontend/+/7520087)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add text filter to Speculation Rules panel**](https://chromium-review.googlesource.com/c/devtools/devtools-frontend/+/7520087)
 - [Prerender Until Script Origin Trial](https://developer.chrome.com/blog/prerender-until-script-origin-trial?hl=de)
 - [Debugging Speculation Rules in DevTools](https://developer.chrome.com/docs/devtools/application/debugging-speculation-rules)
 - [Barry Pollard on GitHub](https://github.com/tunetheweb)

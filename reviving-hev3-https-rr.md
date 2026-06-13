@@ -4,9 +4,16 @@ category: "Chromium"
 tech: "C++ / DNS / Networking"
 ---
 
-**This post is a work in progress -- it will be updated as CLs land and the project evolves.**
+**Status:** ❌ Rejected
 
 *Taking matters into my own hands to pursue RFC 9460 support in Chrome.*
+
+```snippet
+<div style="margin: 24px 0; padding: 16px 20px; background: rgba(177, 75, 75, 0.12); border: 1px solid #b14b4b; border-radius: 8px;">
+  <strong style="color: #b14b4b;">Update: this effort was rejected.</strong>
+  <p style="margin: 8px 0 0 0;">The networking team is taking a different direction with ongoing refactoring work, so these CLs will not land in their current form. The write-up stays up as a record of the investigation and the patches that came out of it.</p>
+</div>
+```
 
 ## The Beginning: HTTPS Resource Records
 
@@ -59,30 +66,30 @@ I've already landed several preparatory CLs and have a stack of 63 changes in fl
 **In Review (DNS & Normalization):**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**DnsTaskResultsManager target-name behavior**](https://crrev.com/c/7532080)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Canonicalize domain-name matching**](https://crrev.com/c/7532105)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Apply HTTPS metadata via alias targets**](https://crrev.com/c/7534958)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Apply HTTPS metadata via alias targets**](https://crrev.com/c/7534958)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Deduplicate endpoints in DnsTaskResultsManager**](https://crrev.com/c/7531547)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Allow multiple HTTPS completions**](https://crrev.com/c/7531548)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Allow multiple HTTPS completions**](https://crrev.com/c/7531548)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Avoid adding HTTPS query names to DNS aliases**](https://crrev.com/c/7532007)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Surface HTTPS alias records**](https://crrev.com/c/7531967)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Surface HTTPS alias records**](https://crrev.com/c/7531967)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Normalize DNS names for endpoint keying**](https://crrev.com/c/7545367)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Normalize HTTPS target names in extractor**](https://crrev.com/c/7543470)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Propagate stale DNS aliases**](https://crrev.com/c/7548052)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Normalize canonical name matching in HostCache**](https://crrev.com/c/7549124)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Propagate stale DNS aliases**](https://crrev.com/c/7548052)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Normalize canonical name matching in HostCache**](https://crrev.com/c/7549124)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Log DNS aliases with endpoint updates**](https://crrev.com/c/7549523)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Normalize canonical names in HostCache entries**](https://crrev.com/c/7546723)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**HostCache normalization coverage**](https://crrev.com/c/7548494)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**HostCache normalization coverage**](https://crrev.com/c/7548494)
 
 **In Review (Followups & ServiceMode):**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Extend DnsTaskResultsManager tests**](https://crrev.com/c/7550310)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Prototype AliasMode followup resolution**](https://crrev.com/c/7548608)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add bounded recursion + cycle detection**](https://crrev.com/c/7548495)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Prototype AliasMode followup resolution**](https://crrev.com/c/7548608)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Add bounded recursion + cycle detection**](https://crrev.com/c/7548495)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Extend DnsTaskResultsManager to accept followups**](https://crrev.com/c/7543652)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add ServiceMode TargetName followup query handling**](https://crrev.com/c/7550314)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Add ServiceMode TargetName followup query handling**](https://crrev.com/c/7550314)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Extend tests for ServiceMode multi-target followups**](https://crrev.com/c/7550430)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Validate IsMetadataReady semantics**](https://crrev.com/c/7543703)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Plumb target name through connection layer**](https://crrev.com/c/7550411)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add connection-layer tests for multi-target ServiceMode**](https://crrev.com/c/7545973)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**NetLog or UMA for followup query timing**](https://crrev.com/c/7550437)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Add connection-layer tests for multi-target ServiceMode**](https://crrev.com/c/7545973)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**NetLog or UMA for followup query timing**](https://crrev.com/c/7550437)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**ServiceMode multi-target test coverage**](https://crrev.com/c/7545968)
 
 **In Review (Connection Layer & Plumbing):**
@@ -94,23 +101,23 @@ I've already landed several preparatory CLs and have a stack of 63 changes in fl
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add HEv3 ECH fallback handling**](https://crrev.com/c/7552250)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add idle socket lookup or bypass mode**](https://crrev.com/c/7552390)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Move proxy resolution to HttpStreamFactory**](https://crrev.com/c/7552510)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Cancel in-flight QUIC attempts on session activation**](https://crrev.com/c/7552512)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Align HEv3 TCP/TLS timeout error codes**](https://crrev.com/c/7552570)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Cancel in-flight QUIC attempts on session activation**](https://crrev.com/c/7552512)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Align HEv3 TCP/TLS timeout error codes**](https://crrev.com/c/7552570)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add UMA for HEv3 TCP-based and QUIC attempt outcomes**](https://crrev.com/c/7552650)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add HEv3 dual-stack TLS fallback test**](https://crrev.com/c/7552670)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add HEv3 incremental DNS endpoint update test**](https://crrev.com/c/7552730)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add HEv3 DNS error fallback and multi-endpoint tests**](https://crrev.com/c/7552870)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Add NetLog event for HEv3 SPDY throttle delay**](https://crrev.com/c/7552950)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Add NetLog event for HEv3 SPDY throttle delay**](https://crrev.com/c/7552950)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Record QUIC failure in connection_attempts_**](https://crrev.com/c/7552392)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Convert CHECK to DCHECK in MaybeAttemptTcpBased**](https://crrev.com/c/7552931)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Test preconnect with HTTPS RR metadata endpoints**](https://crrev.com/c/7552951)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Test preconnect with HTTPS RR metadata endpoints**](https://crrev.com/c/7552951)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Test cancellation mid-followup**](https://crrev.com/c/7552051)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Integration cleanup**](https://crrev.com/c/7545376)
 
 **In Review (HTTPS-RR Core - The Key Gate!):**
 - <span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">KEY CL</span> [**Remove TargetName filter in DnsResponseResultExtractor**](https://crrev.com/c/7552252)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**End-to-end HTTPS RR different TargetName followup test**](https://crrev.com/c/7552773)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Followup recursion limit + cycle detection test**](https://crrev.com/c/7552933)
+- <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**Followup recursion limit + cycle detection test**](https://crrev.com/c/7552933)
 
 **In Review (Metrics & Flag Flip):**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**UMA for HEv3 vs legacy path selection**](https://crrev.com/c/7551954)

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-02-25",
+    "dateModified": "2026-06-13",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -59,6 +59,8 @@
   <meta name="twitter:title" content="Reviving HEv3 & HTTPS-RR in Chromium">
   <meta name="twitter:description" content="Taking matters into my own hands to pursue RFC 9460 support in Chrome.">
   
+  <meta name="color-scheme" content="dark light">
+  <meta name="color-scheme" content="dark light">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -72,55 +74,100 @@
       box-sizing: border-box;
     }
 
-    :root {
+    :root,
+    [data-theme="dark"] {
       --bg: #121212;
       --bg-light: #1e1e1e;
-      --bg-lighter: #333333;
+      --bg-lighter: #2a2a2a;
+      --bg-bar: #2a2a2a;
       --text: #bebebe;
       --text-dim: #8a8a8d;
       --accent: #FFC107;
       --accent-dim: #e68e0d;
+      --accent-glow: rgba(255, 193, 7, 0.35);
+      --accent-grid: rgba(255, 193, 7, 0.06);
       --border: #333333;
       --orange: #D35F5F;
+      --green: #6ec06e;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* GitHub Blue Theme */
+    [data-theme="light"] {
+      --bg: #f6f5f0;
+      --bg-light: #ffffff;
+      --bg-lighter: #ececec;
+      --bg-bar: #ececec;
+      --text: #1f1f1f;
+      --text-dim: #6a6a6a;
+      --accent: #c98a00;
+      --accent-dim: #a36d00;
+      --accent-glow: rgba(201, 138, 0, 0.30);
+      --accent-grid: rgba(201, 138, 0, 0.10);
+      --border: #d8d4c8;
+      --orange: #b14b4b;
+      --green: #2f8f3f;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+      --scan: rgba(0, 0, 0, 0.06);
+      --scan-blend: multiply;
+    }
+
     [data-theme="blue"] {
       --bg: #0d1117;
       --bg-light: #161b22;
       --bg-lighter: #21262d;
+      --bg-bar: #21262d;
       --text: #ffffff;
       --text-dim: #7d8590;
       --accent: #58a6ff;
       --accent-dim: #1f6feb;
+      --accent-glow: rgba(88, 166, 255, 0.30);
+      --accent-grid: rgba(88, 166, 255, 0.08);
       --border: #30363d;
       --orange: #ff7b72;
+      --green: #56d364;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* Osaka Jade Theme (from Omarchy) */
     [data-theme="osaka-jade"] {
       --bg: #111c18;
       --bg-light: #23372B;
       --bg-lighter: #53685B;
+      --bg-bar: #1b2b23;
       --text: #C1C497;
       --text-dim: #9eebb3;
       --accent: #2DD5B7;
       --accent-dim: #549e6a;
+      --accent-glow: rgba(45, 213, 183, 0.30);
+      --accent-grid: rgba(45, 213, 183, 0.08);
       --border: #509475;
       --orange: #FF5345;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* Purple Moon Theme */
     [data-theme="purple-moon"] {
       --bg: #020007;
       --bg-light: #37277d;
       --bg-lighter: #643aad;
+      --bg-bar: #211650;
       --text: #ffffff;
       --text-dim: #b895dd;
       --accent: #9b49c8;
       --accent-dim: #9845c6;
+      --accent-glow: rgba(155, 73, 200, 0.35);
+      --accent-grid: rgba(155, 73, 200, 0.08);
       --border: #9865cf;
       --orange: #cd9ce1;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
     body {
@@ -173,99 +220,6 @@
     .nav-links a:hover {
       border-color: var(--accent);
       background: var(--bg);
-    }
-
-    /* Theme Switcher */
-    .theme-switcher {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .theme-dropdown {
-      position: relative;
-    }
-
-    .theme-button {
-      background: var(--bg-light);
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      padding: 8px 12px;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.3s ease;
-    }
-
-    .theme-button:hover {
-      border-color: var(--accent);
-      background: var(--bg);
-    }
-
-    .theme-menu {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: #1a1a1a;
-      border: 2px solid #333333;
-      border-radius: 8px;
-      margin-top: 5px;
-      min-width: 150px;
-      z-index: 1000;
-      display: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    }
-
-    .theme-menu.show {
-      display: block;
-      animation: fadeIn 0.2s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .theme-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 12px;
-      transition: background 0.2s ease;
-      border: none;
-      width: 100%;
-      text-align: left;
-      background: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .theme-option:hover {
-      background: #2a2a2a;
-      color: #ffffff;
-    }
-
-    .theme-option:first-child {
-      border-radius: 6px 6px 0 0;
-    }
-
-    .theme-option:last-child {
-      border-radius: 0 0 6px 6px;
-    }
-
-    .theme-preview {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 1px solid #666666;
-      flex-shrink: 0;
     }
 
     /* Blog Post Styles */
@@ -745,6 +699,104 @@
       margin-right: 4px;
     }
 
+
+    /* RunUntil-inspired refresh */
+    body {
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--accent-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -160px;
+      left: 50%;
+      width: min(900px, 120vw);
+      height: 520px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+      filter: blur(50px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* RunUntil mouse-trail glyphs */
+    .glyph {
+      position: fixed;
+      pointer-events: none;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      opacity: 0.9;
+      z-index: 5;
+      animation: fadeglyph 900ms ease-out forwards;
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    @keyframes fadeglyph {
+      0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0;   transform: translate(-50%, -150%) scale(0.6); }
+    }
+
+    .nav, .blog-header, article, .footer, .command-palette {
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav, .blog-header, .footer {
+      border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .nav { border-bottom-width: 1px; }
+
+    .blog-header {
+      border-bottom-width: 1px;
+      background: linear-gradient(180deg, var(--bg-light), rgba(0, 0, 0, 0));
+    }
+
+    .blog-title { text-shadow: 0 0 22px var(--accent-glow); }
+
+    .blog-content {
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      background: var(--bg-light);
+    }
+
+    .blog-content pre {
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .blog-content code { background: var(--bg); }
+
+    .theme-menu, .command-palette-modal {
+      background: var(--bg-bar);
+      border-color: var(--border);
+    }
+
+    .footer { border-top-width: 1px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .status { animation: none; }
+      * { scroll-behavior: auto !important; }
+    }
+
     /* Mobile Responsive */
     @media (max-width: 768px) {
       .blog-title {
@@ -781,7 +833,6 @@
   </style>
 </head>
 <body>
-  <!-- Navigation -->
   <nav class="nav">
     <div class="container">
       <div class="nav-content">
@@ -798,32 +849,6 @@
             <a href="/">← Back to Home</a>
             <a href="/#projects">Projects</a>
             <a href="/#contact">Contact</a>
-          </div>
-          <div class="theme-switcher">
-            <div class="theme-dropdown">
-              <button class="theme-button" id="themeButton">
-                <span class="theme-preview" style="background: var(--accent);"></span>
-                Themes ▼
-              </button>
-              <div class="theme-menu" id="themeMenu">
-                <button class="theme-option" data-theme="matte-black">
-                  <span class="theme-preview" style="background: #FFC107;"></span>
-                  Matte Black
-                </button>
-                <button class="theme-option" data-theme="osaka-jade">
-                  <span class="theme-preview" style="background: #2DD5B7;"></span>
-                  Osaka Jade
-                </button>
-                <button class="theme-option" data-theme="purple-moon">
-                  <span class="theme-preview" style="background: #9b49c8;"></span>
-                  Purple Moon
-                </button>
-                <button class="theme-option" data-theme="blue">
-                  <span class="theme-preview" style="background: #58a6ff;"></span>
-                  GitHub Blue
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -845,25 +870,30 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><strong>This post is a work in progress -- it will be updated as CLs land and the project evolves.</strong></p>
+<p><strong>Status:</strong> ❌ Rejected</p>
 <p><em>Taking matters into my own hands to pursue RFC 9460 support in Chrome.</em></p>
-<h2>The Beginning: HTTPS Resource Records</h2>
+<div style="margin: 24px 0; padding: 16px 20px; background: rgba(177, 75, 75, 0.12); border: 1px solid #b14b4b; border-radius: 8px;">
+  <strong style="color: #b14b4b;">Update: this effort was rejected.</strong>
+  <p style="margin: 8px 0 0 0;">The networking team is taking a different direction with ongoing refactoring work, so these CLs will not land in their current form. The write-up stays up as a record of the investigation and the patches that came out of it.</p>
+</div>
+
+<h2 id="the-beginning-https-resource-records">The Beginning: HTTPS Resource Records</h2>
 <p>It all started with a simple goal: I wanted to implement full support for <strong>HTTPS Resource Records</strong> (HTTPS-RR) in Chromium, specifically RFC 9460. This includes proper handling of <code>AliasMode</code> and <code>ServiceMode</code> with different target names—features crucial for the modern web&#39;s evolution towards more flexible and secure service discovery.</p>
 <p>I picked up <a href="https://issues.chromium.org/issues/40257146">Issue 40257146</a> and went to work. I put together a CL that successfully implemented the logic. It worked! I was ready to land it.</p>
-<h2>The Block: &quot;Wait for HEv3&quot;</h2>
+<h2 id="the-block-wait-for-hev3">The Block: "Wait for HEv3"</h2>
 <p>But then, the code review feedback came in. It wasn&#39;t about the correctness of my specific logic, but about the <em>architecture</em>. The Chromium team was in the middle of a major network stack refactor known as <strong>Happy Eyeballs v3 (HEv3)</strong>.</p>
 <p>My approach was flagged as conflicting with this new direction:</p>
 <blockquote>
 <p>&quot;My preference would be &#39;Wait until HEv3 lands and then revisit with proper integration.&#39; At this point I don&#39;t have concrete ideas about how we should implement aliases and different target names so I&#39;m not sure we keep or abandon this CL. I think marking this as work in progress... is a reasonable action for now.&quot;</p>
 </blockquote>
 <p>It made sense. HEv3 is designed to allow connection attempts to race without waiting for all DNS results—a huge performance win. My implementation, based on the legacy path, might have blocked this optimization. So, I parked the CL and waited.</p>
-<h2>The Twist: &quot;We might not do HEv3&quot;</h2>
+<h2 id="the-twist-we-might-not-do-hev3">The Twist: "We might not do HEv3"</h2>
 <p>Time passed. HEv3 development dragged on. Then came the update that flipped everything:</p>
 <blockquote>
 <p>&quot;The HEv3 development has been prolonged and it&#39;s difficult to predict when it will be completed. The team are moving towards not implementing HEv3 (that&#39;s unfortunate). We may consider supporting HTTPS RR aliases and different target names without HEv3, nothing has been decided yet.&quot;</p>
 </blockquote>
 <p>So, the shiny new architecture I was waiting for—the one that blocked my feature—was potentially being abandoned? And we might go back to a non-HEv3 implementation anyway?</p>
-<h2>The Revival</h2>
+<h2 id="the-revival">The Revival</h2>
 <p>That was my &quot;WTF&quot; moment. Instead of waiting for a compromise or abandoning the architectural improvements of HEv3, I decided to <strong>revive the effort myself</strong>. If HEv3 was stalled, I would help unblock it to get my HTTPS-RR features landed <em>properly</em>.</p>
 <p>I dove deep into the HEv3 design docs and the codebase. I mapped out a detailed plan and started working through a 70+ step checklist to:</p>
 <ol>
@@ -872,7 +902,7 @@
 <li>Ensure no performance regressions (the whole point of HEv3!).</li>
 <li>Ship it.</li>
 </ol>
-<h2>Current Status</h2>
+<h2 id="current-status">Current Status</h2>
 <p>I&#39;ve already landed several preparatory CLs and have a stack of 63 changes in flight to completely overhaul the HEv3 codepath for HTTPS-RR support. <strong>The core functionality is now working end-to-end!</strong></p>
 <details><summary style="cursor: pointer; color: var(--accent); font-weight: bold; margin-bottom: 10px;">View all 63 CLs (Progress: 2 Merged, 61 In Review) →</summary>
 
@@ -887,31 +917,31 @@
 <ul>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7532080"><strong>DnsTaskResultsManager target-name behavior</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7532105"><strong>Canonicalize domain-name matching</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7534958"><strong>Apply HTTPS metadata via alias targets</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7534958"><strong>Apply HTTPS metadata via alias targets</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7531547"><strong>Deduplicate endpoints in DnsTaskResultsManager</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7531548"><strong>Allow multiple HTTPS completions</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7531548"><strong>Allow multiple HTTPS completions</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7532007"><strong>Avoid adding HTTPS query names to DNS aliases</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7531967"><strong>Surface HTTPS alias records</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7531967"><strong>Surface HTTPS alias records</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7545367"><strong>Normalize DNS names for endpoint keying</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7543470"><strong>Normalize HTTPS target names in extractor</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7548052"><strong>Propagate stale DNS aliases</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7549124"><strong>Normalize canonical name matching in HostCache</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7548052"><strong>Propagate stale DNS aliases</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7549124"><strong>Normalize canonical name matching in HostCache</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7549523"><strong>Log DNS aliases with endpoint updates</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7546723"><strong>Normalize canonical names in HostCache entries</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7548494"><strong>HostCache normalization coverage</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7548494"><strong>HostCache normalization coverage</strong></a></li>
 </ul>
 <p><strong>In Review (Followups &amp; ServiceMode):</strong></p>
 <ul>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550310"><strong>Extend DnsTaskResultsManager tests</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7548608"><strong>Prototype AliasMode followup resolution</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7548495"><strong>Add bounded recursion + cycle detection</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7548608"><strong>Prototype AliasMode followup resolution</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7548495"><strong>Add bounded recursion + cycle detection</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7543652"><strong>Extend DnsTaskResultsManager to accept followups</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550314"><strong>Add ServiceMode TargetName followup query handling</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7550314"><strong>Add ServiceMode TargetName followup query handling</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550430"><strong>Extend tests for ServiceMode multi-target followups</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7543703"><strong>Validate IsMetadataReady semantics</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550411"><strong>Plumb target name through connection layer</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7545973"><strong>Add connection-layer tests for multi-target ServiceMode</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7550437"><strong>NetLog or UMA for followup query timing</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7545973"><strong>Add connection-layer tests for multi-target ServiceMode</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7550437"><strong>NetLog or UMA for followup query timing</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7545968"><strong>ServiceMode multi-target test coverage</strong></a></li>
 </ul>
 <p><strong>In Review (Connection Layer &amp; Plumbing):</strong></p>
@@ -924,16 +954,16 @@
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552250"><strong>Add HEv3 ECH fallback handling</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552390"><strong>Add idle socket lookup or bypass mode</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552510"><strong>Move proxy resolution to HttpStreamFactory</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552512"><strong>Cancel in-flight QUIC attempts on session activation</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552570"><strong>Align HEv3 TCP/TLS timeout error codes</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7552512"><strong>Cancel in-flight QUIC attempts on session activation</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7552570"><strong>Align HEv3 TCP/TLS timeout error codes</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552650"><strong>Add UMA for HEv3 TCP-based and QUIC attempt outcomes</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552670"><strong>Add HEv3 dual-stack TLS fallback test</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552730"><strong>Add HEv3 incremental DNS endpoint update test</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552870"><strong>Add HEv3 DNS error fallback and multi-endpoint tests</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552950"><strong>Add NetLog event for HEv3 SPDY throttle delay</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7552950"><strong>Add NetLog event for HEv3 SPDY throttle delay</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552392"><strong>Record QUIC failure in connection_attempts_</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552931"><strong>Convert CHECK to DCHECK in MaybeAttemptTcpBased</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552951"><strong>Test preconnect with HTTPS RR metadata endpoints</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7552951"><strong>Test preconnect with HTTPS RR metadata endpoints</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552051"><strong>Test cancellation mid-followup</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7545376"><strong>Integration cleanup</strong></a></li>
 </ul>
@@ -941,7 +971,7 @@
 <ul>
 <li><span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">KEY CL</span> <a href="https://crrev.com/c/7552252"><strong>Remove TargetName filter in DnsResponseResultExtractor</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552773"><strong>End-to-end HTTPS RR different TargetName followup test</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7552933"><strong>Followup recursion limit + cycle detection test</strong></a></li>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/7552933"><strong>Followup recursion limit + cycle detection test</strong></a></li>
 </ul>
 <p><strong>In Review (Metrics &amp; Flag Flip):</strong></p>
 <ul>
@@ -955,13 +985,14 @@
 
 <p>It&#39;s a deep dive into Chromium&#39;s networking internals—<code>HostResolver</code>, <code>HttpStreamPool</code>, <code>DnsTaskResultsManager</code>—but we&#39;re getting there. The goal remains: <strong>Full RFC 9460 support in Chrome, backed by the performance of Happy Eyeballs v3.</strong></p>
 <p>Stay tuned for updates as I work through the checklist.</p>
-<h2>A Note on Reality</h2>
+<h2 id="a-note-on-reality">A Note on Reality</h2>
 <p>Will this work? I don&#39;t know yet. I&#39;m one contributor with a vision, navigating a codebase shaped by many hands over many years. There will be tough reviews, architectural debates, and probably surprises I haven&#39;t anticipated. That&#39;s the nature of working in a project as complex as Chromium.</p>
 <p>But here&#39;s what I do know: the best way to make something happen is to start. Every merged CL is one step closer. Every review comment is an opportunity to learn. And even if the path changes--even if we discover the way forward looks different than what I&#39;ve mapped out--the effort itself moves the needle.</p>
 <p>If there&#39;s a will, there&#39;s a way. We just might not know the way today.</p>
 <blockquote>
 <p><em>&quot;Only those who will risk going too far can possibly find out how far one can go.&quot;</em><br>— <a href="https://en.wikipedia.org/wiki/T._S._Eliot">T.S. Eliot</a></p>
 </blockquote>
+
     </div>
   </article>
 
@@ -983,7 +1014,7 @@
     </div>
   </div>
 
-  <!-- Footer -->
+
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -994,48 +1025,6 @@
   </footer>
 
   <script>
-    // Theme switcher functionality
-    const themeButton = document.getElementById('themeButton');
-    const themeMenu = document.getElementById('themeMenu');
-    const themeOptions = document.querySelectorAll('.theme-option');
-
-    // Toggle theme menu
-    themeButton.addEventListener('click', function() {
-      themeMenu.classList.toggle('show');
-    });
-
-    // Close theme menu when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!themeButton.contains(e.target) && !themeMenu.contains(e.target)) {
-        themeMenu.classList.remove('show');
-      }
-    });
-
-    // Theme selection
-    themeOptions.forEach(option => {
-      option.addEventListener('click', function() {
-        const theme = this.getAttribute('data-theme');
-
-        if (theme === 'matte-black') {
-          document.documentElement.removeAttribute('data-theme');
-        } else {
-          document.documentElement.setAttribute('data-theme', theme);
-        }
-
-        // Save theme preference
-        localStorage.setItem('theme', theme);
-
-        // Close menu
-        themeMenu.classList.remove('show');
-      });
-    });
-
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme && savedTheme !== 'matte-black') {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-
     // Command Palette
     const palette = document.getElementById('commandPalette');
     const paletteInput = document.getElementById('commandInput');
@@ -1049,14 +1038,14 @@
       { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => window.location.href = '/#projects' },
       { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => window.location.href = '/#blog' },
       { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => window.location.href = '/#contact' },
-      { icon: '🎨', name: 'Theme: Matte Black', keywords: ['theme', 'matte', 'black', 'dark'], action: () => { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme', 'matte-black'); } },
-      { icon: '🌿', name: 'Theme: Osaka Jade', keywords: ['theme', 'osaka', 'jade', 'green'], action: () => { document.documentElement.setAttribute('data-theme', 'osaka-jade'); localStorage.setItem('theme', 'osaka-jade'); } },
-      { icon: '🌙', name: 'Theme: Purple Moon', keywords: ['theme', 'purple', 'moon'], action: () => { document.documentElement.setAttribute('data-theme', 'purple-moon'); localStorage.setItem('theme', 'purple-moon'); } },
-      { icon: '💙', name: 'Theme: GitHub Blue', keywords: ['theme', 'github', 'blue'], action: () => { document.documentElement.setAttribute('data-theme', 'blue'); localStorage.setItem('theme', 'blue'); } },
       { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+      { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
+      { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Negotiated MTU', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
       { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
       { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
       { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
@@ -1144,20 +1133,6 @@
     });
 
     palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
   </script>
   
   <!-- Prism.js for syntax highlighting -->
@@ -1166,6 +1141,27 @@
   <script>
     // Highlight all code blocks
     Prism.highlightAll();
+  </script>
+  <script>
+    // RunUntil mouse-trail glyphs
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(pointer: coarse)').matches) return;
+      var chars = '01{}<>/$;=>_*+#';
+      var last = 0;
+      window.addEventListener('mousemove', function (e) {
+        var now = performance.now();
+        if (now - last < 45) return;
+        last = now;
+        var g = document.createElement('span');
+        g.className = 'glyph';
+        g.textContent = chars[Math.floor(Math.random() * chars.length)];
+        g.style.left = e.clientX + 'px';
+        g.style.top = e.clientY + 'px';
+        document.body.appendChild(g);
+        setTimeout(function () { g.remove(); }, 900);
+      }, { passive: true });
+    })();
   </script>
 </body>
 </html>

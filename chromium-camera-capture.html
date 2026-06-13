@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-02-25",
+    "dateModified": "2026-06-13",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -59,6 +59,8 @@
   <meta name="twitter:title" content="Camera Capture on Desktop: Closing a 12-Year-Old Gap">
   <meta name="twitter:description" content="Bringing input type=file capture to Windows, Mac, and Linux">
   
+  <meta name="color-scheme" content="dark light">
+  <meta name="color-scheme" content="dark light">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -72,55 +74,100 @@
       box-sizing: border-box;
     }
 
-    :root {
+    :root,
+    [data-theme="dark"] {
       --bg: #121212;
       --bg-light: #1e1e1e;
-      --bg-lighter: #333333;
+      --bg-lighter: #2a2a2a;
+      --bg-bar: #2a2a2a;
       --text: #bebebe;
       --text-dim: #8a8a8d;
       --accent: #FFC107;
       --accent-dim: #e68e0d;
+      --accent-glow: rgba(255, 193, 7, 0.35);
+      --accent-grid: rgba(255, 193, 7, 0.06);
       --border: #333333;
       --orange: #D35F5F;
+      --green: #6ec06e;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* GitHub Blue Theme */
+    [data-theme="light"] {
+      --bg: #f6f5f0;
+      --bg-light: #ffffff;
+      --bg-lighter: #ececec;
+      --bg-bar: #ececec;
+      --text: #1f1f1f;
+      --text-dim: #6a6a6a;
+      --accent: #c98a00;
+      --accent-dim: #a36d00;
+      --accent-glow: rgba(201, 138, 0, 0.30);
+      --accent-grid: rgba(201, 138, 0, 0.10);
+      --border: #d8d4c8;
+      --orange: #b14b4b;
+      --green: #2f8f3f;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+      --scan: rgba(0, 0, 0, 0.06);
+      --scan-blend: multiply;
+    }
+
     [data-theme="blue"] {
       --bg: #0d1117;
       --bg-light: #161b22;
       --bg-lighter: #21262d;
+      --bg-bar: #21262d;
       --text: #ffffff;
       --text-dim: #7d8590;
       --accent: #58a6ff;
       --accent-dim: #1f6feb;
+      --accent-glow: rgba(88, 166, 255, 0.30);
+      --accent-grid: rgba(88, 166, 255, 0.08);
       --border: #30363d;
       --orange: #ff7b72;
+      --green: #56d364;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* Osaka Jade Theme (from Omarchy) */
     [data-theme="osaka-jade"] {
       --bg: #111c18;
       --bg-light: #23372B;
       --bg-lighter: #53685B;
+      --bg-bar: #1b2b23;
       --text: #C1C497;
       --text-dim: #9eebb3;
       --accent: #2DD5B7;
       --accent-dim: #549e6a;
+      --accent-glow: rgba(45, 213, 183, 0.30);
+      --accent-grid: rgba(45, 213, 183, 0.08);
       --border: #509475;
       --orange: #FF5345;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
-    /* Purple Moon Theme */
     [data-theme="purple-moon"] {
       --bg: #020007;
       --bg-light: #37277d;
       --bg-lighter: #643aad;
+      --bg-bar: #211650;
       --text: #ffffff;
       --text-dim: #b895dd;
       --accent: #9b49c8;
       --accent-dim: #9845c6;
+      --accent-glow: rgba(155, 73, 200, 0.35);
+      --accent-grid: rgba(155, 73, 200, 0.08);
       --border: #9865cf;
       --orange: #cd9ce1;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
     }
 
     body {
@@ -173,99 +220,6 @@
     .nav-links a:hover {
       border-color: var(--accent);
       background: var(--bg);
-    }
-
-    /* Theme Switcher */
-    .theme-switcher {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .theme-dropdown {
-      position: relative;
-    }
-
-    .theme-button {
-      background: var(--bg-light);
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      padding: 8px 12px;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.3s ease;
-    }
-
-    .theme-button:hover {
-      border-color: var(--accent);
-      background: var(--bg);
-    }
-
-    .theme-menu {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: #1a1a1a;
-      border: 2px solid #333333;
-      border-radius: 8px;
-      margin-top: 5px;
-      min-width: 150px;
-      z-index: 1000;
-      display: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    }
-
-    .theme-menu.show {
-      display: block;
-      animation: fadeIn 0.2s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .theme-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 12px;
-      transition: background 0.2s ease;
-      border: none;
-      width: 100%;
-      text-align: left;
-      background: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .theme-option:hover {
-      background: #2a2a2a;
-      color: #ffffff;
-    }
-
-    .theme-option:first-child {
-      border-radius: 6px 6px 0 0;
-    }
-
-    .theme-option:last-child {
-      border-radius: 0 0 6px 6px;
-    }
-
-    .theme-preview {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 1px solid #666666;
-      flex-shrink: 0;
     }
 
     /* Blog Post Styles */
@@ -745,6 +699,104 @@
       margin-right: 4px;
     }
 
+
+    /* RunUntil-inspired refresh */
+    body {
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--accent-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -160px;
+      left: 50%;
+      width: min(900px, 120vw);
+      height: 520px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+      filter: blur(50px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* RunUntil mouse-trail glyphs */
+    .glyph {
+      position: fixed;
+      pointer-events: none;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      opacity: 0.9;
+      z-index: 5;
+      animation: fadeglyph 900ms ease-out forwards;
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    @keyframes fadeglyph {
+      0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0;   transform: translate(-50%, -150%) scale(0.6); }
+    }
+
+    .nav, .blog-header, article, .footer, .command-palette {
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav, .blog-header, .footer {
+      border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .nav { border-bottom-width: 1px; }
+
+    .blog-header {
+      border-bottom-width: 1px;
+      background: linear-gradient(180deg, var(--bg-light), rgba(0, 0, 0, 0));
+    }
+
+    .blog-title { text-shadow: 0 0 22px var(--accent-glow); }
+
+    .blog-content {
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      background: var(--bg-light);
+    }
+
+    .blog-content pre {
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .blog-content code { background: var(--bg); }
+
+    .theme-menu, .command-palette-modal {
+      background: var(--bg-bar);
+      border-color: var(--border);
+    }
+
+    .footer { border-top-width: 1px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .status { animation: none; }
+      * { scroll-behavior: auto !important; }
+    }
+
     /* Mobile Responsive */
     @media (max-width: 768px) {
       .blog-title {
@@ -781,7 +833,6 @@
   </style>
 </head>
 <body>
-  <!-- Navigation -->
   <nav class="nav">
     <div class="container">
       <div class="nav-content">
@@ -798,32 +849,6 @@
             <a href="/">← Back to Home</a>
             <a href="/#projects">Projects</a>
             <a href="/#contact">Contact</a>
-          </div>
-          <div class="theme-switcher">
-            <div class="theme-dropdown">
-              <button class="theme-button" id="themeButton">
-                <span class="theme-preview" style="background: var(--accent);"></span>
-                Themes ▼
-              </button>
-              <div class="theme-menu" id="themeMenu">
-                <button class="theme-option" data-theme="matte-black">
-                  <span class="theme-preview" style="background: #FFC107;"></span>
-                  Matte Black
-                </button>
-                <button class="theme-option" data-theme="osaka-jade">
-                  <span class="theme-preview" style="background: #2DD5B7;"></span>
-                  Osaka Jade
-                </button>
-                <button class="theme-option" data-theme="purple-moon">
-                  <span class="theme-preview" style="background: #9b49c8;"></span>
-                  Purple Moon
-                </button>
-                <button class="theme-option" data-theme="blue">
-                  <span class="theme-preview" style="background: #58a6ff;"></span>
-                  GitHub Blue
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -848,13 +873,13 @@
 <p><em>Bringing <code>&lt;input type=file capture&gt;</code> to Windows, Mac, and Linux</em></p>
 <p><strong>Status:</strong> 🚧 In Progress</p>
 <hr>
-<h2>The 12-Year-Old Feature Request</h2>
+<h2 id="the-12-year-old-feature-request">The 12-Year-Old Feature Request</h2>
 <p>In October 2012, a feature request was filed: bring camera capture to desktop browsers. On Android, developers could already do this:</p>
 <pre><code class="language-html">&lt;input type=&quot;file&quot; accept=&quot;image/*&quot; capture=&quot;camera&quot;&gt;
 </code></pre>
 <p>Click the input, and Android opens the camera app. Take a photo, and it&#39;s submitted as a file. Simple, elegant, and completely unavailable on desktop platforms for over a decade.</p>
 <p><strong>Bug:</strong> <a href="https://issues.chromium.org/issues/40291635">40291635</a></p>
-<h2>Why It Matters</h2>
+<h2 id="why-it-matters">Why It Matters</h2>
 <p>Think about the use cases:</p>
 <ul>
 <li><strong>ID verification</strong> - Upload a photo of your passport or driver&#39;s license</li>
@@ -864,7 +889,7 @@
 <li><strong>Video messages</strong> - Record a quick video response</li>
 </ul>
 <p>Today, web developers have to build custom camera UIs using <code>getUserMedia()</code> - non-trivial work that most sites skip entirely. With native capture support, it&#39;s a single HTML attribute.</p>
-<h2>The Implementation</h2>
+<h2 id="the-implementation">The Implementation</h2>
 <p>The solution is a cross-platform <code>CameraCaptureDialog</code> that intercepts file inputs with the <code>capture</code> attribute:</p>
 <pre><code class="language-cpp">// In file_select_helper.cc - intercept capture requests
 if (params.capture &amp;&amp; ShouldShowCameraCaptureDialog(params)) {
@@ -872,7 +897,7 @@ if (params.capture &amp;&amp; ShouldShowCameraCaptureDialog(params)) {
   return;
 }
 </code></pre>
-<h3>Features</h3>
+<h3 id="features">Features</h3>
 <table>
 <thead>
 <tr>
@@ -905,7 +930,7 @@ if (params.capture &amp;&amp; ShouldShowCameraCaptureDialog(params)) {
 <td>Proper duration headers for video files</td>
 </tr>
 </tbody></table>
-<h3>Demo</h3>
+<h3 id="demo">Demo</h3>
 <p><strong>Image Capture:</strong></p>
 <div class="youtube-embed">
   <iframe src="https://www.youtube.com/embed/t5561A1SHks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -921,10 +946,10 @@ if (params.capture &amp;&amp; ShouldShowCameraCaptureDialog(params)) {
   <iframe src="https://www.youtube.com/embed/CkbsyqdDNBM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
-<h2>Try It</h2>
+<h2 id="try-it">Try It</h2>
 <p><strong><a href="https://static.januschka.com/i-40291635/">Live Demo →</a></strong></p>
 <p>Test the feature yourself with a patched Chromium build.</p>
-<h2>The HTML API</h2>
+<h2 id="the-html-api">The HTML API</h2>
 <p>The <code>capture</code> attribute on file inputs tells the browser to prefer media capture:</p>
 <pre><code class="language-html">&lt;!-- Prefer camera for images --&gt;
 &lt;input type=&quot;file&quot; accept=&quot;image/*&quot; capture&gt;
@@ -942,7 +967,7 @@ if (params.capture &amp;&amp; ShouldShowCameraCaptureDialog(params)) {
 &lt;input type=&quot;file&quot; accept=&quot;audio/*&quot; capture&gt;
 </code></pre>
 <p>The spec is defined in <a href="https://w3c.github.io/html-media-capture/">HTML Media Capture</a>, and this implementation brings Chrome desktop in line with Android and mobile Safari.</p>
-<h2>Architecture</h2>
+<h2 id="architecture">Architecture</h2>
 <p>The implementation lives in <code>chrome/browser/ui/views/media_capture/</code>:</p>
 <pre><code>camera_capture_dialog.h      # Dialog interface and state machine
 camera_capture_dialog.cc     # Cross-platform UI implementation
@@ -955,9 +980,9 @@ camera_capture_dialog_unittest.cc
 <li><strong>Device enumeration</strong> through <code>media::AudioDeviceDescription</code></li>
 <li><strong>Views-based UI</strong> for cross-platform consistency</li>
 </ul>
-<h2>Current Status</h2>
+<h2 id="current-status">Current Status</h2>
 <p><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7594822"><strong>CL 7594822</strong></a> - Support camera capture for <code>&lt;input type=file capture&gt;</code> on desktop</p>
-<h2>Links</h2>
+<h2 id="links">Links</h2>
 <ul>
 <li><a href="https://issues.chromium.org/issues/40291635">Chromium Bug 40291635</a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://crrev.com/c/7594822"><strong>CL 7594822</strong></a></li>
@@ -966,6 +991,7 @@ camera_capture_dialog_unittest.cc
 </ul>
 <hr>
 <p><em>Sometimes the best features are the ones that should have existed all along. After 12 years, desktop Chrome is finally catching up to mobile.</em></p>
+
     </div>
   </article>
 
@@ -987,7 +1013,7 @@ camera_capture_dialog_unittest.cc
     </div>
   </div>
 
-  <!-- Footer -->
+
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -998,48 +1024,6 @@ camera_capture_dialog_unittest.cc
   </footer>
 
   <script>
-    // Theme switcher functionality
-    const themeButton = document.getElementById('themeButton');
-    const themeMenu = document.getElementById('themeMenu');
-    const themeOptions = document.querySelectorAll('.theme-option');
-
-    // Toggle theme menu
-    themeButton.addEventListener('click', function() {
-      themeMenu.classList.toggle('show');
-    });
-
-    // Close theme menu when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!themeButton.contains(e.target) && !themeMenu.contains(e.target)) {
-        themeMenu.classList.remove('show');
-      }
-    });
-
-    // Theme selection
-    themeOptions.forEach(option => {
-      option.addEventListener('click', function() {
-        const theme = this.getAttribute('data-theme');
-
-        if (theme === 'matte-black') {
-          document.documentElement.removeAttribute('data-theme');
-        } else {
-          document.documentElement.setAttribute('data-theme', theme);
-        }
-
-        // Save theme preference
-        localStorage.setItem('theme', theme);
-
-        // Close menu
-        themeMenu.classList.remove('show');
-      });
-    });
-
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme && savedTheme !== 'matte-black') {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-
     // Command Palette
     const palette = document.getElementById('commandPalette');
     const paletteInput = document.getElementById('commandInput');
@@ -1053,14 +1037,14 @@ camera_capture_dialog_unittest.cc
       { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => window.location.href = '/#projects' },
       { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => window.location.href = '/#blog' },
       { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => window.location.href = '/#contact' },
-      { icon: '🎨', name: 'Theme: Matte Black', keywords: ['theme', 'matte', 'black', 'dark'], action: () => { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme', 'matte-black'); } },
-      { icon: '🌿', name: 'Theme: Osaka Jade', keywords: ['theme', 'osaka', 'jade', 'green'], action: () => { document.documentElement.setAttribute('data-theme', 'osaka-jade'); localStorage.setItem('theme', 'osaka-jade'); } },
-      { icon: '🌙', name: 'Theme: Purple Moon', keywords: ['theme', 'purple', 'moon'], action: () => { document.documentElement.setAttribute('data-theme', 'purple-moon'); localStorage.setItem('theme', 'purple-moon'); } },
-      { icon: '💙', name: 'Theme: GitHub Blue', keywords: ['theme', 'github', 'blue'], action: () => { document.documentElement.setAttribute('data-theme', 'blue'); localStorage.setItem('theme', 'blue'); } },
       { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+      { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
+      { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Negotiated MTU', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
       { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
       { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
       { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
@@ -1148,20 +1132,6 @@ camera_capture_dialog_unittest.cc
     });
 
     palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
   </script>
   
   <!-- Prism.js for syntax highlighting -->
@@ -1170,6 +1140,27 @@ camera_capture_dialog_unittest.cc
   <script>
     // Highlight all code blocks
     Prism.highlightAll();
+  </script>
+  <script>
+    // RunUntil mouse-trail glyphs
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(pointer: coarse)').matches) return;
+      var chars = '01{}<>/$;=>_*+#';
+      var last = 0;
+      window.addEventListener('mousemove', function (e) {
+        var now = performance.now();
+        if (now - last < 45) return;
+        last = now;
+        var g = document.createElement('span');
+        g.className = 'glyph';
+        g.textContent = chars[Math.floor(Math.random() * chars.length)];
+        g.style.left = e.clientX + 'px';
+        g.style.top = e.clientY + 'px';
+        document.body.appendChild(g);
+        setTimeout(function () { g.remove(); }, 900);
+      }, { passive: true });
+    })();
   </script>
 </body>
 </html>
