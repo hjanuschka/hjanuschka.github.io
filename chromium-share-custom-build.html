@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Chrome Themes: Building DHH's Vision for Omarchy - Helmut Januschka</title>
-  <meta name="description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <title>Packaging a Custom Chromium Build for Distribution - Helmut Januschka</title>
+  <meta name="description" content="Turning a patched developer build into an installable artifact for people without a Chromium toolchain">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Dynamic Chrome Themes: Building DHH's Vision for Omarchy",
-    "description": "How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming",
+    "headline": "Packaging a Custom Chromium Build for Distribution",
+    "description": "Turning a patched developer build into an installable artifact for people without a Chromium toolchain",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-omarchy.html"
+      "@id": "https://januschka.com/chromium-share-custom-build.html"
     },
-    "keywords": "Chromium, C++, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, Build / Packaging, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-omarchy.html"
+      "target": "https://januschka.com/chromium-share-custom-build.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta property="og:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta property="og:title" content="Packaging a Custom Chromium Build for Distribution">
+  <meta property="og:description" content="Turning a patched developer build into an installable artifact for people without a Chromium toolchain">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-omarchy.html">
+  <meta property="og:url" content="https://januschka.com/chromium-share-custom-build.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta name="twitter:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta name="twitter:title" content="Packaging a Custom Chromium Build for Distribution">
+  <meta name="twitter:description" content="Turning a patched developer build into an installable artifact for people without a Chromium toolchain">
   
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -858,10 +858,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Dynamic Chrome Themes: Building DHH's Vision for Omarchy</h1>
+      <h1 class="blog-title">Packaging a Custom Chromium Build for Distribution</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++</span>
+        <span>🔧 Build / Packaging</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -870,269 +870,157 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming</em></p>
-<h2 id="update-september-14-2025-merged-landed-a-better-way-through-managed-policies">🎉 Update: September 14, 2025 - MERGED & LANDED! A Better Way Through Managed Policies</h2>
-<h3 id="the-golden-nugget-discovery">The Golden Nugget Discovery</h3>
-<p>Google initially rejected our CLI approach, but working closely with friends at Brave, a crucial insight emerged: <strong>Chrome&#39;s managed policies could set theme colors!</strong> This was a game-changer - policies are an officially supported Chrome feature used by enterprises worldwide.</p>
-<p>However, there was a catch: applying policies took 5+ seconds to take effect. This wasn&#39;t the instant response Omarchy users expected.</p>
-<h3 id="making-it-instant">Making It Instant</h3>
-<p>I dug deeper into Chrome&#39;s policy system and discovered we could add a new flag:</p>
-<pre><code class="language-sh"># Instantly refresh and apply platform policies
-chromium --refresh-platform-policy
+<p><em>Turning a patched developer build into an installable artifact for people without a Chromium toolchain</em></p>
+<p><strong>Status:</strong> 🛠️ Guide</p>
+<h2 id="the-problem">The Problem</h2>
+<p>A common situation: you have built Chromium with a change - a flipped feature flag, a fix, a proof of concept - and you need to hand the result to someone who does not have a Chromium build environment. They will not sync the tree or launch a binary from a build directory, and they should not have to.</p>
+<p>Copying <code>out/Release</code> and sending it does not work either. A standard developer build is a <strong>component build</strong>: the binary is split into hundreds of loose <code>.so</code> / <code>.dylib</code> files next to <code>chrome</code> to speed up incremental linking. It is not relocatable and not distributable. It is also unsigned, and each operating system has its own guard rails against running a loose bundle - quarantine on macOS, side-by-side assembly activation on Windows.</p>
+<p>The deliverable a non-developer expects is an ordinary package: a <code>.deb</code> / <code>.rpm</code>, a proper <code>.app</code>, or an installer <code>.exe</code>.</p>
+<h2 id="the-one-setting-that-matters">The One Setting That Matters</h2>
+<p>Regardless of platform, the rule is:</p>
+<pre><code class="language-gn">is_component_build = false
 </code></pre>
-<p>This flag forces Chrome to immediately reload and apply managed policies without the usual delay. The implications go far beyond just theming - it enables instant policy updates for any managed Chrome setting!</p>
-<h3 id="the-implementation-journey">The Implementation Journey</h3>
-<p>After much discussion and collaboration with Chrome&#39;s policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>--refresh-platform-policy flag</strong></a>) adds:</p>
-<pre><code class="language-cpp">// chrome/common/chrome_switches.cc
-const char kRefreshPlatformPolicy[] = &quot;refresh-platform-policy&quot;;
+<p>A component build is ideal for iterating and useless for distribution. Build <strong>non-component release</strong> for anything that leaves the build machine. <code>is_official_build</code> is not required (that enables PGO and branded release builds) - a plain release, non-component build is sufficient to distribute.</p>
+<p>A minimal distributable <code>args.gn</code>:</p>
+<pre><code class="language-gn">is_debug           = false
+is_component_build = false
+symbol_level       = 0
+</code></pre>
+<p>From there, each platform provides a dedicated packaging target.</p>
+<h2 id="linux-deb-and-rpm">Linux: .deb and .rpm</h2>
+<p>Chromium&#39;s build system produces distribution packages directly:</p>
+<pre><code class="language-bash">autoninja -C out/Release chrome/installer/linux:stable_deb
+autoninja -C out/Release chrome/installer/linux:stable_rpm
+</code></pre>
+<p>This writes a <code>.deb</code> and a <code>.rpm</code> into <code>out/Release/</code>. The recipient installs it with their package manager:</p>
+<pre><code class="language-bash">sudo dpkg -i chromium-*.deb     # Debian / Ubuntu
+sudo rpm -i  chromium-*.rpm      # Fedora / RHEL / openSUSE
+</code></pre>
+<p>The build installs like any other browser, registers in the application menu, and integrates with the package manager for updates and removal. This is the most robust option: the packaging target handles the filesystem layout, desktop entry, and icons.</p>
+<h2 id="macos-a-universal-app">macOS: A Universal .app</h2>
+<p>On macOS the distributable artifact is <code>Chromium.app</code>. Two considerations apply:</p>
+<ol>
+<li>The bundle must come from a <strong>non-component</strong> build (same rule as above) so the app is self-contained.</li>
+<li>Recipients may be on Intel or Apple Silicon. Rather than shipping two builds, produce both architectures and merge them into a single <strong>universal</strong> app with <code>universalizer.py</code>.</li>
+</ol>
+<p>The build-and-universalize script:</p>
+<pre><code class="language-bash">#!/usr/bin/env bash
+# Build a release universal (x64 + arm64) Chromium.app.
+#
+# Produces:
+#   $CHROMIUM_SRC/out/release_x64/Chromium.app        (Intel)
+#   $CHROMIUM_SRC/out/release_arm64/Chromium.app      (Apple Silicon)
+#   $CHROMIUM_SRC/out/release_universal/Chromium.app  (fat)
+#
+# Usage:
+#   binary_build.sh                 # both arches + universalize
+#   binary_build.sh x64             # only x64
+#   binary_build.sh arm64           # only arm64
+#   binary_build.sh universal-only  # merge existing dirs only
+set -euo pipefail
 
-// chrome/browser/ui/startup/startup_browser_creator.cc
-// Trigger immediate policy refresh when Chrome is already running
-if (command_line.HasSwitch(switches::kRefreshPlatformPolicy)) {
-  g_browser_process-&gt;browser_policy_connector()-&gt;RefreshPlatformPolicies();
-  // Return early to prevent opening a new browser window
-  return;
+CHROMIUM_SRC=&quot;${CHROMIUM_SRC:-$HOME/chromium/src}&quot;
+TARGET=&quot;${1:-both}&quot;
+cd &quot;$CHROMIUM_SRC&quot;
+
+# Shared args. is_component_build MUST be false for a universal-mergeable app.
+common_args() {
+  cat &lt;&lt;&#39;GN&#39;
+target_os          = &quot;mac&quot;
+is_debug           = false
+is_component_build = false
+is_official_build  = false
+symbol_level       = 0
+blink_symbol_level = 0
+v8_symbol_level    = 0
+GN
 }
+
+seed_args() {
+  local outdir=&quot;$1&quot; cpu=&quot;$2&quot;
+  mkdir -p &quot;$outdir&quot;
+  { common_args; echo &quot;target_cpu = \&quot;$cpu\&quot;&quot;; } &gt; &quot;$outdir/args.gn&quot;
+}
+
+build_one() {
+  local cpu=&quot;$1&quot; outdir=&quot;out/release_${1}&quot;
+  echo &quot;&gt;&gt; Configuring $outdir (target_cpu=$cpu) ...&quot;
+  seed_args &quot;$outdir&quot; &quot;$cpu&quot;
+  gn gen &quot;$outdir&quot;
+  echo &quot;&gt;&gt; Building chrome in $outdir ...&quot;
+  autoninja -C &quot;$outdir&quot; chrome
+}
+
+universalize() {
+  local x64_app=&quot;out/release_x64/Chromium.app&quot;
+  local arm_app=&quot;out/release_arm64/Chromium.app&quot;
+  local out_app=&quot;out/release_universal/Chromium.app&quot;
+  [ -d &quot;$x64_app&quot; ] &amp;&amp; [ -d &quot;$arm_app&quot; ] || { echo &quot;!! build both arches first&quot; &gt;&amp;2; exit 1; }
+  echo &quot;&gt;&gt; Universalizing into $out_app ...&quot;
+  mkdir -p out/release_universal
+  rm -rf &quot;$out_app&quot;
+  chrome/installer/mac/universalizer.py &quot;$x64_app&quot; &quot;$arm_app&quot; &quot;$out_app&quot;
+  file &quot;$out_app/Contents/MacOS/Chromium&quot; || true
+}
+
+case &quot;$TARGET&quot; in
+  x64)            build_one x64 ;;
+  arm64)          build_one arm64 ;;
+  universal-only) universalize ;;
+  both|&quot;&quot;)        build_one x64; build_one arm64; universalize ;;
+  *) echo &quot;usage: $0 [x64|arm64|both|universal-only]&quot; &gt;&amp;2; exit 2 ;;
+esac
 </code></pre>
-<p>The beauty of this implementation is its simplicity - just a few lines of code that unlock powerful functionality!</p>
-<h3 id="official-chrome-release">Official Chrome Release</h3>
-<p>This change has landed and will be released in <strong>Chrome Stable 142</strong>! This means:</p>
-<ul>
-<li>Official support for instant policy updates</li>
-<li>No more waiting for policy refresh intervals</li>
-<li>Works with any managed policy, not just themes</li>
-</ul>
-<h3 id="omarchys-lightning-fast-integration">Omarchy's Lightning-Fast Integration</h3>
-<p>I quickly assembled <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/basecamp/omarchy/pull/1251"><strong>Omarchy theme integration</strong></a> that integrates the new flag with JSON policy updates. Here&#39;s how it works in practice:</p>
-<pre><code class="language-sh"># Set theme via managed policy (Linux example)
-sudo mkdir -p /etc/chromium/policies/managed
-echo &#39;{
-  &quot;BrowserThemeColor&quot;: &quot;#ff6b35&quot;
-}&#39; | sudo tee /etc/chromium/policies/managed/theme.json
-
-# Instantly apply to running Chrome instances
-chromium --refresh-platform-policy --no-startup-window
+<p>The output, <code>out/release_universal/Chromium.app</code>, is a single bundle that runs on both Intel and Apple Silicon.</p>
+<h3 id="the-gatekeeper-consideration">The Gatekeeper Consideration</h3>
+<p>An unsigned build - one without an Apple Developer ID - is quarantined by macOS. The simplest path for a recipient is to clear the quarantine attribute after copying the app to <code>/Applications</code>:</p>
+<pre><code class="language-bash">xattr -dr com.apple.quarantine /Applications/Chromium.app
 </code></pre>
-<p>For macOS users:</p>
-<pre><code class="language-sh"># Create policy directory
-sudo mkdir -p /Library/Managed\ Preferences/com.google.Chrome
-
-# Set theme color policy
-sudo defaults write /Library/Managed\ Preferences/com.google.Chrome BrowserThemeColor -string &quot;#ff6b35&quot;
-
-# Apply instantly
-open -a &quot;Google Chrome&quot; --args --refresh-platform-policy --no-startup-window
+<p>An ad-hoc signature also allows the app to launch without the right-click-Open workaround:</p>
+<pre><code class="language-bash">codesign --force --deep --sign - out/release_universal/Chromium.app
 </code></pre>
-<p>This approach is <strong>even faster than our original CLI implementation</strong> because:</p>
-<ol>
-<li>Policies are read directly from disk (no IPC overhead)</li>
-<li>The refresh flag bypasses all delays</li>
-<li>Chrome&#39;s native policy system handles the theme application</li>
-<li>Works with existing enterprise policy infrastructure</li>
-</ol>
-<h3 id="brave-ships-it-early">Brave Ships It Early</h3>
-<p>Brave has cherry-picked this change and will ship it even faster with their release based on Chrome 141! This shows the power of open-source collaboration - features can reach users through multiple channels.</p>
-<h3 id="the-bigger-picture">The Bigger Picture</h3>
-<p>The <code>--refresh-platform-policy</code> flag opens up new possibilities beyond theming:</p>
-<ul>
-<li>Instant enterprise policy updates without browser restart</li>
-<li>Dynamic security policy adjustments</li>
-<li>Real-time configuration changes for managed deployments</li>
-<li>Scriptable policy management for power users</li>
-</ul>
-<p>This is a perfect example of how solving one problem (theme switching) led to a more general solution that benefits the entire Chrome ecosystem.</p>
-<hr>
-<h2 id="the-tweet-that-started-everything">The Tweet That Started Everything</h2>
-<p>It began with <a href="https://x.com/hjanuschka/status/1954552977814855845">a challenge from DHH</a> (David Heinemeier Hansson, creator of Ruby on Rails). He wanted something that seemed simple but revealed an interesting gap: the ability to change Chrome&#39;s theme colors dynamically from the command line.</p>
-<p>The context was important - when Chrome uses GTK/Qt themes, this already works automatically. But when using Chrome&#39;s &quot;Classic&quot; theme (which many prefer for consistency across platforms), there was no CLI way to control colors. While you could manually change themes through settings for each instance, Omarchy needed scriptable control - just like it has for other applications.</p>
-<p>His vision was clear:</p>
-<pre><code class="language-sh"># Change theme when using Chrome&#39;s Classic theme
-chrome --set-user-color=&quot;255,0,0&quot;
+<p>A full Developer ID signature plus notarization is the correct approach for wider distribution, but ad-hoc signing plus quarantine removal is adequate for internal or one-off sharing.</p>
+<h2 id="windows-mini_installer">Windows: mini_installer</h2>
+<p>On Windows, do not distribute a raw <code>chrome.exe</code> from a build directory - side-by-side assembly activation does not support running the binary out of <code>out/Release</code>. Build the installer instead:</p>
+<pre><code class="language-bash">autoninja -C out/Release mini_installer
 </code></pre>
-<p>This wasn&#39;t just about aesthetics. For DHH&#39;s new <a href="https://omarchy.org">Omarchy Linux distribution</a>, this represented a core philosophy: giving power users complete control over their environment through simple, scriptable interfaces.</p>
-<h2 id="why-this-matters">Why This Matters</h2>
-<p>The gap in Chrome&#39;s theming:</p>
-<ul>
-<li><strong>GTK/Qt themes</strong>: Work great, update automatically</li>
-<li><strong>Classic theme</strong>: No CLI control, must use GUI per instance</li>
-<li><strong>Omarchy&#39;s need</strong>: Scriptable theming like other apps have</li>
-</ul>
-<p>DHH&#39;s request highlighted this inconsistency. Why shouldn&#39;t the Classic theme be as flexible as GTK/Qt integration?</p>
-<h2 id="the-pleasant-surprise">The Pleasant Surprise</h2>
-<p>The implementation turned out to be easier than expected - the code was already in Chromium! The theme system was robust and well-designed. It just wasn&#39;t exposed via command-line interface.</p>
-<p>My task was essentially plumbing: connecting existing functionality to a new entry point.</p>
-<h2 id="the-implementation">The Implementation</h2>
-<h3 id="finding-the-existing-code">Finding the Existing Code</h3>
-<p>Chrome&#39;s theme system was already sophisticated:</p>
-<pre><code class="language-cpp">// Theme colors are defined in the ThemeService
-class ThemeService : public KeyedService {
-  // Material Design 3 (GM3) color generation
-  ui::ColorProviderManager::Key GetColorProviderKey();
-  
-  // This notifies observers when theme changes
-  void NotifyThemeChanged();
-};
-</code></pre>
-<p>The Material Design 3 (GM3) theming logic was all there - it just needed a CLI entry point.</p>
-<h3 id="adding-command-line-support">Adding Command-Line Support</h3>
-<p>The implementation added several switches that work together:</p>
-<pre><code class="language-cpp">// Core theme switches in chrome_switches.cc
-const char kSetDefaultTheme[] = &quot;set-default-theme&quot;;      // Reset to system
-const char kSetUserColor[] = &quot;set-user-color&quot;;            // GM3 seed color
-const char kSetColorScheme[] = &quot;set-color-scheme&quot;;        // light/dark/system
-const char kSetColorVariant[] = &quot;set-color-variant&quot;;      // Material variants
-const char kSetGrayscaleTheme[] = &quot;set-grayscale-theme&quot;;  // Grayscale overlay
-</code></pre>
-<p>These switches can be combined for complete control:</p>
-<pre><code class="language-sh"># Dark blue vibrant theme
-chrome --set-user-color=&quot;100,150,200&quot; \
-       --set-color-scheme=&quot;dark&quot; \
-       --set-color-variant=&quot;vibrant&quot;
-
-# Light neutral theme with custom color
-chrome --set-user-color=&quot;255,107,53&quot; \
-       --set-color-scheme=&quot;light&quot; \
-       --set-color-variant=&quot;neutral&quot;
-
-# System theme with grayscale
-chrome --set-color-scheme=&quot;system&quot; \
-       --set-grayscale-theme=&quot;true&quot;
-</code></pre>
-<h3 id="leveraging-chromes-theme-system">Leveraging Chrome's Theme System</h3>
-<p>The beauty was that Chrome already had:</p>
-<ul>
-<li>Material Design 3 (GM3) dynamic color generation</li>
-<li>ProcessSingleton IPC for notifying running instances</li>
-<li>ThemeService infrastructure for applying changes</li>
-<li>Support for all Material color variants</li>
-</ul>
-<p>Combined with <code>--no-startup-window</code>, themes update without opening new windows!</p>
-<h2 id="plan-b-the-gtk-theme-generator">Plan B: The GTK Theme Generator</h2>
-<p>While working on the Chrome patch, I also explored an alternative approach: what if we could generate GTK themes using Chrome&#39;s Material Design 3 logic?</p>
-<p>This led to <a href="https://github.com/hjanuschka/material-gtk-generator">material-gtk-generator</a>:</p>
-<pre><code class="language-sh"># Generate a GTK theme from Chrome&#39;s GM3 colors
-material-gtk-generator --seed-color=&quot;#FF6B6B&quot; --output-dir=~/.themes/
-</code></pre>
-<p>This was Plan B - if the Chromium CL didn&#39;t land, we could:</p>
-<ol>
-<li>Generate GTK themes matching Chrome&#39;s GM3 palette</li>
-<li>Apply them system-wide</li>
-<li>Chrome would pick them up automatically</li>
-</ol>
-<p>It&#39;s still useful for creating cohesive desktop themes!</p>
-<h2 id="the-micro-fork-getting-it-to-users-fast">The Micro Fork: Getting It to Users Fast</h2>
-<p>DHH didn&#39;t want to wait for Google&#39;s review process. He made a decisive move: <strong>invest in build infrastructure</strong> to ship a micro fork immediately.</p>
-<h3 id="what-happened">What Happened</h3>
-<ol>
-<li><strong>DHH&#39;s Decision</strong>: &quot;Let&#39;s ship this NOW to Omarchy users&quot;</li>
-<li><strong>Build Infrastructure</strong>: DHH funded dedicated build servers</li>
-<li><strong>The Micro Fork</strong>: <a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium</a> was born</li>
-<li><strong>Immediate Availability</strong>: Users got the feature within days, not months</li>
-</ol>
-<p>There&#39;s an excellent <a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">YouTube video by DHH</a> about the power of open source - showing how we went from idea to fork at incredible speed.</p>
-<h3 id="the-patch">The Patch</h3>
-<p>The entire feature is contained in a single CL (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a> - superseded by policy approach):</p>
-<ul>
-<li>Minimal, focused changes</li>
-<li>Clean integration with existing code</li>
-<li>Easy to maintain and rebase</li>
-<li>No invasive modifications</li>
-</ul>
-<h2 id="real-world-usage">Real-World Usage</h2>
-<h3 id="for-omarchy-users">For Omarchy Users</h3>
-<p>Omarchy users just use the built-in theme switcher - it all happens automatically in the background! The system handles the Chrome theming seamlessly alongside other applications.</p>
-<h3 id="for-power-users-and-scripters">For Power Users and Scripters</h3>
-<p>The CLI switches enable powerful automation:</p>
-<pre><code class="language-sh"># Match browser to terminal theme (Classic theme only)
-chromium --set-user-color=&quot;$(get-terminal-color-rgb)&quot;
-
-# Different themes for different workspaces with variants
-workspace-1: chromium --set-user-color=&quot;26,26,26&quot; \
-                      --set-color-variant=&quot;neutral&quot;
-workspace-2: chromium --set-user-color=&quot;0,43,54&quot; \
-                      --set-color-variant=&quot;tonal_spot&quot;
-
-# Time-based theming with color schemes
-if [[ $(date +%H) -gt 18 ]]; then
-  chromium --set-color-scheme=&quot;dark&quot; \
-           --set-user-color=&quot;0,0,0&quot;
-else
-  chromium --set-color-scheme=&quot;light&quot; \
-           --set-user-color=&quot;255,255,255&quot;
-fi
-
-# Update running instances without opening new window
-chromium --no-startup-window \
-         --set-user-color=&quot;100,200,150&quot; \
-         --set-color-variant=&quot;expressive&quot;
-</code></pre>
-<p>Note: This works specifically with Chrome&#39;s Classic theme. If you&#39;re using GTK/Qt themes, Chrome already responds to system theme changes automatically.</p>
-<h3 id="integration-with-window-managers">Integration with Window Managers</h3>
-<p>Window managers can now theme browsers to match the desktop:</p>
-<pre><code class="language-python"># Example i3wm integration
-import i3ipc
-import subprocess
-
-def on_workspace_focus(i3, event):
-    workspace = event.current.name
-    themes = {
-        &quot;1: term&quot;: (&quot;0,0,0&quot;, &quot;dark&quot;, &quot;neutral&quot;),
-        &quot;2: web&quot;: (&quot;26,26,46&quot;, &quot;dark&quot;, &quot;tonal_spot&quot;), 
-        &quot;3: code&quot;: (&quot;15,52,96&quot;, &quot;dark&quot;, &quot;vibrant&quot;)
-    }
-    if workspace in themes:
-        color, scheme, variant = themes[workspace]
-        subprocess.run([
-            &quot;chromium&quot;,
-            &quot;--no-startup-window&quot;,
-            f&quot;--set-user-color={color}&quot;,
-            f&quot;--set-color-scheme={scheme}&quot;,
-            f&quot;--set-color-variant={variant}&quot;
-        ])
-
-i3 = i3ipc.Connection()
-i3.on(&quot;workspace::focus&quot;, on_workspace_focus)
-i3.main()
-</code></pre>
-<h2 id="whats-next">What's Next?</h2>
-<h3 id="upstream-progress">Upstream Progress</h3>
-<p>The direct CLI approach (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>CL 6832165</strong></a>) was superseded by the policy-based solution (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>CL 6900896</strong></a>), which landed in Chrome 142.</p>
-<h3 id="extended-features">Extended Features</h3>
-<p>The complete feature set includes:</p>
-<ul>
-<li><strong>Material variants</strong>: tonal_spot, neutral, vibrant, expressive</li>
-<li><strong>Color schemes</strong>: light, dark, system</li>
-<li><strong>Grayscale mode</strong>: For accessibility</li>
-<li><strong>No startup window</strong>: Update running instances silently</li>
-<li><strong>GM3 color generation</strong>: Full Material Design 3 palette from seed color</li>
-</ul>
-<h3 id="other-browsers">Other Browsers</h3>
-<p>Brave has shown interest in downstream landing our patch.</p>
-<h2 id="try-it-yourself">Try It Yourself</h2>
-<h3 id="for-archomarchy-users">For Arch/Omarchy Users</h3>
-<p>The AUR package is available (replaces the standard Chromium):</p>
-<pre><code class="language-sh">yay -S omarchy-chromium-bin
-
-# Teal expressive theme
-chromium --set-user-color=&quot;78,205,196&quot; \
-         --set-color-variant=&quot;expressive&quot;
-
-# Reset to default
-chromium --set-default-theme
-</code></pre>
-<hr>
-<p><em>Sometimes the best features are already there, waiting to be exposed. Thanks to DHH&#39;s vision and investment, Omarchy users don&#39;t have to wait.</em></p>
-<p><strong>Links:</strong></p>
-<ul>
-<li><a href="https://x.com/hjanuschka/status/1954552977814855845">Original Tweet</a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>Policy refresh flag</strong></a></li>
-<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a></li>
-<li><a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium Fork</a></li>
-<li><a href="https://github.com/hjanuschka/material-gtk-generator">Material GTK Generator (Plan B)</a></li>
-<li><a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">DHH&#39;s Video: Power of OSS - Idea to Fork</a></li>
-<li><a href="https://omarchy.org">Omarchy.org</a></li>
-<li><a href="https://world.hey.com/dhh/omarchy-micro-forks-chromium-1287486d">DHH&#39;s Blog Post</a></li>
-</ul>
+<p>This produces <code>mini_installer.exe</code>: a self-contained installer. It installs Chromium into the user profile, registers the Start menu entry, and behaves like a normal application install.</p>
+<h2 id="summary">Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Command</th>
+<th>Artifact</th>
+<th>Recipient action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Linux (deb)</td>
+<td><code>autoninja -C out/Release chrome/installer/linux:stable_deb</code></td>
+<td><code>*.deb</code></td>
+<td><code>sudo dpkg -i</code></td>
+</tr>
+<tr>
+<td>Linux (rpm)</td>
+<td><code>autoninja -C out/Release chrome/installer/linux:stable_rpm</code></td>
+<td><code>*.rpm</code></td>
+<td><code>sudo rpm -i</code></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><code>binary_build.sh</code> (universal)</td>
+<td><code>Chromium.app</code></td>
+<td>copy to Applications, clear quarantine</td>
+</tr>
+<tr>
+<td>Windows</td>
+<td><code>autoninja -C out/Release mini_installer</code></td>
+<td><code>mini_installer.exe</code></td>
+<td>run the installer</td>
+</tr>
+</tbody></table>
+<p>The principle is consistent across platforms: build <strong>non-component release</strong>, then use the platform&#39;s packaging target. Skipping that step means distributing a directory of loose libraries and a binary that will not launch. Following it produces an artifact that installs like any other browser - which is what a recipient without a Chromium toolchain expects.</p>
 
     </div>
   </article>
