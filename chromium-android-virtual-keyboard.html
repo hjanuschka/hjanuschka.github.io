@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch) - Helmut Januschka</title>
-  <meta name="description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <title>Debugging Android's VirtualKeyboard Geometry - Helmut Januschka</title>
+  <meta name="description" content="Three CLs against one moving target: what is the keyboard inset, right now?">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)",
-    "description": "disconnect() should actually stop a connect() that never finished - on every platform, down to the OS",
+    "headline": "Debugging Android's VirtualKeyboard Geometry",
+    "description": "Three CLs against one moving target: what is the keyboard inset, right now?",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "@id": "https://januschka.com/chromium-android-virtual-keyboard.html"
     },
-    "keywords": "Chromium, C++ / Java / Web Bluetooth, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Java, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "target": "https://januschka.com/chromium-android-virtual-keyboard.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta property="og:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta property="og:title" content="Debugging Android's VirtualKeyboard Geometry">
+  <meta property="og:description" content="Three CLs against one moving target: what is the keyboard inset, right now?">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-webbluetooth-cancel-connect.html">
+  <meta property="og:url" content="https://januschka.com/chromium-android-virtual-keyboard.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta name="twitter:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta name="twitter:title" content="Debugging Android's VirtualKeyboard Geometry">
+  <meta name="twitter:description" content="Three CLs against one moving target: what is the keyboard inset, right now?">
   
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -858,10 +858,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)</h1>
+      <h1 class="blog-title">Debugging Android's VirtualKeyboard Geometry</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++ / Java / Web Bluetooth</span>
+        <span>🔧 C++ / Java</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -870,56 +870,44 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>disconnect() should actually stop a connect() that never finished - on every platform, down to the OS</em></p>
+<p><em>Three CLs against one moving target: what is the keyboard inset, right now?</em></p>
 <p><strong>Status:</strong> 🎉 Landed</p>
-<p><strong>Update 15.7.2026:</strong> ✅ Pending GATT connect cancellation is enabled on Windows and Android. The Android platform (AOSP) patch was ultimately not needed - the Chromium Android backend now handles the cancellation itself.</p>
 <h2 id="the-problem">The Problem</h2>
-<p>The Web Bluetooth spec is explicit: step 1 of <a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect"><code>disconnect()</code></a> clears the active algorithms map to cancel any pending connections. In practice, a <code>gatt.connect()</code> aimed at a device that is not currently available would just hang, and calling <code>disconnect()</code> did not reliably cancel it.</p>
-<p>The expected behavior is simple:</p>
-<ul>
-<li><code>gatt.connect()</code> starts while the known device is unavailable.</li>
-<li>Calling <code>disconnect()</code> should make the pending promise reject promptly with <code>AbortError</code>.</li>
-<li>After that, <code>requestDevice()</code> and a fresh connect attempt to another device should still work - no page reload required.</li>
-</ul>
-<p>This one has been open a while: <a href="https://issuetracker.google.com/issues/40502943">issue 40502943</a> was filed in January 2017.</p>
-<h2 id="the-background">The Background</h2>
-<p>The cross-platform core fix landed first:</p>
-<ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921"><strong>bluetooth: GATT disconnect to cancel ongoing connect attempt</strong></a></li>
-</ul>
-<p>That wires up the general &quot;disconnect cancels a pending connect&quot; behavior in Chromium. But the actual cancellation has to be honored by each platform backend - and below the browser, by the OS Bluetooth stack itself.</p>
-<h2 id="the-windows-backend">The Windows Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473"><strong>bluetooth: Enable pending GATT connect cancellation on Windows</strong></a></p>
-<p>On Windows, a <code>disconnect()</code> during an in-flight connect needs to fail the pending connection callbacks, and the canceled WinRT service discovery has to be handled without tripping the async-results <code>DCHECK</code>. This CL makes the Windows path actually reject the pending connect instead of leaving it dangling.</p>
-<h2 id="the-android-backend">The Android Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797"><strong>bluetooth: Enable pending GATT connect cancellation on Android</strong></a></p>
-<p>Android has the extra wrinkle described below: the platform does not reliably deliver a disconnect callback for a connect that was cancelled while still waiting for client registration. Rather than wait for an OS-level fix, the Chromium backend synthesizes the disconnect callback itself when the platform does not deliver one, and enables the <code>kWebBluetoothCancelConnect</code> feature on Android.</p>
-<h2 id="down-to-the-os-my-first-aosp-patch">Down to the OS: My First AOSP Patch</h2>
-<p>The most interesting part is that the fix does not stop at Chromium. On Android, <code>BluetoothGatt.disconnect()</code> did not cancel a <code>connectGatt()</code> that was still waiting for client registration - so a pending connect could not be cleanly aborted at the platform level.</p>
-<p>That fix lives in the Android OS itself, in <code>packages/modules/Bluetooth</code>:</p>
-<blockquote>
-<p><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933"><strong>Bluetooth: Cancel pending GATT connects</strong></a> - make <code>BluetoothGatt.disconnect()</code> cancel a <code>connectGatt()</code> request that is still waiting for client registration, and report the cancellation through <code>onConnectionStateChange()</code>.</p>
-</blockquote>
-<p>This was my first patch to the Android platform (AOSP), and while the review confirmed the platform gap, the change was ultimately abandoned in favor of handling the cancellation in Chromium&#39;s Android backend - synthesizing the missing disconnect callback there works on every Android version already in the field, whereas a platform fix would only help devices that receive the updated Bluetooth module. Still a useful detour: a Web Bluetooth spec line about <code>disconnect()</code> ends up reaching three layers down, into the OS Bluetooth stack, before the practical fix lands one layer up.</p>
-<h2 id="the-test-rig">The Test Rig</h2>
-<p>Verifying a &quot;cancel&quot; path needs a device that you can make appear and then yank away. The <a href="https://static.januschka.com/i-40502943/">sampler</a> uses ESP32-C3 firmware advertising as <em>dino c(h)ancler</em> with serial commands to start/stop advertising, disconnect the central, or deep-sleep - so you can reliably create the &quot;device went away mid-connect&quot; condition.</p>
-<p>The flow:</p>
+<p>The <a href="https://developer.mozilla.org/en-US/docs/Web/API/VirtualKeyboard_API">VirtualKeyboard API</a> gives web pages the software keyboard&#39;s geometry (<code>navigator.virtualKeyboard.boundingRect</code>, the <code>keyboard-inset-*</code> CSS env variables) so layouts can adapt instead of being blindly resized. For that to be usable, the numbers have to be right - and on Android they frequently were not.</p>
+<p>The most thorough public documentation of just how wrong they were came from Zouhir Chahoud - a co-author of the original Virtual Keyboard API explainer at Microsoft Edge - in <a href="https://zouhir.org/blog/virtual-keyboard-api/">&quot;The Virtual Keyboard API Is Broken Where It Matters Most&quot;</a>. The post makes an uncomfortable point: Chromium is the <em>only</em> engine that ships this API at all (Safari and Firefox still have nothing, six years after the spec), and the one shipping implementation reported broken geometry in three distinct ways. It came with reproducible demos (an <a href="https://vkb-overshoot-detector-zouhir.yoyo.codes">overshoot detector</a> and an <a href="https://vkb-inset-inspector-zouhir.yoyo.codes">inset inspector</a>) and three filed Chromium bugs:</p>
 <ol>
-<li>Select the ESP32-C3 while it is advertising.</li>
-<li>Make it unavailable (stop advertising / deep sleep) and start a connect.</li>
-<li>Hit <strong>Disconnect / cancel pending connect</strong> - the pending promise should reject with <code>AbortError</code>.</li>
-<li>Confirm a fresh <code>requestDevice()</code> + connect to another device still works without reloading.</li>
+<li><a href="https://issues.chromium.org/issues/493412612">493412612</a>: <code>geometrychange</code> reports keyboard heights that spike past the final resting value, then correct - e.g. 343px, 392px, back to 343px. Any layout keyed off the value visibly jumps, and no amount of <code>requestAnimationFrame</code> discipline helps, because the source data itself is wrong</li>
+<li><a href="https://issues.chromium.org/issues/493415366">493415366</a>: the <code>keyboard-inset-*</code> CSS environment variables contained raw rect coordinates instead of insets - <code>keyboard-inset-bottom</code> reported the rect&#39;s bottom edge coordinate (409px) rather than the distance from the viewport&#39;s bottom edge (0px). Only <code>keyboard-inset-height</code> worked, and largely by coincidence</li>
+<li><a href="https://issues.chromium.org/issues/493416495">493416495</a>: <code>boundingRect</code> was in the wrong coordinate space - every vertical coordinate offset by the browser chrome height instead of being relative to the layout viewport as the spec requires</li>
 </ol>
-<p>The sampler ships a patched ARM64 ChromePublic APK and the firmware source so reviewers can reproduce it on real hardware.</p>
+<p>His diagnosis was blunt and correct: &quot;It&#39;s not your code.&quot; These were platform bugs, not misuse.</p>
+<p>On top of those three, there was a related class of transient bugs (<a href="https://issues.chromium.org/issues/450752874">450752874</a>): during show/hide animations, <code>window.innerHeight</code> would briefly overshoot or undershoot the final value, firing bogus resize events mid-animation. That 392px-vs-343px overshoot in the detector demo is a 49px difference - the height of the system navigation bar, leaking into the keyboard height while insets were in flight. The transient bugs are the nastiest class: everything settles to correct values, so screenshots look fine, but pages that react to geometry events flicker through a wrong intermediate state on every keyboard show or dismiss.</p>
+<p>The suggested workarounds all fail for structural reasons, as the article lays out: debouncing waits out the animation but defeats the entire point of a streaming geometry API, and there is no signal for &quot;settled&quot; - any timeout is a device-specific guess.</p>
+<h2 id="the-fixes">The Fixes</h2>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7686010"><strong>Fix VirtualKeyboard geometry and inset calculations on Android</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7691492"><strong>Fix transient VK innerHeight overshoot during inset transitions</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7806510"><strong>Fix transient VK innerHeight undershoot during keyboard dismiss</strong></a></li>
+</ul>
+<h3 id="geometry-agree-on-a-coordinate-space">Geometry: agree on a coordinate space</h3>
+<p>The geometry fix addresses all three of the filed bugs at their common root. Keyboard geometry arrives from Android as window insets, but was being consumed in a mix of coordinate spaces. The fix normalizes the overlay rect and the CSS keyboard inset values to viewport insets - making <code>boundingRect</code> actually relative to the layout viewport, and making <code>keyboard-inset-*</code> actual insets from the viewport edges as the spec requires - and subtracts the bottom system/navigation bar insets from the keyboard height. The keyboard rect should describe the keyboard, not the keyboard plus the gesture bar. Regression tests landed in three layers (base, chrome, blink) since the values cross all of them.</p>
+<h3 id="overshoot-do-not-compensate-with-stale-numbers">Overshoot: do not compensate with stale numbers</h3>
+<p>The overshoot fix handles keyboard <em>appearance</em>. In overlay and resizes-visual modes, inset compensation could run against a layout that had not caught up yet, so <code>innerHeight</code> briefly reported a value larger than it would settle at. The fix defers and clamps the compensation during these layout races, with regression tests pinning down the intermediate inset steps - asserting not just the final value but the sequence.</p>
+<h3 id="undershoot-hold-the-baseline-while-state-is-in-flight">Undershoot: hold the baseline while state is in flight</h3>
+<p>The undershoot fix is the mirror image on keyboard <em>dismiss</em>: <code>innerHeight</code> would briefly dip below the final value while insets and WebContents height updated in different orders. The fix establishes a stable height baseline (gated on the keyboard visibility delegate, so it only applies in outsets mode) and clamps the WebContents height to that baseline in both directions while keyboard state is in flight.</p>
+<h2 id="the-common-thread">The Common Thread</h2>
+<p>All three bugs are the same underlying issue wearing different hats: keyboard geometry on Android is assembled from multiple asynchronous sources - window insets, WebContents size, keyboard visibility, animation state - and any consumer that reads them mid-transition sees a frankenstate. The fixes do not try to make the sources synchronous; they identify the values pages actually observe (<code>innerHeight</code>, the VK rect, CSS insets) and guarantee those never expose an intermediate combination.</p>
+<p>Testing transient states is the hard part. A test asserting the final value passes both before and after these fixes; the regression tests here had to capture the intermediate steps to demonstrate the bug at all.</p>
+<h2 id="thanks">Thanks</h2>
+<p>Thanks to <strong>Zouhir Chahoud</strong> for the writeup, the reproducible demos, and the precisely-filed bugs - a report that maps &quot;the API feels broken&quot; to three concrete, testable defects is the reason fixes like these can be scoped and verified at all. And thanks to reviewers <strong>David Bokan</strong>, <strong>Daniel Cheng</strong>, <strong>Calder Kitagawa</strong>, <strong>Matthew Jones</strong> and <strong>David Trainor</strong> for the reviews across blink, content, and Android UI.</p>
 <h2 id="links">Links</h2>
 <ul>
-<li><a href="https://issuetracker.google.com/issues/40502943">Issue 40502943 - disconnect should cancel pending connect</a></li>
-<li><a href="https://static.januschka.com/i-40502943/">Interactive sampler + APK + firmware</a></li>
-<li><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933">AOSP CL 4105933 - Cancel pending GATT connects (Android, abandoned)</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473">Chromium CL 7899473 - Windows backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797">Chromium CL 7964797 - Android backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921">Chromium CL 6798921 - core fix</a></li>
-<li><a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect">Web Bluetooth spec: disconnect()</a></li>
+<li><a href="https://zouhir.org/blog/virtual-keyboard-api/">The Virtual Keyboard API Is Broken Where It Matters Most (zouhir.org)</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/VirtualKeyboard_API">VirtualKeyboard API on MDN</a></li>
+<li><a href="https://issues.chromium.org/issues/493412612">Chromium Bug 493412612</a> (overshoot)</li>
+<li><a href="https://issues.chromium.org/issues/493415366">Chromium Bug 493415366</a> (CSS insets are not insets)</li>
+<li><a href="https://issues.chromium.org/issues/493416495">Chromium Bug 493416495</a> (boundingRect coordinate space)</li>
+<li><a href="https://issues.chromium.org/issues/450752874">Chromium Bug 450752874</a> (transient innerHeight)</li>
 </ul>
 
     </div>

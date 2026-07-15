@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch) - Helmut Januschka</title>
-  <meta name="description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <title>Ctrl+Alt+Click: Opening Links in Split View - Helmut Januschka</title>
+  <meta name="description" content="Adding a new window-open disposition through the whole navigation pipeline">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)",
-    "description": "disconnect() should actually stop a connect() that never finished - on every platform, down to the OS",
+    "headline": "Ctrl+Alt+Click: Opening Links in Split View",
+    "description": "Adding a new window-open disposition through the whole navigation pipeline",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "@id": "https://januschka.com/chromium-split-view-links.html"
     },
-    "keywords": "Chromium, C++ / Java / Web Bluetooth, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "target": "https://januschka.com/chromium-split-view-links.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta property="og:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta property="og:title" content="Ctrl+Alt+Click: Opening Links in Split View">
+  <meta property="og:description" content="Adding a new window-open disposition through the whole navigation pipeline">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-webbluetooth-cancel-connect.html">
+  <meta property="og:url" content="https://januschka.com/chromium-split-view-links.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta name="twitter:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta name="twitter:title" content="Ctrl+Alt+Click: Opening Links in Split View">
+  <meta name="twitter:description" content="Adding a new window-open disposition through the whole navigation pipeline">
   
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -858,10 +858,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)</h1>
+      <h1 class="blog-title">Ctrl+Alt+Click: Opening Links in Split View</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++ / Java / Web Bluetooth</span>
+        <span>🔧 C++</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -870,56 +870,38 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>disconnect() should actually stop a connect() that never finished - on every platform, down to the OS</em></p>
+<p><em>Adding a new window-open disposition through the whole navigation pipeline</em></p>
 <p><strong>Status:</strong> 🎉 Landed</p>
-<p><strong>Update 15.7.2026:</strong> ✅ Pending GATT connect cancellation is enabled on Windows and Android. The Android platform (AOSP) patch was ultimately not needed - the Chromium Android backend now handles the cancellation itself.</p>
-<h2 id="the-problem">The Problem</h2>
-<p>The Web Bluetooth spec is explicit: step 1 of <a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect"><code>disconnect()</code></a> clears the active algorithms map to cancel any pending connections. In practice, a <code>gatt.connect()</code> aimed at a device that is not currently available would just hang, and calling <code>disconnect()</code> did not reliably cancel it.</p>
-<p>The expected behavior is simple:</p>
+<h2 id="the-idea">The Idea</h2>
+<p>Chrome&#39;s split view lets two tabs share a window side by side. There was already a way to get a link into it: right-click the link and pick &quot;Open in split view&quot; from the context menu. But the context menu is the slow path. The other link destinations have direct modifier gestures - Ctrl+Click for a background tab, Shift+Click for a new window - and split view had no equivalent: two clicks and a menu scan instead of one gesture.</p>
+<p>This change adds the missing shortcut: <strong>Ctrl+Alt+Click</strong> (Cmd+Opt+Click on macOS) opens the link directly in a split view next to the current tab, no menu involved.</p>
+<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/456470504">456470504</a></p>
+<h2 id="why-this-touches-three-layers">Why This Touches Three Layers</h2>
+<p>A modifier-click on a link starts its life in the renderer, and the decision about what to do with it is encoded as a <code>WindowOpenDisposition</code> - <code>NEW_BACKGROUND_TAB</code>, <code>NEW_WINDOW</code>, and so on. Adding a new disposition means threading it through every layer that inspects the enum:</p>
 <ul>
-<li><code>gatt.connect()</code> starts while the known device is unavailable.</li>
-<li>Calling <code>disconnect()</code> should make the pending promise reject promptly with <code>AbortError</code>.</li>
-<li>After that, <code>requestDevice()</code> and a fresh connect attempt to another device should still work - no page reload required.</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7557431"><strong>Add Ctrl+Alt+Click to open links in split view</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7735743"><strong>content: allow NEW_SPLIT_VIEW renderer disposition</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7776727"><strong>Cache split-view feature check in navigation policy</strong></a></li>
 </ul>
-<p>This one has been open a while: <a href="https://issuetracker.google.com/issues/40502943">issue 40502943</a> was filed in January 2017.</p>
-<h2 id="the-background">The Background</h2>
-<p>The cross-platform core fix landed first:</p>
-<ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921"><strong>bluetooth: GATT disconnect to cancel ongoing connect attempt</strong></a></li>
-</ul>
-<p>That wires up the general &quot;disconnect cancels a pending connect&quot; behavior in Chromium. But the actual cancellation has to be honored by each platform backend - and below the browser, by the OS Bluetooth stack itself.</p>
-<h2 id="the-windows-backend">The Windows Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473"><strong>bluetooth: Enable pending GATT connect cancellation on Windows</strong></a></p>
-<p>On Windows, a <code>disconnect()</code> during an in-flight connect needs to fail the pending connection callbacks, and the canceled WinRT service discovery has to be handled without tripping the async-results <code>DCHECK</code>. This CL makes the Windows path actually reject the pending connect instead of leaving it dangling.</p>
-<h2 id="the-android-backend">The Android Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797"><strong>bluetooth: Enable pending GATT connect cancellation on Android</strong></a></p>
-<p>Android has the extra wrinkle described below: the platform does not reliably deliver a disconnect callback for a connect that was cancelled while still waiting for client registration. Rather than wait for an OS-level fix, the Chromium backend synthesizes the disconnect callback itself when the platform does not deliver one, and enables the <code>kWebBluetoothCancelConnect</code> feature on Android.</p>
-<h2 id="down-to-the-os-my-first-aosp-patch">Down to the OS: My First AOSP Patch</h2>
-<p>The most interesting part is that the fix does not stop at Chromium. On Android, <code>BluetoothGatt.disconnect()</code> did not cancel a <code>connectGatt()</code> that was still waiting for client registration - so a pending connect could not be cleanly aborted at the platform level.</p>
-<p>That fix lives in the Android OS itself, in <code>packages/modules/Bluetooth</code>:</p>
-<blockquote>
-<p><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933"><strong>Bluetooth: Cancel pending GATT connects</strong></a> - make <code>BluetoothGatt.disconnect()</code> cancel a <code>connectGatt()</code> request that is still waiting for client registration, and report the cancellation through <code>onConnectionStateChange()</code>.</p>
-</blockquote>
-<p>This was my first patch to the Android platform (AOSP), and while the review confirmed the platform gap, the change was ultimately abandoned in favor of handling the cancellation in Chromium&#39;s Android backend - synthesizing the missing disconnect callback there works on every Android version already in the field, whereas a platform fix would only help devices that receive the updated Bluetooth module. Still a useful detour: a Web Bluetooth spec line about <code>disconnect()</code> ends up reaching three layers down, into the OS Bluetooth stack, before the practical fix lands one layer up.</p>
-<h2 id="the-test-rig">The Test Rig</h2>
-<p>Verifying a &quot;cancel&quot; path needs a device that you can make appear and then yank away. The <a href="https://static.januschka.com/i-40502943/">sampler</a> uses ESP32-C3 firmware advertising as <em>dino c(h)ancler</em> with serial commands to start/stop advertising, disconnect the central, or deep-sleep - so you can reliably create the &quot;device went away mid-connect&quot; condition.</p>
-<p>The flow:</p>
 <ol>
-<li>Select the ESP32-C3 while it is advertising.</li>
-<li>Make it unavailable (stop advertising / deep sleep) and start a connect.</li>
-<li>Hit <strong>Disconnect / cancel pending connect</strong> - the pending promise should reject with <code>AbortError</code>.</li>
-<li>Confirm a fresh <code>requestDevice()</code> + connect to another device still works without reloading.</li>
+<li><strong>Blink</strong> maps the modifier combination to <code>NEW_SPLIT_VIEW</code> in the navigation policy that classifies input events</li>
+<li><strong>content/</strong> carries the disposition across the renderer/browser boundary</li>
+<li><strong>chrome/</strong> handles it in the browser: create the neighboring tab and form the split</li>
 </ol>
-<p>The sampler ships a patched ARM64 ChromePublic APK and the firmware source so reviewers can reproduce it on real hardware.</p>
+<p>The main CL collected reviewers from each layer - input handling, navigation, security, and the split view feature itself - which is typical for anything that widens a cross-process enum.</p>
+<h2 id="the-renderer-kill-bug">The Renderer Kill Bug</h2>
+<p>Bugs surfaced after the initial landing - and this one is the instructive kind. The browser process validates every disposition a renderer sends: anything unexpected is treated as a compromised renderer, and the process is killed with a <code>RFH_OPEN_URL_INVALID_DISPOSITION</code> bad message.</p>
+<p><code>NEW_SPLIT_VIEW</code> was wired into the click path, but one <code>OpenURL</code> route still reached <code>IsValidRendererDisposition</code> without the new value in its allowlist. Result: a Cmd+Opt+Click that took that route killed the renderer - the tab just crashed. The fix is a one-liner adding the disposition to the validation, plus a test asserting the navigation survives.</p>
+<p>It is a good illustration of how the mojo boundary works in Chromium: the browser does not trust the renderer&#39;s claims, so every new enum value must be explicitly allowed everywhere it can arrive, not just where it was first plumbed.</p>
+<h2 id="the-hot-path-cleanup">The Hot-Path Cleanup</h2>
+<p>A smaller cleanup also came out of post-landing review feedback: the split-view feature check was being evaluated repeatedly inside <code>NavigationPolicyFromEvent</code>, which runs for every classified input event. Computing it once and passing it down removes the repeated feature lookups from a hot path without changing behavior.</p>
+<h2 id="thanks">Thanks</h2>
+<p>Special thanks to <strong>Garry Klassen</strong> for the help and support along the way.</p>
+<p>Thanks to reviewers <strong>Mike West</strong>, <strong>Daniel Cheng</strong>, <strong>Sergey Ulanov</strong>, <strong>ccameron</strong>, <strong>Darryl James</strong>, <strong>April Zhou</strong>, <strong>Rakina Zata Amni</strong> and <strong>Takashi Toyoshima</strong> for reviews spanning input, content, security, and split view.</p>
 <h2 id="links">Links</h2>
 <ul>
-<li><a href="https://issuetracker.google.com/issues/40502943">Issue 40502943 - disconnect should cancel pending connect</a></li>
-<li><a href="https://static.januschka.com/i-40502943/">Interactive sampler + APK + firmware</a></li>
-<li><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933">AOSP CL 4105933 - Cancel pending GATT connects (Android, abandoned)</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473">Chromium CL 7899473 - Windows backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797">Chromium CL 7964797 - Android backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921">Chromium CL 6798921 - core fix</a></li>
-<li><a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect">Web Bluetooth spec: disconnect()</a></li>
+<li><a href="https://issues.chromium.org/issues/456470504">Chromium Bug 456470504</a></li>
+<li><a href="https://source.chromium.org/chromium/chromium/src/+/main:ui/base/window_open_disposition.h">WindowOpenDisposition</a></li>
 </ul>
 
     </div>

@@ -6,7 +6,9 @@ tech: "C++ / Linux / Input"
 
 *Why a long-press on Linux opens a menu instead of picking up the thing you wanted to drag*
 
-**Status:** 🚧 In Review
+**Status:** 🎉 Shipped (enabled by default)
+
+**Update 15.7.2026:** ✅ The Chromium change landed and touch drag-and-drop is now enabled by default on Linux. The Hyprland compositor fix is merged as well; the Sway one is still in review.
 
 ## The Problem
 
@@ -29,7 +31,7 @@ On Windows the preference tracks the touch drag-and-drop feature, so long-press 
 
 ## The Fix
 
-<span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Enable touch drag-and-drop defaults on Linux**](https://chromium-review.googlesource.com/c/chromium/src/+/7824980)
+<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Enable touch drag-and-drop defaults on Linux**](https://chromium-review.googlesource.com/c/chromium/src/+/7824980)
 
 Make `touch_dragend_context_menu` follow `kTouchDragAndDrop` on Linux, matching the Windows behavior, so a long-press drag does what you expect instead of popping the context menu. The change adds coverage in `ChromeContentBrowserClientAIPrefsTest` so the Linux default stays tied to the feature flag and does not silently regress.
 
@@ -58,7 +60,7 @@ The browser-side change is only half the story. Chromium asks for touch drag-and
 
 wlroots-based compositors were dropping or not updating touch focus mid-drag, so the drop never reached the right surface. I sent fixes upstream so touch drag-and-drop works there too:
 
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Hyprland: dnd - fix touch-driven drag-and-drop**](https://github.com/hyprwm/Hyprland/pull/15077)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Hyprland: dnd - fix touch-driven drag-and-drop**](https://github.com/hyprwm/Hyprland/pull/15077)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Sway: input/seatop_down - update touch drag focus while dragging**](https://github.com/swaywm/sway/pull/9182)
 
 ## Why It Is Worth Doing

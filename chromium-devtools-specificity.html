@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch) - Helmut Januschka</title>
-  <meta name="description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <title>DevTools: Showing Why a Selector Has Its Specificity - Helmut Januschka</title>
+  <meta name="description" content="From a bare (a,b,c) tuple to a per-part breakdown in the selector tooltip">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)",
-    "description": "disconnect() should actually stop a connect() that never finished - on every platform, down to the OS",
+    "headline": "DevTools: Showing Why a Selector Has Its Specificity",
+    "description": "From a bare (a,b,c) tuple to a per-part breakdown in the selector tooltip",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "@id": "https://januschka.com/chromium-devtools-specificity.html"
     },
-    "keywords": "Chromium, C++ / Java / Web Bluetooth, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / TypeScript, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "target": "https://januschka.com/chromium-devtools-specificity.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta property="og:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta property="og:title" content="DevTools: Showing Why a Selector Has Its Specificity">
+  <meta property="og:description" content="From a bare (a,b,c) tuple to a per-part breakdown in the selector tooltip">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-webbluetooth-cancel-connect.html">
+  <meta property="og:url" content="https://januschka.com/chromium-devtools-specificity.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta name="twitter:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta name="twitter:title" content="DevTools: Showing Why a Selector Has Its Specificity">
+  <meta name="twitter:description" content="From a bare (a,b,c) tuple to a per-part breakdown in the selector tooltip">
   
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -858,10 +858,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)</h1>
+      <h1 class="blog-title">DevTools: Showing Why a Selector Has Its Specificity</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++ / Java / Web Bluetooth</span>
+        <span>🔧 C++ / TypeScript</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -870,56 +870,43 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>disconnect() should actually stop a connect() that never finished - on every platform, down to the OS</em></p>
+<p><em>From a bare (a,b,c) tuple to a per-part breakdown in the selector tooltip</em></p>
 <p><strong>Status:</strong> 🎉 Landed</p>
-<p><strong>Update 15.7.2026:</strong> ✅ Pending GATT connect cancellation is enabled on Windows and Android. The Android platform (AOSP) patch was ultimately not needed - the Chromium Android backend now handles the cancellation itself.</p>
 <h2 id="the-problem">The Problem</h2>
-<p>The Web Bluetooth spec is explicit: step 1 of <a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect"><code>disconnect()</code></a> clears the active algorithms map to cancel any pending connections. In practice, a <code>gatt.connect()</code> aimed at a device that is not currently available would just hang, and calling <code>disconnect()</code> did not reliably cancel it.</p>
-<p>The expected behavior is simple:</p>
+<p>Hovering a selector in the DevTools Styles pane shows its specificity as a <code>(a, b, c)</code> tuple. That answers <em>what</em> the specificity is, but not <em>why</em>. For a selector like:</p>
+<pre><code class="language-css">#nav ul.menu &gt; li:hover a[href^=&quot;https&quot;]
+</code></pre>
+<p>the tooltip said <code>(1, 3, 3)</code> and left you to do the accounting yourself: which parts count as IDs? Does <code>:hover</code> go into b or c? What about <code>[href^=&quot;https&quot;]</code>? For anyone who does not have the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity">specificity rules</a> memorized - which is most people, most of the time - the tuple alone does not help debug why one rule beats another.</p>
+<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/353436867">353436867</a></p>
+<h2 id="the-fix">The Fix</h2>
 <ul>
-<li><code>gatt.connect()</code> starts while the known device is unavailable.</li>
-<li>Calling <code>disconnect()</code> should make the pending promise reject promptly with <code>AbortError</code>.</li>
-<li>After that, <code>requestDevice()</code> and a fresh connect attempt to another device should still work - no page reload required.</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7793254"><strong>Expose CSS specificity component breakdown via CDP</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7645008"><strong>Show CSS specificity breakdown in selector tooltip</strong></a></li>
 </ul>
-<p>This one has been open a while: <a href="https://issuetracker.google.com/issues/40502943">issue 40502943</a> was filed in January 2017.</p>
-<h2 id="the-background">The Background</h2>
-<p>The cross-platform core fix landed first:</p>
+<p>The tooltip now lists which simple selectors contribute to each component:</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921"><strong>bluetooth: GATT disconnect to cancel ongoing connect attempt</strong></a></li>
+<li><strong>a (1)</strong>: <code>#nav</code></li>
+<li><strong>b (3)</strong>: <code>.menu</code>, <code>:hover</code>, <code>[href^=&quot;https&quot;]</code></li>
+<li><strong>c (3)</strong>: <code>ul</code>, <code>li</code>, <code>a</code></li>
 </ul>
-<p>That wires up the general &quot;disconnect cancels a pending connect&quot; behavior in Chromium. But the actual cancellation has to be honored by each platform backend - and below the browser, by the OS Bluetooth stack itself.</p>
-<h2 id="the-windows-backend">The Windows Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473"><strong>bluetooth: Enable pending GATT connect cancellation on Windows</strong></a></p>
-<p>On Windows, a <code>disconnect()</code> during an in-flight connect needs to fail the pending connection callbacks, and the canceled WinRT service discovery has to be handled without tripping the async-results <code>DCHECK</code>. This CL makes the Windows path actually reject the pending connect instead of leaving it dangling.</p>
-<h2 id="the-android-backend">The Android Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797"><strong>bluetooth: Enable pending GATT connect cancellation on Android</strong></a></p>
-<p>Android has the extra wrinkle described below: the platform does not reliably deliver a disconnect callback for a connect that was cancelled while still waiting for client registration. Rather than wait for an OS-level fix, the Chromium backend synthesizes the disconnect callback itself when the platform does not deliver one, and enables the <code>kWebBluetoothCancelConnect</code> feature on Android.</p>
-<h2 id="down-to-the-os-my-first-aosp-patch">Down to the OS: My First AOSP Patch</h2>
-<p>The most interesting part is that the fix does not stop at Chromium. On Android, <code>BluetoothGatt.disconnect()</code> did not cancel a <code>connectGatt()</code> that was still waiting for client registration - so a pending connect could not be cleanly aborted at the platform level.</p>
-<p>That fix lives in the Android OS itself, in <code>packages/modules/Bluetooth</code>:</p>
-<blockquote>
-<p><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933"><strong>Bluetooth: Cancel pending GATT connects</strong></a> - make <code>BluetoothGatt.disconnect()</code> cancel a <code>connectGatt()</code> request that is still waiting for client registration, and report the cancellation through <code>onConnectionStateChange()</code>.</p>
-</blockquote>
-<p>This was my first patch to the Android platform (AOSP), and while the review confirmed the platform gap, the change was ultimately abandoned in favor of handling the cancellation in Chromium&#39;s Android backend - synthesizing the missing disconnect callback there works on every Android version already in the field, whereas a platform fix would only help devices that receive the updated Bluetooth module. Still a useful detour: a Web Bluetooth spec line about <code>disconnect()</code> ends up reaching three layers down, into the OS Bluetooth stack, before the practical fix lands one layer up.</p>
-<h2 id="the-test-rig">The Test Rig</h2>
-<p>Verifying a &quot;cancel&quot; path needs a device that you can make appear and then yank away. The <a href="https://static.januschka.com/i-40502943/">sampler</a> uses ESP32-C3 firmware advertising as <em>dino c(h)ancler</em> with serial commands to start/stop advertising, disconnect the central, or deep-sleep - so you can reliably create the &quot;device went away mid-connect&quot; condition.</p>
-<p>The flow:</p>
-<ol>
-<li>Select the ESP32-C3 while it is advertising.</li>
-<li>Make it unavailable (stop advertising / deep sleep) and start a connect.</li>
-<li>Hit <strong>Disconnect / cancel pending connect</strong> - the pending promise should reject with <code>AbortError</code>.</li>
-<li>Confirm a fresh <code>requestDevice()</code> + connect to another device still works without reloading.</li>
-</ol>
-<p>The sampler ships a patched ARM64 ChromePublic APK and the firmware source so reviewers can reproduce it on real hardware.</p>
+<h2 id="why-the-breakdown-comes-from-blink">Why the Breakdown Comes from Blink</h2>
+<p>The tempting shortcut is to re-parse the selector in the DevTools frontend and classify the parts in TypeScript. That approach was rejected for a simple reason: it means maintaining a second CSS selector parser that will drift from the real one.</p>
+<p>The cases that make this hard are exactly the cases where the tooltip is useful:</p>
+<ul>
+<li><code>:is()</code> and <code>:has()</code> take the specificity of their most specific argument</li>
+<li><code>:where()</code> contributes zero, regardless of its contents</li>
+<li><code>:not()</code> takes the specificity of its most specific argument, but is not a &quot;pseudo-class&quot; for counting purposes</li>
+<li><code>:nth-child(2n of .foo)</code> combines the pseudo-class count with its selector list argument</li>
+</ul>
+<p>Blink already computes all of this correctly in <code>CSSSelector::Specificity()</code>. The CDP change walks the selector the same way the engine does and attaches per-simple-selector contributions to the existing <code>CSS.Specificity</code> structure in the protocol. The frontend just renders what the engine reports - no client-side parsing, no drift.</p>
+<p>Since it is part of the Chrome DevTools Protocol, the breakdown is also available to anything else speaking CDP - editors, linters, or other tooling that wants to explain specificity with engine-accurate numbers.</p>
+<h2 id="thanks">Thanks</h2>
+<p>Thanks to reviewers <strong>Rune Lillesveen</strong> and <strong>Philip Pfaffe</strong> on the Blink/CDP side and <strong>Jack Franklin</strong> on the DevTools frontend side.</p>
 <h2 id="links">Links</h2>
 <ul>
-<li><a href="https://issuetracker.google.com/issues/40502943">Issue 40502943 - disconnect should cancel pending connect</a></li>
-<li><a href="https://static.januschka.com/i-40502943/">Interactive sampler + APK + firmware</a></li>
-<li><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933">AOSP CL 4105933 - Cancel pending GATT connects (Android, abandoned)</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473">Chromium CL 7899473 - Windows backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797">Chromium CL 7964797 - Android backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921">Chromium CL 6798921 - core fix</a></li>
-<li><a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect">Web Bluetooth spec: disconnect()</a></li>
+<li><a href="https://issues.chromium.org/issues/353436867">Chromium Bug 353436867</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity">MDN: Specificity</a></li>
+<li><a href="https://www.w3.org/TR/selectors-4/#specificity-rules">CSS Selectors Level 4: Calculating Specificity</a></li>
 </ul>
 
     </div>

@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch) - Helmut Januschka</title>
-  <meta name="description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <title>Shipping Request.isReloadNavigation - Helmut Januschka</title>
+  <meta name="description" content="A small fetch API attribute, and the full path from spec to enabled-by-default">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)",
-    "description": "disconnect() should actually stop a connect() that never finished - on every platform, down to the OS",
+    "headline": "Shipping Request.isReloadNavigation",
+    "description": "A small fetch API attribute, and the full path from spec to enabled-by-default",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "@id": "https://januschka.com/chromium-request-isreloadnavigation.html"
     },
-    "keywords": "Chromium, C++ / Java / Web Bluetooth, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Web Platform, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "target": "https://januschka.com/chromium-request-isreloadnavigation.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta property="og:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta property="og:title" content="Shipping Request.isReloadNavigation">
+  <meta property="og:description" content="A small fetch API attribute, and the full path from spec to enabled-by-default">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-webbluetooth-cancel-connect.html">
+  <meta property="og:url" content="https://januschka.com/chromium-request-isreloadnavigation.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta name="twitter:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta name="twitter:title" content="Shipping Request.isReloadNavigation">
+  <meta name="twitter:description" content="A small fetch API attribute, and the full path from spec to enabled-by-default">
   
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -858,10 +858,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)</h1>
+      <h1 class="blog-title">Shipping Request.isReloadNavigation</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++ / Java / Web Bluetooth</span>
+        <span>🔧 C++ / Web Platform</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -870,56 +870,52 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>disconnect() should actually stop a connect() that never finished - on every platform, down to the OS</em></p>
-<p><strong>Status:</strong> 🎉 Landed</p>
-<p><strong>Update 15.7.2026:</strong> ✅ Pending GATT connect cancellation is enabled on Windows and Android. The Android platform (AOSP) patch was ultimately not needed - the Chromium Android backend now handles the cancellation itself.</p>
-<h2 id="the-problem">The Problem</h2>
-<p>The Web Bluetooth spec is explicit: step 1 of <a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect"><code>disconnect()</code></a> clears the active algorithms map to cancel any pending connections. In practice, a <code>gatt.connect()</code> aimed at a device that is not currently available would just hang, and calling <code>disconnect()</code> did not reliably cancel it.</p>
-<p>The expected behavior is simple:</p>
+<p><em>A small fetch API attribute, and the full path from spec to enabled-by-default</em></p>
+<p><strong>Status:</strong> 🎉 Shipped (enabled by default)</p>
+<h2 id="the-gap">The Gap</h2>
+<p>The Fetch spec defines <a href="https://fetch.spec.whatwg.org/#dom-request-isreloadnavigation"><code>Request.isReloadNavigation</code></a>: inside a service worker, a navigation request can tell you whether it came from a reload. The attribute had been in the spec for years and Firefox already shipped it - Chromium did not, which left a hole in cross-browser service worker code.</p>
+<p>The use case is straightforward. A service worker deciding between cache-first and network-first can treat an explicit reload as a signal that the user wants fresh content:</p>
+<pre><code class="language-js">self.addEventListener(&#39;fetch&#39;, (event) =&gt; {
+  if (event.request.isReloadNavigation) {
+    // User hit reload - bypass the cache
+    event.respondWith(fetch(event.request));
+    return;
+  }
+  event.respondWith(caches.match(event.request) || fetch(event.request));
+});
+</code></pre>
+<p>Before this shipped, the common workaround was sniffing <code>event.request.cache === &#39;no-cache&#39;</code> - which conflates reloads with other cache modes and does not express intent.</p>
+<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/40487194">40487194</a></p>
+<h2 id="the-implementation">The Implementation</h2>
 <ul>
-<li><code>gatt.connect()</code> starts while the known device is unavailable.</li>
-<li>Calling <code>disconnect()</code> should make the pending promise reject promptly with <code>AbortError</code>.</li>
-<li>After that, <code>requestDevice()</code> and a fresh connect attempt to another device should still work - no page reload required.</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7137783"><strong>Add Request.isReloadNavigation attribute</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7806333"><strong>Ship RequestIsReloadNavigation</strong></a></li>
 </ul>
-<p>This one has been open a while: <a href="https://issuetracker.google.com/issues/40502943">issue 40502943</a> was filed in January 2017.</p>
-<h2 id="the-background">The Background</h2>
-<p>The cross-platform core fix landed first:</p>
-<ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921"><strong>bluetooth: GATT disconnect to cancel ongoing connect attempt</strong></a></li>
-</ul>
-<p>That wires up the general &quot;disconnect cancels a pending connect&quot; behavior in Chromium. But the actual cancellation has to be honored by each platform backend - and below the browser, by the OS Bluetooth stack itself.</p>
-<h2 id="the-windows-backend">The Windows Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473"><strong>bluetooth: Enable pending GATT connect cancellation on Windows</strong></a></p>
-<p>On Windows, a <code>disconnect()</code> during an in-flight connect needs to fail the pending connection callbacks, and the canceled WinRT service discovery has to be handled without tripping the async-results <code>DCHECK</code>. This CL makes the Windows path actually reject the pending connect instead of leaving it dangling.</p>
-<h2 id="the-android-backend">The Android Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797"><strong>bluetooth: Enable pending GATT connect cancellation on Android</strong></a></p>
-<p>Android has the extra wrinkle described below: the platform does not reliably deliver a disconnect callback for a connect that was cancelled while still waiting for client registration. Rather than wait for an OS-level fix, the Chromium backend synthesizes the disconnect callback itself when the platform does not deliver one, and enables the <code>kWebBluetoothCancelConnect</code> feature on Android.</p>
-<h2 id="down-to-the-os-my-first-aosp-patch">Down to the OS: My First AOSP Patch</h2>
-<p>The most interesting part is that the fix does not stop at Chromium. On Android, <code>BluetoothGatt.disconnect()</code> did not cancel a <code>connectGatt()</code> that was still waiting for client registration - so a pending connect could not be cleanly aborted at the platform level.</p>
-<p>That fix lives in the Android OS itself, in <code>packages/modules/Bluetooth</code>:</p>
-<blockquote>
-<p><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933"><strong>Bluetooth: Cancel pending GATT connects</strong></a> - make <code>BluetoothGatt.disconnect()</code> cancel a <code>connectGatt()</code> request that is still waiting for client registration, and report the cancellation through <code>onConnectionStateChange()</code>.</p>
-</blockquote>
-<p>This was my first patch to the Android platform (AOSP), and while the review confirmed the platform gap, the change was ultimately abandoned in favor of handling the cancellation in Chromium&#39;s Android backend - synthesizing the missing disconnect callback there works on every Android version already in the field, whereas a platform fix would only help devices that receive the updated Bluetooth module. Still a useful detour: a Web Bluetooth spec line about <code>disconnect()</code> ends up reaching three layers down, into the OS Bluetooth stack, before the practical fix lands one layer up.</p>
-<h2 id="the-test-rig">The Test Rig</h2>
-<p>Verifying a &quot;cancel&quot; path needs a device that you can make appear and then yank away. The <a href="https://static.januschka.com/i-40502943/">sampler</a> uses ESP32-C3 firmware advertising as <em>dino c(h)ancler</em> with serial commands to start/stop advertising, disconnect the central, or deep-sleep - so you can reliably create the &quot;device went away mid-connect&quot; condition.</p>
-<p>The flow:</p>
+<p>The interesting part is where the bit comes from. Whether a navigation is a reload is decided in the browser process, not the renderer, so the flag has to travel with the navigation:</p>
 <ol>
-<li>Select the ESP32-C3 while it is advertising.</li>
-<li>Make it unavailable (stop advertising / deep sleep) and start a connect.</li>
-<li>Hit <strong>Disconnect / cancel pending connect</strong> - the pending promise should reject with <code>AbortError</code>.</li>
-<li>Confirm a fresh <code>requestDevice()</code> + connect to another device still works without reloading.</li>
+<li>The browser process classifies the navigation (<code>ReloadType</code>) and sets the flag on the request as it is handed to the renderer</li>
+<li>Blink stores it on the <code>Request</code> object created for the service worker <code>FetchEvent</code></li>
+<li>The IDL attribute simply exposes the stored value - it is <code>false</code> for anything that is not a main-resource navigation request</li>
 </ol>
-<p>The sampler ships a patched ARM64 ChromePublic APK and the firmware source so reviewers can reproduce it on real hardware.</p>
+<p>The attribute was implemented behind a runtime feature flag, with web platform tests covering reload, non-reload navigation, and non-navigation requests.</p>
+<h2 id="the-shipping-process">The Shipping Process</h2>
+<p>Landing the code is half of it. Getting it enabled by default meant the Blink launch process:</p>
+<ol>
+<li>Implementation behind <code>RequestIsReloadNavigation</code>, off by default</li>
+<li><a href="https://groups.google.com/a/chromium.org/g/blink-dev/">Intent to Ship on blink-dev</a> with spec link, interop status (Firefox: shipped, Safari: implemented in WebKit but not enabled), and WPT results</li>
+<li>API owner approvals</li>
+<li>The final one-line CL promoting the feature to stable</li>
+</ol>
+<p>The gap between the two CLs - implementation in January, ship in May - is mostly this process, not code. For a spec-backed attribute that another engine already ships, the review is light, but it still requires the paper trail.</p>
+<h2 id="takeaway">Takeaway</h2>
+<p>There is a long tail of small, fully-specced web platform features that only need someone to walk them through the pipeline. The <a href="https://www.chromium.org/blink/platform-predictability/">Chromium web platform predictability</a> effort tracks interop gaps like this one - most are far less work than a new feature, and each one closes a real cross-browser difference.</p>
+<h2 id="thanks">Thanks</h2>
+<p>Thanks to reviewers <strong>Adam Rice</strong>, <strong>Daniel Cheng</strong>, <strong>Alex Moshchuk</strong>, <strong>Crisrael Lucero</strong> and <strong>Mike Taylor</strong> for the implementation and ship reviews.</p>
 <h2 id="links">Links</h2>
 <ul>
-<li><a href="https://issuetracker.google.com/issues/40502943">Issue 40502943 - disconnect should cancel pending connect</a></li>
-<li><a href="https://static.januschka.com/i-40502943/">Interactive sampler + APK + firmware</a></li>
-<li><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933">AOSP CL 4105933 - Cancel pending GATT connects (Android, abandoned)</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473">Chromium CL 7899473 - Windows backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797">Chromium CL 7964797 - Android backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921">Chromium CL 6798921 - core fix</a></li>
-<li><a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect">Web Bluetooth spec: disconnect()</a></li>
+<li><a href="https://fetch.spec.whatwg.org/#dom-request-isreloadnavigation">Fetch spec: isReloadNavigation</a></li>
+<li><a href="https://issues.chromium.org/issues/40487194">Chromium Bug 40487194</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Request/isReloadNavigation">MDN: Request.isReloadNavigation</a></li>
 </ul>
 
     </div>

@@ -871,7 +871,8 @@
   <article class="container">
     <div class="blog-content">
 <p><em>Why a long-press on Linux opens a menu instead of picking up the thing you wanted to drag</em></p>
-<p><strong>Status:</strong> 🚧 In Review</p>
+<p><strong>Status:</strong> 🎉 Shipped (enabled by default)</p>
+<p><strong>Update 15.7.2026:</strong> ✅ The Chromium change landed and touch drag-and-drop is now enabled by default on Linux. The Hyprland compositor fix is merged as well; the Sway one is still in review.</p>
 <h2 id="the-problem">The Problem</h2>
 <p>Touch drag-and-drop behaves differently depending on the platform.</p>
 <p>On Windows, you long-press an image with your finger and it starts a drag - the intuitive gesture. On Linux, the same long-press triggers the context menu instead, while a short press appears to start a drag. The result is that dragging by touch on Linux is inconsistent and surprising, and the context menu fights the drag gesture.</p>
@@ -885,7 +886,7 @@
 </ul>
 <p>On Windows the preference tracks the touch drag-and-drop feature, so long-press drag works and the context menu stays out of the way. On Linux the two were decoupled, which is why the gesture felt broken.</p>
 <h2 id="the-fix">The Fix</h2>
-<p><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7824980"><strong>Enable touch drag-and-drop defaults on Linux</strong></a></p>
+<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7824980"><strong>Enable touch drag-and-drop defaults on Linux</strong></a></p>
 <p>Make <code>touch_dragend_context_menu</code> follow <code>kTouchDragAndDrop</code> on Linux, matching the Windows behavior, so a long-press drag does what you expect instead of popping the context menu. The change adds coverage in <code>ChromeContentBrowserClientAIPrefsTest</code> so the Linux default stays tied to the feature flag and does not silently regress.</p>
 <h2 id="the-demo">The Demo</h2>
 <p>Long-press an image, drag it, drop it - on Linux, with the change in place. From the <a href="https://static.januschka.com/i-451651623/index.html">interactive sampler</a>, which also has a live drag link, drag image, and drop zone you can try yourself.</p>
@@ -927,7 +928,7 @@
 <h2 id="upstream-compositor-fixes">Upstream Compositor Fixes</h2>
 <p>wlroots-based compositors were dropping or not updating touch focus mid-drag, so the drop never reached the right surface. I sent fixes upstream so touch drag-and-drop works there too:</p>
 <ul>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/hyprwm/Hyprland/pull/15077"><strong>Hyprland: dnd - fix touch-driven drag-and-drop</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/hyprwm/Hyprland/pull/15077"><strong>Hyprland: dnd - fix touch-driven drag-and-drop</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/swaywm/sway/pull/9182"><strong>Sway: input/seatop_down - update touch drag focus while dragging</strong></a></li>
 </ul>
 <h2 id="why-it-is-worth-doing">Why It Is Worth Doing</h2>

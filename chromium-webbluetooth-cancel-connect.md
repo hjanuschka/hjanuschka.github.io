@@ -6,7 +6,9 @@ tech: "C++ / Java / Web Bluetooth"
 
 *disconnect() should actually stop a connect() that never finished - on every platform, down to the OS*
 
-**Status:** 🚧 In Progress
+**Status:** 🎉 Landed
+
+**Update 15.7.2026:** ✅ Pending GATT connect cancellation is enabled on Windows and Android. The Android platform (AOSP) patch was ultimately not needed - the Chromium Android backend now handles the cancellation itself.
 
 ## The Problem
 
@@ -30,9 +32,15 @@ That wires up the general "disconnect cancels a pending connect" behavior in Chr
 
 ## The Windows Backend
 
-<span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**bluetooth: Enable pending GATT connect cancellation on Windows**](https://chromium-review.googlesource.com/c/chromium/src/+/7899473)
+<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**bluetooth: Enable pending GATT connect cancellation on Windows**](https://chromium-review.googlesource.com/c/chromium/src/+/7899473)
 
 On Windows, a `disconnect()` during an in-flight connect needs to fail the pending connection callbacks, and the canceled WinRT service discovery has to be handled without tripping the async-results `DCHECK`. This CL makes the Windows path actually reject the pending connect instead of leaving it dangling.
+
+## The Android Backend
+
+<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**bluetooth: Enable pending GATT connect cancellation on Android**](https://chromium-review.googlesource.com/c/chromium/src/+/7964797)
+
+Android has the extra wrinkle described below: the platform does not reliably deliver a disconnect callback for a connect that was cancelled while still waiting for client registration. Rather than wait for an OS-level fix, the Chromium backend synthesizes the disconnect callback itself when the platform does not deliver one, and enables the `kWebBluetoothCancelConnect` feature on Android.
 
 ## Down to the OS: My First AOSP Patch
 
@@ -42,7 +50,7 @@ That fix lives in the Android OS itself, in `packages/modules/Bluetooth`:
 
 > [**Bluetooth: Cancel pending GATT connects**](https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933) - make `BluetoothGatt.disconnect()` cancel a `connectGatt()` request that is still waiting for client registration, and report the cancellation through `onConnectionStateChange()`.
 
-This is my first patch to the Android platform (AOSP), and it is still being iterated on. It is a fun milestone: a Web Bluetooth spec line about `disconnect()` ends up requiring a change three layers down, in the OS Bluetooth stack.
+This was my first patch to the Android platform (AOSP), and while the review confirmed the platform gap, the change was ultimately abandoned in favor of handling the cancellation in Chromium's Android backend - synthesizing the missing disconnect callback there works on every Android version already in the field, whereas a platform fix would only help devices that receive the updated Bluetooth module. Still a useful detour: a Web Bluetooth spec line about `disconnect()` ends up reaching three layers down, into the OS Bluetooth stack, before the practical fix lands one layer up.
 
 ## The Test Rig
 
@@ -61,7 +69,8 @@ The sampler ships a patched ARM64 ChromePublic APK and the firmware source so re
 
 - [Issue 40502943 - disconnect should cancel pending connect](https://issuetracker.google.com/issues/40502943)
 - [Interactive sampler + APK + firmware](https://static.januschka.com/i-40502943/)
-- [AOSP CL 4105933 - Cancel pending GATT connects (Android)](https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933)
+- [AOSP CL 4105933 - Cancel pending GATT connects (Android, abandoned)](https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933)
 - [Chromium CL 7899473 - Windows backend](https://chromium-review.googlesource.com/c/chromium/src/+/7899473)
+- [Chromium CL 7964797 - Android backend](https://chromium-review.googlesource.com/c/chromium/src/+/7964797)
 - [Chromium CL 6798921 - core fix](https://chromium-review.googlesource.com/c/chromium/src/+/6798921)
 - [Web Bluetooth spec: disconnect()](https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect)

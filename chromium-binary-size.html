@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch) - Helmut Januschka</title>
-  <meta name="description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <title>Moving Data Out of the Chrome Binary - Helmut Januschka</title>
+  <meta name="description" content="Two binary-size cleanups: the USB ID database and libphonenumber metadata">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)",
-    "description": "disconnect() should actually stop a connect() that never finished - on every platform, down to the OS",
+    "headline": "Moving Data Out of the Chrome Binary",
+    "description": "Two binary-size cleanups: the USB ID database and libphonenumber metadata",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,31 +33,31 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "@id": "https://januschka.com/chromium-binary-size.html"
     },
-    "keywords": "Chromium, C++ / Java / Web Bluetooth, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Python, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/chromium-webbluetooth-cancel-connect.html"
+      "target": "https://januschka.com/chromium-binary-size.html"
     }
   }
   </script>
   
   <!-- Open Graph -->
-  <meta property="og:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta property="og:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta property="og:title" content="Moving Data Out of the Chrome Binary">
+  <meta property="og:description" content="Two binary-size cleanups: the USB ID database and libphonenumber metadata">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/chromium-webbluetooth-cancel-connect.html">
+  <meta property="og:url" content="https://januschka.com/chromium-binary-size.html">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)">
-  <meta name="twitter:description" content="disconnect() should actually stop a connect() that never finished - on every platform, down to the OS">
+  <meta name="twitter:title" content="Moving Data Out of the Chrome Binary">
+  <meta name="twitter:description" content="Two binary-size cleanups: the USB ID database and libphonenumber metadata">
   
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -858,10 +858,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Cancelling a Pending Web Bluetooth Connect (and my first AOSP patch)</h1>
+      <h1 class="blog-title">Moving Data Out of the Chrome Binary</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
-        <span>🔧 C++ / Java / Web Bluetooth</span>
+        <span>🔧 C++ / Python</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -870,56 +870,46 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>disconnect() should actually stop a connect() that never finished - on every platform, down to the OS</em></p>
+<p><em>Two binary-size cleanups: the USB ID database and libphonenumber metadata</em></p>
 <p><strong>Status:</strong> 🎉 Landed</p>
-<p><strong>Update 15.7.2026:</strong> ✅ Pending GATT connect cancellation is enabled on Windows and Android. The Android platform (AOSP) patch was ultimately not needed - the Chromium Android backend now handles the cancellation itself.</p>
-<h2 id="the-problem">The Problem</h2>
-<p>The Web Bluetooth spec is explicit: step 1 of <a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect"><code>disconnect()</code></a> clears the active algorithms map to cancel any pending connections. In practice, a <code>gatt.connect()</code> aimed at a device that is not currently available would just hang, and calling <code>disconnect()</code> did not reliably cancel it.</p>
-<p>The expected behavior is simple:</p>
+<h2 id="the-pattern">The Pattern</h2>
+<p>Chrome&#39;s binary carries a surprising amount of static data compiled directly into <code>.rodata</code>: lookup tables, generated arrays, metadata blobs. Data linked into the binary has real costs - it inflates the download, it is mapped into every process whether used or not, and on Android it counts against tightly-monitored APK size budgets (there is a whole <a href="https://chromium.googlesource.com/chromium/src/+/main/docs/speed/binary_size/">binary size gardening rotation</a> watching every CL).</p>
+<p>The fix pattern is the same in both cases here: move the data out of code and into a compressed resource, loaded lazily on first use.</p>
+<h2 id="case-1-the-usb-id-database">Case 1: The USB ID Database</h2>
+<p>Chrome ships a vendor/product name table derived from <a href="http://www.linux-usb.org/usb-ids.html">usb.ids</a> so that WebUSB permission prompts and <code>chrome://usb-internals</code> can say &quot;Logitech USB Receiver&quot; instead of <code>046d:c52b</code>. That table was generated into C++ arrays and linked into the binary - hundreds of kilobytes of string data mapped into every process, used only when someone actually plugs in a device and a name lookup happens.</p>
 <ul>
-<li><code>gatt.connect()</code> starts while the known device is unavailable.</li>
-<li>Calling <code>disconnect()</code> should make the pending promise reject promptly with <code>AbortError</code>.</li>
-<li>After that, <code>requestDevice()</code> and a fresh connect attempt to another device should still work - no page reload required.</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7880229"><strong>usb_ids: ship lookup table as a Chrome resource instead of linking it in</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7882626"><strong>usb_ids: use the database on all Android platforms</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7927286"><strong>Add UsbIds::GetVendorAndProductName combined lookup</strong></a></li>
 </ul>
-<p>This one has been open a while: <a href="https://issuetracker.google.com/issues/40502943">issue 40502943</a> was filed in January 2017.</p>
-<h2 id="the-background">The Background</h2>
-<p>The cross-platform core fix landed first:</p>
+<p>The resource move puts the table into a compressed entry in <code>resources.pak</code>, loaded lazily through <code>ui::ResourceBundle</code> on the first lookup. The data goes from &quot;mapped in every process, always&quot; to &quot;decompressed once, only in the browser process, only if needed&quot;.</p>
+<p>Enabling Android is the payoff: the database had been excluded from Android entirely because the size cost was unacceptable there - Android users just got raw hex IDs in their permission prompts. With the table in a compressed pak entry the cost became acceptable, and the <code>!IS_ANDROID</code> guards came out. Android now shows human-readable device names like every other platform.</p>
+<p>A smaller inefficiency turned up after the initial landing: callers that need both vendor and product name were doing two binary searches over the vendor table; a combined lookup does one.</p>
+<h2 id="case-2-libphonenumber-metadata">Case 2: libphonenumber Metadata</h2>
+<p>The same shape of problem in a different corner: <a href="https://github.com/google/libphonenumber">libphonenumber</a> (used for phone number formatting in autofill) embeds a generated metadata table describing number formats for every region on earth.</p>
+<p>This one needed upstream work first. libphonenumber exposed its compiled-in metadata through a C-style API - <code>metadata_size()</code> plus a <code>const void*</code> accessor pointing at a static array - which structurally assumes the bytes already exist somewhere in the binary. There is no place in that contract for &quot;decompress on first use&quot;, because nobody owns the buffer:</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921"><strong>bluetooth: GATT disconnect to cancel ongoing connect attempt</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/google/libphonenumber/pull/4016"><strong>Introduce MetadataBytes wrapper for compiled-in metadata accessors</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/google/libphonenumber/pull/4018"><strong>Include &lt;utility&gt; for std::move in metadata_bytes.h</strong></a></li>
 </ul>
-<p>That wires up the general &quot;disconnect cancels a pending connect&quot; behavior in Chromium. But the actual cancellation has to be honored by each platform backend - and below the browser, by the OS Bluetooth stack itself.</p>
-<h2 id="the-windows-backend">The Windows Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473"><strong>bluetooth: Enable pending GATT connect cancellation on Windows</strong></a></p>
-<p>On Windows, a <code>disconnect()</code> during an in-flight connect needs to fail the pending connection callbacks, and the canceled WinRT service discovery has to be handled without tripping the async-results <code>DCHECK</code>. This CL makes the Windows path actually reject the pending connect instead of leaving it dangling.</p>
-<h2 id="the-android-backend">The Android Backend</h2>
-<p><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797"><strong>bluetooth: Enable pending GATT connect cancellation on Android</strong></a></p>
-<p>Android has the extra wrinkle described below: the platform does not reliably deliver a disconnect callback for a connect that was cancelled while still waiting for client registration. Rather than wait for an OS-level fix, the Chromium backend synthesizes the disconnect callback itself when the platform does not deliver one, and enables the <code>kWebBluetoothCancelConnect</code> feature on Android.</p>
-<h2 id="down-to-the-os-my-first-aosp-patch">Down to the OS: My First AOSP Patch</h2>
-<p>The most interesting part is that the fix does not stop at Chromium. On Android, <code>BluetoothGatt.disconnect()</code> did not cancel a <code>connectGatt()</code> that was still waiting for client registration - so a pending connect could not be cleanly aborted at the platform level.</p>
-<p>That fix lives in the Android OS itself, in <code>packages/modules/Bluetooth</code>:</p>
-<blockquote>
-<p><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933"><strong>Bluetooth: Cancel pending GATT connects</strong></a> - make <code>BluetoothGatt.disconnect()</code> cancel a <code>connectGatt()</code> request that is still waiting for client registration, and report the cancellation through <code>onConnectionStateChange()</code>.</p>
-</blockquote>
-<p>This was my first patch to the Android platform (AOSP), and while the review confirmed the platform gap, the change was ultimately abandoned in favor of handling the cancellation in Chromium&#39;s Android backend - synthesizing the missing disconnect callback there works on every Android version already in the field, whereas a platform fix would only help devices that receive the updated Bluetooth module. Still a useful detour: a Web Bluetooth spec line about <code>disconnect()</code> ends up reaching three layers down, into the OS Bluetooth stack, before the practical fix lands one layer up.</p>
-<h2 id="the-test-rig">The Test Rig</h2>
-<p>Verifying a &quot;cancel&quot; path needs a device that you can make appear and then yank away. The <a href="https://static.januschka.com/i-40502943/">sampler</a> uses ESP32-C3 firmware advertising as <em>dino c(h)ancler</em> with serial commands to start/stop advertising, disconnect the central, or deep-sleep - so you can reliably create the &quot;device went away mid-connect&quot; condition.</p>
-<p>The flow:</p>
-<ol>
-<li>Select the ESP32-C3 while it is advertising.</li>
-<li>Make it unavailable (stop advertising / deep sleep) and start a connect.</li>
-<li>Hit <strong>Disconnect / cancel pending connect</strong> - the pending promise should reject with <code>AbortError</code>.</li>
-<li>Confirm a fresh <code>requestDevice()</code> + connect to another device still works without reloading.</li>
-</ol>
-<p>The sampler ships a patched ARM64 ChromePublic APK and the firmware source so reviewers can reproduce it on real hardware.</p>
+<p>The upstream PR replaces the raw accessors with a move-only <code>MetadataBytes</code> handle that can be either non-owning (pointing at the static array, as before - upstream behavior unchanged) or owning (a <code>unique_ptr</code> buffer plus size). That owning mode is the hook: an embedder can hand back a freshly decompressed buffer instead of a pointer into <code>.rodata</code>.</p>
+<p>With that in place, the Chromium side becomes straightforward:</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7928952"><strong>Brotli-compress libphonenumber production metadata</strong></a></li>
+</ul>
+<p>The metadata is now stored brotli-compressed and decompressed on first use into an owning <code>MetadataBytes</code>. The runtime behavior is byte-identical - same protobuf bytes come out of the decompressor that used to sit uncompressed in the binary - but the normalized APK size drops. Highly-structured protobuf metadata compresses well; this kind of table is close to the best case for brotli.</p>
+<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/41124186">41124186</a> (usb_ids), <a href="https://issues.chromium.org/issues/525294819">525294819</a> (libphonenumber)</p>
+<h2 id="the-trade-off">The Trade-off</h2>
+<p>This is not free. A resource load can fail in ways a linked array cannot, decompression costs CPU on first use, and the data is no longer available before the ResourceBundle is initialized. The reviews for these CLs were largely about pinning down those edges: what happens on lookup-before-init, which processes can reach the code path, and whether the lazy load belongs on the callers or inside the lookup.</p>
+<p>For rarely-used reference data, the trade is heavily one-sided: every user pays for linked-in data on every download and every process launch; almost nobody pays the lazy-load cost, because almost nobody hits the code path.</p>
+<h2 id="thanks">Thanks</h2>
+<p>Thanks to reviewers <strong>Daniel Cheng</strong>, <strong>Lei Zhang</strong>, <strong>Reilly Grant</strong>, <strong>Andrew Grieve</strong> and <strong>Dominic Battré</strong> for the reviews across resources, device service, and Android size tooling.</p>
 <h2 id="links">Links</h2>
 <ul>
-<li><a href="https://issuetracker.google.com/issues/40502943">Issue 40502943 - disconnect should cancel pending connect</a></li>
-<li><a href="https://static.januschka.com/i-40502943/">Interactive sampler + APK + firmware</a></li>
-<li><a href="https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933">AOSP CL 4105933 - Cancel pending GATT connects (Android, abandoned)</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7899473">Chromium CL 7899473 - Windows backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7964797">Chromium CL 7964797 - Android backend</a></li>
-<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/6798921">Chromium CL 6798921 - core fix</a></li>
-<li><a href="https://webbluetoothcg.github.io/web-bluetooth/#dom-bluetoothremotegattserver-disconnect">Web Bluetooth spec: disconnect()</a></li>
+<li><a href="https://chromium.googlesource.com/chromium/src/+/main/docs/speed/binary_size/">Chromium binary size docs</a></li>
+<li><a href="https://issues.chromium.org/issues/41124186">Chromium Bug 41124186</a></li>
+<li><a href="https://issues.chromium.org/issues/525294819">Chromium Bug 525294819</a></li>
+<li><a href="https://github.com/google/libphonenumber/pull/4016">libphonenumber PR #4016: MetadataBytes wrapper</a></li>
 </ul>
 
     </div>
