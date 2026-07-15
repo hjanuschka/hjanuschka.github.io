@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-06-13",
+    "dateModified": "2026-07-15",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -871,7 +871,8 @@
   <article class="container">
     <div class="blog-content">
 <p><em>Getting installed fullscreen PWAs to actually reach into the notch</em></p>
-<p><strong>Status:</strong> 🚧 In Review (almost landing)</p>
+<p><strong>Status:</strong> 🎉 Landed</p>
+<p><strong>Update 15.7.2026:</strong> ✅ The final CL of the stack landed - fullscreen PWAs going edge-to-edge is now available in Chrome Canary for Android behind <code>chrome://flags/#web-app-short-edges-cutout-mode</code>.</p>
 <h2 id="the-problem">The Problem</h2>
 <p>Install a PWA that asks for the whole screen and it still does not get the whole screen.</p>
 <p>The canonical repro is the <a href="https://interop-2022-viewport.netlify.app/individual/pwa/cover">interop viewport demo</a>. It is a PWA with:</p>
@@ -891,47 +892,43 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7842853"><strong>Android: refactor edge-to-edge manager plumbing</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7792833"><strong>Hide top-toolbar hairline when content offset includes it</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7864521"><strong>Android: add WebApp short-edges cutout mode flag</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7864522"><strong>Android: add short-edges plumbing to display cutout controller</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7689791"><strong>Android: enable short-edges cutout mode in webapp and activity flows</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7968718"><strong>Android: add short-edges plumbing to display cutout controller</strong></a> (relanded, see below)</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7689791"><strong>Android: enable short-edges cutout mode in webapp and activity flows</strong></a></li>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7900354"><strong>Android: rename releaseSetDecorFitsSystemWindowToken callers to releaseEdgeToEdgeToken</strong></a></li>
 </ul>
 <p>The controller-side CL adds support for <code>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</code> behind a delegate bit that defaults to false - a no-op on its own. The webapp/activity-flow CL is the one that actually flips fullscreen PWAs into short-edges mode. The rename CL is mechanical cleanup, moving callers off the deprecated <code>releaseSetDecorFitsSystemWindowToken</code> shim to the canonical <code>releaseEdgeToEdgeToken</code>.</p>
+<h2 id="the-reland-saga">The Reland Saga</h2>
+<p>The controller-side plumbing CL earned itself a small reland history. The code was fine; the tests were the problem. Android form factors are messier than they look:</p>
+<ul>
+<li><strong>Original</strong> (<a href="https://chromium-review.googlesource.com/c/chromium/src/+/7864522">7864522</a>): landed, then got reverted because the new <code>WebappDisplayCutoutTest</code> standalone tests timed out on desktop-freeform bots. A standalone webapp there runs in a windowed, non-fullscreen container, so <code>SHORT_EDGES</code> never applies and the test waits forever for a cutout mode that will never arrive.</li>
+<li><strong>Reland 1</strong> (<a href="https://chromium-review.googlesource.com/c/chromium/src/+/7944188">7944188</a>): skipped the tests on <code>DeviceFormFactor.DESKTOP_FREEFORM</code>. Still not enough - tablets and non-freeform desktop hit the same windowed-container behavior but are a different form factor value.</li>
+<li><strong>Reland 2</strong> (<a href="https://chromium-review.googlesource.com/c/chromium/src/+/7968718">7968718</a>): widened the skip to <code>DeviceFormFactor.TABLET_OR_DESKTOP</code>. Standalone webapps with cutout treatment are only exercised on phones anyway; the fullscreen webapp test still covers the cutout path on the larger form factors. This one stuck.</li>
+</ul>
+<p>With the plumbing finally stable, the last CL flipped the actual behavior on for webapp and activity flows - and that is the piece that just landed.</p>
+<h2 id="trying-it-in-canary">Trying It in Canary</h2>
+<p>On Chrome Canary for Android:</p>
+<ol>
+<li>Open <code>chrome://flags/#web-app-short-edges-cutout-mode</code> and enable it</li>
+<li>Install a PWA with <code>display: fullscreen</code> (or <code>display_override: [&quot;cover-display-cutout&quot;]</code>) and <code>viewport-fit=cover</code> - e.g. one of the <a href="https://static.januschka.com/i-407420295/index.html">sampler demos</a></li>
+<li>Launch it from the home screen - it now draws into the notch, with <code>env(safe-area-inset-top)</code> reporting the cutout height</li>
+</ol>
 <h2 id="before-and-after">Before and After</h2>
-<p>Captured on-device from the <a href="https://static.januschka.com/i-407420295/index.html">APK sampler</a>. The notch row is the interesting one: unpatched stops below the cutout, patched draws under it.</p>
+<p>Captured on-device from the <a href="https://static.januschka.com/i-407420295/index.html">APK sampler</a>. Unpatched stops below the cutout, patched draws under it.</p>
 <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin:24px 0;">
   <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Case 1: Fullscreen - Before</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case1-unpatched-notch.png" alt="Case 1 fullscreen unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Standalone PWA - Before</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case2-unpatched-notch.png" alt="Standalone PWA unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
   </figure>
   <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Case 1: Fullscreen - After</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case1-patched-withnotch.png" alt="Case 1 fullscreen patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
-  </figure>
-</div>
-<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin:24px 0;">
-  <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Case 2: Standalone - Before</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case2-unpatched-notch.png" alt="Case 2 standalone unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
-  </figure>
-  <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Case 2: Standalone - After</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case2-patched-withnotch.png" alt="Case 2 standalone patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
-  </figure>
-</div>
-<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin:24px 0;">
-  <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Case 3: Backswipe - Before</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case3-unpatched-notch.png" alt="Case 3 backswipe unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
-  </figure>
-  <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Case 3: Backswipe - After</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case3-patched-withnotch.png" alt="Case 3 backswipe patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Standalone PWA - After</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case2-patched-withnotch.png" alt="Standalone PWA patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
   </figure>
 </div>
 
-<p>Case 4 (<code>requestFullscreen()</code>) already worked before the change and is unchanged - it is the control case. The sampler also has the no-notch gallery and downloadable APKs for each case.</p>
+<p>The demo page self-reports its verdict: it reads <code>display-mode</code>, <code>innerHeight</code> vs <code>screen.height</code>, and <code>env(safe-area-inset-top)</code> and prints <strong>PASS (edge-to-edge active)</strong> only when the window really extends under the cutout. In the &quot;after&quot; shot, <code>safe-area-inset-top</code> reports the actual 48px cutout height instead of 0.</p>
+<p>The sampler covers the other flows too (fullscreen display mode, backswipe, and the <code>requestFullscreen()</code> control case that already worked), plus a no-notch gallery proving the change is a no-op on devices without a cutout, and downloadable APKs for each case.</p>
 <h2 id="thanks">Thanks</h2>
-<p>Big thanks to my reviewers <strong>Dan Murphy</strong> and <strong>Charles Hager</strong> for the patient back-and-forth across the stack - the layered, flag-gated approach is a direct result of their guidance on keeping a shared Android codepath safe.</p>
+<p>Big thanks to reviewers <strong>Dan Murphy</strong> and <strong>Charles Hager</strong> for the patient back-and-forth across the stack - the layered, flag-gated approach is a direct result of their guidance on keeping a shared Android codepath safe.</p>
 <h2 id="links">Links</h2>
 <ul>
 <li><a href="https://issues.chromium.org/issues/407420295">Chromium Bug 407420295</a></li>
@@ -998,6 +995,7 @@
       { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
       { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
       { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
     ];
 

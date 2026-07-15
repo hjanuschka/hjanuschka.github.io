@@ -6,7 +6,9 @@ tech: "C++ / Java / Android"
 
 *Getting installed fullscreen PWAs to actually reach into the notch*
 
-**Status:** 🚧 In Review (almost landing)
+**Status:** 🎉 Landed
+
+**Update 15.7.2026:** ✅ The final CL of the stack landed - fullscreen PWAs going edge-to-edge is now available in Chrome Canary for Android behind `chrome://flags/#web-app-short-edges-cutout-mode`.
 
 ## The Problem
 
@@ -36,54 +38,54 @@ The change landed as a stack so each layer could be reviewed and de-risked on it
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Android: refactor edge-to-edge manager plumbing**](https://chromium-review.googlesource.com/c/chromium/src/+/7842853)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Hide top-toolbar hairline when content offset includes it**](https://chromium-review.googlesource.com/c/chromium/src/+/7792833)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Android: add WebApp short-edges cutout mode flag**](https://chromium-review.googlesource.com/c/chromium/src/+/7864521)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Android: add short-edges plumbing to display cutout controller**](https://chromium-review.googlesource.com/c/chromium/src/+/7864522)
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Android: enable short-edges cutout mode in webapp and activity flows**](https://chromium-review.googlesource.com/c/chromium/src/+/7689791)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Android: add short-edges plumbing to display cutout controller**](https://chromium-review.googlesource.com/c/chromium/src/+/7968718) (relanded, see below)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Android: enable short-edges cutout mode in webapp and activity flows**](https://chromium-review.googlesource.com/c/chromium/src/+/7689791)
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Android: rename releaseSetDecorFitsSystemWindowToken callers to releaseEdgeToEdgeToken**](https://chromium-review.googlesource.com/c/chromium/src/+/7900354)
 
 The controller-side CL adds support for `LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES` behind a delegate bit that defaults to false - a no-op on its own. The webapp/activity-flow CL is the one that actually flips fullscreen PWAs into short-edges mode. The rename CL is mechanical cleanup, moving callers off the deprecated `releaseSetDecorFitsSystemWindowToken` shim to the canonical `releaseEdgeToEdgeToken`.
 
+## The Reland Saga
+
+The controller-side plumbing CL earned itself a small reland history. The code was fine; the tests were the problem. Android form factors are messier than they look:
+
+- **Original** ([7864522](https://chromium-review.googlesource.com/c/chromium/src/+/7864522)): landed, then got reverted because the new `WebappDisplayCutoutTest` standalone tests timed out on desktop-freeform bots. A standalone webapp there runs in a windowed, non-fullscreen container, so `SHORT_EDGES` never applies and the test waits forever for a cutout mode that will never arrive.
+- **Reland 1** ([7944188](https://chromium-review.googlesource.com/c/chromium/src/+/7944188)): skipped the tests on `DeviceFormFactor.DESKTOP_FREEFORM`. Still not enough - tablets and non-freeform desktop hit the same windowed-container behavior but are a different form factor value.
+- **Reland 2** ([7968718](https://chromium-review.googlesource.com/c/chromium/src/+/7968718)): widened the skip to `DeviceFormFactor.TABLET_OR_DESKTOP`. Standalone webapps with cutout treatment are only exercised on phones anyway; the fullscreen webapp test still covers the cutout path on the larger form factors. This one stuck.
+
+With the plumbing finally stable, the last CL flipped the actual behavior on for webapp and activity flows - and that is the piece that just landed.
+
+## Trying It in Canary
+
+On Chrome Canary for Android:
+
+1. Open `chrome://flags/#web-app-short-edges-cutout-mode` and enable it
+2. Install a PWA with `display: fullscreen` (or `display_override: ["cover-display-cutout"]`) and `viewport-fit=cover` - e.g. one of the [sampler demos](https://static.januschka.com/i-407420295/index.html)
+3. Launch it from the home screen - it now draws into the notch, with `env(safe-area-inset-top)` reporting the cutout height
+
 ## Before and After
 
-Captured on-device from the [APK sampler](https://static.januschka.com/i-407420295/index.html). The notch row is the interesting one: unpatched stops below the cutout, patched draws under it.
+Captured on-device from the [APK sampler](https://static.januschka.com/i-407420295/index.html). Unpatched stops below the cutout, patched draws under it.
 
 ```snippet
 <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin:24px 0;">
   <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Case 1: Fullscreen - Before</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case1-unpatched-notch.png" alt="Case 1 fullscreen unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Standalone PWA - Before</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case2-unpatched-notch.png" alt="Standalone PWA unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
   </figure>
   <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Case 1: Fullscreen - After</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case1-patched-withnotch.png" alt="Case 1 fullscreen patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
-  </figure>
-</div>
-<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin:24px 0;">
-  <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Case 2: Standalone - Before</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case2-unpatched-notch.png" alt="Case 2 standalone unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
-  </figure>
-  <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Case 2: Standalone - After</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case2-patched-withnotch.png" alt="Case 2 standalone patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
-  </figure>
-</div>
-<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin:24px 0;">
-  <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#D35F5F;margin-bottom:8px;">Case 3: Backswipe - Before</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case3-unpatched-notch.png" alt="Case 3 backswipe unpatched" style="width:220px;max-width:42vw;border:2px solid #D35F5F;border-radius:10px;">
-  </figure>
-  <figure style="margin:0;text-align:center;">
-    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Case 3: Backswipe - After</figcaption>
-    <img src="https://static.januschka.com/i-407420295/case3-patched-withnotch.png" alt="Case 3 backswipe patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
+    <figcaption style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#6abf69;margin-bottom:8px;">Standalone PWA - After</figcaption>
+    <img src="https://static.januschka.com/i-407420295/case2-patched-withnotch.png" alt="Standalone PWA patched" style="width:220px;max-width:42vw;border:2px solid #6abf69;border-radius:10px;">
   </figure>
 </div>
 ```
 
-Case 4 (`requestFullscreen()`) already worked before the change and is unchanged - it is the control case. The sampler also has the no-notch gallery and downloadable APKs for each case.
+The demo page self-reports its verdict: it reads `display-mode`, `innerHeight` vs `screen.height`, and `env(safe-area-inset-top)` and prints **PASS (edge-to-edge active)** only when the window really extends under the cutout. In the "after" shot, `safe-area-inset-top` reports the actual 48px cutout height instead of 0.
+
+The sampler covers the other flows too (fullscreen display mode, backswipe, and the `requestFullscreen()` control case that already worked), plus a no-notch gallery proving the change is a no-op on devices without a cutout, and downloadable APKs for each case.
 
 ## Thanks
 
-Big thanks to my reviewers **Dan Murphy** and **Charles Hager** for the patient back-and-forth across the stack - the layered, flag-gated approach is a direct result of their guidance on keeping a shared Android codepath safe.
+Big thanks to reviewers **Dan Murphy** and **Charles Hager** for the patient back-and-forth across the stack - the layered, flag-gated approach is a direct result of their guidance on keeping a shared Android codepath safe.
 
 ## Links
 
