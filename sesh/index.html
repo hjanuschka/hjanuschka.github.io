@@ -4,14 +4,40 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0c1117">
-  <meta name="description" content="sesh is a native iPhone and iPad SSH client built around zellij sessions, secure keys, SFTP, and mobile-first terminal controls.">
-  <meta property="og:title" content="sesh - your terminal sessions, anywhere">
-  <meta property="og:description" content="A native SSH and zellij workspace for iPhone and iPad.">
-  <meta property="og:image" content="https://www.januschka.com/sesh/assets/icon.png">
+  <meta name="description" content="sesh is a private, native SSH and zellij workspace for iPhone and iPad with secure keys, SFTP, terminal search, and touch-first controls.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://www.januschka.com/sesh/">
+  <meta property="og:title" content="sesh - SSH and zellij for iPhone and iPad">
+  <meta property="og:description" content="A private, native SSH and zellij workspace with secure keys, SFTP, and touch-first terminal controls.">
+  <meta property="og:image" content="https://www.januschka.com/sesh/assets/social.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="sesh running a native zellij workspace on iPhone">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="sesh">
   <meta property="og:url" content="https://www.januschka.com/sesh/">
-  <title>sesh - SSH and zellij for iPhone and iPad</title>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="sesh - SSH and zellij for iPhone and iPad">
+  <meta name="twitter:description" content="A private, native SSH and zellij workspace with secure keys, SFTP, and touch-first terminal controls.">
+  <meta name="twitter:image" content="https://www.januschka.com/sesh/assets/social.png">
+  <title>sesh - Native SSH and zellij client for iPhone and iPad</title>
   <link rel="icon" href="assets/icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    "name": "sesh",
+    "description": "A private, native SSH and zellij workspace for iPhone and iPad with secure keys, SFTP, terminal search, and touch-first controls.",
+    "url": "https://www.januschka.com/sesh/",
+    "image": "https://www.januschka.com/sesh/assets/social.png",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "iOS 17 or later, iPadOS 17 or later",
+    "softwareVersion": "1.0",
+    "author": { "@type": "Organization", "name": "RunUntil Technologies GmbH" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "featureList": ["Native SSH terminal", "zellij session, tab, and pane controls", "SFTP file transfers", "Keychain identity storage", "Terminal search and themes", "NFC FIDO2 forwarding"]
+  }
+  </script>
   <style>
     :root {
       color-scheme: dark;
@@ -71,6 +97,9 @@
     }
     .button:hover { transform: translateY(-2px); border-color: #4a5b6e; }
     .button.primary { color: #061009; background: var(--green); border-color: var(--green); }
+    .button.disabled { color: var(--muted); background: var(--surface); cursor: default; }
+    .button.disabled:hover { transform: none; border-color: var(--line); }
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
     .hero {
       min-height: calc(100vh - 68px);
       display: grid;
@@ -95,9 +124,10 @@
       width: min(430px, 86vw);
       border-radius: 42px;
       box-shadow: 0 42px 100px rgba(0, 0, 0, .55);
+      height: auto;
       transform: rotate(2deg);
     }
-    section { padding: 110px 0; }
+    section { padding: 110px 0; content-visibility: auto; contain-intrinsic-size: auto 820px; }
     .section-head { max-width: 760px; margin-bottom: 48px; }
     h2 { margin: 12px 0 16px; font-size: clamp(34px, 5vw, 58px); line-height: 1.08; letter-spacing: -.045em; }
     .section-head p { margin: 0; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 19px; }
@@ -107,14 +137,14 @@
     .feature h3 { margin: 18px 0 8px; font-size: 18px; }
     .feature p { margin: 0; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; }
     .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start; }
-    .shot { overflow: hidden; padding: 9px; border: 1px solid var(--line); border-radius: 26px; background: var(--surface); cursor: zoom-in; }
-    .shot img { display: block; width: 100%; border-radius: 19px; }
+    .shot { overflow: hidden; width: 100%; padding: 9px; border: 1px solid var(--line); border-radius: 26px; background: var(--surface); color: inherit; font: inherit; cursor: zoom-in; }
+    .shot img { display: block; width: 100%; height: auto; border-radius: 19px; }
     .ipad { margin-top: 22px; padding: 10px; border: 1px solid var(--line); border-radius: 26px; background: var(--surface); }
-    .ipad img { display: block; width: 100%; border-radius: 18px; }
+    .ipad img { display: block; width: 100%; height: auto; border-radius: 18px; }
     .security { display: grid; grid-template-columns: .85fr 1.15fr; gap: 50px; align-items: center; }
     .terminal-card { padding: 25px; border: 1px solid var(--line); border-radius: 20px; background: #070a0e; box-shadow: inset 0 1px rgba(255,255,255,.03); color: #c8d3de; font-size: 14px; }
     .terminal-card .green { color: var(--green); }
-    .terminal-card .dim { color: #65717e; }
+    .terminal-card .dim { color: #7b8794; }
     .checks { display: grid; gap: 18px; }
     .check { display: grid; grid-template-columns: 28px 1fr; gap: 12px; }
     .check strong { color: var(--green); }
@@ -128,6 +158,7 @@
     dialog { max-width: min(94vw, 760px); padding: 0; border: 1px solid var(--line); border-radius: 24px; background: var(--surface); box-shadow: 0 40px 100px rgba(0,0,0,.7); }
     dialog::backdrop { background: rgba(0,0,0,.8); backdrop-filter: blur(8px); }
     dialog img { display: block; max-width: 100%; max-height: 88vh; border-radius: 23px; }
+    .dialog-close { position: absolute; top: 12px; right: 12px; width: 42px; height: 42px; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; background: rgba(7,10,14,.86); color: white; font: 700 23px/1 sans-serif; cursor: pointer; }
     @media (max-width: 880px) {
       .nav-links a:not(.button) { display: none; }
       .hero { grid-template-columns: 1fr; gap: 25px; padding-top: 58px; }
@@ -155,12 +186,12 @@
 <body>
   <nav>
     <div class="wrap">
-      <a class="brand" href="#top"><img src="assets/icon.png" alt="sesh app icon"><span>sesh</span></a>
+      <a class="brand" href="#top"><img src="assets/icon.png" width="1024" height="1024" alt="sesh app icon"><span>sesh</span></a>
       <div class="nav-links">
         <a href="#features">features</a>
         <a href="#screens">screens</a>
         <a href="#security">security</a>
-        <a class="button primary" href="https://apps.apple.com/app/id6798778693">View on App Store</a>
+        <span class="button primary disabled" aria-disabled="true">App Store soon</span>
       </div>
     </div>
   </nav>
@@ -169,10 +200,10 @@
     <div class="wrap hero">
       <div>
         <div class="eyebrow">SSH + zellij, built for touch</div>
-        <h1>Your sessions.<br><span>Still running.</span></h1>
+        <h1>Your sessions.<br><span>Anywhere.</span></h1>
         <p class="lead">sesh turns remote shells and zellij workspaces into a native iPhone and iPad experience. Attach, switch panes, move files, and keep working without shrinking a desktop app onto a phone.</p>
         <div class="hero-actions">
-          <a class="button primary" href="https://apps.apple.com/app/id6798778693">Get sesh for iOS</a>
+          <span class="button primary disabled" aria-disabled="true">Coming soon on the App Store</span>
           <a class="button" href="#screens">See it in action</a>
         </div>
         <div class="promise">
@@ -181,7 +212,10 @@
       </div>
       <div class="hero-visual">
         <div class="glow"></div>
-        <img class="phone-shot" src="assets/terminal.png" alt="sesh terminal showing a controlled demo zellij workspace">
+        <picture>
+          <source srcset="assets/terminal.webp" type="image/webp">
+          <img class="phone-shot" src="assets/terminal.png" width="1320" height="2868" fetchpriority="high" decoding="async" alt="sesh terminal showing a controlled demo zellij workspace">
+        </picture>
       </div>
     </div>
 
@@ -212,14 +246,14 @@
         </div>
         <!-- These are controlled sesh demo captures. They contain no real credentials, addresses, usernames, keys, or private project data. -->
         <div class="gallery">
-          <button class="shot" aria-label="Open terminal screenshot"><img loading="lazy" src="assets/terminal.png" alt="A controlled two-pane zellij workspace in sesh"></button>
-          <button class="shot" aria-label="Open shell switcher screenshot"><img loading="lazy" src="assets/shells.png" alt="The Open Shells switcher in sesh"></button>
-          <button class="shot" aria-label="Open terminal themes screenshot"><img loading="lazy" src="assets/themes.png" alt="Live terminal themes and type sizing in sesh"></button>
-          <button class="shot" aria-label="Open scrollback search screenshot"><img loading="lazy" src="assets/search.png" alt="Searching terminal scrollback in sesh"></button>
-          <button class="shot" aria-label="Open compact terminal keys screenshot"><img loading="lazy" src="assets/keyboard.png" alt="Optional compact terminal keys in sesh"></button>
-          <button class="shot" aria-label="Open optional tips screenshot"><img loading="lazy" src="assets/free.png" alt="Optional one-time tips with no subscription in sesh"></button>
+          <button class="shot" aria-label="Open terminal screenshot"><picture><source srcset="assets/terminal.webp" type="image/webp"><img loading="lazy" decoding="async" src="assets/terminal.png" width="1320" height="2868" alt="A controlled two-pane zellij workspace in sesh"></picture></button>
+          <button class="shot" aria-label="Open shell switcher screenshot"><picture><source srcset="assets/shells.webp" type="image/webp"><img loading="lazy" decoding="async" src="assets/shells.png" width="1320" height="2868" alt="The Open Shells switcher in sesh"></picture></button>
+          <button class="shot" aria-label="Open terminal themes screenshot"><picture><source srcset="assets/themes.webp" type="image/webp"><img loading="lazy" decoding="async" src="assets/themes.png" width="1320" height="2868" alt="Live terminal themes and type sizing in sesh"></picture></button>
+          <button class="shot" aria-label="Open scrollback search screenshot"><picture><source srcset="assets/search.webp" type="image/webp"><img loading="lazy" decoding="async" src="assets/search.png" width="1320" height="2868" alt="Searching terminal scrollback in sesh"></picture></button>
+          <button class="shot" aria-label="Open compact terminal keys screenshot"><picture><source srcset="assets/keyboard.webp" type="image/webp"><img loading="lazy" decoding="async" src="assets/keyboard.png" width="1320" height="2868" alt="Optional compact terminal keys in sesh"></picture></button>
+          <button class="shot" aria-label="Open optional tips screenshot"><picture><source srcset="assets/free.webp" type="image/webp"><img loading="lazy" decoding="async" src="assets/free.png" width="1320" height="2868" alt="Optional one-time tips with no subscription in sesh"></picture></button>
         </div>
-        <div class="ipad"><img loading="lazy" src="assets/ipad.png" alt="sesh running a controlled demo workspace on iPad"></div>
+        <div class="ipad"><picture><source srcset="assets/ipad.webp" type="image/webp"><img loading="lazy" decoding="async" src="assets/ipad.png" width="2048" height="2732" alt="sesh running a controlled demo workspace on iPad"></picture></div>
       </div>
     </section>
 
@@ -244,7 +278,7 @@
             <div class="check"><strong>01</strong><div><b>Host verification</b><p>Trust-on-first-use pinning warns when a server key changes and shows both fingerprints.</p></div></div>
             <div class="check"><strong>02</strong><div><b>Local key storage</b><p>Passwords, passphrases, and private keys stay in the device Keychain.</p></div></div>
             <div class="check"><strong>03</strong><div><b>Direct connections</b><p>SSH traffic flows between your device and your host. sesh has no relay or analytics backend.</p></div></div>
-            <div class="check"><strong>04</strong><div><b>FIDO2 forwarding</b><p>Optional NFC security-key support handles forwarded WebAuthn challenges while credentials remain protected on the key.</p></div></div>
+            <div class="check"><strong>04</strong><div><b>FIDO2 forwarding</b><p>Optional NFC security-key support handles WebAuthn challenges from compatible remote tools while credentials remain protected on the key.</p></div></div>
           </div>
         </div>
       </div>
@@ -252,10 +286,10 @@
 
     <section>
       <div class="wrap free">
-        <div class="eyebrow">Donationware</div>
+        <div class="eyebrow">Optional tips</div>
         <h2>Free means free.</h2>
         <p>Every host, shell, pane, transfer, identity, theme, and security feature is available without payment. If sesh earns a place on your home screen, you can leave an optional one-time tip. No subscription. No renewal. No locked features.</p>
-        <a class="button primary" href="https://apps.apple.com/app/id6798778693">Download sesh</a>
+        <span class="button primary disabled" aria-disabled="true">Coming soon on the App Store</span>
       </div>
     </section>
   </main>
@@ -267,20 +301,26 @@
     </div>
   </footer>
 
-  <dialog id="lightbox" aria-label="Screenshot preview"><img alt="Expanded sesh screenshot"></dialog>
+  <dialog id="lightbox" aria-label="Screenshot preview">
+    <button class="dialog-close" type="button" aria-label="Close screenshot preview">x</button>
+    <img alt="Expanded sesh screenshot">
+  </dialog>
   <script>
     const dialog = document.querySelector('#lightbox');
     const expanded = dialog.querySelector('img');
+    const closeButton = dialog.querySelector('.dialog-close');
     document.querySelectorAll('.shot').forEach((button) => {
       button.addEventListener('click', () => {
         const image = button.querySelector('img');
-        expanded.src = image.src;
+        expanded.src = image.currentSrc || image.src;
         expanded.alt = image.alt;
         dialog.showModal();
+        closeButton.focus();
       });
     });
+    closeButton.addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (event) => {
-      if (event.target === dialog || event.target === expanded) dialog.close();
+      if (event.target === dialog) dialog.close();
     });
   </script>
 </body>
