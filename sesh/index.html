@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c1117">
+  <meta name="description" content="sesh is a native iPhone and iPad SSH client built around persistent zellij sessions, secure keys, SFTP, and mobile-first terminal controls.">
+  <meta property="og:title" content="sesh - your terminal sessions, anywhere">
+  <meta property="og:description" content="A native SSH and zellij workspace for iPhone and iPad.">
+  <meta property="og:image" content="https://www.januschka.com/sesh/assets/icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.januschka.com/sesh/">
+  <title>sesh - SSH and zellij for iPhone and iPad</title>
+  <link rel="icon" href="assets/icon.png">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0c1117;
+      --surface: #121922;
+      --surface-2: #19222d;
+      --line: #293440;
+      --text: #edf3f8;
+      --muted: #9ba8b5;
+      --green: #3cc653;
+      --green-soft: rgba(60, 198, 83, .14);
+      --blue: #4da3ff;
+      --max: 1180px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 75% 2%, rgba(60, 198, 83, .11), transparent 28rem),
+        radial-gradient(circle at 8% 34%, rgba(77, 163, 255, .07), transparent 24rem),
+        var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    .wrap { width: min(calc(100% - 40px), var(--max)); margin: 0 auto; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(41, 52, 64, .7);
+      background: rgba(12, 17, 23, .82);
+      backdrop-filter: blur(18px);
+    }
+    nav .wrap { height: 68px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 800; font-size: 20px; }
+    .brand img { width: 38px; height: 38px; border-radius: 9px; }
+    .nav-links { display: flex; align-items: center; gap: 24px; font-size: 13px; color: var(--muted); }
+    .nav-links a { text-decoration: none; }
+    .nav-links a:hover { color: var(--text); }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 13px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 750;
+      transition: transform .2s, border-color .2s, background .2s;
+    }
+    .button:hover { transform: translateY(-2px); border-color: #4a5b6e; }
+    .button.primary { color: #061009; background: var(--green); border-color: var(--green); }
+    .hero {
+      min-height: calc(100vh - 68px);
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      align-items: center;
+      gap: 64px;
+      padding: 78px 0 62px;
+      overflow: hidden;
+    }
+    .eyebrow { color: var(--green); font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { max-width: 760px; margin: 18px 0 22px; font-size: clamp(48px, 6.5vw, 88px); line-height: .99; letter-spacing: -.065em; }
+    h1 span { color: var(--green); }
+    .lead { max-width: 670px; margin: 0; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: clamp(19px, 2vw, 25px); line-height: 1.45; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+    .promise { display: flex; flex-wrap: wrap; gap: 14px 24px; margin-top: 30px; color: var(--muted); font-size: 12px; }
+    .promise span::before { content: ">"; margin-right: 8px; color: var(--green); font-weight: 900; }
+    .hero-visual { position: relative; min-height: 710px; display: grid; place-items: center; }
+    .glow { position: absolute; width: 420px; height: 420px; border-radius: 50%; background: rgba(60, 198, 83, .18); filter: blur(90px); }
+    .phone-shot {
+      position: relative;
+      z-index: 2;
+      width: min(430px, 86vw);
+      border-radius: 42px;
+      box-shadow: 0 42px 100px rgba(0, 0, 0, .55);
+      transform: rotate(2deg);
+    }
+    section { padding: 110px 0; }
+    .section-head { max-width: 760px; margin-bottom: 48px; }
+    h2 { margin: 12px 0 16px; font-size: clamp(34px, 5vw, 58px); line-height: 1.08; letter-spacing: -.045em; }
+    .section-head p { margin: 0; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 19px; }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .feature { padding: 26px; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(145deg, rgba(25,34,45,.92), rgba(18,25,34,.86)); }
+    .feature .icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 11px; color: var(--green); background: var(--green-soft); font-size: 19px; font-weight: 900; }
+    .feature h3 { margin: 18px 0 8px; font-size: 18px; }
+    .feature p { margin: 0; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; }
+    .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start; }
+    .shot { overflow: hidden; padding: 9px; border: 1px solid var(--line); border-radius: 26px; background: var(--surface); cursor: zoom-in; }
+    .shot img { display: block; width: 100%; border-radius: 19px; }
+    .ipad { margin-top: 22px; padding: 10px; border: 1px solid var(--line); border-radius: 26px; background: var(--surface); }
+    .ipad img { display: block; width: 100%; border-radius: 18px; }
+    .security { display: grid; grid-template-columns: .85fr 1.15fr; gap: 50px; align-items: center; }
+    .terminal-card { padding: 25px; border: 1px solid var(--line); border-radius: 20px; background: #070a0e; box-shadow: inset 0 1px rgba(255,255,255,.03); color: #c8d3de; font-size: 14px; }
+    .terminal-card .green { color: var(--green); }
+    .terminal-card .dim { color: #65717e; }
+    .checks { display: grid; gap: 18px; }
+    .check { display: grid; grid-template-columns: 28px 1fr; gap: 12px; }
+    .check strong { color: var(--green); }
+    .check p { margin: 2px 0 0; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .free { padding: 72px 40px; border: 1px solid rgba(60,198,83,.35); border-radius: 30px; background: linear-gradient(145deg, rgba(60,198,83,.1), rgba(18,25,34,.95)); text-align: center; }
+    .free h2 { margin-top: 0; }
+    .free p { max-width: 690px; margin: 0 auto 28px; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 18px; }
+    footer { padding: 40px 0 55px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 25px; flex-wrap: wrap; }
+    footer a { color: var(--muted); }
+    dialog { max-width: min(94vw, 760px); padding: 0; border: 1px solid var(--line); border-radius: 24px; background: var(--surface); box-shadow: 0 40px 100px rgba(0,0,0,.7); }
+    dialog::backdrop { background: rgba(0,0,0,.8); backdrop-filter: blur(8px); }
+    dialog img { display: block; max-width: 100%; max-height: 88vh; border-radius: 23px; }
+    @media (max-width: 880px) {
+      .nav-links a:not(.button) { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 25px; padding-top: 58px; }
+      .hero-visual { min-height: 590px; }
+      .features { grid-template-columns: 1fr 1fr; }
+      .security { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: min(calc(100% - 26px), var(--max)); }
+      nav .wrap { height: 60px; }
+      .brand img { width: 34px; height: 34px; }
+      .nav-links .button { min-height: 38px; padding: 0 12px; font-size: 11px; }
+      .hero { min-height: auto; padding: 50px 0 20px; }
+      h1 { font-size: 51px; }
+      .hero-visual { min-height: 560px; }
+      .phone-shot { width: min(360px, 92vw); border-radius: 32px; transform: none; }
+      section { padding: 78px 0; }
+      .features { grid-template-columns: 1fr; }
+      .free { padding: 52px 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .button { transition: none; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="assets/icon.png" alt="sesh app icon"><span>sesh</span></a>
+      <div class="nav-links">
+        <a href="#features">features</a>
+        <a href="#screens">screens</a>
+        <a href="#security">security</a>
+        <a class="button primary" href="https://apps.apple.com/app/id6798778693">View on App Store</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <div class="wrap hero">
+      <div>
+        <div class="eyebrow">SSH + zellij, built for touch</div>
+        <h1>Your sessions.<br><span>Still running.</span></h1>
+        <p class="lead">sesh turns remote shells and zellij workspaces into a native iPhone and iPad experience. Attach, switch panes, move files, and keep working without shrinking a desktop app onto a phone.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="https://apps.apple.com/app/id6798778693">Get sesh for iOS</a>
+          <a class="button" href="#screens">See it in action</a>
+        </div>
+        <div class="promise">
+          <span>free</span><span>no subscription</span><span>no ads</span><span>no analytics</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="glow"></div>
+        <img class="phone-shot" src="assets/terminal.png" alt="sesh terminal showing a controlled demo zellij workspace">
+      </div>
+    </div>
+
+    <section id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">A workspace, not just a terminal</div>
+          <h2>Native controls where touch wins.</h2>
+          <p>The terminal stays a real terminal. Everything around it is designed for the device in your hand.</p>
+        </div>
+        <div class="features">
+          <article class="feature"><div class="icon">[]</div><h3>zellij, natively</h3><p>Sessions, tabs, and panes become tappable UI with quick switching, rename, focus, split, and overview controls.</p></article>
+          <article class="feature"><div class="icon">&gt;_</div><h3>Persistent shells</h3><p>Move around the app without destroying your PTY. Reopen the same shell with its content and scrollback intact.</p></article>
+          <article class="feature"><div class="icon">^K</div><h3>Terminal keyboard</h3><p>Optional Esc, Ctrl, Tab, arrows, pane controls, saved commands, and history without wasting screen space.</p></article>
+          <article class="feature"><div class="icon">S/</div><h3>Native SFTP</h3><p>Browse, upload, download, rename, create folders, and delete remote files with progress and cancellation.</p></article>
+          <article class="feature"><div class="icon">key</div><h3>Secure identities</h3><p>Import or generate Ed25519 keys, protect them with Face ID or passcode, and keep credentials in Keychain.</p></article>
+          <article class="feature"><div class="icon">iP</div><h3>Made for iPad</h3><p>Resizable sidebar, hardware shortcuts, separate shell windows, and Stage Manager workflows.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="screens">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">The real app</div>
+          <h2>Less finger gymnastics.</h2>
+          <p>Jump between work, inspect every pane, and bring up terminal keys only when you need them.</p>
+        </div>
+        <!-- These are controlled sesh demo captures. They contain no real credentials, addresses, usernames, keys, or private project data. -->
+        <div class="gallery">
+          <button class="shot" aria-label="Open terminal screenshot"><img loading="lazy" src="assets/terminal.png" alt="A controlled two-pane zellij workspace in sesh"></button>
+          <button class="shot" aria-label="Open persistent shell switcher screenshot"><img loading="lazy" src="assets/shells.png" alt="The persistent Open Shells switcher in sesh"></button>
+          <button class="shot" aria-label="Open terminal themes screenshot"><img loading="lazy" src="assets/themes.png" alt="Live terminal themes and type sizing in sesh"></button>
+          <button class="shot" aria-label="Open scrollback search screenshot"><img loading="lazy" src="assets/search.png" alt="Searching terminal scrollback in sesh"></button>
+          <button class="shot" aria-label="Open compact terminal keys screenshot"><img loading="lazy" src="assets/keyboard.png" alt="Optional compact terminal keys in sesh"></button>
+          <button class="shot" aria-label="Open optional tips screenshot"><img loading="lazy" src="assets/free.png" alt="Optional one-time tips with no subscription in sesh"></button>
+        </div>
+        <div class="ipad"><img loading="lazy" src="assets/ipad.png" alt="sesh running a controlled demo workspace on iPad"></div>
+      </div>
+    </section>
+
+    <section id="security">
+      <div class="wrap security">
+        <div class="terminal-card" aria-label="Security summary">
+          <div><span class="green">$</span> sesh security --summary</div><br>
+          <div><span class="green">OK</span> credentials: iOS Keychain</div>
+          <div><span class="green">OK</span> host keys: TOFU pinning</div>
+          <div><span class="green">OK</span> identity lock: Face ID / passcode</div>
+          <div><span class="green">OK</span> analytics: none</div>
+          <div><span class="green">OK</span> tracking: none</div>
+          <div><span class="green">OK</span> app servers: none</div><br>
+          <div class="dim">connection: your device -SSH-&gt; your server</div>
+        </div>
+        <div>
+          <div class="section-head">
+            <div class="eyebrow">Your server. Your keys.</div>
+            <h2>Private by construction.</h2>
+          </div>
+          <div class="checks">
+            <div class="check"><strong>01</strong><div><b>Host verification</b><p>Trust-on-first-use pinning warns when a server key changes and shows both fingerprints.</p></div></div>
+            <div class="check"><strong>02</strong><div><b>Local key storage</b><p>Passwords, passphrases, and private keys stay in the device Keychain.</p></div></div>
+            <div class="check"><strong>03</strong><div><b>Direct connections</b><p>SSH traffic flows between your device and your host. sesh has no relay or analytics backend.</p></div></div>
+            <div class="check"><strong>04</strong><div><b>Hardware-key workflows</b><p>Optional NFC YubiKey support forwards Chromium LUCI ReAuth challenges without exposing FIDO secrets.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap free">
+        <div class="eyebrow">Donationware</div>
+        <h2>Free means free.</h2>
+        <p>Every host, shell, pane, transfer, identity, theme, and security feature is available without payment. If sesh earns a place on your home screen, you can leave an optional one-time tip. No subscription. No renewal. No locked features.</p>
+        <a class="button primary" href="https://apps.apple.com/app/id6798778693">Download sesh</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>Copyright 2026 RunUntil Technologies GmbH</span>
+      <span><a href="/sesh-privacy.html">Privacy</a> - <a href="mailto:office@rununtil.com">Support</a></span>
+    </div>
+  </footer>
+
+  <dialog id="lightbox" aria-label="Screenshot preview"><img alt="Expanded sesh screenshot"></dialog>
+  <script>
+    const dialog = document.querySelector('#lightbox');
+    const expanded = dialog.querySelector('img');
+    document.querySelectorAll('.shot').forEach((button) => {
+      button.addEventListener('click', () => {
+        const image = button.querySelector('img');
+        expanded.src = image.src;
+        expanded.alt = image.alt;
+        dialog.showModal();
+      });
+    });
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog || event.target === expanded) dialog.close();
+    });
+  </script>
+</body>
+</html>
