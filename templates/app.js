@@ -26,6 +26,7 @@
       { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
       { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
+      { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },
     ];
 
     function openPalette() {

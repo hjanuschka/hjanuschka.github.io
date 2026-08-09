@@ -41,6 +41,8 @@ function fillPost(shell, data) {
     .split('{{TECH}}').join(data.tech)
     .split('{{OUTPUT}}').join(data.output)
     .split('{{DATE}}').join(data.date)
+    .split('{{PUBLISHED}}').join(data.published)
+    .split('{{IMAGE}}').join(data.image)
     .split('{{CONTENT}}').join(data.content);
 }
 
@@ -88,6 +90,8 @@ function main() {
       tech: metadata.tech || 'C++',
       output,
       date,
+      published: metadata.date || '2024-08-01',
+      image: metadata.image || 'https://januschka.com/og-image.png',
       content: html,
     });
 

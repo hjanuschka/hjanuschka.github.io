@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building sesh: SSH and zellij, Native on iPhone and iPad - Helmut Januschka</title>
+  <meta name="description" content="I wanted to check a remote coding session from my phone. I ended up building the mobile SSH workspace I could not find.">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Building sesh: SSH and zellij, Native on iPhone and iPad",
+    "description": "I wanted to check a remote coding session from my phone. I ended up building the mobile SSH workspace I could not find.",
+    "author": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com",
+      "sameAs": [
+        "https://github.com/hjanuschka",
+        "https://twitter.com/hjanuschka",
+        "https://linkedin.com/in/hjanuschka"
+      ]
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com"
+    },
+    "datePublished": "2026-08-09",
+    "dateModified": "2026-08-09",
+    "image": "https://www.januschka.com/sesh/assets/social.png",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://januschka.com/building-sesh-ios-ssh-zellij.html"
+    },
+    "keywords": "iOS / Tools, Swift / SwiftUI / SwiftNIO / Rust, Chromium, Open Source, Browser Development",
+    "articleSection": "Technology",
+    "inLanguage": "en-US",
+    "potentialAction": {
+      "@type": "ReadAction",
+      "target": "https://januschka.com/building-sesh-ios-ssh-zellij.html"
+    }
+  }
+  </script>
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Building sesh: SSH and zellij, Native on iPhone and iPad">
+  <meta property="og:description" content="I wanted to check a remote coding session from my phone. I ended up building the mobile SSH workspace I could not find.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://januschka.com/building-sesh-ios-ssh-zellij.html">
+  <meta property="og:image" content="https://www.januschka.com/sesh/assets/social.png">
+  <meta property="og:site_name" content="Helmut Januschka">
+  <meta property="article:author" content="Helmut Januschka">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@hjanuschka">
+  <meta name="twitter:title" content="Building sesh: SSH and zellij, Native on iPhone and iPad">
+  <meta name="twitter:description" content="I wanted to check a remote coding session from my phone. I ended up building the mobile SSH workspace I could not find.">
+  <meta name="twitter:image" content="https://www.januschka.com/sesh/assets/social.png">
+  <link rel="canonical" href="https://www.januschka.com/building-sesh-ios-ssh-zellij.html">
+  
+  <meta name="color-scheme" content="dark light">
+  <meta name="color-scheme" content="dark light">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"></noscript>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root,
+    [data-theme="dark"] {
+      --bg: #121212;
+      --bg-light: #1e1e1e;
+      --bg-lighter: #2a2a2a;
+      --bg-bar: #2a2a2a;
+      --text: #bebebe;
+      --text-dim: #8a8a8d;
+      --accent: #FFC107;
+      --accent-dim: #e68e0d;
+      --accent-glow: rgba(255, 193, 7, 0.35);
+      --accent-grid: rgba(255, 193, 7, 0.06);
+      --border: #333333;
+      --orange: #D35F5F;
+      --green: #6ec06e;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f5f0;
+      --bg-light: #ffffff;
+      --bg-lighter: #ececec;
+      --bg-bar: #ececec;
+      --text: #1f1f1f;
+      --text-dim: #6a6a6a;
+      --accent: #c98a00;
+      --accent-dim: #a36d00;
+      --accent-glow: rgba(201, 138, 0, 0.30);
+      --accent-grid: rgba(201, 138, 0, 0.10);
+      --border: #d8d4c8;
+      --orange: #b14b4b;
+      --green: #2f8f3f;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+      --scan: rgba(0, 0, 0, 0.06);
+      --scan-blend: multiply;
+    }
+
+    [data-theme="blue"] {
+      --bg: #0d1117;
+      --bg-light: #161b22;
+      --bg-lighter: #21262d;
+      --bg-bar: #21262d;
+      --text: #ffffff;
+      --text-dim: #7d8590;
+      --accent: #58a6ff;
+      --accent-dim: #1f6feb;
+      --accent-glow: rgba(88, 166, 255, 0.30);
+      --accent-grid: rgba(88, 166, 255, 0.08);
+      --border: #30363d;
+      --orange: #ff7b72;
+      --green: #56d364;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
+    }
+
+    [data-theme="osaka-jade"] {
+      --bg: #111c18;
+      --bg-light: #23372B;
+      --bg-lighter: #53685B;
+      --bg-bar: #1b2b23;
+      --text: #C1C497;
+      --text-dim: #9eebb3;
+      --accent: #2DD5B7;
+      --accent-dim: #549e6a;
+      --accent-glow: rgba(45, 213, 183, 0.30);
+      --accent-grid: rgba(45, 213, 183, 0.08);
+      --border: #509475;
+      --orange: #FF5345;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
+    }
+
+    [data-theme="purple-moon"] {
+      --bg: #020007;
+      --bg-light: #37277d;
+      --bg-lighter: #643aad;
+      --bg-bar: #211650;
+      --text: #ffffff;
+      --text-dim: #b895dd;
+      --accent: #9b49c8;
+      --accent-dim: #9845c6;
+      --accent-glow: rgba(155, 73, 200, 0.35);
+      --accent-grid: rgba(155, 73, 200, 0.08);
+      --border: #9865cf;
+      --orange: #cd9ce1;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Navigation */
+    .nav {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 15px 0;
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 16px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+
+    /* Blog Post Styles */
+    .blog-header {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 40px 0;
+      margin-bottom: 40px;
+    }
+
+    .blog-title {
+      font-size: 32px;
+      color: var(--accent);
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+
+    .blog-meta {
+      display: flex;
+      gap: 20px;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    .blog-content {
+      background: var(--bg-light);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      margin-bottom: 40px;
+    }
+
+    /* Markdown Content Styles */
+    .blog-content h1 {
+      color: var(--accent);
+      font-size: 28px;
+      margin: 30px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content h2 {
+      color: var(--orange);
+      font-size: 24px;
+      margin: 30px 0 15px;
+    }
+
+    .blog-content h3 {
+      color: var(--accent);
+      font-size: 20px;
+      margin: 25px 0 15px;
+    }
+
+    .blog-content p {
+      margin: 15px 0;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .blog-content a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .blog-content a:hover {
+      color: var(--orange);
+      border-bottom-color: var(--orange);
+    }
+
+    .blog-content ul, .blog-content ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+
+    .blog-content li {
+      margin: 8px 0;
+      line-height: 1.8;
+    }
+
+    .blog-content code {
+      background: var(--bg);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .blog-content pre {
+      background: #1d1f21 !important;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 20px !important;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    .blog-content pre code {
+      background: none !important;
+      color: #c5c8c6 !important;
+      padding: 0;
+      text-shadow: none !important;
+    }
+
+    /* Override Prism theme colors for better integration */
+    .token.comment,
+    .token.prolog,
+    .token.doctype,
+    .token.cdata {
+      color: #969896 !important;
+    }
+
+    .token.punctuation {
+      color: #c5c8c6 !important;
+    }
+
+    .token.property,
+    .token.tag,
+    .token.boolean,
+    .token.number,
+    .token.constant,
+    .token.symbol,
+    .token.deleted {
+      color: #cc6666 !important;
+    }
+
+    .token.selector,
+    .token.attr-name,
+    .token.string,
+    .token.char,
+    .token.builtin,
+    .token.inserted {
+      color: #b5bd68 !important;
+    }
+
+    .token.operator,
+    .token.entity,
+    .token.url,
+    .language-css .token.string,
+    .style .token.string {
+      color: #8abeb7 !important;
+    }
+
+    .token.atrule,
+    .token.attr-value,
+    .token.keyword {
+      color: #b294bb !important;
+    }
+
+    .token.function,
+    .token.class-name {
+      color: #81a2be !important;
+    }
+
+    .token.regex,
+    .token.important,
+    .token.variable {
+      color: #de935f !important;
+    }
+
+    .blog-content blockquote {
+      border-left: 4px solid var(--accent);
+      padding-left: 20px;
+      margin: 20px 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content em {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content strong {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* Table styles */
+    .blog-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .blog-content thead,
+    .blog-content tbody,
+    .blog-content tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .blog-content th {
+      background: var(--bg-lighter);
+      color: var(--accent);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .blog-content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .blog-content tr:hover {
+      background: var(--bg-light);
+    }
+
+    /* Mobile table responsiveness */
+    @media (max-width: 768px) {
+      .blog-content table {
+        font-size: 11px;
+        border: none;
+      }
+
+      .blog-content thead {
+        display: none;
+      }
+
+      .blog-content tbody,
+      .blog-content tr {
+        display: block;
+        width: 100%;
+      }
+
+      .blog-content tr {
+        margin-bottom: 15px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--bg);
+      }
+
+      .blog-content td {
+        display: block;
+        text-align: left;
+        padding: 8px 0;
+        border: none;
+        position: relative;
+        padding-left: 40%;
+      }
+
+      .blog-content td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 38%;
+        padding-right: 10px;
+        font-weight: bold;
+        color: var(--accent);
+        text-align: left;
+      }
+
+      /* First column (Image name) */
+      .blog-content td:nth-of-type(1):before {
+        content: "Image";
+      }
+
+      /* Second column (Size) */
+      .blog-content td:nth-of-type(2):before {
+        content: "Size";
+      }
+
+      /* Third column (Before) */
+      .blog-content td:nth-of-type(3):before {
+        content: "Before";
+      }
+
+      /* Fourth column (After) */
+      .blog-content td:nth-of-type(4):before {
+        content: "After";
+      }
+
+      /* Fifth column (C++) */
+      .blog-content td:nth-of-type(5):before {
+        content: "C++";
+      }
+
+      /* Sixth column (Speedup) */
+      .blog-content td:nth-of-type(6):before {
+        content: "Speedup";
+      }
+    }
+
+    /* Snippet blocks for inline HTML */
+    .snippet-block {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .snippet-block img {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    /* YouTube embed container */
+    .youtube-embed {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      margin: 30px 0;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .youtube-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Gravatar in nav */
+    .gravatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    /* Status indicator */
+    .status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-light);
+      border-top: 3px solid var(--accent);
+      padding: 30px 0;
+      margin-top: 60px;
+      text-align: center;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-dim);
+    }
+
+    .badge {
+      background: var(--bg-lighter);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    /* Command Palette */
+    .command-palette {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+    .command-palette.hidden { display: none; }
+    .command-palette-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+    .command-palette-modal {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 20px;
+      background: var(--bg-light);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent);
+      overflow: hidden;
+    }
+    .command-palette-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .command-palette-header .prompt {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .command-palette-header input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+    }
+    .command-palette-header input::placeholder { color: var(--text-dim); }
+    .command-palette-header kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-results {
+      list-style: none;
+      max-height: 320px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 8px;
+    }
+    .command-result {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+    .command-result:hover, .command-result.selected {
+      background: var(--bg-lighter);
+    }
+    .command-result .icon { font-size: 16px; }
+    .command-result .name { flex: 1; color: var(--text); }
+    .command-palette-footer {
+      display: flex;
+      gap: 20px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-palette-footer kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 5px;
+      margin-right: 4px;
+    }
+
+
+    /* RunUntil-inspired refresh */
+    body {
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--accent-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -160px;
+      left: 50%;
+      width: min(900px, 120vw);
+      height: 520px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+      filter: blur(50px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* RunUntil mouse-trail glyphs */
+    .glyph {
+      position: fixed;
+      pointer-events: none;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      opacity: 0.9;
+      z-index: 5;
+      animation: fadeglyph 900ms ease-out forwards;
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    @keyframes fadeglyph {
+      0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0;   transform: translate(-50%, -150%) scale(0.6); }
+    }
+
+    .nav, .blog-header, article, .footer, .command-palette {
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav, .blog-header, .footer {
+      border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .nav { border-bottom-width: 1px; }
+
+    .blog-header {
+      border-bottom-width: 1px;
+      background: linear-gradient(180deg, var(--bg-light), rgba(0, 0, 0, 0));
+    }
+
+    .blog-title { text-shadow: 0 0 22px var(--accent-glow); }
+
+    .blog-content {
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      background: var(--bg-light);
+    }
+
+    .blog-content pre {
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .blog-content code { background: var(--bg); }
+
+    .theme-menu, .command-palette-modal {
+      background: var(--bg-bar);
+      border-color: var(--border);
+    }
+
+    .footer { border-top-width: 1px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .status { animation: none; }
+      * { scroll-behavior: auto !important; }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .blog-title {
+        font-size: 24px;
+      }
+      
+      .nav-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .nav-content > div {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-links {
+        gap: 15px;
+      }
+      
+      .theme-switcher {
+        justify-content: center;
+      }
+      
+      .blog-content {
+        padding: 20px;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-content">
+        <div class="nav-brand">
+          <img src="https://gravatar.com/avatar/7f3d8f25d208327860bdfebf145e481b?s=64"
+               alt="Helmut Januschka"
+               class="gravatar"
+               width="32" height="32">
+          <span class="status"></span>
+          hjanuschka@world
+        </div>
+        <div style="display: flex; align-items: center; gap: 30px;">
+          <div class="nav-links">
+            <a href="/">← Back to Home</a>
+            <a href="/#projects">Projects</a>
+            <a href="/#contact">Contact</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Blog Header -->
+  <div class="blog-header">
+    <div class="container">
+      <h1 class="blog-title">Building sesh: SSH and zellij, Native on iPhone and iPad</h1>
+      <div class="blog-meta">
+        <span>⚡ iOS / Tools</span>
+        <span>🔧 Swift / SwiftUI / SwiftNIO / Rust</span>
+        <span>👤 Helmut Januschka</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Content -->
+  <article class="container">
+    <div class="blog-content">
+<p><em>I wanted to check a remote coding session from my phone. I ended up building the mobile SSH workspace I could not find.</em></p>
+<p><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">APP STORE REVIEW</span></p>
+<h2 id="the-problem-was-not-ssh">The problem was not SSH</h2>
+<p>SSH clients for iOS already exist. Many of them are very capable. But my actual workflow is no longer just opening a shell, running a command, and disconnecting.</p>
+<p>I keep development environments on remote machines. Long-running builds, tests, and coding agents live inside <a href="https://zellij.dev/">zellij</a> sessions. On a desktop, I can attach to a session, jump between tabs and panes, inspect output, and leave everything organized for later.</p>
+<p>On a phone, the same workflow usually becomes a tiny desktop terminal with an on-screen keyboard covering half of it. Even simple operations require remembering prefix keys and typing awkward key combinations. The protocol works, but the interaction model does not.</p>
+<p>That became the idea behind <strong>sesh</strong>: keep the terminal real, but make everything around it native to iPhone and iPad.</p>
+<div class="snippet-block" style="text-align:center;">
+  <a href="/sesh/" aria-label="Open the sesh product page">
+    <picture>
+      <source srcset="/sesh/assets/terminal.webp" type="image/webp">
+      <img src="/sesh/assets/terminal.png" alt="sesh showing a controlled two-pane zellij workspace" width="520" height="1130" loading="lazy">
+    </picture>
+  </a>
+</div>
+
+<h2 id="a-terminal-with-native-structure">A terminal with native structure</h2>
+<p>The important distinction is that sesh does not try to replace the terminal. Full-screen programs, shell input, ANSI output, mouse reporting, scrollback, and selection still belong to a terminal emulator.</p>
+<p>The app adds native controls for the structure around it:</p>
+<ul>
+<li>zellij sessions become a tappable session list</li>
+<li>tabs become a horizontal native tab strip</li>
+<li>panes can be focused, split, closed, or inspected from an overview</li>
+<li>open shells can be switched without destroying their local terminal view</li>
+<li>SFTP becomes a native file browser</li>
+<li>search, themes, type sizing, and saved commands use normal iOS sheets</li>
+</ul>
+<p>That division matters. Reimplementing terminal behavior in SwiftUI would be a dead end, while rendering every control inside a terminal wastes everything iOS is good at.</p>
+<h2 id="choosing-the-terminal-engine">Choosing the terminal engine</h2>
+<p>I first looked at using Ghostty. Its terminal core is impressive, but its iOS embedding and input path were not mature enough for what I needed. I wanted a terminal view that already understood iOS keyboard input, selection, scrolling, and the lifecycle of a UIKit view embedded in SwiftUI.</p>
+<p><a href="https://github.com/migueldeicaza/SwiftTerm">SwiftTerm</a> was the practical choice. It gave sesh a real terminal emulator while leaving room to build the rest of the experience natively.</p>
+<p>The SSH layer uses Citadel and SwiftNIO SSH. That provides async SSH connections, PTY channels, SFTP, host-key validation, and remote port forwarding without dropping into a C wrapper around OpenSSH.</p>
+<p>The rough stack looks like this:</p>
+<pre><code class="language-text">SwiftUI navigation and sheets
+        |
+UIKit / SwiftTerm terminal view
+        |
+Citadel + SwiftNIO SSH
+        |
+remote shell or zellij attachment
+</code></pre>
+<p>The app ships JetBrains Mono Nerd Font so terminal output is predictable and zellij layouts do not depend on whatever fonts happen to be installed on the device.</p>
+<h2 id="making-zellij-understandable-to-a-native-app">Making zellij understandable to a native app</h2>
+<p>Attaching to zellij is easy:</p>
+<pre><code class="language-bash">zellij attach --create my-session
+</code></pre>
+<p>Understanding its current tabs and panes is harder. zellij&#39;s internal IPC is not a stable integration API, and coupling an iOS app to its serialized internal messages would be fragile.</p>
+<p>sesh uses two paths instead:</p>
+<ol>
+<li>A polling fallback based on zellij commands such as <code>dump-layout</code>.</li>
+<li>An optional Rust sidecar plugin that streams semantic layout state.</li>
+</ol>
+<p>The sidecar is installed per host and sends information the app actually cares about: active session, tab names, pane focus, pane IDs, and geometry. If it cannot be installed or started, sesh falls back to polling. Native controls remain useful instead of becoming an all-or-nothing feature.</p>
+<p>This also exposed a subtle UI problem. Publishing unchanged layout state every few seconds caused SwiftUI to rebuild an open options menu. Under heavy terminal output, an activity timestamp did the same thing once per second. The menu visibly flickered and could not be scrolled.</p>
+<p>The fix was not a clever animation. It was to stop treating unchanged background state and terminal byte flow as UI state. Parsed zellij layouts are now published only when they differ, and terminal activity timestamps no longer invalidate the entire screen.</p>
+<h2 id="shell-lifetime-is-a-ui-concern">Shell lifetime is a UI concern</h2>
+<p>A common mobile navigation mistake is letting the destination view own the SSH PTY. Pop the screen, and the shell disappears with it.</p>
+<p>sesh keeps active shells in a workspace object outside the navigation hierarchy. The SwiftTerm view, terminal scrollback, PTY channel, and connection stay attached to that workspace while moving through host lists, files, settings, or another shell.</p>
+<p>This is deliberately bounded:</p>
+<ul>
+<li>navigating inside the app does not close the shell</li>
+<li>a connected shell can be reopened with its terminal state intact</li>
+<li>a remote zellij session can be reattached after reconnecting</li>
+<li>a plain remote shell does not magically survive the server closing its PTY</li>
+</ul>
+<p>That last point is important. &quot;Persistent&quot; is an easy marketing word, but it overpromises. zellij provides remote session persistence. sesh provides a workspace lifecycle that does not destroy a healthy connection just because a SwiftUI view disappeared.</p>
+<div class="snippet-block" style="text-align:center;">
+  <picture>
+    <source srcset="/sesh/assets/shells.webp" type="image/webp">
+    <img src="/sesh/assets/shells.png" alt="The Open Shells switcher in sesh" width="520" height="1130" loading="lazy">
+  </picture>
+</div>
+
+<h2 id="the-keyboard-is-part-of-the-product">The keyboard is part of the product</h2>
+<p>Terminal keyboards can become a wall of tiny buttons. My first versions did exactly that. They exposed every zellij action and terminal key all the time, which looked powerful and made the terminal smaller.</p>
+<p>The current approach is phone-first:</p>
+<ul>
+<li>extra keys start hidden on iPhone</li>
+<li>a floating keyboard button brings input back</li>
+<li>compact mode fits useful controls into one row</li>
+<li>full and keys-only layouts remain optional</li>
+<li>iPad can make better use of the extra space and hardware keyboard shortcuts</li>
+</ul>
+<p>Pane operations are also available from a normal options menu. The always-visible row of unlabeled pane icons was removed after it became clear that even I had to pause and decode some of them.</p>
+<p>This sounds cosmetic, but terminal usability on a phone is mostly the sum of small space and input decisions.</p>
+<h2 id="keys-should-remain-keys">Keys should remain keys</h2>
+<p>An SSH app has to treat key storage as part of its core architecture, not as a settings feature added at the end.</p>
+<p>sesh supports passwords, imported private keys, encrypted key files, reusable identities, and generated Ed25519 keys. Private material is stored in the iOS Keychain. Identities can require Face ID or the device passcode before use.</p>
+<p>Host verification uses trust on first use. The first connection stores the server key fingerprint. A later mismatch blocks the connection and shows both fingerprints instead of silently accepting the new key.</p>
+<p>There is no sesh account, analytics SDK, advertising SDK, or relay backend. SSH traffic flows directly from the device to the configured host.</p>
+<h2 id="files-links-and-the-things-around-a-shell">Files, links, and the things around a shell</h2>
+<p>Once the shell worked, the missing surrounding tools became obvious.</p>
+<p>SFTP uses the same SSH connection and presents folders as a native browser with upload, download, rename, delete, progress, and cancellation. HTTP and HTTPS links from terminal output open in an embedded WebKit browser, while custom schemes still go through iOS.</p>
+<p>Terminal profiles add themes, text sizing, bell and haptic preferences, and accessory layouts per host. Host cards can show protected local terminal snapshots without opening miniature background SSH sessions.</p>
+<p>On iPad, the same model expands into a sidebar, resizable layouts, hardware keyboard shortcuts, and separate windows for Stage Manager.</p>
+<h2 id="nfc-security-key-forwarding">NFC security-key forwarding</h2>
+<p>One specialized workflow pushed the SSH layer further. Some remote tools request a WebAuthn assertion while the command itself is running on another machine.</p>
+<p>Third-party iOS apps cannot access a USB-C security key through raw FIDO HID. NFC is available, so sesh can receive a supported forwarded WebAuthn challenge over a loopback-only remote port and perform the assertion against an NFC FIDO2 security key.</p>
+<p>The private key never leaves the security key. sesh forwards a challenge and returns the signed assertion. The integration currently targets compatible remote tooling rather than pretending to be a universal FIDO transport.</p>
+<h2 id="free-with-optional-tips">Free, with optional tips</h2>
+<p>sesh is free. Hosts, identities, SFTP, zellij controls, themes, and security features are not gated.</p>
+<p>There are three optional one-time tips through StoreKit. They unlock nothing and never renew. A reminder appears only after meaningful use, at most once per calendar month, and can be disabled permanently.</p>
+<p>Even that simple model had an App Store detail I had not expected: Apple&#39;s first consumable in-app purchase must be submitted together with an app version. The three tips therefore had to be attached to the same review submission as version 1.0 rather than reviewed independently.</p>
+<h2 id="what-shipped">What shipped</h2>
+<p>The first version grew beyond the original &quot;zellij buttons on an SSH terminal&quot; idea:</p>
+<ul>
+<li>native SSH terminal on iPhone and iPad</li>
+<li>zellij sessions, tabs, panes, overview, and optional sidecar integration</li>
+<li>connection-aware shell workspaces and reconnect support</li>
+<li>Keychain identities, Ed25519 generation, and biometric protection</li>
+<li>TOFU host-key pinning</li>
+<li>native SFTP</li>
+<li>terminal search, selection, themes, profiles, and compact keys</li>
+<li>embedded web links</li>
+<li>compatible NFC FIDO2 challenge forwarding</li>
+<li>optional one-time tips with no feature gating</li>
+</ul>
+<p>The app is currently in App Store review. The product page, screenshots, privacy details, and eventual download link live at <a href="/sesh/">januschka.com/sesh</a>.</p>
+<h2 id="the-lesson">The lesson</h2>
+<p>Building sesh reinforced something I keep seeing in developer tools: moving a desktop workflow to mobile is not a scaling exercise.</p>
+<p>The SSH protocol did not need to change. zellij did not need a mobile clone. The useful work was deciding which state belongs to the terminal, which belongs to the connection, which belongs to the app workspace, and which actions should become native touch UI.</p>
+<p>A mobile developer tool feels native when it stops asking the user to pretend they still have a desktop keyboard and a large screen.</p>
+<hr>
+<p><strong>Links:</strong></p>
+<ul>
+<li><a href="/sesh/">sesh product page</a></li>
+<li><a href="/sesh-privacy.html">Privacy policy</a></li>
+<li><a href="https://zellij.dev/">zellij</a></li>
+<li><a href="https://github.com/migueldeicaza/SwiftTerm">SwiftTerm</a></li>
+</ul>
+
+    </div>
+  </article>
+
+  <!-- Command Palette -->
+  <div id="commandPalette" class="command-palette hidden">
+    <div class="command-palette-backdrop"></div>
+    <div class="command-palette-modal">
+      <div class="command-palette-header">
+        <span class="prompt">❯</span>
+        <input type="text" id="commandInput" placeholder="Type a command..." autocomplete="off">
+        <kbd>ESC</kbd>
+      </div>
+      <ul id="commandResults" class="command-results"></ul>
+      <div class="command-palette-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
+
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <span>© 2025 Helmut Januschka · <a href="http://www.rununtil.com/impressum.html" style="color: var(--text-dim);">Imprint</a></span>
+        <span class="badge">Powered by marked.js + Terminal Vibes</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Command Palette
+    const palette = document.getElementById('commandPalette');
+    const paletteInput = document.getElementById('commandInput');
+    const paletteResults = document.getElementById('commandResults');
+    let selectedIndex = 0;
+
+    const commands = [
+      { icon: '🏠', name: 'Go to Home', keywords: ['home', 'top', 'start'], action: () => window.location.href = '/' },
+      { icon: '👤', name: 'Go to About', keywords: ['about', 'bio', 'me'], action: () => window.location.href = '/#about' },
+      { icon: '💼', name: 'Go to Experience', keywords: ['experience', 'work', 'career'], action: () => window.location.href = '/#experience' },
+      { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => window.location.href = '/#projects' },
+      { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => window.location.href = '/#blog' },
+      { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => window.location.href = '/#contact' },
+      { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
+      { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
+      { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
+      { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+      { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
+      { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Negotiated MTU', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
+      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
+      { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
+      { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },
+    ];
+
+    function openPalette() {
+      palette.classList.remove('hidden');
+      paletteInput.value = '';
+      selectedIndex = 0;
+      renderResults(commands);
+      setTimeout(() => paletteInput.focus(), 10);
+    }
+
+    function closePalette() {
+      palette.classList.add('hidden');
+      paletteInput.value = '';
+    }
+
+    function filterCommands(query) {
+      if (!query) return commands;
+      const q = query.toLowerCase();
+      return commands.filter(cmd =>
+        cmd.name.toLowerCase().includes(q) ||
+        cmd.keywords.some(k => k.includes(q))
+      );
+    }
+
+    function renderResults(results) {
+      paletteResults.innerHTML = results.map((cmd, i) =>
+        '<li class="command-result' + (i === selectedIndex ? ' selected' : '') + '" data-index="' + i + '">' +
+          '<span class="icon">' + cmd.icon + '</span>' +
+          '<span class="name">' + cmd.name + '</span>' +
+        '</li>'
+      ).join('');
+    }
+
+    function executeCommand(results) {
+      if (results[selectedIndex]) {
+        results[selectedIndex].action();
+        closePalette();
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+      if (e.key === 'Escape' && !palette.classList.contains('hidden')) {
+        closePalette();
+      }
+    });
+
+    paletteInput.addEventListener('input', function() {
+      const results = filterCommands(this.value);
+      selectedIndex = 0;
+      renderResults(results);
+    });
+
+    paletteInput.addEventListener('keydown', function(e) {
+      const results = filterCommands(this.value);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+        renderResults(results);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        renderResults(results);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        executeCommand(results);
+      }
+    });
+
+    paletteResults.addEventListener('click', function(e) {
+      const item = e.target.closest('.command-result');
+      if (item) {
+        selectedIndex = parseInt(item.dataset.index);
+        executeCommand(filterCommands(paletteInput.value));
+      }
+    });
+
+    palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
+  </script>
+  
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script>
+    // Highlight all code blocks
+    Prism.highlightAll();
+  </script>
+  <script>
+    // RunUntil mouse-trail glyphs
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(pointer: coarse)').matches) return;
+      var chars = '01{}<>/$;=>_*+#';
+      var last = 0;
+      window.addEventListener('mousemove', function (e) {
+        var now = performance.now();
+        if (now - last < 45) return;
+        last = now;
+        var g = document.createElement('span');
+        g.className = 'glyph';
+        g.textContent = chars[Math.floor(Math.random() * chars.length)];
+        g.style.left = e.clientX + 'px';
+        g.style.top = e.clientY + 'px';
+        document.body.appendChild(g);
+        setTimeout(function () { g.remove(); }, 900);
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>
