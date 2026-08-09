@@ -93,7 +93,7 @@ function main() {
       published: metadata.date || '2024-08-01',
       image: metadata.image || 'https://januschka.com/og-image.png',
       content: html,
-    });
+    }).replace(/[ \t]+$/gm, '');
 
     fs.writeFileSync(path.join(ROOT, output), page);
     log(C.green, `\u2713 Generated: ${output}`);
