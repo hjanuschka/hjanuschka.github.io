@@ -18,16 +18,18 @@ That is a good sign. A codec starts feeling native when its bugs are the same un
 
 The biggest missing part of this story was fuzzing. Chromium already runs image decoders against hostile inputs, but fixing every finding only in the browser would leave the underlying Rust crate vulnerable for every other embedder.
 
-The first step was adding [ClusterFuzzLite to jxl-rs](https://github.com/libjxl/jxl-rs/pull/628): short AddressSanitizer fuzz runs on pull requests and longer scheduled runs against the existing decode targets. It paid for itself almost immediately.
+The first step was adding ClusterFuzzLite to jxl-rs: short AddressSanitizer fuzz runs on pull requests and longer scheduled runs against the existing decode targets. It paid for itself almost immediately.
+
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add ClusterFuzzLite CI integration for continuous fuzzing**](https://github.com/libjxl/jxl-rs/pull/628)
 
 The first wave found arithmetic and allocation assumptions hidden behind valid Rust types:
 
-- [An extra-channel name could underflow its remaining-length calculation](https://github.com/libjxl/jxl-rs/pull/629).
-- [`SmallBuffer::refill` could overflow while extending malformed input](https://github.com/libjxl/jxl-rs/pull/633).
-- [Image dimensions, patch counts, spline areas, and render-group sizes needed checked or saturating arithmetic](https://github.com/libjxl/jxl-rs/pull/638).
-- [Section buffers needed fallible allocation](https://github.com/libjxl/jxl-rs/pull/614), so an allocation failure becomes a decoder error rather than a process abort.
-- [Blending alpha-channel indices needed validation before rendering](https://github.com/libjxl/jxl-rs/pull/617).
-- [A crafted frame-index count could request a multi-gigabyte allocation](https://github.com/libjxl/jxl-rs/pull/686), even though the remaining bytes could not possibly contain that many entries.
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Prevent extra-channel name length underflow**](https://github.com/libjxl/jxl-rs/pull/629)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Prevent overflow in SmallBuffer::refill**](https://github.com/libjxl/jxl-rs/pull/633)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Use checked arithmetic for dimensions, patches, splines, and render groups**](https://github.com/libjxl/jxl-rs/pull/638)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Make section-buffer allocation fallible**](https://github.com/libjxl/jxl-rs/pull/614)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Validate blending alpha-channel indices**](https://github.com/libjxl/jxl-rs/pull/617)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Bound frame-index allocation by remaining input**](https://github.com/libjxl/jxl-rs/pull/686)
 
 Rust prevents these from becoming ordinary out-of-bounds writes or use-after-free bugs. It does not automatically make a panic or an infallible multi-gigabyte allocation acceptable in a renderer. A browser decoder still has to turn arbitrary bytes into either pixels or a controlled error.
 
@@ -35,11 +37,13 @@ Rust prevents these from becoming ordinary out-of-bounds writes or use-after-fre
 
 Later findings were less about one arithmetic operation and more about decoder invariants:
 
-- [Missing reference frames must use the clipped blend width](https://github.com/libjxl/jxl-rs/pull/773), not the full image width.
-- [HF section allocation must be fallible](https://github.com/libjxl/jxl-rs/pull/774).
-- [Histogram indices need validation when the histogram count is not a power of two](https://github.com/libjxl/jxl-rs/pull/775).
-- [A one-pixel save region must not underflow when its orientation flips X](https://github.com/libjxl/jxl-rs/pull/776).
-- [A 9-byte truncated codestream must not allocate the 743 MB claimed by its TOC](https://github.com/libjxl/jxl-rs/pull/856). Section buffers now grow from bytes actually available, not declarations made by untrusted input.
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Use clipped blend width for missing references**](https://github.com/libjxl/jxl-rs/pull/773)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Use fallible allocation for HF sections**](https://github.com/libjxl/jxl-rs/pull/774)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Validate histogram indices**](https://github.com/libjxl/jxl-rs/pull/775)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Prevent one-pixel save-region underflow**](https://github.com/libjxl/jxl-rs/pull/776)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Grow section buffers from available input**](https://github.com/libjxl/jxl-rs/pull/856)
+
+The last issue came from a 9-byte truncated codestream whose TOC claimed a 743 MB section. Section buffers now grow from bytes actually available, not declarations made by untrusted input.
 
 That last issue came from Chromium's `blink_jxl_decoder_fuzzer`, but the reproducer and fix live in jxl-rs. This is the feedback loop I wanted: Chromium supplies production-scale fuzzing; the generic fix goes upstream; the next crate roll brings it back to Chromium.
 
@@ -49,12 +53,12 @@ Once multi-threaded decoding entered the picture, bytes were no longer the only 
 
 That work found reentrant locks, incorrect read/write lock ownership, schedule-dependent border rows, and progressive output that depended on group completion order:
 
-- [Avoid an aliased squeeze-buffer reentrant lock](https://github.com/libjxl/jxl-rs/pull/867)
-- [Use floor semantics for vertically subsampled border rows](https://github.com/libjxl/jxl-rs/pull/868)
-- [Take read locks for palette prediction context](https://github.com/libjxl/jxl-rs/pull/869)
-- [Make scheduling sets deterministic so failed schedules replay](https://github.com/libjxl/jxl-rs/pull/870)
-- [Fix smooth-unsqueeze scratch-row races](https://github.com/libjxl/jxl-rs/pull/871)
-- [Clip ready rectangles before pipeline stages consume them](https://github.com/libjxl/jxl-rs/pull/873)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Avoid an aliased squeeze-buffer reentrant lock**](https://github.com/libjxl/jxl-rs/pull/867)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Use floor semantics for vertically subsampled border rows**](https://github.com/libjxl/jxl-rs/pull/868)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Take read locks for palette prediction context**](https://github.com/libjxl/jxl-rs/pull/869)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Make scheduling sets deterministic so failures replay**](https://github.com/libjxl/jxl-rs/pull/870)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix smooth-unsqueeze scratch-row races**](https://github.com/libjxl/jxl-rs/pull/871)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Clip ready rectangles before pipeline stages consume them**](https://github.com/libjxl/jxl-rs/pull/873)
 
 This is the less visible half of enabling a parallel runner. The happy path getting faster is useful; proving that output does not change with a different interleaving is what makes it shippable.
 
