@@ -959,6 +959,96 @@
               <span>In Progress</span>
             </div>
 
+            <a href="/chromium-installed-webapps-native.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-progress">ONGOING</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2026</span>
+                <h4>Making Installed Web Apps Belong on the OS</h4>
+                <p>System bars, cutouts, IME insets, and toolbar seams - verified by a reproducible nine-case Android hardware matrix.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Web Apps</span>
+                  <span class="blog-tag">Platform UI</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-css-zoom-inheritance.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-review">IN REVIEW</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2026</span>
+                <h4>Fixing CSS Zoom and Explicit Inheritance</h4>
+                <p>Why inherit, unset, and revert-layer need to cross zoom boundaries without double-scaling computed lengths.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Blink</span>
+                  <span class="blog-tag">CSS</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-speculation-preload-scanner.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-review">IN REVIEW</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2026</span>
+                <h4>What the Browser Sees Before the Parser</h4>
+                <p>Teaching the preload scanner to notice speculation rules early without turning it into a second HTML parser.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Loading</span>
+                  <span class="blog-tag">Speculation Rules</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-jxl-one-year-later.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-progress">ONGOING</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2026</span>
+                <h4>JPEG XL, One Year Later</h4>
+                <p>ClusterFuzzLite, Chromium fuzzers, thread-schedule testing, progressive rendering, and the hardening after integration.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">JPEG XL</span>
+                  <span class="blog-tag">Rust</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-binary-size-tables.html" class="blog-card" data-status="progress">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-progress">ONGOING</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2026</span>
+                <h4>Shrinking Chromium's Binary, One Table at a Time</h4>
+                <p>About 567 KiB of measured arm64 savings from replacing generated control flow with compact data tables.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Binary Size</span>
+                  <span class="blog-tag">C++</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
             <a href="/chromium-https-rr-take-two.html" class="blog-card" data-status="progress">
               <div class="blog-card-header">
                 <span class="blog-status blog-status-review">IN REVIEW</span>
@@ -998,12 +1088,12 @@
 
             <a href="/chromium-webbluetooth-mtu.html" class="blog-card" data-status="progress">
               <div class="blog-card-header">
-                <span class="blog-status blog-status-progress">IN PROGRESS</span>
+                <span class="blog-status blog-status-review">IN REVIEW</span>
               </div>
               <div class="blog-card-body">
-                <span class="blog-date">June 2026</span>
-                <h4>Web Bluetooth: Negotiated ATT MTU</h4>
-                <p>Exposing getNegotiatedMTU() to break past the 20-byte wall across Windows, Linux, Android, macOS.</p>
+                <span class="blog-date">August 2026</span>
+                <h4>Web Bluetooth: How Large Can a Write Be?</h4>
+                <p>Exposing maxWriteWithoutResponseSize so pages can use the negotiated connection instead of assuming a 20-byte payload.</p>
               </div>
               <div class="blog-card-footer">
                 <div class="blog-tags">
@@ -1075,14 +1165,86 @@
               <span>Landed</span>
             </div>
 
+            <a href="/chromium-dangling-pointer-order.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2026</span>
+                <h4>Four Dangling Pointers, One Ownership Lesson</h4>
+                <p>Using declaration and teardown order to make raw_ptr observers die before the objects they do not own.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Memory Safety</span>
+                  <span class="blog-tag">C++</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-text-decoration-inset.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2026</span>
+                <h4>Implementing text-decoration-inset in Blink</h4>
+                <p>Making underlines stop short of the text edges, from CSS parsing through inline fragments and painting.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Blink</span>
+                  <span class="blog-tag">CSS</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-devtools-papercuts.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2026</span>
+                <h4>Fixing the DevTools Friction I Kept Running Into</h4>
+                <p>Binary payloads, storage clearing, XML documents, hidden columns, and flame-chart search.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">DevTools</span>
+                  <span class="blog-tag">DX</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
+            <a href="/chromium-timeticks-unixepoch.html" class="blog-card" data-status="landed">
+              <div class="blog-card-header">
+                <span class="blog-status blog-status-landed">LANDED</span>
+              </div>
+              <div class="blog-card-body">
+                <span class="blog-date">August 2026</span>
+                <h4>Deleting base::TimeTicks::UnixEpoch</h4>
+                <p>Removing a misleading conversion between monotonic ticks and wall-clock time, one subsystem at a time.</p>
+              </div>
+              <div class="blog-card-footer">
+                <div class="blog-tags">
+                  <span class="blog-tag">Chromium</span>
+                  <span class="blog-tag">Time</span>
+                </div>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </a>
+
             <a href="/chromium-webbluetooth-cancel-connect.html" class="blog-card" data-status="landed">
               <div class="blog-card-header">
                 <span class="blog-status blog-status-landed">LANDED</span>
               </div>
               <div class="blog-card-body">
                 <span class="blog-date">July 2026</span>
-                <h4>Cancelling a Pending Web Bluetooth Connect</h4>
-                <p>disconnect() now aborts an in-flight connect on Windows and Android - a journey that reached down into AOSP.</p>
+                <h4>Cancelling a Pending Web Bluetooth Connection</h4>
+                <p>Making disconnect() finish an in-flight connect exactly once on Windows and Android, with an AOSP detour.</p>
               </div>
               <div class="blog-card-footer">
                 <div class="blog-tags">
@@ -2167,6 +2329,15 @@
         { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
         { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
         { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+        { icon: '📄', name: 'Blog: Installed Web Apps on the OS', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+        { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
+        { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
+        { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+        { icon: '📄', name: 'Blog: Shrinking Binary Size with Tables', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+        { icon: '📄', name: 'Blog: Four Dangling Pointers', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+        { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
+        { icon: '📄', name: 'Blog: DevTools Papercuts', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+        { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
         { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch', 'fullscreen'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
         { icon: '📄', name: 'Blog: Shipping Request.isReloadNavigation', keywords: ['blog', 'fetch', 'reload', 'service worker', 'isreloadnavigation', 'ship', 'i2s'], action: () => window.location.href = '/chromium-request-isreloadnavigation.html' },
         { icon: '📄', name: 'Blog: DevTools CSS Specificity Breakdown', keywords: ['blog', 'devtools', 'css', 'specificity', 'selector', 'tooltip', 'cdp'], action: () => window.location.href = '/chromium-devtools-specificity.html' },
@@ -2175,7 +2346,7 @@
         { icon: '📄', name: 'Blog: BFCache Focus Preservation', keywords: ['blog', 'bfcache', 'focus', 'back', 'forward', 'cache', 'ime', 'a11y'], action: () => window.location.href = '/chromium-bfcache-focus.html' },
         { icon: '📄', name: 'Blog: Android VirtualKeyboard Geometry', keywords: ['blog', 'virtual', 'keyboard', 'android', 'inset', 'innerheight', 'vk', 'geometry'], action: () => window.location.href = '/chromium-android-virtual-keyboard.html' },
         { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux', 'input'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
-        { icon: '📄', name: 'Blog: Web Bluetooth Negotiated MTU', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'web', 'ble'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
+        { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'web', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
         { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android', 'disconnect'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
         { icon: '📄', name: 'Blog: Camera Capture on Desktop', keywords: ['blog', 'camera', 'capture', 'input', 'file', 'media', 'webcam'], action: () => window.location.href = '/chromium-camera-capture.html' },
         { icon: '📄', name: 'Blog: Another Try at HTTPS-RR', keywords: ['blog', 'https-rr', 'https', 'rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },

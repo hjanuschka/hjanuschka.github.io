@@ -1,70 +1,99 @@
 ---
-title: "Web Bluetooth: Exposing the Negotiated ATT MTU"
+title: "Web Bluetooth: How Large Can a Write Be?"
 category: "Chromium"
 tech: "C++ / Web Bluetooth"
 ---
 
-*The 20-byte wall, and giving the web a way to ask how big its packets can actually be*
+*The negotiated ATT MTU is protocol detail. What a page needs is the payload size it can safely send without a response.*
 
-**Status:** 🚧 In Progress (WIP)
+**Status:** 🚧 In Review
 
-## The Problem
+## The 20-Byte Wall
 
-Web Bluetooth has a long-standing rough edge around the ATT MTU - the maximum size of a single GATT packet.
+A long-running Web Bluetooth failure looked arbitrary from JavaScript. A characteristic write larger than 20 bytes failed on Windows with a generic `GATT operation failed for unknown reason`, while similar code worked on other platforms.
 
-Three issues describe the same underlying gap from different angles:
+The number comes from Bluetooth ATT: the default MTU is 23 bytes and a write command spends 3 bytes on its header, leaving a 20-byte payload. Connections can negotiate a larger MTU, but Web Bluetooth gave the page no reliable way to choose a payload size for `writeValueWithoutResponse()`.
 
-- [**40686244**](https://issues.chromium.org/issues/40686244) - "20 byte MTU for web-bluetooth on Windows Chrome?" Writing a characteristic value longer than 20 bytes fails on Windows with a generic `GATT operation failed for unknown reason`, while the exact same code works on macOS.
-- [**40163619**](https://issues.chromium.org/issues/40163619) - the "Exchange MTU" step from the Web Bluetooth specification was not implemented for a long time, which especially hurt Android where the default MTU is tiny.
-- [**40265040**](https://issues.chromium.org/issues/40265040) - there is no way for a page to read the final negotiated MTU, so authors cannot size their writes to avoid the wall in the first place.
+The result was defensive chunking: applications split everything into 20-byte writes even when the connection could carry much more.
 
-The 20-byte number is not arbitrary: it is the default ATT MTU of 23 bytes minus the 3-byte ATT header. Until the MTU is negotiated up, that is all you get per packet.
+Three old issues describe parts of the same gap:
 
-## The Background
+- [40686244](https://issues.chromium.org/issues/40686244) - writes above 20 bytes failing on Windows.
+- [40163619](https://issues.chromium.org/issues/40163619) - the missing Exchange MTU behavior, especially visible on Android.
+- [40265040](https://issues.chromium.org/issues/40265040) - expose enough negotiated-MTU information for an application to size writes.
 
-Part of this story predates my involvement. The "Exchange MTU" gap (40163619) was addressed for Android by François Beaufort, who landed the larger-MTU request and later removed the experimental flag:
+## Why the API Changed Shape
 
-- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Web Bluetooth: Request a larger ATT MTU on Android**](https://chromium-review.googlesource.com/c/chromium/src/+/3260011)
-- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Remove web-bluetooth-request-larger-mtu flag**](https://chromium-review.googlesource.com/c/chromium/src/+/3500407)
+The first version of this work exposed the raw negotiated ATT MTU. The useful question for a page, however, is not "what was the protocol MTU?" It is:
 
-That makes the platform negotiate a bigger MTU, but it does not tell the web page what the negotiated value ended up being. Without that, authors are still guessing - chunking writes to 20 bytes "to be safe" even when the link negotiated a much larger MTU. The corresponding spec work is tracked in [WebBluetoothCG/web-bluetooth#383](https://github.com/WebBluetoothCG/web-bluetooth/issues/383).
+> How many bytes may I pass to `writeValueWithoutResponse()` on this characteristic?
 
-## The Fix
+That became a synchronous characteristic attribute:
 
-<span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Web Bluetooth: Expose negotiated ATT MTU via getNegotiatedMTU()**](https://chromium-review.googlesource.com/c/chromium/src/+/7879985)
+```js
+const size = characteristic.maxWriteWithoutResponseSize;
+const chunk = payload.slice(0, size);
+await characteristic.writeValueWithoutResponse(chunk);
+```
 
-The change adds `BluetoothRemoteGATTCharacteristic.getNegotiatedMTU()`, giving pages a direct way to read the negotiated MTU so they can size writes accordingly instead of assuming 20 bytes. It wires up platform backends across the board:
+`maxWriteWithoutResponseSize` is seeded from the negotiated ATT MTU (normally `MTU - 3`) and updates when a platform reports an MTU change. The API exposes the practical limit rather than making every site know ATT header accounting.
 
-- Windows
-- Linux / ChromeOS (BlueZ)
-- Android
-- macOS
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Expose maxWriteWithoutResponseSize**](https://chromium-review.googlesource.com/c/chromium/src/+/7879985)
 
-This is still a work in progress - the API surface and the per-platform backends are being iterated on alongside the spec discussion - but the goal is to close all three issues at once: stop the silent failures on Windows, build on the Exchange MTU work, and finally expose the negotiated value to the web.
+## Getting the Value from Each Platform
 
-## Test Rig and Demos
+The web-facing property is small; obtaining the value consistently is not.
 
-Verifying an MTU API across four platforms needs a real peripheral, not a mock. I built an [interactive sampler](https://static.januschka.com/i-40265040/index.html) backed by ESP32-C3 firmware (`ESP32C3_All_BLE_Tester`, advertised as *dino tester*) that echoes back the received length and peer MTU, so silent truncation is visible.
+Windows, Android, macOS/CoreBluetooth, and Linux/ChromeOS all expose GATT connection state differently. On BlueZ, the negotiated MTU appears as the `MTU` property on `org.bluez.GattCharacteristic1` (available since BlueZ 5.62). Chromium's generated system API first needs to know that property exists before the backend can observe it.
 
-Launch Chrome with the feature flag so the new API is available:
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**system_api: Add MTU property for GattCharacteristic1**](https://chromium-review.googlesource.com/c/chromium/src/+/8224745)
+
+Android already requests a larger MTU. That earlier work solved negotiation, but not discovery by the page:
+
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Request a larger ATT MTU on Android**](https://chromium-review.googlesource.com/c/chromium/src/+/3260011)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Remove the request-larger-MTU experiment flag**](https://chromium-review.googlesource.com/c/chromium/src/+/3500407)
+
+## Testing with a Real Peripheral
+
+A mock can check that a property exists. It cannot prove that a 244-byte write reaches a radio intact.
+
+The [MTU sampler](https://static.januschka.com/i-40265040/) uses an ESP32-C3 peripheral named *dino tester*. Its firmware reports the peer MTU and echoes the length, first byte, and last byte of each received write. That makes silent truncation observable.
+
+The sampler has three tests:
+
+### Progressive JPEG over BLE
+
+The page reads `maxWriteWithoutResponseSize`, then pulls an embedded progressive JPEG chunk by chunk over notifications. The image moves from blurry to sharp as scans arrive. This is a useful end-to-end workload: negotiation, notifications, reassembly, and progressive decoding all have to agree.
+
+### Attribute Conformance
+
+The conformance page verifies that the attribute exists, is in range, matches the peripheral's peer-MTU accounting, remains stable across repeated reads, and predicts the practical write limit.
+
+### Write-Size Probe
+
+The probe sends deterministic payloads on both write APIs at sizes around the old boundary and up through larger negotiated limits. The ESP32 echoes the actual received length so the page can detect both explicit failures and silent truncation.
+
+On the tested Windows path with an effective MTU of 517, writes without response can use payloads up to 514 bytes rather than being hard-coded to 20.
+
+Run the test build with:
 
 ```text
 --enable-features=NewBLEGattSessionHandling,WebBluetooth
 ```
 
-Three demos exercise the three issues:
+The project page includes the firmware, focused test pages, and prebuilt Android APKs from the current CL.
 
-1. **Progressive JPEG streamer** (#40163619 + #40265040) - calls `getNegotiatedMTU()`, then pulls an embedded progressive JPEG chunk-by-chunk over notifications; the browser repaints scans blurry-to-sharp as bytes arrive. Payloads are capped at 244 bytes to dodge the Chromium notification cap on macOS/CoreBluetooth.
-2. **MTU conformance suite** (#40265040) - eight checks: the method exists, returns a Promise, resolves to an integer in spec range, matches the device-reported peer MTU, is idempotent, survives concurrent calls, and actually drives the maximum write size.
-3. **Write-size probe** (#40686244) - writes payloads at 1, 19, 20, 21, 22, ... up to 512 bytes through both `writeValueWithResponse()` and `writeValueWithoutResponse()`, and flags any silent truncation. On Windows with an effective MTU of 517, both APIs now accept up to 512 bytes - exactly the case from the original bug.
+## The Takeaway
 
-There are also pre-built Chrome for Android APKs from CL 7879985 on the sampler page for testing on a real device.
+Exposing a protocol number would have been easy. Exposing the number application code can actually use is the better API.
+
+`maxWriteWithoutResponseSize` keeps ATT bookkeeping inside the browser, follows negotiated changes from each platform backend, and lets a site choose efficient chunks without probing by failure.
 
 ## Links
 
-- [Interactive sampler + ESP32-C3 firmware + APKs](https://static.januschka.com/i-40265040/index.html)
-- [Chromium Bug 40265040 - getNegotiatedMTU](https://issues.chromium.org/issues/40265040)
-- [Chromium Bug 40686244 - 20 byte MTU on Windows](https://issues.chromium.org/issues/40686244)
-- [Chromium Bug 40163619 - Exchange MTU step](https://issues.chromium.org/issues/40163619)
-- [WebBluetoothCG/web-bluetooth#383 - negotiated MTU API](https://github.com/WebBluetoothCG/web-bluetooth/issues/383)
-- [Exchange MTU in the Web Bluetooth spec](https://webbluetoothcg.github.io/web-bluetooth/#ref-for-exchange-mtu)
+- [Interactive sampler, firmware, and APKs](https://static.januschka.com/i-40265040/)
+- [Expose maxWriteWithoutResponseSize](https://chromium-review.googlesource.com/c/chromium/src/+/7879985)
+- [BlueZ MTU property](https://chromium-review.googlesource.com/c/chromium/src/+/8224745)
+- [Issue 40265040](https://issues.chromium.org/issues/40265040)
+- [Issue 40686244](https://issues.chromium.org/issues/40686244)
+- [WebBluetoothCG issue 383](https://github.com/WebBluetoothCG/web-bluetooth/issues/383)

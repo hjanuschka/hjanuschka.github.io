@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Why I Switched to Pi: A Terminal-First Coding Agent - Helmut Januschka</title>
-  <meta name="description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <title>JPEG XL, One Year Later - Helmut Januschka</title>
+  <meta name="description" content="Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Why I Switched to Pi: A Terminal-First Coding Agent",
-    "description": "From Claude Code to Pi - why a shitty coding agent became my daily driver",
+    "headline": "JPEG XL, One Year Later",
+    "description": "Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,23 +33,23 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/pi-coding-agent.html"
+      "@id": "https://januschka.com/chromium-jxl-one-year-later.html"
     },
-    "keywords": "Tools, TypeScript / AI, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, Rust / C++ / Images, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/pi-coding-agent.html"
+      "target": "https://januschka.com/chromium-jxl-one-year-later.html"
     }
   }
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta property="og:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta property="og:title" content="JPEG XL, One Year Later">
+  <meta property="og:description" content="Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/pi-coding-agent.html">
+  <meta property="og:url" content="https://januschka.com/chromium-jxl-one-year-later.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
@@ -57,10 +57,10 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta name="twitter:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta name="twitter:title" content="JPEG XL, One Year Later">
+  <meta name="twitter:description" content="Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
-  <link rel="canonical" href="https://www.januschka.com/pi-coding-agent.html">
+  <link rel="canonical" href="https://www.januschka.com/chromium-jxl-one-year-later.html">
 
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -861,10 +861,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Why I Switched to Pi: A Terminal-First Coding Agent</h1>
+      <h1 class="blog-title">JPEG XL, One Year Later</h1>
       <div class="blog-meta">
-        <span>⚡ Tools</span>
-        <span>🔧 TypeScript / AI</span>
+        <span>⚡ Chromium</span>
+        <span>🔧 Rust / C++ / Images</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -873,79 +873,89 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>From Claude Code to Pi - why a shitty coding agent became my daily driver</em></p>
-<h2 id="the-discovery">The Discovery</h2>
-<p>A few weeks ago, I stumbled upon <a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">Pi</a> by Mario Zechner (<a href="https://github.com/badlogic">@badlogic</a>) - yes, the same Mario behind <a href="https://libgdx.com/">libGDX</a>, the cross-platform game framework. He&#39;s been building a terminal-based coding agent that&#39;s refreshingly different from the mainstream options.</p>
-<p>The project doesn&#39;t take itself too seriously - its website is literally <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - but under the hood, it&#39;s become one of the most capable and extensible coding agents I&#39;ve used.</p>
-<h2 id="why-pi">Why Pi?</h2>
-<h3 id="multi-model-freedom">Multi-Model Freedom</h3>
-<p>The killer feature that first caught my attention: <strong>mid-session model switching</strong>. I can start a conversation with Claude Opus for exploration, switch to GPT-5.2 for a second opinion, then jump to Gemini for its massive context window - all in the same session.</p>
-<pre><code class="language-bash"># Press Ctrl+L to open model selector anytime
-# Or use Ctrl+P to cycle through models
-</code></pre>
-<p>Pi supports basically every provider:</p>
+<p><em>Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.</em></p>
+<p><strong>Status:</strong> 🚧 Ongoing</p>
+<h2 id="after-the-comeback">After the Comeback</h2>
+<p>The original <a href="/chromium-jxl-resurrection.html">JPEG XL return to Chrome</a> was about integrating a memory-safe Rust decoder. Since then the work has looked less like a comeback story and more like ordinary browser engineering: partial input, paint requests arriving before headers, threading, MIME sniffing, and fuzzers.</p>
+<p>That is a good sign. A codec starts feeling native when its bugs are the same unglamorous bugs every mature decoder has to solve.</p>
+<h2 id="making-fuzzing-part-of-the-upstream-loop">Making Fuzzing Part of the Upstream Loop</h2>
+<p>The biggest missing part of this story was fuzzing. Chromium already runs image decoders against hostile inputs, but fixing every finding only in the browser would leave the underlying Rust crate vulnerable for every other embedder.</p>
+<p>The first step was adding <a href="https://github.com/libjxl/jxl-rs/pull/628">ClusterFuzzLite to jxl-rs</a>: short AddressSanitizer fuzz runs on pull requests and longer scheduled runs against the existing decode targets. It paid for itself almost immediately.</p>
+<p>The first wave found arithmetic and allocation assumptions hidden behind valid Rust types:</p>
 <ul>
-<li>Anthropic (API + Claude Pro/Max via OAuth)</li>
-<li>OpenAI</li>
-<li>Google Gemini (free tier via OAuth!)</li>
-<li>GitHub Copilot (if you have the subscription)</li>
-<li>Mistral, Groq, xAI, OpenRouter, and more</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/629">An extra-channel name could underflow its remaining-length calculation</a>.</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/633"><code>SmallBuffer::refill</code> could overflow while extending malformed input</a>.</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/638">Image dimensions, patch counts, spline areas, and render-group sizes needed checked or saturating arithmetic</a>.</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/614">Section buffers needed fallible allocation</a>, so an allocation failure becomes a decoder error rather than a process abort.</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/617">Blending alpha-channel indices needed validation before rendering</a>.</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/686">A crafted frame-index count could request a multi-gigabyte allocation</a>, even though the remaining bytes could not possibly contain that many entries.</li>
 </ul>
-<h3 id="the-session-tree">The Session Tree</h3>
-<p>Instead of linear chat history, Pi stores sessions as <strong>trees</strong>. Every conversation branch is preserved. Made a mistake 10 messages ago? Use <code>/tree</code> to navigate back, branch off, and try a different approach - without losing your original path.</p>
-<p>This has saved me countless times when exploring different solutions to a problem.</p>
-<h3 id="skills-system">Skills System</h3>
-<p>Pi implements the <a href="https://agentskills.io/specification">Agent Skills</a> standard - self-contained capability packages the agent loads on-demand. Think of them as specialized &quot;modes&quot; - a skill might contain setup instructions, helper scripts, and workflow documentation for a specific task like browser automation, API integrations, or code review workflows.</p>
-<p>The agent automatically detects when a skill is relevant based on its description. No manual activation needed.</p>
-<h3 id="extensibility-done-right">Extensibility Done Right</h3>
-<p>The hook system is where Pi really shines. Want to customize behavior? Write a TypeScript hook:</p>
-<pre><code class="language-typescript">// hooks/my-hook.ts
-export default {
-  name: &quot;my-hook&quot;,
-  before_agent_start: async (ctx) =&gt; {
-    // Modify prompts, inject context, whatever you need
-    return { systemPromptAppend: &quot;Always be concise.&quot; };
-  }
-};
-</code></pre>
-<p>I&#39;ve published my own hooks at <a href="https://github.com/hjanuschka/shitty-extensions">shitty-extensions</a>:</p>
+<p>Rust prevents these from becoming ordinary out-of-bounds writes or use-after-free bugs. It does not automatically make a panic or an infallible multi-gigabyte allocation acceptable in a renderer. A browser decoder still has to turn arbitrary bytes into either pixels or a controlled error.</p>
+<h3 id="from-crashes-to-invariants">From Crashes to Invariants</h3>
+<p>Later findings were less about one arithmetic operation and more about decoder invariants:</p>
 <ul>
-<li><strong>memory-mode</strong> - Save instructions to AGENTS.md with AI-assisted integration</li>
-<li><strong>plan-mode</strong> - Claude Code-style read-only exploration mode</li>
-<li><strong>usage-bar</strong> - Track AI provider usage statistics</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/773">Missing reference frames must use the clipped blend width</a>, not the full image width.</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/774">HF section allocation must be fallible</a>.</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/775">Histogram indices need validation when the histogram count is not a power of two</a>.</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/776">A one-pixel save region must not underflow when its orientation flips X</a>.</li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/856">A 9-byte truncated codestream must not allocate the 743 MB claimed by its TOC</a>. Section buffers now grow from bytes actually available, not declarations made by untrusted input.</li>
 </ul>
-<h2 id="my-contributions">My Contributions</h2>
+<p>That last issue came from Chromium&#39;s <code>blink_jxl_decoder_fuzzer</code>, but the reproducer and fix live in jxl-rs. This is the feedback loop I wanted: Chromium supplies production-scale fuzzing; the generic fix goes upstream; the next crate roll brings it back to Chromium.</p>
+<h3 id="fuzzing-thread-schedules-too">Fuzzing Thread Schedules Too</h3>
+<p>Once multi-threaded decoding entered the picture, bytes were no longer the only input worth fuzzing. <a href="https://github.com/awslabs/shuttle">Shuttle</a> explores thread schedules deterministically, turning rare races into replayable tests.</p>
+<p>That work found reentrant locks, incorrect read/write lock ownership, schedule-dependent border rows, and progressive output that depended on group completion order:</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/416"><strong>Add plan mode for safe code analysis</strong></a> - Claude Code-style read-only exploration mode</li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/405"><strong>Add configurable keybindings system</strong></a> - Customize all keyboard shortcuts via <code>~/.pi/agent/keybindings.json</code></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/867">Avoid an aliased squeeze-buffer reentrant lock</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/868">Use floor semantics for vertically subsampled border rows</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/869">Take read locks for palette prediction context</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/870">Make scheduling sets deterministic so failed schedules replay</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/871">Fix smooth-unsqueeze scratch-row races</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/873">Clip ready rectangles before pipeline stages consume them</a></li>
 </ul>
-<h2 id="getting-started">Getting Started</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-pi
-</code></pre>
-<h2 id="contributing-back">Contributing Back</h2>
-<p>Speaking of contributions - the project is actively developed and welcoming to PRs. The codebase is clean TypeScript, well-documented, and Mario is responsive to issues and pull requests.</p>
-<p>My keybindings PR went from idea to merged in a few days. That&#39;s the kind of open source experience I appreciate.</p>
-<h2 id="the-philosophy">The Philosophy</h2>
-<p>From Pi&#39;s README:</p>
-<blockquote>
-<p>Pi is a terminal-native coding agent designed for developers who prefer keyboard-driven workflows. It emphasizes transparency, control, and extensibility over magic.</p>
-</blockquote>
-<p>That resonates with me. I want to see what the agent is doing, control its behavior, and extend it when needed. Pi delivers on all three.</p>
-<h2 id="try-it">Try It</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-export ANTHROPIC_API_KEY=sk-ant-...
-pi
-</code></pre>
-<p>Or grab a <a href="https://github.com/badlogic/pi-mono/releases">standalone binary</a> if you don&#39;t want Node.js.</p>
-<p>The <a href="https://discord.com/invite/nKXTsAcmbT">Discord community</a> is active and helpful. And yes, the website is still <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - embrace it.</p>
-<hr>
-<p><strong>Links:</strong></p>
+<p>This is the less visible half of enabling a parallel runner. The happy path getting faster is useful; proving that output does not change with a different interleaving is what makes it shippable.</p>
+<h2 id="the-4096-byte-stall">The 4096-Byte Stall</h2>
+<p>Progressive images should render as data arrives. A page should not need the full file before showing the first useful pixels.</p>
+<p>The jxl-rs codestream parser eagerly reads input into a 4096-byte internal buffer while parsing headers. Chromium&#39;s decode loop saw that all <em>external</em> input had been consumed and stopped calling <code>process()</code>. But jxl-rs still had buffered bytes to drain. The result: no partial image until the network delivered more than the first 4096 bytes.</p>
+<p>The fix is subtle but simple: external input being empty does not mean the decoder has no work. Keep calling <code>process()</code> while the internal parser can make progress.</p>
 <ul>
-<li><a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">GitHub Repository</a></li>
-<li><a href="https://www.npmjs.com/package/@mariozechner/pi-coding-agent">NPM Package</a></li>
-<li><a href="https://discord.com/invite/nKXTsAcmbT">Discord Community</a></li>
-<li><a href="https://agentskills.io/specification">Agent Skills Specification</a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8257552"><strong>Fix JXL progressive rendering stalling on the first 4096 bytes</strong></a></li>
+</ul>
+<p>A related bug happened at the other end of initialization: Chromium tried to flush partial pixels before the decoder had selected a pixel format. jxl-rs correctly aborted at an internal <code>unwrap()</code>. The browser now waits until basic image information exists before flushing.</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7965920"><strong>Do not flush partial pixels before the pixel format is set</strong></a></li>
+</ul>
+<h2 id="paint-can-arrive-before-the-header">Paint Can Arrive Before the Header</h2>
+<p>Browser image decoders do not control every call order. Paint code can ask whether an image repeats before enough bytes have arrived to parse its basic header.</p>
+<p>The JXL path used to <code>CHECK</code> that <code>basic_info_</code> existed. A valid streaming sequence could therefore crash the renderer before the header was complete. Returning <code>kAnimationNone</code> until the information exists is both safe and consistent with an image whose animation state is not known yet.</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8008326"><strong>Fix RepetitionCount before header parsing</strong></a></li>
+</ul>
+<h2 id="more-cores-same-decoder">More Cores, Same Decoder</h2>
+<p>Large images should not decode on one core when the Rust decoder already supports parallel work. The next performance step is wiring jxl-rs&#39;s parallel runner into Chromium&#39;s decode path rather than implementing a second threading model around it.</p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8177171"><strong>Enable multi-threaded JXL decoding via the jxl-rs parallel runner</strong></a></li>
+</ul>
+<p>The decoder itself also moved forward through the normal Rust roll from 0.4.3 to 0.5.1.</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8156062"><strong>Roll jxl-rs 0.4.3 to 0.5.1</strong></a></li>
+</ul>
+<h2 id="the-less-visible-chromium-work">The Less Visible Chromium Work</h2>
+<p>MIME sniffing now handles complete image data shorter than the longest known signature, stale web-test expectations are gone, and the feature flag remains available while the implementation matures. The Chromium AVIF and JXL fuzzers also dropped an invalid <code>timeout_per_input</code> option so ClusterFuzz runs the configuration it actually understands.</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8187036"><strong>Remove invalid timeout_per_input from AVIF and JXL fuzzers</strong></a></li>
+</ul>
+<p>None of that makes a good launch screenshot. It is exactly what makes a decoder trustworthy.</p>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="/chromium-jxl-resurrection.html">Original: JPEG XL Returns to Chrome</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/628">ClusterFuzzLite integration in jxl-rs</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/614">ClusterFuzz: fallible section allocation</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/856">Chromium fuzzer: do not trust TOC-declared allocation size</a></li>
+<li><a href="https://github.com/libjxl/jxl-rs/pull/867">Shuttle concurrency fixes</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8257552">4096-byte progressive stall</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7965920">Early partial-pixel flush</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8008326">RepetitionCount crash</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8177171">Multi-threaded decode</a></li>
 </ul>
 
     </div>

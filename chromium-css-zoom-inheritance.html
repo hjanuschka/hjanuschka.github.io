@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Why I Switched to Pi: A Terminal-First Coding Agent - Helmut Januschka</title>
-  <meta name="description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <title>Fixing CSS Zoom and Explicit Inheritance in Blink - Helmut Januschka</title>
+  <meta name="description" content="The parent says 10px, the child says inherit, and zoom quietly turns that into the wrong number.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Why I Switched to Pi: A Terminal-First Coding Agent",
-    "description": "From Claude Code to Pi - why a shitty coding agent became my daily driver",
+    "headline": "Fixing CSS Zoom and Explicit Inheritance in Blink",
+    "description": "The parent says 10px, the child says inherit, and zoom quietly turns that into the wrong number.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,23 +33,23 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/pi-coding-agent.html"
+      "@id": "https://januschka.com/chromium-css-zoom-inheritance.html"
     },
-    "keywords": "Tools, TypeScript / AI, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Blink / CSS, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/pi-coding-agent.html"
+      "target": "https://januschka.com/chromium-css-zoom-inheritance.html"
     }
   }
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta property="og:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta property="og:title" content="Fixing CSS Zoom and Explicit Inheritance in Blink">
+  <meta property="og:description" content="The parent says 10px, the child says inherit, and zoom quietly turns that into the wrong number.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/pi-coding-agent.html">
+  <meta property="og:url" content="https://januschka.com/chromium-css-zoom-inheritance.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
@@ -57,10 +57,10 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta name="twitter:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta name="twitter:title" content="Fixing CSS Zoom and Explicit Inheritance in Blink">
+  <meta name="twitter:description" content="The parent says 10px, the child says inherit, and zoom quietly turns that into the wrong number.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
-  <link rel="canonical" href="https://www.januschka.com/pi-coding-agent.html">
+  <link rel="canonical" href="https://www.januschka.com/chromium-css-zoom-inheritance.html">
 
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -861,10 +861,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Why I Switched to Pi: A Terminal-First Coding Agent</h1>
+      <h1 class="blog-title">Fixing CSS Zoom and Explicit Inheritance in Blink</h1>
       <div class="blog-meta">
-        <span>⚡ Tools</span>
-        <span>🔧 TypeScript / AI</span>
+        <span>⚡ Chromium</span>
+        <span>🔧 C++ / Blink / CSS</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -873,79 +873,41 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>From Claude Code to Pi - why a shitty coding agent became my daily driver</em></p>
-<h2 id="the-discovery">The Discovery</h2>
-<p>A few weeks ago, I stumbled upon <a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">Pi</a> by Mario Zechner (<a href="https://github.com/badlogic">@badlogic</a>) - yes, the same Mario behind <a href="https://libgdx.com/">libGDX</a>, the cross-platform game framework. He&#39;s been building a terminal-based coding agent that&#39;s refreshingly different from the mainstream options.</p>
-<p>The project doesn&#39;t take itself too seriously - its website is literally <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - but under the hood, it&#39;s become one of the most capable and extensible coding agents I&#39;ve used.</p>
-<h2 id="why-pi">Why Pi?</h2>
-<h3 id="multi-model-freedom">Multi-Model Freedom</h3>
-<p>The killer feature that first caught my attention: <strong>mid-session model switching</strong>. I can start a conversation with Claude Opus for exploration, switch to GPT-5.2 for a second opinion, then jump to Gemini for its massive context window - all in the same session.</p>
-<pre><code class="language-bash"># Press Ctrl+L to open model selector anytime
-# Or use Ctrl+P to cycle through models
-</code></pre>
-<p>Pi supports basically every provider:</p>
+<p><em>The parent says 10px, the child says inherit, and zoom quietly turns that into the wrong number.</em></p>
+<p><strong>Status:</strong> 🚧 In Review</p>
+<h2 id="the-unexpected-interaction">The Unexpected Interaction</h2>
+<p>CSS <code>zoom</code> changes the effective scale used when lengths become computed values. Explicit <code>inherit</code> copies a computed value from the parent. Put the two together and Blink has to preserve the author&#39;s value while moving it between elements with different effective zoom.</p>
+<p>That sounds abstract, but the failure is concrete: a parent computes a length under one zoom, a child with another zoom says <code>inherit</code>, and the inherited value is scaled twice or not re-scaled when it should be. The same shared bug appeared across otherwise unrelated length properties.</p>
+<h2 id="why-property-by-property-fixes-were-wrong">Why Property-by-Property Fixes Were Wrong</h2>
+<p>Early failures looked local: one property serialized incorrectly, another had a bad WPT expectation, SVG text decoration had a special override. Fixing each symptom would leave the inheritance machinery inconsistent.</p>
+<p>The general fix marks properties whose computed values are affected by zoom and recomputes explicitly inherited values for the child&#39;s effective zoom. That lets the style system handle length properties as one class of problem rather than a collection of exceptions.</p>
 <ul>
-<li>Anthropic (API + Claude Pro/Max via OAuth)</li>
-<li>OpenAI</li>
-<li>Google Gemini (free tier via OAuth!)</li>
-<li>GitHub Copilot (if you have the subscription)</li>
-<li>Mistral, Groq, xAI, OpenRouter, and more</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8165187"><strong>Fix remaining zoom inheritance failures</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8249138"><strong>Fix explicit inheritance for all length properties</strong></a></li>
 </ul>
-<h3 id="the-session-tree">The Session Tree</h3>
-<p>Instead of linear chat history, Pi stores sessions as <strong>trees</strong>. Every conversation branch is preserved. Made a mistake 10 messages ago? Use <code>/tree</code> to navigate back, branch off, and try a different approach - without losing your original path.</p>
-<p>This has saved me countless times when exploring different solutions to a problem.</p>
-<h3 id="skills-system">Skills System</h3>
-<p>Pi implements the <a href="https://agentskills.io/specification">Agent Skills</a> standard - self-contained capability packages the agent loads on-demand. Think of them as specialized &quot;modes&quot; - a skill might contain setup instructions, helper scripts, and workflow documentation for a specific task like browser automation, API integrations, or code review workflows.</p>
-<p>The agent automatically detects when a skill is relevant based on its description. No manual activation needed.</p>
-<h3 id="extensibility-done-right">Extensibility Done Right</h3>
-<p>The hook system is where Pi really shines. Want to customize behavior? Write a TypeScript hook:</p>
-<pre><code class="language-typescript">// hooks/my-hook.ts
-export default {
-  name: &quot;my-hook&quot;,
-  before_agent_start: async (ctx) =&gt; {
-    // Modify prompts, inject context, whatever you need
-    return { systemPromptAppend: &quot;Always be concise.&quot; };
-  }
-};
-</code></pre>
-<p>I&#39;ve published my own hooks at <a href="https://github.com/hjanuschka/shitty-extensions">shitty-extensions</a>:</p>
+<h2 id="a-tree-scope-trap-in-animation-timeline">A Tree-Scope Trap in animation-timeline</h2>
+<p><code>animation-timeline</code> exposed a second layer. Its computed-value serialization loses the tree scope attached to the original declaration. Reapplying that serialized value during explicit inheritance reached <code>CSSToStyleMap::MapAnimationTimeline()</code> without a scoped value and hit a <code>DCHECK</code>.</p>
+<p>The fix re-scopes the serialized value to the child element&#39;s tree scope and marks the property as zoom-sensitive so pixel insets in <code>view()</code> timelines are recomputed correctly.</p>
 <ul>
-<li><strong>memory-mode</strong> - Save instructions to AGENTS.md with AI-assisted integration</li>
-<li><strong>plan-mode</strong> - Claude Code-style read-only exploration mode</li>
-<li><strong>usage-bar</strong> - Track AI provider usage statistics</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8252264"><strong>Rezoom animation-timeline on explicit inheritance</strong></a></li>
 </ul>
-<h2 id="my-contributions">My Contributions</h2>
+<h2 id="removing-an-old-svg-exception">Removing an Old SVG Exception</h2>
+<p>SVG <code>&lt;text&gt;</code> still carried a StyleAdjuster override from the SVG Text NG transition that forced <code>text-decoration-thickness</code> to <code>auto</code>. Removing it let explicit thickness work again, and marking the property zoom-sensitive made inheritance use the child&#39;s effective zoom.</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/416"><strong>Add plan mode for safe code analysis</strong></a> - Claude Code-style read-only exploration mode</li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/405"><strong>Add configurable keybindings system</strong></a> - Customize all keyboard shortcuts via <code>~/.pi/agent/keybindings.json</code></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8179313"><strong>Apply text-decoration-thickness to SVG text and zoom inheritance</strong></a></li>
 </ul>
-<h2 id="getting-started">Getting Started</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-pi
-</code></pre>
-<h2 id="contributing-back">Contributing Back</h2>
-<p>Speaking of contributions - the project is actively developed and welcoming to PRs. The codebase is clean TypeScript, well-documented, and Mario is responsive to issues and pull requests.</p>
-<p>My keybindings PR went from idea to merged in a few days. That&#39;s the kind of open source experience I appreciate.</p>
-<h2 id="the-philosophy">The Philosophy</h2>
-<p>From Pi&#39;s README:</p>
-<blockquote>
-<p>Pi is a terminal-native coding agent designed for developers who prefer keyboard-driven workflows. It emphasizes transparency, control, and extensibility over magic.</p>
-</blockquote>
-<p>That resonates with me. I want to see what the agent is doing, control its behavior, and extend it when needed. Pi delivers on all three.</p>
-<h2 id="try-it">Try It</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-export ANTHROPIC_API_KEY=sk-ant-...
-pi
-</code></pre>
-<p>Or grab a <a href="https://github.com/badlogic/pi-mono/releases">standalone binary</a> if you don&#39;t want Node.js.</p>
-<p>The <a href="https://discord.com/invite/nKXTsAcmbT">Discord community</a> is active and helpful. And yes, the website is still <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - embrace it.</p>
-<hr>
-<p><strong>Links:</strong></p>
+<h2 id="testing-the-rule-not-the-examples">Testing the Rule, Not the Examples</h2>
+<p>A computed-value harness now exercises explicit <code>inherit</code> across zoom levels. The important part is coverage at the abstraction boundary: any zoom-sensitive length property should obey the same invariant, including future properties not named in the original bug.</p>
 <ul>
-<li><a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">GitHub Repository</a></li>
-<li><a href="https://www.npmjs.com/package/@mariozechner/pi-coding-agent">NPM Package</a></li>
-<li><a href="https://discord.com/invite/nKXTsAcmbT">Discord Community</a></li>
-<li><a href="https://agentskills.io/specification">Agent Skills Specification</a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8261175"><strong>Test explicit inherit under zoom in the computed-value harness</strong></a></li>
+</ul>
+<h2 id="the-takeaway">The Takeaway</h2>
+<p>When unrelated CSS properties fail the same computed-value pattern, the property implementations are probably not the right layer to patch. The better fix is to identify the shared conversion - here, explicit inheritance across effective zoom - and teach the style system the invariant once.</p>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8249138">All length properties</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8252264">animation-timeline scoping and zoom</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8261175">Computed-value harness</a></li>
 </ul>
 
     </div>

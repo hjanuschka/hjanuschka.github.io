@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Why I Switched to Pi: A Terminal-First Coding Agent - Helmut Januschka</title>
-  <meta name="description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <title>What the Browser Sees Before the Parser - Helmut Januschka</title>
+  <meta name="description" content="Improving Speculation Rules tooling led into a second problem: the fast parser at the front of the browser was not seeing the same page as the real parser.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Why I Switched to Pi: A Terminal-First Coding Agent",
-    "description": "From Claude Code to Pi - why a shitty coding agent became my daily driver",
+    "headline": "What the Browser Sees Before the Parser",
+    "description": "Improving Speculation Rules tooling led into a second problem: the fast parser at the front of the browser was not seeing the same page as the real parser.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,23 +33,23 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/pi-coding-agent.html"
+      "@id": "https://januschka.com/chromium-speculation-preload-scanner.html"
     },
-    "keywords": "Tools, TypeScript / AI, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / DevTools / Performance, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/pi-coding-agent.html"
+      "target": "https://januschka.com/chromium-speculation-preload-scanner.html"
     }
   }
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta property="og:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta property="og:title" content="What the Browser Sees Before the Parser">
+  <meta property="og:description" content="Improving Speculation Rules tooling led into a second problem: the fast parser at the front of the browser was not seeing the same page as the real parser.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/pi-coding-agent.html">
+  <meta property="og:url" content="https://januschka.com/chromium-speculation-preload-scanner.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
@@ -57,10 +57,10 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta name="twitter:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta name="twitter:title" content="What the Browser Sees Before the Parser">
+  <meta name="twitter:description" content="Improving Speculation Rules tooling led into a second problem: the fast parser at the front of the browser was not seeing the same page as the real parser.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
-  <link rel="canonical" href="https://www.januschka.com/pi-coding-agent.html">
+  <link rel="canonical" href="https://www.januschka.com/chromium-speculation-preload-scanner.html">
 
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -861,10 +861,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Why I Switched to Pi: A Terminal-First Coding Agent</h1>
+      <h1 class="blog-title">What the Browser Sees Before the Parser</h1>
       <div class="blog-meta">
-        <span>⚡ Tools</span>
-        <span>🔧 TypeScript / AI</span>
+        <span>⚡ Chromium</span>
+        <span>🔧 C++ / DevTools / Performance</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -873,79 +873,53 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>From Claude Code to Pi - why a shitty coding agent became my daily driver</em></p>
-<h2 id="the-discovery">The Discovery</h2>
-<p>A few weeks ago, I stumbled upon <a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">Pi</a> by Mario Zechner (<a href="https://github.com/badlogic">@badlogic</a>) - yes, the same Mario behind <a href="https://libgdx.com/">libGDX</a>, the cross-platform game framework. He&#39;s been building a terminal-based coding agent that&#39;s refreshingly different from the mainstream options.</p>
-<p>The project doesn&#39;t take itself too seriously - its website is literally <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - but under the hood, it&#39;s become one of the most capable and extensible coding agents I&#39;ve used.</p>
-<h2 id="why-pi">Why Pi?</h2>
-<h3 id="multi-model-freedom">Multi-Model Freedom</h3>
-<p>The killer feature that first caught my attention: <strong>mid-session model switching</strong>. I can start a conversation with Claude Opus for exploration, switch to GPT-5.2 for a second opinion, then jump to Gemini for its massive context window - all in the same session.</p>
-<pre><code class="language-bash"># Press Ctrl+L to open model selector anytime
-# Or use Ctrl+P to cycle through models
-</code></pre>
-<p>Pi supports basically every provider:</p>
+<p><em>Improving Speculation Rules tooling led into a second problem: the fast parser at the front of the browser was not seeing the same page as the real parser.</em></p>
+<p><strong>Status:</strong> 🚧 In Review</p>
+<h2 id="two-views-of-the-same-page">Two Views of the Same Page</h2>
+<p>Chromium observes a page along more than one path.</p>
+<p>DevTools consumes browser events and turns them into an explanation a developer can use. Separately, Blink&#39;s preload scanner races ahead of the full HTML parser, recognizes likely resources, and starts fetches early.</p>
+<p>Both are deliberately incomplete views. DevTools is a model of browser state, not the state itself. The preload scanner is a fast approximation of the tree builder. Bugs appear when either approximation drifts too far from the real thing.</p>
+<h2 id="a-refresh-button-that-does-not-reload">A Refresh Button That Does Not Reload</h2>
+<p>The Speculative Loads panel is event-driven. Its old <strong>Clear speculative loads</strong> button only cleared the frontend model; it did not cancel or clear anything in the browser process. After pressing it, the panel stayed empty until a new preloading event arrived.</p>
+<p>Reloading the page forced new events, but destroyed exactly the state being investigated - active prerenders and current preloading decisions.</p>
+<p>The fix adds a real <strong>Refresh</strong> action: reset the frontend model, re-enable the Preload CDP domain, and let the backend re-emit its current state without touching the inspected page. The old button becomes the more honest <strong>Clear list</strong>.</p>
 <ul>
-<li>Anthropic (API + Claude Pro/Max via OAuth)</li>
-<li>OpenAI</li>
-<li>Google Gemini (free tier via OAuth!)</li>
-<li>GitHub Copilot (if you have the subscription)</li>
-<li>Mistral, Groq, xAI, OpenRouter, and more</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8180388"><strong>Add a refresh button to the Speculative Loads panel</strong></a></li>
 </ul>
-<h3 id="the-session-tree">The Session Tree</h3>
-<p>Instead of linear chat history, Pi stores sessions as <strong>trees</strong>. Every conversation branch is preserved. Made a mistake 10 messages ago? Use <code>/tree</code> to navigate back, branch off, and try a different approach - without losing your original path.</p>
-<p>This has saved me countless times when exploring different solutions to a problem.</p>
-<h3 id="skills-system">Skills System</h3>
-<p>Pi implements the <a href="https://agentskills.io/specification">Agent Skills</a> standard - self-contained capability packages the agent loads on-demand. Think of them as specialized &quot;modes&quot; - a skill might contain setup instructions, helper scripts, and workflow documentation for a specific task like browser automation, API integrations, or code review workflows.</p>
-<p>The agent automatically detects when a skill is relevant based on its description. No manual activation needed.</p>
-<h3 id="extensibility-done-right">Extensibility Done Right</h3>
-<p>The hook system is where Pi really shines. Want to customize behavior? Write a TypeScript hook:</p>
-<pre><code class="language-typescript">// hooks/my-hook.ts
-export default {
-  name: &quot;my-hook&quot;,
-  before_agent_start: async (ctx) =&gt; {
-    // Modify prompts, inject context, whatever you need
-    return { systemPromptAppend: &quot;Always be concise.&quot; };
-  }
-};
-</code></pre>
-<p>I&#39;ve published my own hooks at <a href="https://github.com/hjanuschka/shitty-extensions">shitty-extensions</a>:</p>
+<p>The filter is getting the same treatment. Typing <code>status:</code> or <code>action:</code> now offers values from the attempts currently in the panel, including comma-separated status lists. The suggestion builder is a pure function covered by unit tests instead of UI logic hidden inside the toolbar.</p>
 <ul>
-<li><strong>memory-mode</strong> - Save instructions to AGENTS.md with AI-assisted integration</li>
-<li><strong>plan-mode</strong> - Claude Code-style read-only exploration mode</li>
-<li><strong>usage-bar</strong> - Track AI provider usage statistics</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7563833"><strong>Add autocomplete to the Speculation Rules filter</strong></a></li>
 </ul>
-<h2 id="my-contributions">My Contributions</h2>
+<h2 id="mobile-heuristics-without-a-phone">Mobile Heuristics Without a Phone</h2>
+<p>Moderate-eagerness speculation rules use viewport-based navigation heuristics. Those were gated to Android at compile time, even though speculation rules exist on every platform. A developer using desktop DevTools mobile emulation therefore could not test the behavior they were emulating.</p>
+<p>Enabling the predictor features on all platforms makes the heuristic reachable through mobile emulation without changing normal desktop behavior.</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/416"><strong>Add plan mode for safe code analysis</strong></a> - Claude Code-style read-only exploration mode</li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/405"><strong>Add configurable keybindings system</strong></a> - Customize all keyboard shortcuts via <code>~/.pi/agent/keybindings.json</code></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7800216"><strong>Enable mobile viewport heuristics in DevTools emulation</strong></a></li>
 </ul>
-<h2 id="getting-started">Getting Started</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-pi
-</code></pre>
-<h2 id="contributing-back">Contributing Back</h2>
-<p>Speaking of contributions - the project is actively developed and welcoming to PRs. The codebase is clean TypeScript, well-documented, and Mario is responsive to issues and pull requests.</p>
-<p>My keybindings PR went from idea to merged in a few days. That&#39;s the kind of open source experience I appreciate.</p>
-<h2 id="the-philosophy">The Philosophy</h2>
-<p>From Pi&#39;s README:</p>
-<blockquote>
-<p>Pi is a terminal-native coding agent designed for developers who prefer keyboard-driven workflows. It emphasizes transparency, control, and extensibility over magic.</p>
-</blockquote>
-<p>That resonates with me. I want to see what the agent is doing, control its behavior, and extend it when needed. Pi delivers on all three.</p>
-<h2 id="try-it">Try It</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-export ANTHROPIC_API_KEY=sk-ant-...
-pi
-</code></pre>
-<p>Or grab a <a href="https://github.com/badlogic/pi-mono/releases">standalone binary</a> if you don&#39;t want Node.js.</p>
-<p>The <a href="https://discord.com/invite/nKXTsAcmbT">Discord community</a> is active and helpful. And yes, the website is still <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - embrace it.</p>
-<hr>
-<p><strong>Links:</strong></p>
+<h2 id="when-the-fast-parser-disagrees">When the Fast Parser Disagrees</h2>
+<p>The preload scanner is not a DOM builder, but it has to mimic enough tree-building rules to identify resources correctly.</p>
+<p>An SVG <code>&lt;image&gt;</code> loads from <code>href</code> or legacy <code>xlink:href</code>; <code>src</code> is irrelevant. The scanner now tracks whether it is inside SVG foreign content, gives <code>href</code> precedence, and ignores <code>src</code>.</p>
 <ul>
-<li><a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">GitHub Repository</a></li>
-<li><a href="https://www.npmjs.com/package/@mariozechner/pi-coding-agent">NPM Package</a></li>
-<li><a href="https://discord.com/invite/nKXTsAcmbT">Discord Community</a></li>
-<li><a href="https://agentskills.io/specification">Agent Skills Specification</a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8081860"><strong>Preload SVG image href and xlink:href</strong></a></li>
+</ul>
+<p>Inside <code>&lt;picture&gt;</code>, a void element such as <code>&lt;br&gt;</code> cannot contain the following <code>&lt;img&gt;</code>. The real tree builder keeps that image as a direct picture child. The scanner used to leave picture mode and discard the selected <code>&lt;source&gt;</code>. It now follows the same structural rule.</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8081920"><strong>Ignore void elements between picture children</strong></a></li>
+</ul>
+<p>Security constraints matter too. The experimental meta-CSP work parses <code>&lt;meta http-equiv=&quot;Content-Security-Policy&quot;&gt;</code> in the scanner and checks speculative requests, including nonces, rather than simply abandoning speculative parsing at the first meta policy.</p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8081921"><strong>Apply meta CSP to speculative loads</strong></a></li>
+</ul>
+<h2 id="the-shared-lesson">The Shared Lesson</h2>
+<p>Both halves are synchronization problems. DevTools needs a way to re-synchronize its model without destroying the page. The preload scanner needs to stay structurally synchronized with the real parser without becoming as expensive as the real parser.</p>
+<p>Fast approximations are useful because they are incomplete. The engineering work is deciding which details they cannot afford to omit.</p>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="/chromium-devtools-speculation-filter.html">Original Speculation Rules filter post</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8180388">Panel refresh</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7563833">Filter autocomplete</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8081860">SVG image preloading</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8081921">Meta CSP in the scanner</a></li>
 </ul>
 
     </div>

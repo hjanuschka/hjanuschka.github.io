@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Why I Switched to Pi: A Terminal-First Coding Agent - Helmut Januschka</title>
-  <meta name="description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <title>Making Installed Web Apps Belong on the Operating System - Helmut Januschka</title>
+  <meta name="description" content="Installation is only the beginning. The browser also has to respect notches, system bars, keyboards, desktop files, and whatever macOS decides an icon should lo">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Why I Switched to Pi: A Terminal-First Coding Agent",
-    "description": "From Claude Code to Pi - why a shitty coding agent became my daily driver",
+    "headline": "Making Installed Web Apps Belong on the Operating System",
+    "description": "Installation is only the beginning. The browser also has to respect notches, system bars, keyboards, desktop files, and whatever macOS decides an icon should lo",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,23 +33,23 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/pi-coding-agent.html"
+      "@id": "https://januschka.com/chromium-installed-webapps-native.html"
     },
-    "keywords": "Tools, TypeScript / AI, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Java / Web Apps, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/pi-coding-agent.html"
+      "target": "https://januschka.com/chromium-installed-webapps-native.html"
     }
   }
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta property="og:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta property="og:title" content="Making Installed Web Apps Belong on the Operating System">
+  <meta property="og:description" content="Installation is only the beginning. The browser also has to respect notches, system bars, keyboards, desktop files, and whatever macOS decides an icon should lo">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/pi-coding-agent.html">
+  <meta property="og:url" content="https://januschka.com/chromium-installed-webapps-native.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
@@ -57,10 +57,10 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta name="twitter:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta name="twitter:title" content="Making Installed Web Apps Belong on the Operating System">
+  <meta name="twitter:description" content="Installation is only the beginning. The browser also has to respect notches, system bars, keyboards, desktop files, and whatever macOS decides an icon should lo">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
-  <link rel="canonical" href="https://www.januschka.com/pi-coding-agent.html">
+  <link rel="canonical" href="https://www.januschka.com/chromium-installed-webapps-native.html">
 
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -861,10 +861,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Why I Switched to Pi: A Terminal-First Coding Agent</h1>
+      <h1 class="blog-title">Making Installed Web Apps Belong on the Operating System</h1>
       <div class="blog-meta">
-        <span>⚡ Tools</span>
-        <span>🔧 TypeScript / AI</span>
+        <span>⚡ Chromium</span>
+        <span>🔧 C++ / Java / Web Apps</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -873,79 +873,121 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>From Claude Code to Pi - why a shitty coding agent became my daily driver</em></p>
-<h2 id="the-discovery">The Discovery</h2>
-<p>A few weeks ago, I stumbled upon <a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">Pi</a> by Mario Zechner (<a href="https://github.com/badlogic">@badlogic</a>) - yes, the same Mario behind <a href="https://libgdx.com/">libGDX</a>, the cross-platform game framework. He&#39;s been building a terminal-based coding agent that&#39;s refreshingly different from the mainstream options.</p>
-<p>The project doesn&#39;t take itself too seriously - its website is literally <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - but under the hood, it&#39;s become one of the most capable and extensible coding agents I&#39;ve used.</p>
-<h2 id="why-pi">Why Pi?</h2>
-<h3 id="multi-model-freedom">Multi-Model Freedom</h3>
-<p>The killer feature that first caught my attention: <strong>mid-session model switching</strong>. I can start a conversation with Claude Opus for exploration, switch to GPT-5.2 for a second opinion, then jump to Gemini for its massive context window - all in the same session.</p>
-<pre><code class="language-bash"># Press Ctrl+L to open model selector anytime
-# Or use Ctrl+P to cycle through models
-</code></pre>
-<p>Pi supports basically every provider:</p>
+<p><em>Installation is only the beginning. The browser also has to respect notches, system bars, keyboards, desktop files, and whatever macOS decides an icon should look like this year.</em></p>
+<p><strong>Status:</strong> 🚧 Ongoing</p>
+<h2 id="a-web-app-is-still-an-app-window">A Web App Is Still an App Window</h2>
+<p>An installed web app stops looking like a tab, but it does not stop depending on browser infrastructure. Android owns the status bar, navigation bar, display cutout, keyboard insets, and immersive mode. Linux expects a correct desktop file and icon path. macOS applies its own icon treatment.</p>
+<p>The failures are small in isolation: invisible system-bar buttons, a one-pixel toolbar capture, content under a notch, an icon that gets masked twice. Together they are what makes an installed web app feel like a web page awkwardly pretending to be native.</p>
+<h2 id="android-theme-the-whole-window">Android: Theme the Whole Window</h2>
+<p>Installed web apps already used a manifest theme color for the status bar but left the navigation bar at the platform default. The first fix reused that color for both bars and moved the update into the shared custom-tab activity so WebApps and WebAPKs followed one path.</p>
 <ul>
-<li>Anthropic (API + Claude Pro/Max via OAuth)</li>
-<li>OpenAI</li>
-<li>Google Gemini (free tier via OAuth!)</li>
-<li>GitHub Copilot (if you have the subscription)</li>
-<li>Mistral, Groq, xAI, OpenRouter, and more</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8077818"><strong>Color the installed web app navigation bar with the theme color</strong></a></li>
 </ul>
-<h3 id="the-session-tree">The Session Tree</h3>
-<p>Instead of linear chat history, Pi stores sessions as <strong>trees</strong>. Every conversation branch is preserved. Made a mistake 10 messages ago? Use <code>/tree</code> to navigate back, branch off, and try a different approach - without losing your original path.</p>
-<p>This has saved me countless times when exploring different solutions to a problem.</p>
-<h3 id="skills-system">Skills System</h3>
-<p>Pi implements the <a href="https://agentskills.io/specification">Agent Skills</a> standard - self-contained capability packages the agent loads on-demand. Think of them as specialized &quot;modes&quot; - a skill might contain setup instructions, helper scripts, and workflow documentation for a specific task like browser automation, API integrations, or code review workflows.</p>
-<p>The agent automatically detects when a skill is relevant based on its description. No manual activation needed.</p>
-<h3 id="extensibility-done-right">Extensibility Done Right</h3>
-<p>The hook system is where Pi really shines. Want to customize behavior? Write a TypeScript hook:</p>
-<pre><code class="language-typescript">// hooks/my-hook.ts
-export default {
-  name: &quot;my-hook&quot;,
-  before_agent_start: async (ctx) =&gt; {
-    // Modify prompts, inject context, whatever you need
-    return { systemPromptAppend: &quot;Always be concise.&quot; };
-  }
-};
-</code></pre>
-<p>I&#39;ve published my own hooks at <a href="https://github.com/hjanuschka/shitty-extensions">shitty-extensions</a>:</p>
+<p>Dynamic page themes exposed the next bug. Homescreen shortcuts (<code>ActivityType.WEBAPP</code>) were excluded from bright/night page theming, and edge-to-edge navigation buttons ignored the page theme entirely. A page switching to a white theme could leave white status icons and light navigation buttons invisible on white.</p>
+<p>The system-bar appearance now follows the current page theme and updates when either the theme or edge-to-edge state changes.</p>
 <ul>
-<li><strong>memory-mode</strong> - Save instructions to AGENTS.md with AI-assisted integration</li>
-<li><strong>plan-mode</strong> - Claude Code-style read-only exploration mode</li>
-<li><strong>usage-bar</strong> - Track AI provider usage statistics</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8227486"><strong>Follow page theme for system-bar appearance</strong></a></li>
 </ul>
-<h2 id="my-contributions">My Contributions</h2>
+<h2 id="insets-are-state-not-a-one-time-setup">Insets Are State, Not a One-Time Setup</h2>
+<p>A web app can move between fitted and edge-to-edge layouts. It can open an off-origin Custom Tab. The keyboard can resize the viewport without changing the physical display cutout. Treating system-window fitting as something configured once at activity startup breaks as soon as one of those states changes.</p>
+<p>The edge-to-edge root wrapper now stays installed and switches whether it consumes insets. Custom Tabs restore their fitted insets after webapp cutout mode, and resizing keyboards no longer pollute CSS safe-area values.</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/416"><strong>Add plan mode for safe code analysis</strong></a> - Claude Code-style read-only exploration mode</li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/405"><strong>Add configurable keybindings system</strong></a> - Customize all keyboard shortcuts via <code>~/.pi/agent/keybindings.json</code></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8117612"><strong>Support dynamic inset fitting in edge-to-edge layout</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8117613"><strong>Restore Custom Tab insets after webapp cutout mode</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8200664"><strong>Fix standalone web app system-bar handling</strong></a></li>
 </ul>
-<h2 id="getting-started">Getting Started</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-pi
-</code></pre>
-<h2 id="contributing-back">Contributing Back</h2>
-<p>Speaking of contributions - the project is actively developed and welcoming to PRs. The codebase is clean TypeScript, well-documented, and Mario is responsive to issues and pull requests.</p>
-<p>My keybindings PR went from idea to merged in a few days. That&#39;s the kind of open source experience I appreciate.</p>
-<h2 id="the-philosophy">The Philosophy</h2>
-<p>From Pi&#39;s README:</p>
-<blockquote>
-<p>Pi is a terminal-native coding agent designed for developers who prefer keyboard-driven workflows. It emphasizes transparency, control, and extensibility over magic.</p>
-</blockquote>
-<p>That resonates with me. I want to see what the agent is doing, control its behavior, and extend it when needed. Pi delivers on all three.</p>
-<h2 id="try-it">Try It</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-export ANTHROPIC_API_KEY=sk-ant-...
-pi
-</code></pre>
-<p>Or grab a <a href="https://github.com/badlogic/pi-mono/releases">standalone binary</a> if you don&#39;t want Node.js.</p>
-<p>The <a href="https://discord.com/invite/nKXTsAcmbT">Discord community</a> is active and helpful. And yes, the website is still <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - embrace it.</p>
-<hr>
-<p><strong>Links:</strong></p>
+<p>Landscape cutouts add one more state. A fitted <code>viewport-fit</code> page should remain away from the cutout; stale side insets and disconnected black segments made that unreliable. The pending fix forces cutout padding while fitted, lets system-bar colors cover overlapping insets, and clears the merged safe area instead of exposing stale values to CSS.</p>
 <ul>
-<li><a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">GitHub Repository</a></li>
-<li><a href="https://www.npmjs.com/package/@mariozechner/pi-coding-agent">NPM Package</a></li>
-<li><a href="https://discord.com/invite/nKXTsAcmbT">Discord Community</a></li>
-<li><a href="https://agentskills.io/specification">Agent Skills Specification</a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8223545"><strong>Pad fitted web apps away from the display cutout in landscape</strong></a></li>
+</ul>
+<p>Entering immersive mode also has to reapply the cutout mode to the real Android window. Updating a copied <code>LayoutParams</code> object is not enough; without <code>Window.setAttributes()</code>, opening and closing an off-origin child Custom Tab could silently reset <code>shortEdges</code> and return the PWA to a fitted viewport.</p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8198785"><strong>Apply display cutout mode when entering immersive mode</strong></a></li>
+</ul>
+<p>Resizing keyboards exposed a related ownership bug. The IME changes the visible viewport, but it must not leave stale physical-display safe-area padding above the keyboard. With the fix, the sampler&#39;s <code>interactive-widget=resizes-content</code> case moves from <code>innerHeight=914px</code> and 56px bottom padding to <code>innerHeight=572px</code> and 8px padding while focused; the input remains inside the 571.8px visual viewport instead of floating above an empty gap.</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8207801"><strong>Fix safe area for resizing virtual keyboards</strong></a></li>
+</ul>
+<p>This builds directly on the <a href="/chromium-pwa-edge-to-edge.html">fullscreen PWA edge-to-edge work</a>.</p>
+<h2 id="what-the-sampler-actually-measures">What the Sampler Actually Measures</h2>
+<p>The <a href="https://static.januschka.com/i-407420295/">APK sampler</a> compares unpatched and patched Chromium builds on an emulator and physical Android devices. It installs real fullscreen and standalone PWAs, reads viewport metrics over CDP, and captures the Android system bars rather than cropping them away.</p>
+<p>The original standalone case makes the bug concrete. On the Android 13 cutout emulator:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="right">Unpatched</th>
+<th align="right">Patched</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>innerHeight</code></td>
+<td align="right">843px</td>
+<td align="right">914px</td>
+</tr>
+<tr>
+<td>screen gap</td>
+<td align="right">72px</td>
+<td align="right">1px</td>
+</tr>
+<tr>
+<td><code>safe-area-inset-top</code></td>
+<td align="right">0px</td>
+<td align="right">48px</td>
+</tr>
+<tr>
+<td><code>safe-area-inset-bottom</code></td>
+<td align="right">0px</td>
+<td align="right">24px</td>
+</tr>
+</tbody></table>
+<p>The unpatched app avoids the notch by shrinking the page and tells CSS there is no safe area. The patched app uses the full screen and reports the cutout and bottom inset, which is the contract <code>viewport-fit=cover</code> expects.</p>
+<p>Four initial cases separate the PWA behavior from unrelated fullscreen code:</p>
+<ol>
+<li>Manifest <code>display: fullscreen</code></li>
+<li>Manifest <code>display: standalone</code></li>
+<li>Back-swipe while the viewport and transient bars move</li>
+<li>Regular <code>document.requestFullscreen()</code> as an unchanged baseline</li>
+</ol>
+<p>That last control matters. A patch can make the target screenshot look right while accidentally changing the document fullscreen API. The sampler keeps the two paths separate.</p>
+<h2 id="from-demo-to-hardware-regression-suite">From Demo to Hardware Regression Suite</h2>
+<p>The <a href="https://static.januschka.com/i-407420295/regression-check.html">hardware regression report</a> grew into a nine-case matrix on a Pixel 6a running Android 16, with stock Chrome 141 as the control. It covers:</p>
+<ul>
+<li>fullscreen and standalone cold launch;</li>
+<li>pull-to-refresh and back-swipe;</li>
+<li>off-origin Custom Tab entry and parent recovery;</li>
+<li>three-button navigation over white and black pages;</li>
+<li>dynamic status-bar and navigation-button contrast;</li>
+<li>repeated landscape <code>cover -&gt; auto -&gt; contain -&gt; cover -&gt; auto</code> transitions;</li>
+<li>resizing IME geometry and Chrome&#39;s keyboard accessory.</li>
+</ul>
+<p>The repeated landscape cycle is especially useful. The second <code>cover</code> and <code>auto</code> captures must exactly match the first ones, catching stale padding or inset ownership that a one-way transition misses.</p>
+<p>The latest published run is <strong>PASS: 9 passed, 0 failed, 0 skipped</strong>, with APKs, screenshot hashes, raw JSON metrics, ADB/CDP automation, and rerun instructions downloadable from the report. That changed this work from &quot;looks correct on my emulator&quot; into a reproducible regression suite.</p>
+<h2 id="the-one-pixel-details">The One-Pixel Details</h2>
+<p>Fully hidden browser controls can rest exactly at the zero-height boundary. A guard intended to avoid unnecessary capture updates then skipped the final adjustment, leaving a 1dp toolbar hairline at the top of an installed app.</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8225723"><strong>Hide toolbar hairline capture for fully hidden controls</strong></a></li>
+</ul>
+<p>That is the scale of native-feeling polish: one pixel is enough to reveal the browser frame.</p>
+<h2 id="desktop-integration-outside-android">Desktop Integration Outside Android</h2>
+<p>On Linux, generated desktop files now point to an absolute icon already installed in the XDG icon hierarchy, rather than relying on lookup behavior that varies across desktops.</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8251057"><strong>Use an absolute Linux desktop icon path</strong></a></li>
+</ul>
+<p>On macOS 26, the operating system applies its own icon processing. Chromium&#39;s existing mask on top of that produced a double-processed icon, so the pending change lets the new OS own the treatment while preserving masking on older releases.</p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8175547"><strong>Stop masking web app icons on macOS 26</strong></a></li>
+</ul>
+<h2 id="the-takeaway">The Takeaway</h2>
+<p>There is no single &quot;make this web app native&quot; switch. It is a contract with each operating system: use its insets correctly, keep icon contrast readable, restore state after transient surfaces, install assets where the shell expects them, and know when the OS wants to own the final pixels.</p>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://static.januschka.com/i-407420295/">APK sampler and before/after matrix</a></li>
+<li><a href="https://static.januschka.com/i-407420295/regression-check.html">Pixel 6a hardware regression report</a></li>
+<li><a href="/chromium-pwa-edge-to-edge.html">Fullscreen PWA edge-to-edge post</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8227486">System-bar page theming</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8117612">Dynamic inset fitting</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8223545">Landscape cutout padding</a></li>
 </ul>
 
     </div>

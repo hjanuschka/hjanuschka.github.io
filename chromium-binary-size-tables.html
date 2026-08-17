@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Why I Switched to Pi: A Terminal-First Coding Agent - Helmut Januschka</title>
-  <meta name="description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <title>Shrinking Chromium's Binary, One Table at a Time - Helmut Januschka</title>
+  <meta name="description" content="Sometimes the expensive part of generated code is not the data. It is spelling out the same operation once for every entry.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Why I Switched to Pi: A Terminal-First Coding Agent",
-    "description": "From Claude Code to Pi - why a shitty coding agent became my daily driver",
+    "headline": "Shrinking Chromium's Binary, One Table at a Time",
+    "description": "Sometimes the expensive part of generated code is not the data. It is spelling out the same operation once for every entry.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,23 +33,23 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/pi-coding-agent.html"
+      "@id": "https://januschka.com/chromium-binary-size-tables.html"
     },
-    "keywords": "Tools, TypeScript / AI, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Binary Size, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/pi-coding-agent.html"
+      "target": "https://januschka.com/chromium-binary-size-tables.html"
     }
   }
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta property="og:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta property="og:title" content="Shrinking Chromium's Binary, One Table at a Time">
+  <meta property="og:description" content="Sometimes the expensive part of generated code is not the data. It is spelling out the same operation once for every entry.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/pi-coding-agent.html">
+  <meta property="og:url" content="https://januschka.com/chromium-binary-size-tables.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
@@ -57,10 +57,10 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta name="twitter:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta name="twitter:title" content="Shrinking Chromium's Binary, One Table at a Time">
+  <meta name="twitter:description" content="Sometimes the expensive part of generated code is not the data. It is spelling out the same operation once for every entry.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
-  <link rel="canonical" href="https://www.januschka.com/pi-coding-agent.html">
+  <link rel="canonical" href="https://www.januschka.com/chromium-binary-size-tables.html">
 
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -861,10 +861,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Why I Switched to Pi: A Terminal-First Coding Agent</h1>
+      <h1 class="blog-title">Shrinking Chromium's Binary, One Table at a Time</h1>
       <div class="blog-meta">
-        <span>⚡ Tools</span>
-        <span>🔧 TypeScript / AI</span>
+        <span>⚡ Chromium</span>
+        <span>🔧 C++ / Binary Size</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -873,79 +873,84 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>From Claude Code to Pi - why a shitty coding agent became my daily driver</em></p>
-<h2 id="the-discovery">The Discovery</h2>
-<p>A few weeks ago, I stumbled upon <a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">Pi</a> by Mario Zechner (<a href="https://github.com/badlogic">@badlogic</a>) - yes, the same Mario behind <a href="https://libgdx.com/">libGDX</a>, the cross-platform game framework. He&#39;s been building a terminal-based coding agent that&#39;s refreshingly different from the mainstream options.</p>
-<p>The project doesn&#39;t take itself too seriously - its website is literally <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - but under the hood, it&#39;s become one of the most capable and extensible coding agents I&#39;ve used.</p>
-<h2 id="why-pi">Why Pi?</h2>
-<h3 id="multi-model-freedom">Multi-Model Freedom</h3>
-<p>The killer feature that first caught my attention: <strong>mid-session model switching</strong>. I can start a conversation with Claude Opus for exploration, switch to GPT-5.2 for a second opinion, then jump to Gemini for its massive context window - all in the same session.</p>
-<pre><code class="language-bash"># Press Ctrl+L to open model selector anytime
-# Or use Ctrl+P to cycle through models
-</code></pre>
-<p>Pi supports basically every provider:</p>
+<p><em>Sometimes the expensive part of generated code is not the data. It is spelling out the same operation once for every entry.</em></p>
+<p><strong>Status:</strong> 🚧 Ongoing</p>
+<h2 id="the-shape-of-the-problem">The Shape of the Problem</h2>
+<p>I previously wrote about <a href="/chromium-binary-size.html">moving static data out of the Chrome binary</a> - putting USB IDs and compressed phone metadata into lazily-loaded resources. This is the other side of binary-size work: data that legitimately belongs in the binary, but is represented by far too much generated code.</p>
+<p>Chromium generates a surprising amount of C++: feature registries, UKM maps, enum-name lookups, sanitizer configurations, color mappings, locale caches, and resource maps. A generator often emits the most direct implementation - one initializer, function call, or setter per entry.</p>
+<p>That is readable in the generator, but expensive in the binary. Repeating an operation for every entry produces machine code, relocations, padding, and sometimes static constructors. When the operation is identical and only the inputs change, the implementation wants to be <strong>data plus one loop</strong>.</p>
+<h2 id="measuring-the-whole-batch">Measuring the Whole Batch</h2>
+<p>I built an <a href="https://static.januschka.com/apk-size/">interactive binary-size dashboard</a> from Chromium&#39;s <code>android-binary-size</code> and <code>compile-size</code> trybot results. Every point links back to its CL and records the newest patchset for which a size bot reported numbers.</p>
+<p>The dashboard can switch between per-CL deltas and a cumulative view, include or exclude unlanded CLs, and apply a deliberately conservative rule: count savings from an unlanded CL, but do not pretend its size increases have shipped.</p>
+<p>For the 12 table/offset changes discussed here, the latest recorded patchsets add up to roughly:</p>
 <ul>
-<li>Anthropic (API + Claude Pro/Max via OAuth)</li>
-<li>OpenAI</li>
-<li>Google Gemini (free tier via OAuth!)</li>
-<li>GitHub Copilot (if you have the subscription)</li>
-<li>Mistral, Groq, xAI, OpenRouter, and more</li>
+<li><strong>567 KiB smaller</strong> on the high-end arm64 APK metric;</li>
+<li><strong>194 KiB smaller</strong> on arm32.</li>
 </ul>
-<h3 id="the-session-tree">The Session Tree</h3>
-<p>Instead of linear chat history, Pi stores sessions as <strong>trees</strong>. Every conversation branch is preserved. Made a mistake 10 messages ago? Use <code>/tree</code> to navigate back, branch off, and try a different approach - without losing your original path.</p>
-<p>This has saved me countless times when exploring different solutions to a problem.</p>
-<h3 id="skills-system">Skills System</h3>
-<p>Pi implements the <a href="https://agentskills.io/specification">Agent Skills</a> standard - self-contained capability packages the agent loads on-demand. Think of them as specialized &quot;modes&quot; - a skill might contain setup instructions, helper scripts, and workflow documentation for a specific task like browser automation, API integrations, or code review workflows.</p>
-<p>The agent automatically detects when a skill is relevant based on its description. No manual activation needed.</p>
-<h3 id="extensibility-done-right">Extensibility Done Right</h3>
-<p>The hook system is where Pi really shines. Want to customize behavior? Write a TypeScript hook:</p>
-<pre><code class="language-typescript">// hooks/my-hook.ts
-export default {
-  name: &quot;my-hook&quot;,
-  before_agent_start: async (ctx) =&gt; {
-    // Modify prompts, inject context, whatever you need
-    return { systemPromptAppend: &quot;Always be concise.&quot; };
-  }
+<p>Those are not interchangeable measurements. Architecture, alignment, relocation encoding, and linker decisions can make the same representation win by very different amounts. The dashboard keeps the raw dimensions separate instead of collapsing them into one impressive-looking number.</p>
+<h2 id="case-study-gl-enum-names">Case Study: GL Enum Names</h2>
+<p>The generated GL enum table stored a <code>std::string_view</code> in every entry. On 64-bit builds that made each entry 24 bytes and required a relative relocation for every name.</p>
+<p>The replacement concatenates all names into one string blob and stores a 32-bit offset:</p>
+<pre><code class="language-cpp">struct EnumName {
+  uint32_t value;
+  uint32_t name_offset;
 };
 </code></pre>
-<p>I&#39;ve published my own hooks at <a href="https://github.com/hjanuschka/shitty-extensions">shitty-extensions</a>:</p>
+<p>The entries shrink from 24 bytes to 8, the table moves from <code>.data.rel.ro</code> to <code>.rodata</code>, and the per-entry name relocations disappear. The current size-bot patchset reports <strong>18,904 bytes saved on arm64</strong>, while arm32 grows by 1,684 bytes. That split is useful evidence: a source-level representation change does not have one universal binary-size result.</p>
 <ul>
-<li><strong>memory-mode</strong> - Save instructions to AGENTS.md with AI-assisted integration</li>
-<li><strong>plan-mode</strong> - Claude Code-style read-only exploration mode</li>
-<li><strong>usage-bar</strong> - Track AI provider usage statistics</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8185934"><strong>Store GL enum names as offsets into a single string table</strong></a></li>
 </ul>
-<h2 id="my-contributions">My Contributions</h2>
+<h2 id="case-study-workaround-flags">Case Study: Workaround Flags</h2>
+<p><code>GpuDriverBugWorkarounds::ToIntSet()</code> expanded an <code>if</code> plus <code>push_back</code> for every workaround. The result was many copies of the same instruction sequence.</p>
+<p>A constexpr table of workaround IDs and pointers-to-members lets one loop do the work. The output vector is unchanged; the current dashboard result is <strong>2,160 bytes saved on arm64</strong> and <strong>1,760 bytes on arm32</strong>.</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/416"><strong>Add plan mode for safe code analysis</strong></a> - Claude Code-style read-only exploration mode</li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/405"><strong>Add configurable keybindings system</strong></a> - Customize all keyboard shortcuts via <code>~/.pi/agent/keybindings.json</code></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8175466"><strong>Build GpuDriverBugWorkarounds::ToIntSet() from a member table</strong></a></li>
 </ul>
-<h2 id="getting-started">Getting Started</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-pi
-</code></pre>
-<h2 id="contributing-back">Contributing Back</h2>
-<p>Speaking of contributions - the project is actively developed and welcoming to PRs. The codebase is clean TypeScript, well-documented, and Mario is responsive to issues and pull requests.</p>
-<p>My keybindings PR went from idea to merged in a few days. That&#39;s the kind of open source experience I appreciate.</p>
-<h2 id="the-philosophy">The Philosophy</h2>
-<p>From Pi&#39;s README:</p>
+<h2 id="case-study-generated-registries">Case Study: Generated Registries</h2>
+<p>The same pattern appeared in several generators:</p>
+<ul>
+<li>UKM decode maps emitted hash immediates and initializer code per metric. The data-driven version saves <strong>161,284 arm64 bytes</strong>.</li>
+<li>Runtime features had one static bool and outlined setter per feature. A single state array plus <code>uint16_t</code> indices removes padding, setter instantiations, and relocations: <strong>114,200 arm64 bytes saved</strong>.</li>
+<li>The ICU locale cache constructed each canonical locale inline. A tag table and loop build the identical cache without unrolling the same conversion for every tag: <strong>18,152 arm64 bytes saved</strong>.</li>
+<li>Sanitizer configs constructed every <code>QualifiedName</code> in nested initializer lists. Function-local name tables and small helpers produce the same configuration.</li>
+</ul>
+<p>Representative landed changes:</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8185555"><strong>Make the generated UKM decode map data-driven</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8185556"><strong>Use a state array and indices in runtime feature lookup tables</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8174346"><strong>Build the ICU locale cache from a tag table</strong></a></li>
+</ul>
+<p>The same experiment is still in review for Trusted Types event-handler names, settings dispatch, color-mixer registrations, sanitizer builtins, and default share-ranking data. Together they test where table-driven startup remains clearer and where the extra indirection is not worth it.</p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8185854"><strong>Build Trusted Types event-handler attributes from a name table</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8183021"><strong>Define UKM metric setters inline in the generated header</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8186155"><strong>Dispatch SettingsBase setters through tables</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8185557"><strong>Register plain color mappings from tables</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8185914"><strong>Generate sanitizer configs as name tables plus loops</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8181075"><strong>Use constexpr tables for default share-ranking data</strong></a></li>
+</ul>
+<h2 id="resource-maps-keep-the-development-feature">Resource Maps: Keep the Development Feature</h2>
+<p>GRIT resource maps had a different trap. Each production entry carried a path pointer, ID, and an <code>std::optional</code> filesystem path used only by a local WebUI development workflow. Removing the development path would save space but break a useful workflow.</p>
+<p>The compact representation keeps both behaviors: URL and optional development paths become offsets into one deduplicated string blob. Production entries shrink without deleting the local loading feature. The current trybot result reports <strong>31,072 bytes saved on arm64</strong> and <strong>6,404 bytes on arm32</strong>.</p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8182732"><strong>Compact GRIT resource map entries</strong></a></li>
+</ul>
+<h2 id="finding-candidates">Finding Candidates</h2>
+<p>The useful review question is:</p>
 <blockquote>
-<p>Pi is a terminal-native coding agent designed for developers who prefer keyboard-driven workflows. It emphasizes transparency, control, and extensibility over magic.</p>
+<p>Does this generator emit one copy of an operation for every entry, when it could emit the entries as data and execute the operation once?</p>
 </blockquote>
-<p>That resonates with me. I want to see what the agent is doing, control its behavior, and extend it when needed. Pi delivers on all three.</p>
-<h2 id="try-it">Try It</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-export ANTHROPIC_API_KEY=sk-ant-...
-pi
-</code></pre>
-<p>Or grab a <a href="https://github.com/badlogic/pi-mono/releases">standalone binary</a> if you don&#39;t want Node.js.</p>
-<p>The <a href="https://discord.com/invite/nKXTsAcmbT">Discord community</a> is active and helpful. And yes, the website is still <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - embrace it.</p>
-<hr>
-<p><strong>Links:</strong></p>
+<p>Good signs are generated switches, long initializer lists with non-trivial constructors, one static variable per feature, repeated string pointers, and large tables in relocation-heavy sections.</p>
+<p>Binary size is rarely one spectacular deletion. It is a collection of representation choices. Tables, offsets, and loops are not automatically better, but when behavior is uniform and inputs are static, they usually express the problem more directly - and the linker tends to agree.</p>
+<h2 id="links">Links</h2>
 <ul>
-<li><a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">GitHub Repository</a></li>
-<li><a href="https://www.npmjs.com/package/@mariozechner/pi-coding-agent">NPM Package</a></li>
-<li><a href="https://discord.com/invite/nKXTsAcmbT">Discord Community</a></li>
-<li><a href="https://agentskills.io/specification">Agent Skills Specification</a></li>
+<li><a href="https://static.januschka.com/apk-size/">Interactive APK and compile-size dashboard</a></li>
+<li><a href="/chromium-binary-size.html">Related: Moving Data Out of the Chrome Binary</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8185934">GL enum string table</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8175466">GPU workaround member table</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8185555">UKM decode map</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8185556">Runtime feature state array</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8182732">Compact GRIT maps</a></li>
 </ul>
 
     </div>

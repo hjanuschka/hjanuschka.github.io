@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Why I Switched to Pi: A Terminal-First Coding Agent - Helmut Januschka</title>
-  <meta name="description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <title>Implementing text-decoration-inset in Blink - Helmut Januschka</title>
+  <meta name="description" content="A CSS property can be easy to parse and difficult to paint. Fragmentation is where the interesting part starts.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Why I Switched to Pi: A Terminal-First Coding Agent",
-    "description": "From Claude Code to Pi - why a shitty coding agent became my daily driver",
+    "headline": "Implementing text-decoration-inset in Blink",
+    "description": "A CSS property can be easy to parse and difficult to paint. Fragmentation is where the interesting part starts.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,23 +33,23 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/pi-coding-agent.html"
+      "@id": "https://januschka.com/chromium-text-decoration-inset.html"
     },
-    "keywords": "Tools, TypeScript / AI, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Blink / CSS, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/pi-coding-agent.html"
+      "target": "https://januschka.com/chromium-text-decoration-inset.html"
     }
   }
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta property="og:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta property="og:title" content="Implementing text-decoration-inset in Blink">
+  <meta property="og:description" content="A CSS property can be easy to parse and difficult to paint. Fragmentation is where the interesting part starts.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/pi-coding-agent.html">
+  <meta property="og:url" content="https://januschka.com/chromium-text-decoration-inset.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
@@ -57,10 +57,10 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta name="twitter:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta name="twitter:title" content="Implementing text-decoration-inset in Blink">
+  <meta name="twitter:description" content="A CSS property can be easy to parse and difficult to paint. Fragmentation is where the interesting part starts.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
-  <link rel="canonical" href="https://www.januschka.com/pi-coding-agent.html">
+  <link rel="canonical" href="https://www.januschka.com/chromium-text-decoration-inset.html">
 
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -861,10 +861,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Why I Switched to Pi: A Terminal-First Coding Agent</h1>
+      <h1 class="blog-title">Implementing text-decoration-inset in Blink</h1>
       <div class="blog-meta">
-        <span>⚡ Tools</span>
-        <span>🔧 TypeScript / AI</span>
+        <span>⚡ Chromium</span>
+        <span>🔧 C++ / Blink / CSS</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -873,79 +873,39 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>From Claude Code to Pi - why a shitty coding agent became my daily driver</em></p>
-<h2 id="the-discovery">The Discovery</h2>
-<p>A few weeks ago, I stumbled upon <a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">Pi</a> by Mario Zechner (<a href="https://github.com/badlogic">@badlogic</a>) - yes, the same Mario behind <a href="https://libgdx.com/">libGDX</a>, the cross-platform game framework. He&#39;s been building a terminal-based coding agent that&#39;s refreshingly different from the mainstream options.</p>
-<p>The project doesn&#39;t take itself too seriously - its website is literally <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - but under the hood, it&#39;s become one of the most capable and extensible coding agents I&#39;ve used.</p>
-<h2 id="why-pi">Why Pi?</h2>
-<h3 id="multi-model-freedom">Multi-Model Freedom</h3>
-<p>The killer feature that first caught my attention: <strong>mid-session model switching</strong>. I can start a conversation with Claude Opus for exploration, switch to GPT-5.2 for a second opinion, then jump to Gemini for its massive context window - all in the same session.</p>
-<pre><code class="language-bash"># Press Ctrl+L to open model selector anytime
-# Or use Ctrl+P to cycle through models
-</code></pre>
-<p>Pi supports basically every provider:</p>
+<p><em>A CSS property can be easy to parse and difficult to paint. Fragmentation is where the interesting part starts.</em></p>
+<p><strong>Status:</strong> 🎉 Landed</p>
+<h2 id="what-the-property-does">What the Property Does</h2>
+<p><code>text-decoration-inset</code> trims or extends a text decoration at the start and end of a decorated run. It sounds like two lengths added to an underline. On one unwrapped line, it nearly is.</p>
+<p>Blink, however, paints text in fragments. A decorated inline can wrap across lines, be split by forced breaks, live inside SVG text, and use <code>box-decoration-break: slice</code> or <code>clone</code>. Percentage insets resolve against a run whose total size may span several fragments. Paint invalidation and ink overflow must match the exact geometry.</p>
+<p>The feature therefore landed as a vertical slice through style, paint, and overflow.</p>
+<h2 id="first-carry-the-value-through-style">First: Carry the Value Through Style</h2>
+<p>The first change adds parsing, computed-style storage, and <code>AppliedTextDecoration</code> plumbing behind the runtime flag. It intentionally changes no pixels. That separation matters: reviewers can validate CSS syntax, inheritance, and serialization before paint code depends on it.</p>
 <ul>
-<li>Anthropic (API + Claude Pro/Max via OAuth)</li>
-<li>OpenAI</li>
-<li>Google Gemini (free tier via OAuth!)</li>
-<li>GitHub Copilot (if you have the subscription)</li>
-<li>Mistral, Groq, xAI, OpenRouter, and more</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7993418"><strong>Add text-decoration-inset style support</strong></a></li>
 </ul>
-<h3 id="the-session-tree">The Session Tree</h3>
-<p>Instead of linear chat history, Pi stores sessions as <strong>trees</strong>. Every conversation branch is preserved. Made a mistake 10 messages ago? Use <code>/tree</code> to navigate back, branch off, and try a different approach - without losing your original path.</p>
-<p>This has saved me countless times when exploring different solutions to a problem.</p>
-<h3 id="skills-system">Skills System</h3>
-<p>Pi implements the <a href="https://agentskills.io/specification">Agent Skills</a> standard - self-contained capability packages the agent loads on-demand. Think of them as specialized &quot;modes&quot; - a skill might contain setup instructions, helper scripts, and workflow documentation for a specific task like browser automation, API integrations, or code review workflows.</p>
-<p>The agent automatically detects when a skill is relevant based on its description. No manual activation needed.</p>
-<h3 id="extensibility-done-right">Extensibility Done Right</h3>
-<p>The hook system is where Pi really shines. Want to customize behavior? Write a TypeScript hook:</p>
-<pre><code class="language-typescript">// hooks/my-hook.ts
-export default {
-  name: &quot;my-hook&quot;,
-  before_agent_start: async (ctx) =&gt; {
-    // Modify prompts, inject context, whatever you need
-    return { systemPromptAppend: &quot;Always be concise.&quot; };
-  }
-};
-</code></pre>
-<p>I&#39;ve published my own hooks at <a href="https://github.com/hjanuschka/shitty-extensions">shitty-extensions</a>:</p>
+<h2 id="then-paint-fragment-boundaries">Then: Paint Fragment Boundaries</h2>
+<p>Painting applies the start and end inset only at the boundaries of the decorated run. That means knowing whether the current inline fragment is the first, last, or an interior fragment, and whether <code>box-decoration-break</code> wants a sliced run or a cloned decoration per fragment.</p>
+<p>The implementation carries the decoration data into paint, handles SVG fragments, and enables the WPT rendering cases that were previously expected to fail.</p>
 <ul>
-<li><strong>memory-mode</strong> - Save instructions to AGENTS.md with AI-assisted integration</li>
-<li><strong>plan-mode</strong> - Claude Code-style read-only exploration mode</li>
-<li><strong>usage-bar</strong> - Track AI provider usage statistics</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7748204"><strong>Implement text-decoration-inset painting</strong></a></li>
 </ul>
-<h2 id="my-contributions">My Contributions</h2>
+<h2 id="the-hard-part-exact-overflow">The Hard Part: Exact Overflow</h2>
+<p>A conservative overflow rectangle is safe but wrong in visible ways: it can invalidate too much, miss negative insets that extend beyond the text, or disagree with the line that paint actually draws.</p>
+<p>The final change gives overflow calculation the same fragment context as paint - a line cursor at the current fragment with access to neighboring fragments. Paint and ink overflow now make the same geometric decision.</p>
+<p>Percentages were trickier. Under <code>box-decoration-break: slice</code>, an inset percentage resolves against the <strong>total decorated run</strong>, not each fragment. Computing that requires walking the fragment chain in both directions across soft wraps and forced breaks. If a trim is larger than one fragment, the remainder carries into the next fragment rather than being discarded.</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/416"><strong>Add plan mode for safe code analysis</strong></a> - Claude Code-style read-only exploration mode</li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/405"><strong>Add configurable keybindings system</strong></a> - Customize all keyboard shortcuts via <code>~/.pi/agent/keybindings.json</code></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8148940"><strong>Resolve overflow and percentages precisely</strong></a></li>
 </ul>
-<h2 id="getting-started">Getting Started</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-pi
-</code></pre>
-<h2 id="contributing-back">Contributing Back</h2>
-<p>Speaking of contributions - the project is actively developed and welcoming to PRs. The codebase is clean TypeScript, well-documented, and Mario is responsive to issues and pull requests.</p>
-<p>My keybindings PR went from idea to merged in a few days. That&#39;s the kind of open source experience I appreciate.</p>
-<h2 id="the-philosophy">The Philosophy</h2>
-<p>From Pi&#39;s README:</p>
-<blockquote>
-<p>Pi is a terminal-native coding agent designed for developers who prefer keyboard-driven workflows. It emphasizes transparency, control, and extensibility over magic.</p>
-</blockquote>
-<p>That resonates with me. I want to see what the agent is doing, control its behavior, and extend it when needed. Pi delivers on all three.</p>
-<h2 id="try-it">Try It</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-export ANTHROPIC_API_KEY=sk-ant-...
-pi
-</code></pre>
-<p>Or grab a <a href="https://github.com/badlogic/pi-mono/releases">standalone binary</a> if you don&#39;t want Node.js.</p>
-<p>The <a href="https://discord.com/invite/nKXTsAcmbT">Discord community</a> is active and helpful. And yes, the website is still <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - embrace it.</p>
-<hr>
-<p><strong>Links:</strong></p>
+<p>The tests cover wrapped runs, forced breaks, percentage resolution, inset accumulation, SVG fragments, and dynamic invalidation when positive or negative insets are added and removed after the first paint.</p>
+<h2 id="the-takeaway">The Takeaway</h2>
+<p>The parser was not the feature. The feature became complete when style, painting, and overflow shared the same definition of a decorated run.</p>
+<p>That is a useful rule for rendering work: if paint needs fragment context to draw something, overflow and invalidation probably need the same context to describe it accurately.</p>
+<h2 id="links">Links</h2>
 <ul>
-<li><a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">GitHub Repository</a></li>
-<li><a href="https://www.npmjs.com/package/@mariozechner/pi-coding-agent">NPM Package</a></li>
-<li><a href="https://discord.com/invite/nKXTsAcmbT">Discord Community</a></li>
-<li><a href="https://agentskills.io/specification">Agent Skills Specification</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7993418">Style plumbing</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7748204">Painting</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8148940">Exact overflow and percentage resolution</a></li>
 </ul>
 
     </div>

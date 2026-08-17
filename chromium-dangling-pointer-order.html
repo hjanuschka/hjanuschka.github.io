@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Why I Switched to Pi: A Terminal-First Coding Agent - Helmut Januschka</title>
-  <meta name="description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <title>Four Dangling Pointers, One Ownership Lesson - Helmut Januschka</title>
+  <meta name="description" content="Sometimes fixing a dangling raw_ptr is not about changing ownership. It is about making destruction order tell the truth.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Why I Switched to Pi: A Terminal-First Coding Agent",
-    "description": "From Claude Code to Pi - why a shitty coding agent became my daily driver",
+    "headline": "Four Dangling Pointers, One Ownership Lesson",
+    "description": "Sometimes fixing a dangling raw_ptr is not about changing ownership. It is about making destruction order tell the truth.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -33,23 +33,23 @@
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https://januschka.com/pi-coding-agent.html"
+      "@id": "https://januschka.com/chromium-dangling-pointer-order.html"
     },
-    "keywords": "Tools, TypeScript / AI, Chromium, Open Source, Browser Development",
+    "keywords": "Chromium, C++ / Memory Safety, Chromium, Open Source, Browser Development",
     "articleSection": "Technology",
     "inLanguage": "en-US",
     "potentialAction": {
       "@type": "ReadAction",
-      "target": "https://januschka.com/pi-coding-agent.html"
+      "target": "https://januschka.com/chromium-dangling-pointer-order.html"
     }
   }
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta property="og:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta property="og:title" content="Four Dangling Pointers, One Ownership Lesson">
+  <meta property="og:description" content="Sometimes fixing a dangling raw_ptr is not about changing ownership. It is about making destruction order tell the truth.">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://januschka.com/pi-coding-agent.html">
+  <meta property="og:url" content="https://januschka.com/chromium-dangling-pointer-order.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
   <meta property="og:site_name" content="Helmut Januschka">
   <meta property="article:author" content="Helmut Januschka">
@@ -57,10 +57,10 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Why I Switched to Pi: A Terminal-First Coding Agent">
-  <meta name="twitter:description" content="From Claude Code to Pi - why a shitty coding agent became my daily driver">
+  <meta name="twitter:title" content="Four Dangling Pointers, One Ownership Lesson">
+  <meta name="twitter:description" content="Sometimes fixing a dangling raw_ptr is not about changing ownership. It is about making destruction order tell the truth.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
-  <link rel="canonical" href="https://www.januschka.com/pi-coding-agent.html">
+  <link rel="canonical" href="https://www.januschka.com/chromium-dangling-pointer-order.html">
 
   <meta name="color-scheme" content="dark light">
   <meta name="color-scheme" content="dark light">
@@ -861,10 +861,10 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Why I Switched to Pi: A Terminal-First Coding Agent</h1>
+      <h1 class="blog-title">Four Dangling Pointers, One Ownership Lesson</h1>
       <div class="blog-meta">
-        <span>⚡ Tools</span>
-        <span>🔧 TypeScript / AI</span>
+        <span>⚡ Chromium</span>
+        <span>🔧 C++ / Memory Safety</span>
         <span>👤 Helmut Januschka</span>
       </div>
     </div>
@@ -873,79 +873,63 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>From Claude Code to Pi - why a shitty coding agent became my daily driver</em></p>
-<h2 id="the-discovery">The Discovery</h2>
-<p>A few weeks ago, I stumbled upon <a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">Pi</a> by Mario Zechner (<a href="https://github.com/badlogic">@badlogic</a>) - yes, the same Mario behind <a href="https://libgdx.com/">libGDX</a>, the cross-platform game framework. He&#39;s been building a terminal-based coding agent that&#39;s refreshingly different from the mainstream options.</p>
-<p>The project doesn&#39;t take itself too seriously - its website is literally <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - but under the hood, it&#39;s become one of the most capable and extensible coding agents I&#39;ve used.</p>
-<h2 id="why-pi">Why Pi?</h2>
-<h3 id="multi-model-freedom">Multi-Model Freedom</h3>
-<p>The killer feature that first caught my attention: <strong>mid-session model switching</strong>. I can start a conversation with Claude Opus for exploration, switch to GPT-5.2 for a second opinion, then jump to Gemini for its massive context window - all in the same session.</p>
-<pre><code class="language-bash"># Press Ctrl+L to open model selector anytime
-# Or use Ctrl+P to cycle through models
-</code></pre>
-<p>Pi supports basically every provider:</p>
+<p><em>Sometimes fixing a dangling raw_ptr is not about changing ownership. It is about making destruction order tell the truth.</em></p>
+<p><strong>Status:</strong> 🎉 Landed</p>
+<h2 id="what-the-detector-found">What the Detector Found</h2>
+<p>Chromium&#39;s dangling-pointer detector turns quiet lifetime mistakes into actionable failures. Several unrelated tests and controllers reported the same shape:</p>
 <ul>
-<li>Anthropic (API + Claude Pro/Max via OAuth)</li>
-<li>OpenAI</li>
-<li>Google Gemini (free tier via OAuth!)</li>
-<li>GitHub Copilot (if you have the subscription)</li>
-<li>Mistral, Groq, xAI, OpenRouter, and more</li>
+<li>an owning container or singleton is destroyed;</li>
+<li>an unowned <code>raw_ptr</code> still contains the old address;</li>
+<li>the pointer is not dereferenced again, but it survives long enough for the detector to report a dangling reference.</li>
 </ul>
-<h3 id="the-session-tree">The Session Tree</h3>
-<p>Instead of linear chat history, Pi stores sessions as <strong>trees</strong>. Every conversation branch is preserved. Made a mistake 10 messages ago? Use <code>/tree</code> to navigate back, branch off, and try a different approach - without losing your original path.</p>
-<p>This has saved me countless times when exploring different solutions to a problem.</p>
-<h3 id="skills-system">Skills System</h3>
-<p>Pi implements the <a href="https://agentskills.io/specification">Agent Skills</a> standard - self-contained capability packages the agent loads on-demand. Think of them as specialized &quot;modes&quot; - a skill might contain setup instructions, helper scripts, and workflow documentation for a specific task like browser automation, API integrations, or code review workflows.</p>
-<p>The agent automatically detects when a skill is relevant based on its description. No manual activation needed.</p>
-<h3 id="extensibility-done-right">Extensibility Done Right</h3>
-<p>The hook system is where Pi really shines. Want to customize behavior? Write a TypeScript hook:</p>
-<pre><code class="language-typescript">// hooks/my-hook.ts
-export default {
-  name: &quot;my-hook&quot;,
-  before_agent_start: async (ctx) =&gt; {
-    // Modify prompts, inject context, whatever you need
-    return { systemPromptAppend: &quot;Always be concise.&quot; };
-  }
-};
+<p>These are not always use-after-free crashes. They are ownership models whose teardown order is inconsistent with the relationship expressed in the members.</p>
+<h2 id="c-destruction-order-matters">C++ Destruction Order Matters</h2>
+<p>Class members are destroyed in the reverse order of their declaration. Consider:</p>
+<pre><code class="language-cpp">raw_ptr&lt;Model&gt; active_model_ = nullptr;
+std::map&lt;Id, std::unique_ptr&lt;Model&gt;&gt; models_;
 </code></pre>
-<p>I&#39;ve published my own hooks at <a href="https://github.com/hjanuschka/shitty-extensions">shitty-extensions</a>:</p>
+<p>At teardown, <code>models_</code> is destroyed first because it was declared last. It frees the <code>Model</code>, while <code>active_model_</code> still contains its address. Only afterward is the <code>raw_ptr</code> destroyed.</p>
+<p>If the pointer is an observer into the container, declare it <strong>after</strong> the owner:</p>
+<pre><code class="language-cpp">std::map&lt;Id, std::unique_ptr&lt;Model&gt;&gt; models_;
+raw_ptr&lt;Model&gt; active_model_ = nullptr;
+</code></pre>
+<p>Now the observer is destroyed first, then the owner. No ownership semantics changed. The declaration order simply matches them.</p>
+<h2 id="payment-request-profiles">Payment Request Profiles</h2>
+<p><code>PaymentRequestState</code> caches <code>AutofillProfile</code> objects and keeps selected/invalid profile pointers into that cache. The observer pointers were declared before <code>profile_cache_</code>, so the cache freed the profiles first during teardown.</p>
+<p>Moving the pointers after the cache makes them die first and removes the <code>DanglingUntriaged</code> annotations rather than suppressing the report.</p>
 <ul>
-<li><strong>memory-mode</strong> - Save instructions to AGENTS.md with AI-assisted integration</li>
-<li><strong>plan-mode</strong> - Claude Code-style read-only exploration mode</li>
-<li><strong>usage-bar</strong> - Track AI provider usage statistics</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7930129"><strong>Fix dangling selected/invalid profile pointers in PaymentRequestState</strong></a></li>
 </ul>
-<h2 id="my-contributions">My Contributions</h2>
+<p><code>PaymentRequestSpec</code> had the same relationship for <code>selected_shipping_option_</code>: an observer into owned option data that survived longer than its owner.</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/416"><strong>Add plan mode for safe code analysis</strong></a> - Claude Code-style read-only exploration mode</li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/405"><strong>Add configurable keybindings system</strong></a> - Customize all keyboard shortcuts via <code>~/.pi/agent/keybindings.json</code></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7941513"><strong>Fix dangling selected_shipping_option_ in PaymentRequestSpec</strong></a></li>
 </ul>
-<h2 id="getting-started">Getting Started</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-pi
-</code></pre>
-<h2 id="contributing-back">Contributing Back</h2>
-<p>Speaking of contributions - the project is actively developed and welcoming to PRs. The codebase is clean TypeScript, well-documented, and Mario is responsive to issues and pull requests.</p>
-<p>My keybindings PR went from idea to merged in a few days. That&#39;s the kind of open source experience I appreciate.</p>
-<h2 id="the-philosophy">The Philosophy</h2>
-<p>From Pi&#39;s README:</p>
-<blockquote>
-<p>Pi is a terminal-native coding agent designed for developers who prefer keyboard-driven workflows. It emphasizes transparency, control, and extensibility over magic.</p>
-</blockquote>
-<p>That resonates with me. I want to see what the agent is doing, control its behavior, and extend it when needed. Pi delivers on all three.</p>
-<h2 id="try-it">Try It</h2>
-<pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
-export ANTHROPIC_API_KEY=sk-ant-...
-pi
-</code></pre>
-<p>Or grab a <a href="https://github.com/badlogic/pi-mono/releases">standalone binary</a> if you don&#39;t want Node.js.</p>
-<p>The <a href="https://discord.com/invite/nKXTsAcmbT">Discord community</a> is active and helpful. And yes, the website is still <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - embrace it.</p>
-<hr>
-<p><strong>Links:</strong></p>
+<h2 id="caption-models">Caption Models</h2>
+<p><code>CaptionBubbleControllerViews</code> owns caption models in a map and caches the currently active model. Again, <code>active_model_</code> was declared before the owning map. Reordering the members makes the lifetime relationship explicit.</p>
 <ul>
-<li><a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">GitHub Repository</a></li>
-<li><a href="https://www.npmjs.com/package/@mariozechner/pi-coding-agent">NPM Package</a></li>
-<li><a href="https://discord.com/invite/nKXTsAcmbT">Discord Community</a></li>
-<li><a href="https://agentskills.io/specification">Agent Skills Specification</a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7935748"><strong>Fix dangling active_model_ in CaptionBubbleControllerViews</strong></a></li>
+</ul>
+<h2 id="tests-and-global-singletons">Tests and Global Singletons</h2>
+<p>Not every owner is a class member. <code>MediaStorageUtilTest</code> cached a pointer to the global <code>TestStorageMonitor</code>. <code>TearDown()</code> deleted the singleton while the fixture member still pointed at it.</p>
+<p>Here member reordering cannot help. The fix clears the cached pointer before deleting the singleton, making the teardown sequence explicit.</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7928951"><strong>Fix dangling monitor_ in MediaStorageUtilTest</strong></a></li>
+</ul>
+<h2 id="the-review-question">The Review Question</h2>
+<p>When a <code>raw_ptr</code> points into another member, ask two questions:</p>
+<ol>
+<li>Which member owns the pointee?</li>
+<li>Will the observer be destroyed or cleared before that owner releases it?</li>
+</ol>
+<p>If the answer to the second question is no, an annotation is not the fix. The class declaration or teardown order is lying about the lifetime relationship.</p>
+<h2 id="the-takeaway">The Takeaway</h2>
+<p>These fixes are intentionally small. The value comes from letting the detector expose lifetime assumptions that C++ otherwise keeps implicit. A clean result is not merely &quot;the test no longer complains&quot;; it is a class whose declaration order documents who must outlive whom.</p>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7930129">PaymentRequestState profiles</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7941513">PaymentRequestSpec shipping option</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7935748">Caption active model</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/7928951">MediaStorageUtilTest monitor</a></li>
 </ul>
 
     </div>
