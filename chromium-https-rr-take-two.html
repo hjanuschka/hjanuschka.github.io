@@ -876,78 +876,117 @@
 <p><em>The first attempt failed in fairly legendary fashion. The ground has shifted since - so here is take two.</em></p>
 <p><strong>Status:</strong> 🚧 In Review</p>
 <h2 id="recap-the-first-attempt">Recap: The First Attempt</h2>
-<p>A while back I wrote about <a href="/reviving-hev3-https-rr.html">reviving HEv3 and HTTPS-RR in Chromium</a>. The short version: I wanted to complete Chromium&#39;s RFC 9460 support (AliasMode, ServiceMode target names, and friends), built it on the legacy resolver path, and the review flagged it as conflicting with the in-flight Happy Eyeballs v3 network-stack refactor. The change was parked, HEv3 dragged on, and the effort was ultimately rejected. Legendary fashion, as I put it in the issue.</p>
+<p>A while back I wrote about <a href="/reviving-hev3-https-rr.html">reviving HEv3 and HTTPS-RR in Chromium</a>. The short version: I wanted to complete Chromium&#39;s RFC 9460 support - AliasMode, ServiceMode target names, address hints - built it on the legacy resolver path, and the review flagged it as conflicting with the in-flight Happy Eyeballs v3 network-stack refactor. The change was parked, HEv3 dragged on, and the effort was ultimately rejected.</p>
+<p>It grew into a 63-change plan that tried to revive HEv3, add new connection-attempt abstractions, and implement HTTPS-RR all at the same time. The architecture kept moving underneath it, most of that stack never reached reviewable scope, and many prototype changes were abandoned. Legendary fashion, as I described it in the issue.</p>
 <p>The gap it was trying to close never went away. <a href="https://issues.chromium.org/issues/40257146">Issue 40257146</a> - &quot;Fully implement HTTPS-RR&quot; - is still open, and Chromium&#39;s incomplete RFC 9460 implementation causes real interoperability problems: the same HTTPS record deployment works in other browsers but not in Chromium, so operators have to keep legacy A/AAAA paths alive specifically for Chrome (see the interop evidence in <a href="https://issues.chromium.org/issues/388545139">issue 388545139</a>).</p>
 <h2 id="what-changed">What Changed</h2>
-<p>The thing that blocked the first attempt is also what unblocks this one: the new cache resolver landed, and the HEv3 plumbing the previous review wanted me to wait for now exists. That means the implementation no longer has to fight the architecture - it can stay inside the existing resolver path instead of bolting onto the legacy one.</p>
-<p>So I restarted, from a different angle. Instead of one large change, this version is split into <strong>five small, ordered CLs</strong> that each do one thing and build on the previous. Compared to the last approach it is much smaller, and it stays within the paths the networking team already maintains.</p>
+<p>The thing that blocked the first attempt is also what unblocks this one: the new cache resolver landed, and the HEv3 plumbing the previous review wanted me to wait for now exists. This attempt starts <em>after</em> that plumbing is in place, and stays entirely in the resolver path that owns DNS transactions:</p>
+<ul>
+<li>extraction in <code>DnsResponseResultExtractor</code></li>
+<li>bounded follow-ups in <code>HostResolverDnsTask</code></li>
+<li>endpoint assembly in <code>DnsTaskResultsManager</code></li>
+</ul>
+<p>It does not invent a second query path and it does not restructure the connection layer. The result is <strong>five small, ordered CLs</strong> with one responsibility each - far easier to review independently, and far easier to drop or revise when feedback changes the design.</p>
 <h2 id="what-this-completes">What This Completes</h2>
-<p>RFC 9460 has several pieces Chromium did not fully implement. The stack closes them:</p>
+<p>The original implementation handled a narrow ServiceMode shape. The stack keeps HTTPS-RR metadata associated with its target, resolves target addresses, follows AliasMode links, accepts usable hints even when the origin has no address of its own, and carries an allowed alternate port into the connection endpoint. Concretely, from RFC 9460:</p>
 <ul>
 <li><strong>ServiceMode address hints</strong> - use <code>ipv4hint</code> / <code>ipv6hint</code> from the record.</li>
-<li><strong>AliasMode</strong> - resolve alias records (and alias chains), solving the CNAME-at-apex problem.</li>
-<li><strong>Non-matching target names</strong> - follow <code>TargetName</code> in ServiceMode, for multi-CDN setups.</li>
-<li><strong>Follow-up queries</strong> - issue A/AAAA follow-ups for target names, including when the origin name has no usable address of its own.</li>
-<li><strong>Alternate ports</strong> - honor <code>port=</code> from the record.</li>
+<li><strong>AliasMode</strong> - turn priority-zero records into resolver aliases, and follow alias chains (solving the CNAME-at-apex problem).</li>
+<li><strong>Non-matching target names</strong> - keep metadata and hints when the <code>TargetName</code> differs from the query name, for multi-CDN setups.</li>
+<li><strong>Follow-up queries</strong> - schedule bounded A/AAAA/HTTPS follow-ups for target names, including when the origin name has no usable address.</li>
+<li><strong>Alternate ports</strong> - carry a scheme-allowed <code>port=</code> through to the connection attempt.</li>
 </ul>
 <h2 id="the-change-stack">The Change Stack</h2>
-<p>Five CLs, in order:</p>
+<p>Five CLs, in intended landing order - each has one concern and depends on the one above it:</p>
 <ul>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7984025"><strong>[HTTPS-RR 1/5] Extract HTTPS-RR ServiceMode address hints</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7984026"><strong>[HTTPS-RR 2/5] Extract HTTPS-RR AliasMode records as alias results</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7984027"><strong>[HTTPS-RR 3/5] Use HTTPS-RR records with non-matching target names</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7984028"><strong>[HTTPS-RR 4/5] Issue HTTPS-RR followup queries for target names</strong></a></li>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8259314"><strong>[HTTPS-RR 5/5] Honor alternate ports from HTTPS resource records</strong></a></li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7984025"><strong>[HTTPS-RR 1/5] Extract HTTPS-RR ServiceMode address hints</strong></a> - extracts <code>ipv4hint</code> and <code>ipv6hint</code> under the HTTPS-RR feature.</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7984026"><strong>[HTTPS-RR 2/5] Extract HTTPS-RR AliasMode records as alias results</strong></a> - turns priority-zero HTTPS records into resolver aliases.</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7984027"><strong>[HTTPS-RR 3/5] Use HTTPS-RR records with non-matching target names</strong></a> - keeps metadata and hints for ServiceMode <code>TargetName</code>s.</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/7984028"><strong>[HTTPS-RR 4/5] Issue HTTPS-RR followup queries for target names</strong></a> - schedules bounded target queries and preserves the final service endpoints.</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8259314"><strong>[HTTPS-RR 5/5] Honor alternate ports from HTTPS resource records</strong></a> - carries a scheme-allowed HTTPS-RR port through metadata to connection attempts.</li>
 </ul>
 <h2 id="proving-it-end-to-end">Proving It End to End</h2>
-<p>Claiming &quot;HTTPS-RR works&quot; is easy; showing it is the point. I set up a live domain (<code>h3q.top</code>) with real HTTPS records and <strong>intentionally unusable origin addresses</strong>, so a successful request <em>has</em> to have gone through the HTTPS-RR path rather than a normal A/AAAA lookup.</p>
-<p>Everything - the DNS setup, the nginx/QUIC config, the live browser checks, and a prebuilt amd64 Debian package - lives on the <a href="https://static.januschka.com/i-40257146/">project page</a>. The coverage matrix walks through the cases that matter:</p>
+<p>Claiming &quot;HTTPS-RR works&quot; is easy; showing it is the point. The <a href="https://static.januschka.com/i-40257146/">project sampler</a> runs real cross-origin requests through public DNS against a live host, <code>bartlby.org</code>, served by Caddy at <code>159.195.20.167</code>.</p>
+<p>The trick is that most test names have <strong>intentionally unusable or absent origin addresses</strong> - the <code>192.0.2.0/24</code> (TEST-NET) block, or no A/AAAA at all - so a request can only succeed if the browser discovered a usable endpoint through HTTPS-RR processing. The direct case is a control. For example, the ServiceMode name resolves like this:</p>
+<pre><code class="language-text">httpsrr-service-origin.bartlby.org   A = 192.0.2.1        (intentionally unusable)
+  -&gt; HTTPS RR  priority 1  target = httpsrr-service-target.bartlby.org  port = 8443
+  -&gt; connection endpoint  159.195.20.167:8443   (SNI and origin stay the URL host)
+</code></pre>
+<p>The coverage matrix walks the cases:</p>
 <table>
 <thead>
 <tr>
-<th>Scenario</th>
-<th>What it proves</th>
+<th>Case</th>
+<th>Origin address</th>
+<th>HTTPS-RR behavior</th>
+<th>Expected endpoint</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>Direct baseline</td>
-<td>ServiceMode hints on the queried name</td>
+<td>Direct</td>
+<td><code>159.195.20.167</code></td>
+<td>control, no RR dependency</td>
+<td><code>159.195.20.167:443</code></td>
 </tr>
 <tr>
-<td>Hint-only target</td>
-<td><code>ipv4hint</code> / <code>ipv6hint</code> used when the origin has no usable address</td>
+<td>ServiceMode</td>
+<td><code>192.0.2.1</code></td>
+<td><code>TargetName</code> A/AAAA + <code>port=8443</code></td>
+<td><code>159.195.20.167:8443</code></td>
 </tr>
 <tr>
-<td>IPv6-only hint</td>
-<td>resolution from an <code>ipv6hint</code> alone</td>
+<td>Hint-only</td>
+<td><code>192.0.2.1</code></td>
+<td>target A/AAAA NODATA; use <code>ipv4hint</code></td>
+<td><code>159.195.20.167:443</code></td>
 </tr>
 <tr>
 <td>No-address origin</td>
-<td>HTTPS-RR path when the origin name has no A/AAAA at all</td>
+<td>none</td>
+<td>owner HTTPS RR supplies its only endpoint via <code>ipv4hint</code></td>
+<td><code>159.195.20.167:443</code></td>
 </tr>
 <tr>
-<td>ServiceMode + alternate port</td>
-<td><code>port=</code> is honored</td>
+<td>IPv6-only hint</td>
+<td>none</td>
+<td>owner HTTPS RR supplies its only endpoint via <code>ipv6hint</code></td>
+<td><code>[2a0a:4cc0:c1:3cb4:e822:68ff:fef3:fed5]:443</code></td>
 </tr>
 <tr>
-<td>Two-link alias chain</td>
-<td>AliasMode chain resolution</td>
+<td>AliasMode</td>
+<td><code>192.0.2.1</code></td>
+<td>priority-0 target A/AAAA/HTTPS</td>
+<td><code>159.195.20.167:443</code></td>
+</tr>
+<tr>
+<td>Alias chain</td>
+<td><code>192.0.2.1</code></td>
+<td>two links, six bounded follow-ups</td>
+<td><code>159.195.20.167:443</code></td>
 </tr>
 </tbody></table>
+<p>The sampler also carries the full lab setup - <code>server.py</code>, <code>Caddyfile</code>, the <code>bartlby.org</code> zone file, the browser-test and net-log validators - plus a prebuilt release, non-component Debian package (<code>chromium-https-rr_153.0.7994.0_amd64.deb</code>) so the whole thing is reproducible.</p>
+<p>To validate locally, run a fresh profile with the supplemental-query timeout disabled, so the browser waits for the RFC 9460 result instead of falling back to A/AAAA:</p>
+<pre><code class="language-bash">out/Default/chrome \
+  --user-data-dir=/tmp/chrome-httpsrr \
+  --no-first-run \
+  --enable-features=AsyncDns,UseDnsHttpsSvcb:UseDnsHttpsSvcbInsecureExtraTimeMax/0/UseDnsHttpsSvcbInsecureExtraTimePercent/0/UseDnsHttpsSvcbInsecureExtraTimeMin/0/UseDnsHttpsSvcbSecureExtraTimeMax/0/UseDnsHttpsSvcbSecureExtraTimePercent/0/UseDnsHttpsSvcbSecureExtraTimeMin/0,UseDnsHttpsSvcbHttpsRr,HappyEyeballsV3 \
+  https://static.januschka.com/i-40257146/
+</code></pre>
 <h2 id="why-this-one-might-move">Why This One Might Move</h2>
 <p>A few reasons for cautious optimism:</p>
 <ul>
 <li>The architectural blocker from last time (waiting on HEv3 / the new resolver) is gone.</li>
-<li>The change is small and ordered, not one monolith, so it is reviewable in pieces.</li>
-<li>It stays within the existing resolver path instead of the legacy one.</li>
+<li>The change is small and ordered, not a 63-CL monolith, so it is reviewable in pieces.</li>
+<li>It stays within the existing resolver path (<code>DnsResponseResultExtractor</code>, <code>HostResolverDnsTask</code>, <code>DnsTaskResultsManager</code>) instead of building a parallel one.</li>
 <li>There is concrete interoperability evidence that this matters, not just a spec-completeness argument.</li>
 </ul>
-<p>To set expectations: I am an external contributor, not a Googler. This is still a sizeable change and there will likely be bumps, and it needs the networking team&#39;s architectural review to go anywhere. But compared to the last attempt, this one is in much better shape - and the thing that stopped it before has finally landed.</p>
+<p>To set expectations: I am an external contributor, not a Googler. This is still a sizeable change and it needs the networking team&#39;s architectural review to go anywhere. But compared to the last attempt, this one is in much better shape - and the thing that stopped it before has finally landed.</p>
 <h2 id="links">Links</h2>
 <ul>
 <li><a href="https://issues.chromium.org/issues/40257146">Issue 40257146 - Fully implement HTTPS-RR</a></li>
 <li><a href="/reviving-hev3-https-rr.html">First attempt (rejected): Reviving HEv3 &amp; HTTPS-RR</a></li>
-<li><a href="https://static.januschka.com/i-40257146/">Project page: stack, DNS setup, live tests, prebuilt .deb</a></li>
+<li><a href="https://static.januschka.com/i-40257146/">Project sampler: stack, DNS zone, live tests, prebuilt .deb</a></li>
 <li><a href="https://issues.chromium.org/issues/388545139">Issue 388545139 - real-world interop evidence</a></li>
 <li><a href="https://www.rfc-editor.org/rfc/rfc9460.html">RFC 9460 - SVCB and HTTPS resource records</a></li>
 </ul>
