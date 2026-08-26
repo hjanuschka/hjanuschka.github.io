@@ -1,10 +1,10 @@
 ---
-title: "Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management"
+title: "Investigating AV1 Hardware Encoding on AMD/Mesa"
 category: "Chromium"
 tech: "C++ / VA-API / Video Encoding"
 ---
 
-*When the GPU crashes encoding a keyframe, you know you're in for a wild ride*
+*How DPB initialization and frame-OBU handling affected the Mesa VA-API path.*
 
 **Status:** 🛑 Stopped
 
@@ -30,15 +30,15 @@ The root cause was subtle: AMD's stateless AV1 encoder driver is sensitive to th
 
 This is a quirk of how AMD/Mesa implements the VA-API encoder interface. Intel's drivers are more forgiving, but Mesa's implementation expects the DPB to be properly initialized from frame zero.
 
-## The Fix (That Took 21 Patchsets)
+## The Candidate Fix
 
-This wasn't a simple one-liner. The fix evolved through 21 patchsets with extensive community testing from a user with an AMD RX 7900 GRE running Nextcloud Talk.
+The patch evolved through repeated testing on an AMD RX 7900 GRE running Nextcloud Talk.
 
 ### Key Changes
 
 **1. DPB Initialization for Keyframes**
 
-For AMD/Mesa, we now properly initialize all reference frame slots even for keyframes:
+For AMD/Mesa, the candidate patch initializes all reference-frame slots even for keyframes:
 
 ```cpp
 // AMD/Mesa is sensitive to DPB state - initialize all slots
@@ -52,7 +52,7 @@ if (is_amd_mesa_driver_) {
 
 **2. Smart Default Handling for Bitrate/Framerate**
 
-WebRTC sometimes sends zero bitrate/framerate during initialization when the actual values aren't known yet. Instead of enforcing arbitrary minimums, we now treat zero as "use sensible defaults":
+WebRTC sometimes sends zero bitrate or framerate during initialization when the values are not known yet. The candidate patch treats zero as "use defaults" rather than clamping every low value:
 
 - Framerate defaults to `VideoEncodeAccelerator::kDefaultFramerate` (30fps)
 - Bitrate defaults to 100 kbps
@@ -62,22 +62,22 @@ This allows WebRTC to signal "encoder's choice" while still supporting explicit 
 
 **3. Resolution Change Handling**
 
-The fix tracks resolution changes and handles the warm-up period that AMD drivers need after a resolution switch in WebRTC streams.
+The patch also tracks resolution changes and handles the warm-up period observed after a WebRTC resolution switch.
 
-## The Testing Journey
+## Community Testing
 
-The real heroes here are the community testers. One user (sv...@gmail.com) provided extraordinary feedback across 50+ issue comments, testing each patchset iteration:
+A tester with the relevant AMD hardware reported results across the patchsets:
 
-**Early Patchsets (1-12)**: GPU crashes with `amdgpu ring vcn_unified_0 timeout`
-**Patchset 13**: No crashes, but severe visual artifacts and "smearing"
-**Patchset 14**: Better, but Simulcast mode still broken
-**Patchsets 15-20**: Iterating on reviewer feedback about integer types, comments, default value handling
-**Patchset 21**: **Success!** - Both single stream and Simulcast working perfectly
+- **Early patchsets**: GPU crashes with `amdgpu ring vcn_unified_0 timeout`
+- **Patchset 13**: no crash, but severe visual artifacts and smearing
+- **Patchset 14**: single-stream improvement, with Simulcast still failing
+- **Later patchsets**: updates to integer types, comments, default handling, and resolution changes
+- **Patchset 21**: single-stream and Simulcast worked in the tester's environment
 
 From the tester's final report:
 > "I tested it both in single stream and simulcast and it hasn't crashed, shown any artifacts or smearing. Even ramping up and down with resolution and bitrate doesn't cause any problem anymore! It seems perfectly stable in my environment."
 
-After days of production testing in real video calls:
+A later report after use in video calls said:
 > "After some days of using the feature IN PRODUCTION, it works perfectly (no issue so far)."
 
 ## The Technical Deep Dive
@@ -96,7 +96,7 @@ amdgpu: GPU reset begin!
 
 ### The OBU Structure Issue
 
-AV1 uses OBUs (Open Bitstream Units) for packaging. We also had to adjust `enable_frame_obu` handling for AMD:
+AV1 uses OBUs (Open Bitstream Units) for packaging. The patch also adjusts `enable_frame_obu` handling for AMD:
 
 ```cpp
 // AMD/Mesa prefers Frame Header OBU (Type 3) over Frame OBU
@@ -105,14 +105,14 @@ seq_param.seq_fields.bits.enable_frame_obu = is_amd_mesa_driver_ ? 0 : 1;
 
 This ensures the bitstream structure is compatible with Mesa's expectations.
 
-## Collaboration in Action
+## Review and Testing Inputs
 
-This fix showcases open source collaboration at its best:
+The patch used:
 
-1. **User reports** detailed crash logs with GPU driver output
-2. **Community testing** with real hardware I don't have access to
-3. **Reviewer feedback** from Ted Meyer on Chromium style, integer types, and API design
-4. **Iterative refinement** through 21 patchsets based on real-world testing
+1. detailed crash logs with GPU driver output;
+2. testing on AMD hardware not available in the local setup;
+3. review from Ted Meyer on integer types, defaults, and API behavior;
+4. repeated single-stream, Simulcast, and resolution-change tests.
 
 The reviewer discussion was particularly valuable. Ted's concerns about default value handling led to a much cleaner design:
 
@@ -120,22 +120,22 @@ The reviewer discussion was particularly valuable. Ted's concerns about default 
 
 ## Current Status
 
-The CL is currently in review with positive signals from initial reviewers. Eugene has been added as a reviewer since he has extensive encoder experience.
+Work on the CL has stopped. The patch and test reports remain linked from the tracking issue, but the change is not expected to merge in its current form.
 
 **Files Changed:**
 - `media/gpu/vaapi/av1_vaapi_video_encoder_delegate.cc` (+285 -43 lines)
 - `media/gpu/vaapi/av1_vaapi_video_encoder_delegate.h` (+8 lines)
 
-## Impact
+## Intended Behavior
 
-When merged, this fix will enable:
+The patch was intended to support:
 
 - **Hardware AV1 encoding** on AMD GPUs with Mesa drivers
 - **WebRTC video calls** with AV1 codec on AMD Linux systems
 - **CPU offloading** - no more libaom software encoding
 - **Simulcast support** - multiple resolution layers for adaptive streaming
 
-For users running Nextcloud Talk, Jitsi, or any WebRTC-based video conferencing on AMD Linux systems, this is a significant improvement in performance and power efficiency.
+The intended benefit for WebRTC applications such as Nextcloud Talk or Jitsi was lower CPU use than the libaom software fallback on supported AMD Linux systems.
 
 ## The Linux Support Question
 
@@ -155,7 +155,7 @@ chromium --enable-features=AcceleratedVideoEncode \
          --enable-features=VaapiVideoEncoder
 ```
 
-Or wait for the CL to merge and try a tip-of-tree Chromium build.
+The CL is stopped, so this command is only useful with a build containing the patch.
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Four Dangling Pointers, One Ownership Lesson"
+title: "Using Member Order to Avoid Dangling raw_ptrs"
 category: "Chromium"
 tech: "C++ / Memory Safety"
 ---

@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-17",
+    "dateModified": "2026-08-26",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -876,14 +876,14 @@
 <p><em>From Claude Code to Pi - why a shitty coding agent became my daily driver</em></p>
 <h2 id="the-discovery">The Discovery</h2>
 <p>A few weeks ago, I stumbled upon <a href="https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent">Pi</a> by Mario Zechner (<a href="https://github.com/badlogic">@badlogic</a>) - yes, the same Mario behind <a href="https://libgdx.com/">libGDX</a>, the cross-platform game framework. He&#39;s been building a terminal-based coding agent that&#39;s refreshingly different from the mainstream options.</p>
-<p>The project doesn&#39;t take itself too seriously - its website is literally <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - but under the hood, it&#39;s become one of the most capable and extensible coding agents I&#39;ve used.</p>
+<p>The project does not take its branding too seriously - its website is <a href="https://shittycodingagent.ai">shittycodingagent.ai</a> - while the implementation emphasizes a small core and extension points.</p>
 <h2 id="why-pi">Why Pi?</h2>
 <h3 id="multi-model-freedom">Multi-Model Freedom</h3>
-<p>The killer feature that first caught my attention: <strong>mid-session model switching</strong>. I can start a conversation with Claude Opus for exploration, switch to GPT-5.2 for a second opinion, then jump to Gemini for its massive context window - all in the same session.</p>
+<p>Pi can switch models in the middle of a session. A conversation can move between providers without exporting its history or starting over.</p>
 <pre><code class="language-bash"># Press Ctrl+L to open model selector anytime
 # Or use Ctrl+P to cycle through models
 </code></pre>
-<p>Pi supports basically every provider:</p>
+<p>Supported providers include:</p>
 <ul>
 <li>Anthropic (API + Claude Pro/Max via OAuth)</li>
 <li>OpenAI</li>
@@ -893,12 +893,12 @@
 </ul>
 <h3 id="the-session-tree">The Session Tree</h3>
 <p>Instead of linear chat history, Pi stores sessions as <strong>trees</strong>. Every conversation branch is preserved. Made a mistake 10 messages ago? Use <code>/tree</code> to navigate back, branch off, and try a different approach - without losing your original path.</p>
-<p>This has saved me countless times when exploring different solutions to a problem.</p>
+<p>This is useful when comparing approaches without discarding the earlier branch.</p>
 <h3 id="skills-system">Skills System</h3>
 <p>Pi implements the <a href="https://agentskills.io/specification">Agent Skills</a> standard - self-contained capability packages the agent loads on-demand. Think of them as specialized &quot;modes&quot; - a skill might contain setup instructions, helper scripts, and workflow documentation for a specific task like browser automation, API integrations, or code review workflows.</p>
 <p>The agent automatically detects when a skill is relevant based on its description. No manual activation needed.</p>
-<h3 id="extensibility-done-right">Extensibility Done Right</h3>
-<p>The hook system is where Pi really shines. Want to customize behavior? Write a TypeScript hook:</p>
+<h3 id="extensions">Extensions</h3>
+<p>Behavior can be customized with TypeScript extensions:</p>
 <pre><code class="language-typescript">// hooks/my-hook.ts
 export default {
   name: &quot;my-hook&quot;,
@@ -908,13 +908,13 @@ export default {
   }
 };
 </code></pre>
-<p>I&#39;ve published my own hooks at <a href="https://github.com/hjanuschka/shitty-extensions">shitty-extensions</a>:</p>
+<p>Example extensions are available in <a href="https://github.com/hjanuschka/shitty-extensions">shitty-extensions</a>:</p>
 <ul>
 <li><strong>memory-mode</strong> - Save instructions to AGENTS.md with AI-assisted integration</li>
 <li><strong>plan-mode</strong> - Claude Code-style read-only exploration mode</li>
 <li><strong>usage-bar</strong> - Track AI provider usage statistics</li>
 </ul>
-<h2 id="my-contributions">My Contributions</h2>
+<h2 id="related-pull-requests">Related Pull Requests</h2>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/416"><strong>Add plan mode for safe code analysis</strong></a> - Claude Code-style read-only exploration mode</li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/badlogic/pi-mono/pull/405"><strong>Add configurable keybindings system</strong></a> - Customize all keyboard shortcuts via <code>~/.pi/agent/keybindings.json</code></li>
@@ -923,15 +923,14 @@ export default {
 <pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
 pi
 </code></pre>
-<h2 id="contributing-back">Contributing Back</h2>
-<p>Speaking of contributions - the project is actively developed and welcoming to PRs. The codebase is clean TypeScript, well-documented, and Mario is responsive to issues and pull requests.</p>
-<p>My keybindings PR went from idea to merged in a few days. That&#39;s the kind of open source experience I appreciate.</p>
+<h2 id="contributing">Contributing</h2>
+<p>The project is written in TypeScript and accepts pull requests. The configurable-keybindings change went through the normal repository review process and was incorporated into the main project.</p>
 <h2 id="the-philosophy">The Philosophy</h2>
 <p>From Pi&#39;s README:</p>
 <blockquote>
 <p>Pi is a terminal-native coding agent designed for developers who prefer keyboard-driven workflows. It emphasizes transparency, control, and extensibility over magic.</p>
 </blockquote>
-<p>That resonates with me. I want to see what the agent is doing, control its behavior, and extend it when needed. Pi delivers on all three.</p>
+<p>That design suits workflows where model choice, visible state, and local customization matter.</p>
 <h2 id="try-it">Try It</h2>
 <pre><code class="language-bash">npm install -g @mariozechner/pi-coding-agent
 export ANTHROPIC_API_KEY=sk-ant-...
@@ -997,25 +996,25 @@ pi
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
-      { icon: '📄', name: 'Blog: Installed Web Apps on the OS', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+      { icon: '📄', name: 'Blog: Platform Integration for Installed Web Apps', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
       { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
       { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
-      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
-      { icon: '📄', name: 'Blog: Shrinking Binary Size with Tables', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
-      { icon: '📄', name: 'Blog: Four Dangling Pointers', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder', 'i2s', 'ship', '155'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+      { icon: '📄', name: 'Blog: Compact Generated Tables for Binary Size', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+      { icon: '📄', name: 'Blog: Member Order and Dangling raw_ptrs', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
       { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
-      { icon: '📄', name: 'Blog: DevTools Papercuts', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+      { icon: '📄', name: 'Blog: Small DevTools Usability Fixes', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
       { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
       { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
       { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
-      { icon: '📄', name: 'Blog: Another Try at HTTPS-RR', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
-      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
-      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
-      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
-      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
-      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: A Smaller HTTPS-RR Implementation', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
+      { icon: '📄', name: 'Blog: Chromium Work in 2025', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: Integrating JPEG XL with jxl-rs', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Chrome --focus Flag', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Refreshing Chrome Theme Policies', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Color-Management Crash', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
       { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
       { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },

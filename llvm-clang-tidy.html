@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reviving Old Ideas: My clang-tidy Contributions to LLVM - Helmut Januschka</title>
-  <meta name="description" content="Invest in tooling once, reap the benefits forever">
+  <title>Turning Repeated C++ Review Feedback into clang-tidy Checks - Helmut Januschka</title>
+  <meta name="description" content="Automating recurring modernization suggestions so they can be applied consistently.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Reviving Old Ideas: My clang-tidy Contributions to LLVM",
-    "description": "Invest in tooling once, reap the benefits forever",
+    "headline": "Turning Repeated C++ Review Feedback into clang-tidy Checks",
+    "description": "Automating recurring modernization suggestions so they can be applied consistently.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-17",
+    "dateModified": "2026-08-26",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -46,8 +46,8 @@
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Reviving Old Ideas: My clang-tidy Contributions to LLVM">
-  <meta property="og:description" content="Invest in tooling once, reap the benefits forever">
+  <meta property="og:title" content="Turning Repeated C++ Review Feedback into clang-tidy Checks">
+  <meta property="og:description" content="Automating recurring modernization suggestions so they can be applied consistently.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/llvm-clang-tidy.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -57,8 +57,8 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Reviving Old Ideas: My clang-tidy Contributions to LLVM">
-  <meta name="twitter:description" content="Invest in tooling once, reap the benefits forever">
+  <meta name="twitter:title" content="Turning Repeated C++ Review Feedback into clang-tidy Checks">
+  <meta name="twitter:description" content="Automating recurring modernization suggestions so they can be applied consistently.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/llvm-clang-tidy.html">
 
@@ -861,7 +861,7 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Reviving Old Ideas: My clang-tidy Contributions to LLVM</h1>
+      <h1 class="blog-title">Turning Repeated C++ Review Feedback into clang-tidy Checks</h1>
       <div class="blog-meta">
         <span>⚡ LLVM</span>
         <span>🔧 C++ / Clang</span>
@@ -873,18 +873,17 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>Invest in tooling once, reap the benefits forever</em></p>
-<p><strong>Status:</strong> Ongoing | <strong>First Merged PR:</strong> <a href="https://github.com/llvm/llvm-project/pull/116033">#116033</a></p>
+<p><em>Automating recurring modernization suggestions so they can be applied consistently.</em></p>
+<p><strong>Status:</strong> Ongoing | <strong>Merged PR:</strong> <a href="https://github.com/llvm/llvm-project/pull/116033">#116033</a></p>
 <hr>
 <h2 id="the-origin-story">The Origin Story</h2>
 <p>Years ago, while working on Chromium, Peter Kasting introduced me to clang-tidy. During code reviews he&#39;d point out patterns that could be automated - things he&#39;d seen hundreds of times, anti-patterns that kept appearing, modernization opportunities too tedious to do by hand.</p>
 <p>I started keeping my own scratchpad, jotting down his suggestions and ideas. That document sat there for years - until I recently picked it back up.</p>
 <h2 id="why-clang-tidy-matters-for-large-codebases">Why clang-tidy Matters for Large Codebases</h2>
-<p>When you&#39;re working on a codebase with millions of lines of C++ - like Chromium - modernization isn&#39;t optional, it&#39;s survival. New C++ standards bring better performance, safer patterns, and clearer intent. But manually updating millions of lines? Impossible.</p>
-<p>That&#39;s where clang-tidy comes in. Write a check once, run it across the entire codebase, get automated fixes. A single check can identify thousands of modernization opportunities and fix them automatically.</p>
+<p>In a large C++ codebase such as Chromium, recurring modernization patterns are difficult to apply consistently by hand. clang-tidy can identify a specific pattern, explain the replacement, and in suitable cases generate the edit automatically.</p>
 <p>Chromium actively uses clang-tidy for ongoing modernization. The <code>base::StringPiece</code> to <code>std::string_view</code> migration, the adoption of <code>std::optional</code>, the move to <code>starts_with</code>/<code>ends_with</code> - all of these are driven by clang-tidy checks that find patterns and transform them at scale.</p>
-<h2 id="my-first-contribution-substr-to-starts_with">My First Contribution: substr to starts_with</h2>
-<p>My first merged PR enhanced an existing check to detect a common anti-pattern:</p>
+<h2 id="extending-modernize-use-starts-ends-with">Extending modernize-use-starts-ends-with</h2>
+<p>The merged PR extends an existing check to detect a common pattern:</p>
 <pre><code class="language-cpp">// Before: Creates a temporary string, then compares
 if (str.substr(0, 5) == &quot;hello&quot;) { ... }
 
@@ -899,9 +898,8 @@ if (str.starts_with(&quot;hello&quot;)) { ... }
 <li><code>str.substr(0, prefix.size()) == prefix</code> → <code>str.starts_with(prefix)</code></li>
 <li><code>str.substr(0, strlen(&quot;foo&quot;)) == &quot;foo&quot;</code> → <code>str.starts_with(&quot;foo&quot;)</code></li>
 </ul>
-<h2 id="the-scratchpad-comes-alive">The Scratchpad Comes Alive</h2>
-<p>After that first merge, I went back to my old scratchpad. Many of Peter&#39;s ideas that seemed far-fetched years ago are now practical with C++20 and C++23 features available. I started working through them one by one.</p>
-<p>Currently open PRs:</p>
+<h2 id="candidate-checks">Candidate Checks</h2>
+<p>Some older review suggestions became practical once C++20 and C++23 facilities were available. The following PRs explore those patterns:</p>
 <p><strong>Modernization checks:</strong></p>
 <ul>
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/182027"><strong>modernize-use-span-param</strong></a> - Suggest <code>std::span</code> for pointer+size parameter pairs</li>
@@ -923,8 +921,7 @@ if (str.starts_with(&quot;hello&quot;)) { ... }
 <li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> <a href="https://github.com/llvm/llvm-project/pull/117529"><strong>modernize-make-shared options</strong></a> - Configurable smart pointer types</li>
 </ul>
 <h2 id="the-chromium-connection">The Chromium Connection</h2>
-<p>The loop closes here: a small contribution to clang-tidy becomes a massive lever for Chromium cleanups. One check can identify thousands of instances across the codebase, generate automated fixes, and make follow-up CLs trivial.</p>
-<p>Quick search across Chromium for the actual patterns these checks catch:</p>
+<p>A code-search sample shows how often several of these patterns occur in Chromium:</p>
 <table>
 <thead>
 <tr>
@@ -954,14 +951,14 @@ if (str.starts_with(&quot;hello&quot;)) { ... }
 <td>~10</td>
 </tr>
 </tbody></table>
-<p>That&#39;s nearly 2,000 <code>starts_with</code>/<code>ends_with</code> candidates alone - each one a clearer, faster replacement. And that&#39;s just one family of checks.</p>
+<p>These are candidate matches, not automatic proof that every occurrence should change. The check still needs to account for types, semantics, and cases where a fix would reduce clarity.</p>
 <h2 id="links">Links</h2>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/llvm/llvm-project/pull/116033"><strong>Enhance modernize-use-starts-ends-with for substr patterns</strong></a></li>
-<li><a href="https://github.com/llvm/llvm-project/pulls?q=author%3Ahjanuschka">View all my LLVM contributions →</a></li>
+<li><a href="https://github.com/llvm/llvm-project/pulls?q=author%3Ahjanuschka">LLVM pull requests by author</a></li>
 </ul>
 <hr>
-<p><em>Sometimes the best ideas need time to mature. That scratchpad waited years - but Peter&#39;s suggestions are now becoming real tools that help developers write better C++.</em></p>
+<p>The useful part of the scratchpad was preserving concrete review examples until the language and tooling could express them reliably.</p>
 <p>Thanks to:</p>
 <ul>
 <li><strong>Peter Kasting</strong> for the original ideas and introducing me to clang-tidy</li>
@@ -1018,25 +1015,25 @@ if (str.starts_with(&quot;hello&quot;)) { ... }
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
-      { icon: '📄', name: 'Blog: Installed Web Apps on the OS', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+      { icon: '📄', name: 'Blog: Platform Integration for Installed Web Apps', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
       { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
       { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
-      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
-      { icon: '📄', name: 'Blog: Shrinking Binary Size with Tables', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
-      { icon: '📄', name: 'Blog: Four Dangling Pointers', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder', 'i2s', 'ship', '155'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+      { icon: '📄', name: 'Blog: Compact Generated Tables for Binary Size', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+      { icon: '📄', name: 'Blog: Member Order and Dangling raw_ptrs', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
       { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
-      { icon: '📄', name: 'Blog: DevTools Papercuts', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+      { icon: '📄', name: 'Blog: Small DevTools Usability Fixes', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
       { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
       { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
       { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
-      { icon: '📄', name: 'Blog: Another Try at HTTPS-RR', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
-      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
-      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
-      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
-      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
-      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: A Smaller HTTPS-RR Implementation', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
+      { icon: '📄', name: 'Blog: Chromium Work in 2025', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: Integrating JPEG XL with jxl-rs', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Chrome --focus Flag', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Refreshing Chrome Theme Policies', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Color-Management Crash', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
       { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
       { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },

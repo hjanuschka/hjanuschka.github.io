@@ -1,5 +1,5 @@
 ---
-title: "Making Installed Web Apps Belong on the Operating System"
+title: "Platform Integration Details for Installed Web Apps"
 category: "Chromium"
 tech: "C++ / Java / Web Apps"
 ---

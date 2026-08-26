@@ -52,11 +52,11 @@ That works on Android versions already in users' hands. An OS-level fix would on
 
 ## The AOSP Detour
 
-Before settling on the browser-side fallback, I took the behavior all the way into Android's Bluetooth module:
+An OS-level version of the fix was also prototyped in Android's Bluetooth module:
 
 - <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> [**AOSP: BluetoothGatt.disconnect() cancels pending connectGatt()**](https://android-review.googlesource.com/c/platform/packages/modules/Bluetooth/+/4105933)
 
-The patch made `BluetoothGatt.disconnect()` cancel a request still waiting for client registration and report it through `onConnectionStateChange()`. It was my first Android platform patch and confirmed the platform gap, but it was not the best deployment point for this Web API behavior. Handling the missing callback in Chromium fixes current devices too.
+The patch made `BluetoothGatt.disconnect()` cancel a request still waiting for client registration and report it through `onConnectionStateChange()`. Review confirmed the platform gap, but the OS module was not the best deployment point for this Web API behavior. Handling the missing callback in Chromium also fixes devices already in use.
 
 That detour was still useful. It located the exact layer where the cancellation signal disappeared and made the trade-off explicit: platform purity versus a browser fix that reaches the installed base.
 

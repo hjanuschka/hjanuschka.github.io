@@ -4,21 +4,35 @@ category: "Chromium"
 tech: "Rust / C++ / Images"
 ---
 
-*Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.*
+*Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.*
 
-**Status:** 🚧 Ongoing
+**Status:** ✅ Approved to Ship - Targeting Chrome 155
 
-## After the Comeback
+## After the Initial Integration
 
-The original [JPEG XL return to Chrome](/chromium-jxl-resurrection.html) was about integrating a memory-safe Rust decoder. Since then the work has looked less like a comeback story and more like ordinary browser engineering: partial input, paint requests arriving before headers, threading, MIME sniffing, and fuzzers.
+The original [JPEG XL integration](/chromium-jxl-resurrection.html) added a memory-safe Rust decoder. Since then the work has covered ordinary browser concerns: partial input, paint requests arriving before headers, threading, MIME sniffing, and fuzzers.
 
 That is a good sign. A codec starts feeling native when its bugs are the same unglamorous bugs every mature decoder has to solve.
 
+## Intent to Ship and Chrome 155
+
+We filed the [Intent to Ship](https://groups.google.com/a/chromium.org/g/blink-dev/c/-gDojQbDPRI), and the Blink API Owners gate received the required three LGTMs.
+
+[ChromeStatus](https://chromestatus.com/feature/5114042131808256) targets JPEG XL decoding for **Chrome 155** on desktop, Android, and WebView. Assuming the remaining release work proceeds as expected, support should begin rolling out with M155.
+
+The flag-flip CL is now in review:
+
+- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Enable JPEG XL decoding by default**](https://chromium-review.googlesource.com/c/chromium/src/+/8279712)
+
+It enables both decoding and `image/jxl` advertising in the `Accept` header by default. `kJXLImageFormat` remains as a kill switch, and the virtual test suite is inverted to exercise the disabled configuration after the default changes. The CL also keeps incremental animation decoding sequential until the pixel decoder is initialized, avoiding an invalid early seek.
+
+The I2S review covers the decoder's security model and test coverage: Rust memory safety, renderer sandboxing, Chromium and upstream fuzzing, controlled allocation failures, conformance tests, and deterministic testing of parallel schedules.
+
 ## Making Fuzzing Part of the Upstream Loop
 
-The biggest missing part of this story was fuzzing. Chromium already runs image decoders against hostile inputs, but fixing every finding only in the browser would leave the underlying Rust crate vulnerable for every other embedder.
+Fuzzing needed to cover both Chromium and the upstream crate. Fixing every finding only in the browser would leave other jxl-rs embedders without the same corrections.
 
-The first step was adding ClusterFuzzLite to jxl-rs: short AddressSanitizer fuzz runs on pull requests and longer scheduled runs against the existing decode targets. It paid for itself almost immediately.
+ClusterFuzzLite was added to jxl-rs with short AddressSanitizer runs on pull requests and longer scheduled runs against the existing decode targets. It soon produced several arithmetic and allocation findings.
 
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add ClusterFuzzLite CI integration for continuous fuzzing**](https://github.com/libjxl/jxl-rs/pull/628)
 
@@ -45,7 +59,7 @@ Later findings were less about one arithmetic operation and more about decoder i
 
 The last issue came from a 9-byte truncated codestream whose TOC claimed a 743 MB section. Section buffers now grow from bytes actually available, not declarations made by untrusted input.
 
-That last issue came from Chromium's `blink_jxl_decoder_fuzzer`, but the reproducer and fix live in jxl-rs. This is the feedback loop I wanted: Chromium supplies production-scale fuzzing; the generic fix goes upstream; the next crate roll brings it back to Chromium.
+That last issue came from Chromium's `blink_jxl_decoder_fuzzer`, while the reproducer and generic fix live in jxl-rs. The next crate roll then brings the upstream correction back into Chromium.
 
 ### Fuzzing Thread Schedules Too
 
@@ -104,7 +118,10 @@ None of that makes a good launch screenshot. It is exactly what makes a decoder 
 
 ## Links
 
-- [Original: JPEG XL Returns to Chrome](/chromium-jxl-resurrection.html)
+- [ChromeStatus: JPEG XL decoding support](https://chromestatus.com/feature/5114042131808256)
+- [Intent to Ship thread](https://groups.google.com/a/chromium.org/g/blink-dev/c/-gDojQbDPRI)
+- [Flag flip: enable JPEG XL by default](https://chromium-review.googlesource.com/c/chromium/src/+/8279712)
+- [Original JPEG XL integration post](/chromium-jxl-resurrection.html)
 - [ClusterFuzzLite integration in jxl-rs](https://github.com/libjxl/jxl-rs/pull/628)
 - [ClusterFuzz: fallible section allocation](https://github.com/libjxl/jxl-rs/pull/614)
 - [Chromium fuzzer: do not trust TOC-declared allocation size](https://github.com/libjxl/jxl-rs/pull/856)

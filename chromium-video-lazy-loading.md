@@ -4,15 +4,15 @@ category: "Chromium"
 tech: "C++ / Blink"
 ---
 
-*The missing piece for video-heavy pages*
+*Extending the existing loading attribute from images to media elements.*
 
 **Status:** ✅ Landed in Chromium ([CL 7511253](https://crrev.com/c/7511253) merged Feb 20, 2026)
 
 ```snippet
 <div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid #22c55e; border-radius: 12px;">
-  <h3 style="color: #22c55e; margin: 0 0 10px 0;">🎉 UPDATE: Shipping in Chrome 148</h3>
-  <p style="margin: 0;">The feature landed default-enabled and is expected to ship with Chrome 148 stable.</p>
-  <p style="font-size: 13px; opacity: 0.8; margin-top: 5px;">HTML Spec and Web Platform Tests also merged!</p>
+  <h3 style="color: #22c55e; margin: 0 0 10px 0;">Shipping in Chrome 148</h3>
+  <p style="margin: 0;">The feature landed default-enabled and is expected in Chrome 148 stable.</p>
+  <p style="font-size: 13px; opacity: 0.8; margin-top: 5px;">The corresponding HTML specification and Web Platform Tests are merged.</p>
 </div>
 ```
 
@@ -33,16 +33,16 @@ But not this:
 <audio src="podcast.mp3" loading="lazy">  <!-- Nope -->
 ```
 
-Six years later, that's finally changing.
+Media elements did not have the equivalent behavior until this change.
 
 ## Why It Matters
 
 Think about:
 
-- **Podcast platforms** — 50+ audio players on a single page
-- **E-commerce** — Product videos below the fold
-- **Landing pages** — Hero video plus 3 more sections with video
-- **Documentation** — Embedded tutorial videos throughout
+- **Podcast platforms** - lists of audio players
+- **E-commerce** - product videos below the fold
+- **Landing pages** - media in sections that begin outside the viewport
+- **Documentation** - embedded tutorial videos
 
 All of these eagerly load every media file upfront. Bandwidth wasted on content users might never scroll to.
 
@@ -53,7 +53,7 @@ This isn't a solo project. [Scott Jehl](https://scottjehl.com/) and the Squaresp
 - **HTML Spec proposal** written and submitted
 - **Firefox patch** in review
 - **WebKit patch** ready
-- **Web Platform Tests** contributed (15+ tests)
+- **Web Platform Tests** contributed for the shared behavior
 - **Mozilla** has an official positive standards position
 
 When Yoav Weiss posted in Chromium Slack that they needed someone for the Chrome side, I figured the Firefox patch and WPTs would make it straightforward to port. They did.
@@ -114,4 +114,4 @@ The implementation reuses Chromium's existing lazy load infrastructure—same in
 
 ---
 
-*Thanks to Scott Jehl, Brad Frost, Zach Lisobey, and Credo Duarte at Squarespace for driving this. And as always, [Yoav Weiss](https://blog.yoav.ws/) for connecting people and pushing the web platform forward.*
+*Thanks to Scott Jehl, Brad Frost, Zach Lisobey, and Credo Duarte at Squarespace for the specification and cross-browser work, and to [Yoav Weiss](https://blog.yoav.ws/) for coordinating the Chromium side.*

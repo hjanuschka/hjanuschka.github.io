@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature - Helmut Januschka</title>
-  <meta name="description" content="How a Twitter conversation led to adding a major new feature to Chromium">
+  <title>Implementing Chrome's --focus Flag - Helmut Januschka</title>
+  <meta name="description" content="A command-line option for focusing an existing tab instead of opening a duplicate.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature",
-    "description": "How a Twitter conversation led to adding a major new feature to Chromium",
+    "headline": "Implementing Chrome's --focus Flag",
+    "description": "A command-line option for focusing an existing tab instead of opening a duplicate.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-17",
+    "dateModified": "2026-08-26",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -46,8 +46,8 @@
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature">
-  <meta property="og:description" content="How a Twitter conversation led to adding a major new feature to Chromium">
+  <meta property="og:title" content="Implementing Chrome's --focus Flag">
+  <meta property="og:description" content="A command-line option for focusing an existing tab instead of opening a duplicate.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/chromium-focus-feature.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -57,8 +57,8 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature">
-  <meta name="twitter:description" content="How a Twitter conversation led to adding a major new feature to Chromium">
+  <meta name="twitter:title" content="Implementing Chrome's --focus Flag">
+  <meta name="twitter:description" content="A command-line option for focusing an existing tab instead of opening a duplicate.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/chromium-focus-feature.html">
 
@@ -861,7 +861,7 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature</h1>
+      <h1 class="blog-title">Implementing Chrome's --focus Flag</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
         <span>🔧 C++</span>
@@ -873,25 +873,23 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>How a Twitter conversation led to adding a major new feature to Chromium</em></p>
+<p><em>A command-line option for focusing an existing tab instead of opening a duplicate.</em></p>
 <p><strong>Update 16.10.2025:</strong> ✅ Feature landed in Chromium main branch (Chrome 143)</p>
-<h2 id="the-origin-story">The Origin Story</h2>
-<p>It started with <a href="https://x.com/tobi/status/1957195479361438142">a tweet from Tobi Lütke</a> (CEO of Shopify). He proposed an elegant solution to a problem every developer faces: tab proliferation. His idea was simple but powerful - Chrome should focus existing tabs instead of blindly creating new ones.</p>
+<h2 id="the-initial-request">The Initial Request</h2>
+<p>A <a href="https://x.com/tobi/status/1957195479361438142">tweet from @tobi</a> proposed a command-line option for a common automation problem: focus an existing matching tab instead of opening another copy.</p>
 <p>His proposed CLI syntax was clean:</p>
 <pre><code class="language-sh">chrome --focus=https://github.com/user/repo
 </code></pre>
-<p>I saw the tweet, loved the idea, and thought: &quot;Why wait? Let&#39;s build this into Chrome right now.&quot;</p>
-<h2 id="from-concept-to-implementation">From Concept to Implementation</h2>
-<p>The vision was clear:</p>
+<h2 id="from-request-to-implementation">From Request to Implementation</h2>
+<p>The expected behavior was:</p>
 <ul>
 <li>If a matching tab exists, focus it</li>
 <li>If multiple matches exist, pick the most recently used</li>
 <li>If nothing matches, optionally open a new tab</li>
 <li>Make it scriptable for automation</li>
 </ul>
-<p>This became my north star for the implementation.</p>
-<h2 id="the-technical-journey">The Technical Journey</h2>
-<h3 id="turning-ideas-into-architecture">Turning Ideas into Architecture</h3>
+<h2 id="technical-design">Technical Design</h2>
+<h3 id="turning-behavior-into-architecture">Turning Behavior into Architecture</h3>
 <p>The spec translated into several technical challenges:</p>
 <ol>
 <li><strong>Selector Parsing</strong>: Supporting exact URLs, wildcards, and app IDs</li>
@@ -913,7 +911,7 @@ std::vector&lt;MatchCandidate&gt; CollectMatchingTabs(
 void SortCandidatesByMRU(std::vector&lt;MatchCandidate&gt;&amp; candidates);
 </code></pre>
 <h3 id="making-mru-work">Making MRU Work</h3>
-<p>The most challenging part was &quot;pick the most recently used.&quot; Chrome doesn&#39;t directly track this, so I had to be creative:</p>
+<p>The less direct requirement was &quot;pick the most recently used.&quot; The implementation uses session ordering as a practical recency proxy:</p>
 <pre><code class="language-cpp">// Leverage Chrome&#39;s SessionID ordering as a proxy for recency
 bool CompareMRU(const MatchCandidate&amp; a, const MatchCandidate&amp; b) {
   return a.tab-&gt;session_id() &gt; b.tab-&gt;session_id();
@@ -942,24 +940,20 @@ chrome --focus=&quot;https://example.com&quot; --allow-create
 # App ID matching
 chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
 </code></pre>
-<h2 id="real-world-impact">Real-World Impact</h2>
-<p>This feature changes how developers interact with Chrome:</p>
+<h2 id="use-cases">Use Cases</h2>
+<p>The option can be used for:</p>
 <ol>
-<li><strong>Shell Integration</strong>: Bind keys to focus specific tabs</li>
-<li><strong>IDE Integration</strong>: Jump to documentation without tab duplication</li>
-<li><strong>Workflow Automation</strong>: Scripts can intelligently manage browser state</li>
-<li><strong>Reduced Memory</strong>: Fewer duplicate tabs = less RAM usage</li>
+<li><strong>Shell integration</strong>: Bind keys to focus specific tabs</li>
+<li><strong>IDE integration</strong>: Open documentation without creating duplicate tabs</li>
+<li><strong>Workflow automation</strong>: Let scripts select browser content and read a JSON result</li>
+<li><strong>Tab management</strong>: Reuse an existing match when one is available</li>
 </ol>
 <h2 id="acknowledgments">Acknowledgments</h2>
-<blockquote>
-<p>Getting a feature into Chromium is a journey, not a sprint. The review process pushed me to think deeper about edge cases, performance implications, and API design. Every piece of feedback made this feature better. Huge thanks to all the reviewers who invested their time and expertise to make this happen.</p>
-</blockquote>
 <p>Thanks to:</p>
 <ul>
-<li><strong>Tobi Lütke</strong> for the original idea</li>
-<li><strong>Yoav Weiss</strong> who is actively supporting me getting forward with this feature</li>
-<li><strong>Daniel Murphy, Kaan Alsan, Erik Chen, Jan Keitel</strong> for thorough code reviews and valuable feedback</li>
-<li><strong>The entire Chromium community</strong> for the collaborative review process</li>
+<li><strong>@tobi</strong> for the original request</li>
+<li><strong>Yoav Weiss</strong> for helping route the proposal</li>
+<li><strong>Daniel Murphy, Kaan Alsan, Erik Chen, and Jan Keitel</strong> for code review and design feedback</li>
 </ul>
 <h2 id="implementation-details">Implementation Details</h2>
 <p><strong>Status:</strong> ✅ All CLs merged to Chromium main branch</p>
@@ -978,7 +972,6 @@ chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6943437"><strong>Integration</strong></a></li>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6946350"><strong>JSON API</strong></a></li>
 <li><a href="https://docs.google.com/document/d/1YRf-BzHTAhqyV6wL6yRxVOU3zhByE6voSEwSNLgPZSU/edit">Design Document</a></li>
-<li><a href="https://github.com/hjanuschka">My GitHub</a></li>
 </ul>
 
     </div>
@@ -1030,25 +1023,25 @@ chrome --focus=&quot;app-id:abcdefghijklmnop&quot;
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
-      { icon: '📄', name: 'Blog: Installed Web Apps on the OS', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+      { icon: '📄', name: 'Blog: Platform Integration for Installed Web Apps', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
       { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
       { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
-      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
-      { icon: '📄', name: 'Blog: Shrinking Binary Size with Tables', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
-      { icon: '📄', name: 'Blog: Four Dangling Pointers', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder', 'i2s', 'ship', '155'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+      { icon: '📄', name: 'Blog: Compact Generated Tables for Binary Size', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+      { icon: '📄', name: 'Blog: Member Order and Dangling raw_ptrs', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
       { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
-      { icon: '📄', name: 'Blog: DevTools Papercuts', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+      { icon: '📄', name: 'Blog: Small DevTools Usability Fixes', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
       { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
       { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
       { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
-      { icon: '📄', name: 'Blog: Another Try at HTTPS-RR', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
-      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
-      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
-      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
-      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
-      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: A Smaller HTTPS-RR Implementation', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
+      { icon: '📄', name: 'Blog: Chromium Work in 2025', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: Integrating JPEG XL with jxl-rs', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Chrome --focus Flag', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Refreshing Chrome Theme Policies', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Color-Management Crash', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
       { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
       { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },

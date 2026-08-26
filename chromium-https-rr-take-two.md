@@ -1,30 +1,30 @@
 ---
-title: "Another Try at Finally Bringing HTTPS-RR to Chrome"
+title: "A Smaller HTTPS-RR Implementation for Chromium"
 category: "Chromium"
 tech: "C++ / DNS / Networking"
 ---
 
-*The first attempt failed in fairly legendary fashion. The ground has shifted since - so here is take two.*
+*Revisiting RFC 9460 after the resolver architecture changed, this time as five scoped CLs.*
 
 **Status:** 🚧 In Review
 
 ## Recap: The First Attempt
 
-A while back I wrote about [reviving HEv3 and HTTPS-RR in Chromium](/reviving-hev3-https-rr.html). The short version: I wanted to complete Chromium's RFC 9460 support - AliasMode, ServiceMode target names, address hints - built it on the legacy resolver path, and the review flagged it as conflicting with the in-flight Happy Eyeballs v3 network-stack refactor. The change was parked, HEv3 dragged on, and the effort was ultimately rejected.
+The [first HEv3 and HTTPS-RR attempt](/reviving-hev3-https-rr.html) implemented AliasMode, ServiceMode target names, and address hints on the legacy resolver path. Review identified a conflict with the in-flight Happy Eyeballs v3 network-stack refactor, and the effort was rejected.
 
-It grew into a 63-change plan that tried to revive HEv3, add new connection-attempt abstractions, and implement HTTPS-RR all at the same time. The architecture kept moving underneath it, most of that stack never reached reviewable scope, and many prototype changes were abandoned. Legendary fashion, as I described it in the issue.
+That attempt expanded into a 63-change prototype covering HEv3, new connection-attempt abstractions, and HTTPS-RR at the same time. Most of the stack never reached a reviewable scope, and many prototype changes were abandoned.
 
 The gap it was trying to close never went away. [Issue 40257146](https://issues.chromium.org/issues/40257146) - "Fully implement HTTPS-RR" - is still open, and Chromium's incomplete RFC 9460 implementation causes real interoperability problems: the same HTTPS record deployment works in other browsers but not in Chromium, so operators have to keep legacy A/AAAA paths alive specifically for Chrome (see the interop evidence in [issue 388545139](https://issues.chromium.org/issues/388545139)).
 
 ## What Changed
 
-The thing that blocked the first attempt is also what unblocks this one: the new cache resolver landed, and the HEv3 plumbing the previous review wanted me to wait for now exists. This attempt starts *after* that plumbing is in place, and stays entirely in the resolver path that owns DNS transactions:
+The new cache resolver and HEv3 plumbing have since landed. The new stack starts after that infrastructure and stays in the resolver path that owns DNS transactions:
 
 - extraction in `DnsResponseResultExtractor`
 - bounded follow-ups in `HostResolverDnsTask`
 - endpoint assembly in `DnsTaskResultsManager`
 
-It does not invent a second query path and it does not restructure the connection layer. The result is **five small, ordered CLs** with one responsibility each - far easier to review independently, and far easier to drop or revise when feedback changes the design.
+It does not add a second query path or restructure the connection layer. The implementation is split into five ordered CLs, each covering one resolver behavior.
 
 ## What This Completes
 
@@ -82,16 +82,9 @@ out/Default/chrome \
   https://static.januschka.com/i-40257146/
 ```
 
-## Why This One Might Move
+## Review Scope
 
-A few reasons for cautious optimism:
-
-- The architectural blocker from last time (waiting on HEv3 / the new resolver) is gone.
-- The change is small and ordered, not a 63-CL monolith, so it is reviewable in pieces.
-- It stays within the existing resolver path (`DnsResponseResultExtractor`, `HostResolverDnsTask`, `DnsTaskResultsManager`) instead of building a parallel one.
-- There is concrete interoperability evidence that this matters, not just a spec-completeness argument.
-
-To set expectations: I am an external contributor, not a Googler. This is still a sizeable change and it needs the networking team's architectural review to go anywhere. But compared to the last attempt, this one is in much better shape - and the thing that stopped it before has finally landed.
+The previous architectural blocker is gone, but the changes still require networking-team review. The stack is deliberately limited to `DnsResponseResultExtractor`, `HostResolverDnsTask`, and `DnsTaskResultsManager`, and the sampler supplies interoperability evidence for each behavior. Individual CLs can be revised or dropped without coupling the review to a connection-layer refactor.
 
 ## Links
 

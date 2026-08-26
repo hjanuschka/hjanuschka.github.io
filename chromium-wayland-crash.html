@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours - Helmut Januschka</title>
-  <meta name="description" content="When Chrome crashes, the community debugs - a story of open source collaboration">
+  <title>Debugging a Wayland Color-Management Crash - Helmut Januschka</title>
+  <meta name="description" content="A protocol-lifetime regression found through shared logs, workarounds, and upstream testing.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours",
-    "description": "When Chrome crashes, the community debugs - a story of open source collaboration",
+    "headline": "Debugging a Wayland Color-Management Crash",
+    "description": "A protocol-lifetime regression found through shared logs, workarounds, and upstream testing.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-17",
+    "dateModified": "2026-08-26",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -46,8 +46,8 @@
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours">
-  <meta property="og:description" content="When Chrome crashes, the community debugs - a story of open source collaboration">
+  <meta property="og:title" content="Debugging a Wayland Color-Management Crash">
+  <meta property="og:description" content="A protocol-lifetime regression found through shared logs, workarounds, and upstream testing.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/chromium-wayland-crash.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -57,8 +57,8 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours">
-  <meta name="twitter:description" content="When Chrome crashes, the community debugs - a story of open source collaboration">
+  <meta name="twitter:title" content="Debugging a Wayland Color-Management Crash">
+  <meta name="twitter:description" content="A protocol-lifetime regression found through shared logs, workarounds, and upstream testing.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/chromium-wayland-crash.html">
 
@@ -861,7 +861,7 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours</h1>
+      <h1 class="blog-title">Debugging a Wayland Color-Management Crash</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
         <span>🔧 C++ / Wayland</span>
@@ -873,12 +873,12 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>When Chrome crashes, the community debugs - a story of open source collaboration</em></p>
+<p><em>A protocol-lifetime regression found through shared logs, workarounds, and upstream testing.</em></p>
 <p><strong>Update 16.10.2025:</strong> ✅ Fix landed and merged to Chromium main branch</p>
 <h2 id="the-problem-surfaces">The Problem Surfaces</h2>
 <p>On October 3rd, 2025, users started reporting Chrome crashes across multiple Linux distributions. The symptoms were consistent: move a Chrome window between monitors on Wayland, instant crash. The error logs pointed to Wayland protocol violations.</p>
-<p>What made this interesting: it wasn&#39;t specific to one distro or configuration. Omarchy users, Arch Linux users, Fedora users - all seeing the same crash. Chrome 141 had introduced a regression that affected the entire Wayland ecosystem.</p>
-<p>The <a href="https://github.com/basecamp/omarchy">Omarchy community</a> became the epicenter for this investigation - not because the bug was Omarchy-specific, but because Omarchy represents a movement of people who fix things fast, share openly, and embrace OSS values. When something breaks, they debug collectively and push fixes upstream where everyone benefits.</p>
+<p>It was not specific to one distribution or configuration. Reports came from Omarchy, Arch Linux, and Fedora users, pointing to a Chrome 141 regression in the Wayland path.</p>
+<p>The <a href="https://github.com/basecamp/omarchy/issues/2184">Omarchy issue</a> became the shared place for logs, configurations, and workarounds even though the bug itself was not Omarchy-specific.</p>
 <h2 id="community-debugging">Community Debugging</h2>
 <p>The GitHub issue (<a href="https://github.com/basecamp/omarchy/issues/2184">#2184</a>) became a hub for collective troubleshooting. Users shared logs, system configurations, and workarounds:</p>
 <ul>
@@ -886,7 +886,7 @@
 <li>Running with <code>--ozone-platform=x11</code> avoided the crash (isolated to Wayland)</li>
 <li>Disabling <code>WaylandWpColorManagerV1</code> feature prevented crashes (identified the subsystem)</li>
 </ul>
-<p>This is open source at its best: distributed debugging. Each data point narrowed the search space.</p>
+<p>Each report narrowed the regression window and affected subsystem.</p>
 <h2 id="the-investigation">The Investigation</h2>
 <p>The error logs showed a clear pattern:</p>
 <pre><code>libwayland: wl_display#1: error 0: invalid object 64
@@ -911,13 +911,13 @@ DestroyOldImageDescription(); // Too late! Protocol violation.
 DestroyOldImageDescription();
 CreateNewImageDescription(); // Now Wayland is happy
 </code></pre>
-<p>A simple timing bug with catastrophic consequences.</p>
+<p>The ordering error caused Wayland to close the client connection.</p>
 <h2 id="parallel-solutions">Parallel Solutions</h2>
 <p>While the Chromium fix was being developed, the Hyprland team created their own workaround (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/hyprwm/Hyprland/pull/11877"><strong>Hyprland workaround</strong></a>) to handle Chrome&#39;s incorrect ordering more gracefully. This helped their users immediately but didn&#39;t solve the root cause.</p>
 <p>The proper fix needed to be in Chromium - the protocol violation was on Chrome&#39;s side.</p>
 <h2 id="the-fix">The Fix</h2>
-<p><strong>Chromium Bug</strong>: <a href="https://issues.chromium.org/issues/449370049">449370049</a><br><strong>Fix CL</strong>: <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7003036"><strong>Fix color management object lifecycle</strong></a><br><strong>Merged</strong>: October 6, 2025 (3 days from initial report)<br><strong>Reviewers</strong>: Thomas Anderson, Tom Lukaszewicz</p>
-<p>The fix was minimal - just reordering the object lifecycle to match protocol requirements. Small change, huge impact.</p>
+<p><strong>Chromium Bug</strong>: <a href="https://issues.chromium.org/issues/449370049">449370049</a><br><strong>Fix CL</strong>: <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/7003036"><strong>Fix color management object lifecycle</strong></a><br><strong>Merged</strong>: October 6, 2025<br><strong>Reviewers</strong>: Thomas Anderson, Tom Lukaszewicz</p>
+<p>The fix reorders the object lifecycle to match the protocol requirement.</p>
 <h2 id="why-this-matters">Why This Matters</h2>
 <p>This bug affected:</p>
 <ul>
@@ -925,15 +925,13 @@ CreateNewImageDescription(); // Now Wayland is happy
 <li>All Wayland compositors with color management support</li>
 <li>Multi-monitor setups globally</li>
 </ul>
-<p>Open source enabled rapid response:</p>
+<p>The public reports supplied the information needed to reproduce the problem:</p>
 <ol>
-<li>Users reported with detailed logs</li>
-<li>Community identified workarounds</li>
-<li>Bug was reproduced and fixed</li>
-<li>Fix merged upstream in 3 days</li>
-<li>Everyone benefits from the same fix</li>
+<li>users shared detailed logs;</li>
+<li>workarounds isolated the Wayland color-management path;</li>
+<li>the protocol-lifetime error was identified;</li>
+<li>the Chromium fix and compositor workaround were reviewed upstream.</li>
 </ol>
-<p>No NDAs. No private bug trackers. No waiting for vendor support contracts. Just people sharing information until the problem was solved.</p>
 <h2 id="status-fixed">Status: Fixed</h2>
 <p>The fix has landed in Chromium main branch and will reach stable releases in the coming weeks. Until then, users experiencing crashes can use these workarounds:</p>
 <p><strong>Option 1: Disable color management</strong></p>
@@ -944,16 +942,7 @@ CreateNewImageDescription(); // Now Wayland is happy
 </code></pre>
 <p><strong>Option 3: Install Chromium from tip-of-tree</strong> (includes the fix)</p>
 <h2 id="the-takeaway">The Takeaway</h2>
-<p>This wasn&#39;t about heroic debugging or individual brilliance. This was about open source working as designed - and about communities like Omarchy that embody these values:</p>
-<ul>
-<li>Transparent bug reports</li>
-<li>Shared reproduction steps</li>
-<li>Public code review</li>
-<li>Fast iteration</li>
-<li>Universal benefit</li>
-<li>Fix it upstream, help everyone</li>
-</ul>
-<p>From first report to merged fix: 72 hours. The Omarchy movement isn&#39;t just about a Linux distribution - it&#39;s about embracing the speed, openness, and collaborative spirit that makes open source powerful. When you fix it for everyone, everyone wins.</p>
+<p>The useful part of the community report was its specificity: version range, backend comparison, feature isolation, and reproducible monitor transition. Those details made it possible to trace the crash to Wayland object lifetime rather than treating it as a distribution-specific failure.</p>
 <hr>
 <p><strong>Links:</strong></p>
 <ul>
@@ -1013,25 +1002,25 @@ CreateNewImageDescription(); // Now Wayland is happy
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
-      { icon: '📄', name: 'Blog: Installed Web Apps on the OS', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+      { icon: '📄', name: 'Blog: Platform Integration for Installed Web Apps', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
       { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
       { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
-      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
-      { icon: '📄', name: 'Blog: Shrinking Binary Size with Tables', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
-      { icon: '📄', name: 'Blog: Four Dangling Pointers', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder', 'i2s', 'ship', '155'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+      { icon: '📄', name: 'Blog: Compact Generated Tables for Binary Size', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+      { icon: '📄', name: 'Blog: Member Order and Dangling raw_ptrs', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
       { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
-      { icon: '📄', name: 'Blog: DevTools Papercuts', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+      { icon: '📄', name: 'Blog: Small DevTools Usability Fixes', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
       { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
       { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
       { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
-      { icon: '📄', name: 'Blog: Another Try at HTTPS-RR', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
-      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
-      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
-      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
-      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
-      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: A Smaller HTTPS-RR Implementation', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
+      { icon: '📄', name: 'Blog: Chromium Work in 2025', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: Integrating JPEG XL with jxl-rs', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Chrome --focus Flag', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Refreshing Chrome Theme Policies', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Color-Management Crash', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
       { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
       { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },

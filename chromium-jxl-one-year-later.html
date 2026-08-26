@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JPEG XL, One Year Later - Helmut Januschka</title>
-  <meta name="description" content="Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.">
+  <meta name="description" content="Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -12,7 +12,7 @@
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "JPEG XL, One Year Later",
-    "description": "Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.",
+    "description": "Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-17",
+    "dateModified": "2026-08-26",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -47,7 +47,7 @@
 
   <!-- Open Graph -->
   <meta property="og:title" content="JPEG XL, One Year Later">
-  <meta property="og:description" content="Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.">
+  <meta property="og:description" content="Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/chromium-jxl-one-year-later.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -58,7 +58,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
   <meta name="twitter:title" content="JPEG XL, One Year Later">
-  <meta name="twitter:description" content="Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.">
+  <meta name="twitter:description" content="Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/chromium-jxl-one-year-later.html">
 
@@ -873,14 +873,23 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>Getting a decoder into Chrome is one milestone. Making it behave correctly while the network delivers an image a few kilobytes at a time is the next one.</em></p>
-<p><strong>Status:</strong> 🚧 Ongoing</p>
-<h2 id="after-the-comeback">After the Comeback</h2>
-<p>The original <a href="/chromium-jxl-resurrection.html">JPEG XL return to Chrome</a> was about integrating a memory-safe Rust decoder. Since then the work has looked less like a comeback story and more like ordinary browser engineering: partial input, paint requests arriving before headers, threading, MIME sniffing, and fuzzers.</p>
+<p><em>Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.</em></p>
+<p><strong>Status:</strong> ✅ Approved to Ship - Targeting Chrome 155</p>
+<h2 id="after-the-initial-integration">After the Initial Integration</h2>
+<p>The original <a href="/chromium-jxl-resurrection.html">JPEG XL integration</a> added a memory-safe Rust decoder. Since then the work has covered ordinary browser concerns: partial input, paint requests arriving before headers, threading, MIME sniffing, and fuzzers.</p>
 <p>That is a good sign. A codec starts feeling native when its bugs are the same unglamorous bugs every mature decoder has to solve.</p>
+<h2 id="intent-to-ship-and-chrome-155">Intent to Ship and Chrome 155</h2>
+<p>We filed the <a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/-gDojQbDPRI">Intent to Ship</a>, and the Blink API Owners gate received the required three LGTMs.</p>
+<p><a href="https://chromestatus.com/feature/5114042131808256">ChromeStatus</a> targets JPEG XL decoding for <strong>Chrome 155</strong> on desktop, Android, and WebView. Assuming the remaining release work proceeds as expected, support should begin rolling out with M155.</p>
+<p>The flag-flip CL is now in review:</p>
+<ul>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8279712"><strong>Enable JPEG XL decoding by default</strong></a></li>
+</ul>
+<p>It enables both decoding and <code>image/jxl</code> advertising in the <code>Accept</code> header by default. <code>kJXLImageFormat</code> remains as a kill switch, and the virtual test suite is inverted to exercise the disabled configuration after the default changes. The CL also keeps incremental animation decoding sequential until the pixel decoder is initialized, avoiding an invalid early seek.</p>
+<p>The I2S review covers the decoder&#39;s security model and test coverage: Rust memory safety, renderer sandboxing, Chromium and upstream fuzzing, controlled allocation failures, conformance tests, and deterministic testing of parallel schedules.</p>
 <h2 id="making-fuzzing-part-of-the-upstream-loop">Making Fuzzing Part of the Upstream Loop</h2>
-<p>The biggest missing part of this story was fuzzing. Chromium already runs image decoders against hostile inputs, but fixing every finding only in the browser would leave the underlying Rust crate vulnerable for every other embedder.</p>
-<p>The first step was adding ClusterFuzzLite to jxl-rs: short AddressSanitizer fuzz runs on pull requests and longer scheduled runs against the existing decode targets. It paid for itself almost immediately.</p>
+<p>Fuzzing needed to cover both Chromium and the upstream crate. Fixing every finding only in the browser would leave other jxl-rs embedders without the same corrections.</p>
+<p>ClusterFuzzLite was added to jxl-rs with short AddressSanitizer runs on pull requests and longer scheduled runs against the existing decode targets. It soon produced several arithmetic and allocation findings.</p>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/628"><strong>Add ClusterFuzzLite CI integration for continuous fuzzing</strong></a></li>
 </ul>
@@ -904,7 +913,7 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/libjxl/jxl-rs/pull/856"><strong>Grow section buffers from available input</strong></a></li>
 </ul>
 <p>The last issue came from a 9-byte truncated codestream whose TOC claimed a 743 MB section. Section buffers now grow from bytes actually available, not declarations made by untrusted input.</p>
-<p>That last issue came from Chromium&#39;s <code>blink_jxl_decoder_fuzzer</code>, but the reproducer and fix live in jxl-rs. This is the feedback loop I wanted: Chromium supplies production-scale fuzzing; the generic fix goes upstream; the next crate roll brings it back to Chromium.</p>
+<p>That last issue came from Chromium&#39;s <code>blink_jxl_decoder_fuzzer</code>, while the reproducer and generic fix live in jxl-rs. The next crate roll then brings the upstream correction back into Chromium.</p>
 <h3 id="fuzzing-thread-schedules-too">Fuzzing Thread Schedules Too</h3>
 <p>Once multi-threaded decoding entered the picture, bytes were no longer the only input worth fuzzing. <a href="https://github.com/awslabs/shuttle">Shuttle</a> explores thread schedules deterministically, turning rare races into replayable tests.</p>
 <p>That work found reentrant locks, incorrect read/write lock ownership, schedule-dependent border rows, and progressive output that depended on group completion order:</p>
@@ -951,7 +960,10 @@
 <p>None of that makes a good launch screenshot. It is exactly what makes a decoder trustworthy.</p>
 <h2 id="links">Links</h2>
 <ul>
-<li><a href="/chromium-jxl-resurrection.html">Original: JPEG XL Returns to Chrome</a></li>
+<li><a href="https://chromestatus.com/feature/5114042131808256">ChromeStatus: JPEG XL decoding support</a></li>
+<li><a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/-gDojQbDPRI">Intent to Ship thread</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8279712">Flag flip: enable JPEG XL by default</a></li>
+<li><a href="/chromium-jxl-resurrection.html">Original JPEG XL integration post</a></li>
 <li><a href="https://github.com/libjxl/jxl-rs/pull/628">ClusterFuzzLite integration in jxl-rs</a></li>
 <li><a href="https://github.com/libjxl/jxl-rs/pull/614">ClusterFuzz: fallible section allocation</a></li>
 <li><a href="https://github.com/libjxl/jxl-rs/pull/856">Chromium fuzzer: do not trust TOC-declared allocation size</a></li>
@@ -1011,25 +1023,25 @@
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
-      { icon: '📄', name: 'Blog: Installed Web Apps on the OS', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+      { icon: '📄', name: 'Blog: Platform Integration for Installed Web Apps', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
       { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
       { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
-      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
-      { icon: '📄', name: 'Blog: Shrinking Binary Size with Tables', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
-      { icon: '📄', name: 'Blog: Four Dangling Pointers', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder', 'i2s', 'ship', '155'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+      { icon: '📄', name: 'Blog: Compact Generated Tables for Binary Size', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+      { icon: '📄', name: 'Blog: Member Order and Dangling raw_ptrs', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
       { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
-      { icon: '📄', name: 'Blog: DevTools Papercuts', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+      { icon: '📄', name: 'Blog: Small DevTools Usability Fixes', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
       { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
       { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
       { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
-      { icon: '📄', name: 'Blog: Another Try at HTTPS-RR', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
-      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
-      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
-      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
-      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
-      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: A Smaller HTTPS-RR Implementation', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
+      { icon: '📄', name: 'Blog: Chromium Work in 2025', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: Integrating JPEG XL with jxl-rs', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Chrome --focus Flag', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Refreshing Chrome Theme Policies', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Color-Management Crash', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
       { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
       { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },

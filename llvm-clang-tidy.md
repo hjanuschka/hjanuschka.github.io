@@ -1,12 +1,12 @@
 ---
-title: "Reviving Old Ideas: My clang-tidy Contributions to LLVM"
+title: "Turning Repeated C++ Review Feedback into clang-tidy Checks"
 category: "LLVM"
 tech: "C++ / Clang"
 ---
 
-*Invest in tooling once, reap the benefits forever*
+*Automating recurring modernization suggestions so they can be applied consistently.*
 
-**Status:** Ongoing | **First Merged PR:** [#116033](https://github.com/llvm/llvm-project/pull/116033)
+**Status:** Ongoing | **Merged PR:** [#116033](https://github.com/llvm/llvm-project/pull/116033)
 
 ---
 
@@ -18,15 +18,13 @@ I started keeping my own scratchpad, jotting down his suggestions and ideas. Tha
 
 ## Why clang-tidy Matters for Large Codebases
 
-When you're working on a codebase with millions of lines of C++ - like Chromium - modernization isn't optional, it's survival. New C++ standards bring better performance, safer patterns, and clearer intent. But manually updating millions of lines? Impossible.
-
-That's where clang-tidy comes in. Write a check once, run it across the entire codebase, get automated fixes. A single check can identify thousands of modernization opportunities and fix them automatically.
+In a large C++ codebase such as Chromium, recurring modernization patterns are difficult to apply consistently by hand. clang-tidy can identify a specific pattern, explain the replacement, and in suitable cases generate the edit automatically.
 
 Chromium actively uses clang-tidy for ongoing modernization. The `base::StringPiece` to `std::string_view` migration, the adoption of `std::optional`, the move to `starts_with`/`ends_with` - all of these are driven by clang-tidy checks that find patterns and transform them at scale.
 
-## My First Contribution: substr to starts_with
+## Extending modernize-use-starts-ends-with
 
-My first merged PR enhanced an existing check to detect a common anti-pattern:
+The merged PR extends an existing check to detect a common pattern:
 
 ```cpp
 // Before: Creates a temporary string, then compares
@@ -45,11 +43,9 @@ Key patterns now detected:
 - `str.substr(0, prefix.size()) == prefix` → `str.starts_with(prefix)`
 - `str.substr(0, strlen("foo")) == "foo"` → `str.starts_with("foo")`
 
-## The Scratchpad Comes Alive
+## Candidate Checks
 
-After that first merge, I went back to my old scratchpad. Many of Peter's ideas that seemed far-fetched years ago are now practical with C++20 and C++23 features available. I started working through them one by one.
-
-Currently open PRs:
+Some older review suggestions became practical once C++20 and C++23 facilities were available. The following PRs explore those patterns:
 
 **Modernization checks:**
 - <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">OPEN</span> [**modernize-use-span-param**](https://github.com/llvm/llvm-project/pull/182027) - Suggest `std::span` for pointer+size parameter pairs
@@ -70,9 +66,7 @@ Currently open PRs:
 
 ## The Chromium Connection
 
-The loop closes here: a small contribution to clang-tidy becomes a massive lever for Chromium cleanups. One check can identify thousands of instances across the codebase, generate automated fixes, and make follow-up CLs trivial.
-
-Quick search across Chromium for the actual patterns these checks catch:
+A code-search sample shows how often several of these patterns occur in Chromium:
 
 | Pattern | Check | Instances |
 |---------|-------|-----------|
@@ -81,16 +75,16 @@ Quick search across Chromium for the actual patterns these checks catch:
 | `.compare(0, n)` | `modernize-use-starts-ends-with` | ~50 |
 | `.subspan(0, n)` | `readability-use-span-first-last` | ~10 |
 
-That's nearly 2,000 `starts_with`/`ends_with` candidates alone - each one a clearer, faster replacement. And that's just one family of checks.
+These are candidate matches, not automatic proof that every occurrence should change. The check still needs to account for types, semantics, and cases where a fix would reduce clarity.
 
 ## Links
 
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Enhance modernize-use-starts-ends-with for substr patterns**](https://github.com/llvm/llvm-project/pull/116033)
-- [View all my LLVM contributions →](https://github.com/llvm/llvm-project/pulls?q=author%3Ahjanuschka)
+- [LLVM pull requests by author](https://github.com/llvm/llvm-project/pulls?q=author%3Ahjanuschka)
 
 ---
 
-*Sometimes the best ideas need time to mature. That scratchpad waited years - but Peter's suggestions are now becoming real tools that help developers write better C++.*
+The useful part of the scratchpad was preserving concrete review examples until the language and tooling could express them reliably.
 
 Thanks to:
 - **Peter Kasting** for the original ideas and introducing me to clang-tidy

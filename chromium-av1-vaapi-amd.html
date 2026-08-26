@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management - Helmut Januschka</title>
-  <meta name="description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
+  <title>Investigating AV1 Hardware Encoding on AMD/Mesa - Helmut Januschka</title>
+  <meta name="description" content="How DPB initialization and frame-OBU handling affected the Mesa VA-API path.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management",
-    "description": "When the GPU crashes encoding a keyframe, you know youre in for a wild ride",
+    "headline": "Investigating AV1 Hardware Encoding on AMD/Mesa",
+    "description": "How DPB initialization and frame-OBU handling affected the Mesa VA-API path.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-17",
+    "dateModified": "2026-08-26",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -46,8 +46,8 @@
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management">
-  <meta property="og:description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
+  <meta property="og:title" content="Investigating AV1 Hardware Encoding on AMD/Mesa">
+  <meta property="og:description" content="How DPB initialization and frame-OBU handling affected the Mesa VA-API path.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/chromium-av1-vaapi-amd.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -57,8 +57,8 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management">
-  <meta name="twitter:description" content="When the GPU crashes encoding a keyframe, you know youre in for a wild ride">
+  <meta name="twitter:title" content="Investigating AV1 Hardware Encoding on AMD/Mesa">
+  <meta name="twitter:description" content="How DPB initialization and frame-OBU handling affected the Mesa VA-API path.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/chromium-av1-vaapi-amd.html">
 
@@ -861,7 +861,7 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Fixing AV1 Hardware Encoding on AMD/Mesa: A Deep Dive into DPB Management</h1>
+      <h1 class="blog-title">Investigating AV1 Hardware Encoding on AMD/Mesa</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
         <span>🔧 C++ / VA-API / Video Encoding</span>
@@ -873,7 +873,7 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>When the GPU crashes encoding a keyframe, you know you&#39;re in for a wild ride</em></p>
+<p><em>How DPB initialization and frame-OBU handling affected the Mesa VA-API path.</em></p>
 <p><strong>Status:</strong> 🛑 Stopped</p>
 <div style="margin: 24px 0; padding: 16px 20px; background: rgba(177, 75, 75, 0.12); border: 1px solid #b14b4b; border-radius: 8px;">
   <strong style="color: #b14b4b;">Update: work on this fix has been stopped.</strong>
@@ -887,11 +887,11 @@
 <h2 id="the-investigation">The Investigation</h2>
 <p>The root cause was subtle: AMD&#39;s stateless AV1 encoder driver is sensitive to the DPB (Decoded Picture Buffer) state and may access reference frame slots even when encoding a keyframe - where you&#39;d normally expect no references to be needed.</p>
 <p>This is a quirk of how AMD/Mesa implements the VA-API encoder interface. Intel&#39;s drivers are more forgiving, but Mesa&#39;s implementation expects the DPB to be properly initialized from frame zero.</p>
-<h2 id="the-fix-that-took-21-patchsets">The Fix (That Took 21 Patchsets)</h2>
-<p>This wasn&#39;t a simple one-liner. The fix evolved through 21 patchsets with extensive community testing from a user with an AMD RX 7900 GRE running Nextcloud Talk.</p>
+<h2 id="the-candidate-fix">The Candidate Fix</h2>
+<p>The patch evolved through repeated testing on an AMD RX 7900 GRE running Nextcloud Talk.</p>
 <h3 id="key-changes">Key Changes</h3>
 <p><strong>1. DPB Initialization for Keyframes</strong></p>
-<p>For AMD/Mesa, we now properly initialize all reference frame slots even for keyframes:</p>
+<p>For AMD/Mesa, the candidate patch initializes all reference-frame slots even for keyframes:</p>
 <pre><code class="language-cpp">// AMD/Mesa is sensitive to DPB state - initialize all slots
 // to the reconstruct surface for keyframes
 if (is_amd_mesa_driver_) {
@@ -901,7 +901,7 @@ if (is_amd_mesa_driver_) {
 }
 </code></pre>
 <p><strong>2. Smart Default Handling for Bitrate/Framerate</strong></p>
-<p>WebRTC sometimes sends zero bitrate/framerate during initialization when the actual values aren&#39;t known yet. Instead of enforcing arbitrary minimums, we now treat zero as &quot;use sensible defaults&quot;:</p>
+<p>WebRTC sometimes sends zero bitrate or framerate during initialization when the values are not known yet. The candidate patch treats zero as &quot;use defaults&quot; rather than clamping every low value:</p>
 <ul>
 <li>Framerate defaults to <code>VideoEncodeAccelerator::kDefaultFramerate</code> (30fps)</li>
 <li>Bitrate defaults to 100 kbps</li>
@@ -909,15 +909,21 @@ if (is_amd_mesa_driver_) {
 </ul>
 <p>This allows WebRTC to signal &quot;encoder&#39;s choice&quot; while still supporting explicit low-bitrate WebCodecs configurations.</p>
 <p><strong>3. Resolution Change Handling</strong></p>
-<p>The fix tracks resolution changes and handles the warm-up period that AMD drivers need after a resolution switch in WebRTC streams.</p>
-<h2 id="the-testing-journey">The Testing Journey</h2>
-<p>The real heroes here are the community testers. One user (<a href="mailto:sv...@gmail.com">sv...@gmail.com</a>) provided extraordinary feedback across 50+ issue comments, testing each patchset iteration:</p>
-<p><strong>Early Patchsets (1-12)</strong>: GPU crashes with <code>amdgpu ring vcn_unified_0 timeout</code><br><strong>Patchset 13</strong>: No crashes, but severe visual artifacts and &quot;smearing&quot;<br><strong>Patchset 14</strong>: Better, but Simulcast mode still broken<br><strong>Patchsets 15-20</strong>: Iterating on reviewer feedback about integer types, comments, default value handling<br><strong>Patchset 21</strong>: <strong>Success!</strong> - Both single stream and Simulcast working perfectly</p>
+<p>The patch also tracks resolution changes and handles the warm-up period observed after a WebRTC resolution switch.</p>
+<h2 id="community-testing">Community Testing</h2>
+<p>A tester with the relevant AMD hardware reported results across the patchsets:</p>
+<ul>
+<li><strong>Early patchsets</strong>: GPU crashes with <code>amdgpu ring vcn_unified_0 timeout</code></li>
+<li><strong>Patchset 13</strong>: no crash, but severe visual artifacts and smearing</li>
+<li><strong>Patchset 14</strong>: single-stream improvement, with Simulcast still failing</li>
+<li><strong>Later patchsets</strong>: updates to integer types, comments, default handling, and resolution changes</li>
+<li><strong>Patchset 21</strong>: single-stream and Simulcast worked in the tester&#39;s environment</li>
+</ul>
 <p>From the tester&#39;s final report:</p>
 <blockquote>
 <p>&quot;I tested it both in single stream and simulcast and it hasn&#39;t crashed, shown any artifacts or smearing. Even ramping up and down with resolution and bitrate doesn&#39;t cause any problem anymore! It seems perfectly stable in my environment.&quot;</p>
 </blockquote>
-<p>After days of production testing in real video calls:</p>
+<p>A later report after use in video calls said:</p>
 <blockquote>
 <p>&quot;After some days of using the feature IN PRODUCTION, it works perfectly (no issue so far).&quot;</p>
 </blockquote>
@@ -930,39 +936,39 @@ amdgpu: GPU reset begin!
 [drm] VRAM is lost due to GPU reset!
 </code></pre>
 <h3 id="the-obu-structure-issue">The OBU Structure Issue</h3>
-<p>AV1 uses OBUs (Open Bitstream Units) for packaging. We also had to adjust <code>enable_frame_obu</code> handling for AMD:</p>
+<p>AV1 uses OBUs (Open Bitstream Units) for packaging. The patch also adjusts <code>enable_frame_obu</code> handling for AMD:</p>
 <pre><code class="language-cpp">// AMD/Mesa prefers Frame Header OBU (Type 3) over Frame OBU
 seq_param.seq_fields.bits.enable_frame_obu = is_amd_mesa_driver_ ? 0 : 1;
 </code></pre>
 <p>This ensures the bitstream structure is compatible with Mesa&#39;s expectations.</p>
-<h2 id="collaboration-in-action">Collaboration in Action</h2>
-<p>This fix showcases open source collaboration at its best:</p>
+<h2 id="review-and-testing-inputs">Review and Testing Inputs</h2>
+<p>The patch used:</p>
 <ol>
-<li><strong>User reports</strong> detailed crash logs with GPU driver output</li>
-<li><strong>Community testing</strong> with real hardware I don&#39;t have access to</li>
-<li><strong>Reviewer feedback</strong> from Ted Meyer on Chromium style, integer types, and API design</li>
-<li><strong>Iterative refinement</strong> through 21 patchsets based on real-world testing</li>
+<li>detailed crash logs with GPU driver output;</li>
+<li>testing on AMD hardware not available in the local setup;</li>
+<li>review from Ted Meyer on integer types, defaults, and API behavior;</li>
+<li>repeated single-stream, Simulcast, and resolution-change tests.</li>
 </ol>
 <p>The reviewer discussion was particularly valuable. Ted&#39;s concerns about default value handling led to a much cleaner design:</p>
 <blockquote>
 <p>&quot;My gut feeling here is that &#39;zero -&gt; 100&#39; is better than &#39;max(value, 100)&#39;, since webrtc isn&#39;t the only thing using this file, and undocumented codec/platform specific combinations are going to be a debugging nightmare later.&quot;</p>
 </blockquote>
 <h2 id="current-status">Current Status</h2>
-<p>The CL is currently in review with positive signals from initial reviewers. Eugene has been added as a reviewer since he has extensive encoder experience.</p>
+<p>Work on the CL has stopped. The patch and test reports remain linked from the tracking issue, but the change is not expected to merge in its current form.</p>
 <p><strong>Files Changed:</strong></p>
 <ul>
 <li><code>media/gpu/vaapi/av1_vaapi_video_encoder_delegate.cc</code> (+285 -43 lines)</li>
 <li><code>media/gpu/vaapi/av1_vaapi_video_encoder_delegate.h</code> (+8 lines)</li>
 </ul>
-<h2 id="impact">Impact</h2>
-<p>When merged, this fix will enable:</p>
+<h2 id="intended-behavior">Intended Behavior</h2>
+<p>The patch was intended to support:</p>
 <ul>
 <li><strong>Hardware AV1 encoding</strong> on AMD GPUs with Mesa drivers</li>
 <li><strong>WebRTC video calls</strong> with AV1 codec on AMD Linux systems</li>
 <li><strong>CPU offloading</strong> - no more libaom software encoding</li>
 <li><strong>Simulcast support</strong> - multiple resolution layers for adaptive streaming</li>
 </ul>
-<p>For users running Nextcloud Talk, Jitsi, or any WebRTC-based video conferencing on AMD Linux systems, this is a significant improvement in performance and power efficiency.</p>
+<p>The intended benefit for WebRTC applications such as Nextcloud Talk or Jitsi was lower CPU use than the libaom software fallback on supported AMD Linux systems.</p>
 <h2 id="the-linux-support-question">The Linux Support Question</h2>
 <p>During the bug discussion, there was an important exchange about Linux support:</p>
 <blockquote>
@@ -975,7 +981,7 @@ seq_param.seq_fields.bits.enable_frame_obu = is_amd_mesa_driver_ ? 0 : 1;
 chromium --enable-features=AcceleratedVideoEncode \
          --enable-features=VaapiVideoEncoder
 </code></pre>
-<p>Or wait for the CL to merge and try a tip-of-tree Chromium build.</p>
+<p>The CL is stopped, so this command is only useful with a build containing the patch.</p>
 <hr>
 <p><strong>Links:</strong></p>
 <ul>
@@ -1033,25 +1039,25 @@ chromium --enable-features=AcceleratedVideoEncode \
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
-      { icon: '📄', name: 'Blog: Installed Web Apps on the OS', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+      { icon: '📄', name: 'Blog: Platform Integration for Installed Web Apps', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
       { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
       { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
-      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
-      { icon: '📄', name: 'Blog: Shrinking Binary Size with Tables', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
-      { icon: '📄', name: 'Blog: Four Dangling Pointers', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder', 'i2s', 'ship', '155'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+      { icon: '📄', name: 'Blog: Compact Generated Tables for Binary Size', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+      { icon: '📄', name: 'Blog: Member Order and Dangling raw_ptrs', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
       { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
-      { icon: '📄', name: 'Blog: DevTools Papercuts', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+      { icon: '📄', name: 'Blog: Small DevTools Usability Fixes', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
       { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
       { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
       { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
-      { icon: '📄', name: 'Blog: Another Try at HTTPS-RR', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
-      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
-      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
-      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
-      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
-      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: A Smaller HTTPS-RR Implementation', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
+      { icon: '📄', name: 'Blog: Chromium Work in 2025', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: Integrating JPEG XL with jxl-rs', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Chrome --focus Flag', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Refreshing Chrome Theme Policies', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Color-Management Crash', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
       { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
       { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },

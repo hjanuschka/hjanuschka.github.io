@@ -1,12 +1,12 @@
 ---
-title: "Reviving HEv3 & HTTPS-RR in Chromium"
+title: "An Abandoned HEv3 and HTTPS-RR Prototype"
 category: "Chromium"
 tech: "C++ / DNS / Networking"
 ---
 
 **Status:** ❌ Rejected
 
-*Taking matters into my own hands to pursue RFC 9460 support in Chrome.*
+*What the first RFC 9460 implementation attempted, why its scope grew, and why it was not accepted.*
 
 ```snippet
 <div style="margin: 24px 0; padding: 16px 20px; background: rgba(177, 75, 75, 0.12); border: 1px solid #b14b4b; border-radius: 8px;">
@@ -15,47 +15,35 @@ tech: "C++ / DNS / Networking"
 </div>
 ```
 
-## The Beginning: HTTPS Resource Records
+## Initial HTTPS-RR Change
 
-It all started with a simple goal: I wanted to implement full support for **HTTPS Resource Records** (HTTPS-RR) in Chromium, specifically RFC 9460. This includes proper handling of `AliasMode` and `ServiceMode` with different target names—features crucial for the modern web's evolution towards more flexible and secure service discovery.
+[Issue 40257146](https://issues.chromium.org/issues/40257146) tracks gaps in Chromium's RFC 9460 support, including `AliasMode` and `ServiceMode` records with different target names.
 
-I picked up [Issue 40257146](https://issues.chromium.org/issues/40257146) and went to work. I put together a CL that successfully implemented the logic. It worked! I was ready to land it.
+The first CL implemented that behavior on Chromium's legacy resolver path. Its functional tests passed, but code review identified an architectural conflict with the Happy Eyeballs v3 (HEv3) network-stack work.
 
 ## The Block: "Wait for HEv3"
 
-But then, the code review feedback came in. It wasn't about the correctness of my specific logic, but about the *architecture*. The Chromium team was in the middle of a major network stack refactor known as **Happy Eyeballs v3 (HEv3)**.
-
-My approach was flagged as conflicting with this new direction:
+The Chromium networking team was in the middle of the **Happy Eyeballs v3 (HEv3)** refactor. The review recommendation was to wait and integrate with that architecture:
 
 > "My preference would be 'Wait until HEv3 lands and then revisit with proper integration.' At this point I don't have concrete ideas about how we should implement aliases and different target names so I'm not sure we keep or abandon this CL. I think marking this as work in progress... is a reasonable action for now."
 
-It made sense. HEv3 is designed to allow connection attempts to race without waiting for all DNS results—a huge performance win. My implementation, based on the legacy path, might have blocked this optimization. So, I parked the CL and waited.
+HEv3 allows connection attempts to race without waiting for every DNS result. A legacy-path implementation risked duplicating or constraining that work, so the CL was parked.
 
-## The Twist: "We might not do HEv3"
+## HEv3 Became Uncertain
 
-Time passed. HEv3 development dragged on. Then came the update that flipped everything:
+Later, the project reported that HEv3's completion date was uncertain:
 
 > "The HEv3 development has been prolonged and it's difficult to predict when it will be completed. The team are moving towards not implementing HEv3 (that's unfortunate). We may consider supporting HTTPS RR aliases and different target names without HEv3, nothing has been decided yet."
 
-So, the shiny new architecture I was waiting for—the one that blocked my feature—was potentially being abandoned? And we might go back to a non-HEv3 implementation anyway?
+That uncertainty prompted a broader prototype combining HEv3 plumbing with the missing HTTPS-RR behavior. Its scope included DNS result normalization, target-name follow-ups, connection-attempt representation, fallback behavior, metrics, and integration tests.
 
-## The Revival
+## Outcome
 
-That was my "WTF" moment. Instead of waiting for a compromise or abandoning the architectural improvements of HEv3, I decided to **revive the effort myself**. If HEv3 was stalled, I would help unblock it to get my HTTPS-RR features landed *properly*.
-
-I dove deep into the HEv3 design docs and the codebase. I mapped out a detailed plan and started working through a 70+ step checklist to:
-1.  Become a regular contributor to the HEv3 codepath (`net/dns`, `net/http`).
-2.  Implement HTTPS-RR follow-ups (AliasMode/ServiceMode) *within* the HEv3 model.
-3.  Ensure no performance regressions (the whole point of HEv3!).
-4.  Ship it.
-
-## Current Status
-
-I've already landed several preparatory CLs and have a stack of 63 changes in flight to completely overhaul the HEv3 codepath for HTTPS-RR support. **The core functionality is now working end-to-end!**
+Two preparatory fixes landed, but the larger prototype stack was not accepted in its current form. Most entries below were experiments used to understand subsystem boundaries; many were abandoned without formal review.
 
 ```snippet
 <details>
-<summary style="cursor: pointer; color: var(--accent); font-weight: bold; margin-bottom: 10px;">View all 63 CLs (Progress: 2 Merged, 61 In Review) →</summary>
+<summary style="cursor: pointer; color: var(--accent); font-weight: bold; margin-bottom: 10px;">Prototype CL inventory</summary>
 
 <div>
 
@@ -129,17 +117,8 @@ I've already landed several preparatory CLs and have a stack of 63 changes in fl
 </details>
 ```
 
-It's a deep dive into Chromium's networking internals—`HostResolver`, `HttpStreamPool`, `DnsTaskResultsManager`—but we're getting there. The goal remains: **Full RFC 9460 support in Chrome, backed by the performance of Happy Eyeballs v3.**
+The prototype showed that combining resolver changes, connection-layer refactoring, and RFC 9460 behavior in one stack was too broad for useful review. The later [HTTPS-RR take-two](/chromium-https-rr-take-two.html) keeps the work inside the resolver path and separates it into smaller changes.
 
-Stay tuned for updates as I work through the checklist.
+## What This Attempt Established
 
-## A Note on Reality
-
-Will this work? I don't know yet. I'm one contributor with a vision, navigating a codebase shaped by many hands over many years. There will be tough reviews, architectural debates, and probably surprises I haven't anticipated. That's the nature of working in a project as complex as Chromium.
-
-But here's what I do know: the best way to make something happen is to start. Every merged CL is one step closer. Every review comment is an opportunity to learn. And even if the path changes--even if we discover the way forward looks different than what I've mapped out--the effort itself moves the needle.
-
-If there's a will, there's a way. We just might not know the way today.
-
-> *"Only those who will risk going too far can possibly find out how far one can go."*
-> — [T.S. Eliot](https://en.wikipedia.org/wiki/T._S._Eliot)
+Even though the stack was rejected, it identified the relevant ownership boundaries: `DnsResponseResultExtractor`, `HostResolverDnsTask`, `DnsTaskResultsManager`, and the connection-attempt layer. It also made clear that RFC 9460 behavior should be reviewed separately from unrelated HEv3 architecture changes.

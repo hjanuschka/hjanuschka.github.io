@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>From Origin Trial to DevTools Fix: Improving Speculation Rules Debugging - Helmut Januschka</title>
-  <meta name="description" content="When youre testing a Chrome origin trial and the debugging tools dont cut it, you fix them">
+  <title>Adding Filtering to DevTools Speculation Rules - Helmut Januschka</title>
+  <meta name="description" content="Production testing produced a small DevTools requirement: find one speculative load in a long list.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "From Origin Trial to DevTools Fix: Improving Speculation Rules Debugging",
-    "description": "When youre testing a Chrome origin trial and the debugging tools dont cut it, you fix them",
+    "headline": "Adding Filtering to DevTools Speculation Rules",
+    "description": "Production testing produced a small DevTools requirement: find one speculative load in a long list.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-17",
+    "dateModified": "2026-08-26",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -46,8 +46,8 @@
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="From Origin Trial to DevTools Fix: Improving Speculation Rules Debugging">
-  <meta property="og:description" content="When youre testing a Chrome origin trial and the debugging tools dont cut it, you fix them">
+  <meta property="og:title" content="Adding Filtering to DevTools Speculation Rules">
+  <meta property="og:description" content="Production testing produced a small DevTools requirement: find one speculative load in a long list.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/chromium-devtools-speculation-filter.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -57,8 +57,8 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="From Origin Trial to DevTools Fix: Improving Speculation Rules Debugging">
-  <meta name="twitter:description" content="When youre testing a Chrome origin trial and the debugging tools dont cut it, you fix them">
+  <meta name="twitter:title" content="Adding Filtering to DevTools Speculation Rules">
+  <meta name="twitter:description" content="Production testing produced a small DevTools requirement: find one speculative load in a long list.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/chromium-devtools-speculation-filter.html">
 
@@ -861,7 +861,7 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">From Origin Trial to DevTools Fix: Improving Speculation Rules Debugging</h1>
+      <h1 class="blog-title">Adding Filtering to DevTools Speculation Rules</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
         <span>🔧 TypeScript / DevTools</span>
@@ -873,59 +873,41 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>When you&#39;re testing a Chrome origin trial and the debugging tools don&#39;t cut it, you fix them</em></p>
-<p><strong>Status:</strong> 🚧 In Review</p>
-<h2 id="the-context-prerender-until-script-at-kroneat">The Context: Prerender Until Script at krone.at</h2>
-<p>At <a href="https://krone.at">krone.at</a>, Austria&#39;s largest news website, we&#39;re always looking for ways to make our site faster. With millions of daily pageviews and readers constantly jumping between articles, navigation speed directly impacts user experience.</p>
-<p>When Google announced the <a href="https://developer.chrome.com/blog/prerender-until-script-origin-trial?hl=de">&quot;Prerender Until Script&quot; origin trial</a>, we jumped on it immediately.</p>
-<p>The idea is powerful: prerender pages speculatively, but pause before executing JavaScript. This gives you the performance benefits of prerendering (instant page loads!) without the complexity of handling script side effects during speculation. When the user actually navigates, scripts run normally.</p>
-<p>For a high-traffic news site like krone.at with thousands of article links, this is huge. We can prerender article pages as users browse the homepage or section pages, making navigation feel instant.</p>
-<h2 id="the-problem-devtools-debugging-was-painful">The Problem: DevTools Debugging Was Painful</h2>
-<p>As we started implementing speculation rules for krone.at, I ran into a frustrating UX issue. The Speculation Rules panel in Chrome DevTools (Application → Speculative loads) shows all your prefetch and prerender attempts. Great in theory.</p>
-<p>But on a real site with many speculation rules, finding specific entries becomes a nightmare:</p>
+<p><em>Production testing produced a small DevTools requirement: find one speculative load in a long list.</em></p>
+<p><strong>Status:</strong> 🎉 Landed</p>
+<h2 id="testing-prerender-until-script">Testing Prerender Until Script</h2>
+<p>At <a href="https://krone.at">krone.at</a>, article navigation is a useful place to evaluate speculative loading. The site joined the <a href="https://developer.chrome.com/blog/prerender-until-script-origin-trial?hl=de">Prerender Until Script origin trial</a>, which allows a page to be prerendered while delaying JavaScript execution until activation.</p>
+<p>That reduces the script side effects a site has to account for during speculation, while still doing much of the navigation work ahead of time.</p>
+<h2 id="the-debugging-problem">The Debugging Problem</h2>
+<p>The Speculation Rules panel in Chrome DevTools lists prefetch and prerender attempts. On a page with many candidate article links, the list quickly becomes difficult to inspect:</p>
 <ul>
-<li><strong>No filtering</strong> - just a long list of URLs</li>
-<li><strong>No search</strong> - want to find all failed attempts? Scroll through everything</li>
-<li><strong>No way to focus</strong> - debugging a specific route means visual scanning</li>
+<li>no text filter for a route or URL fragment;</li>
+<li>no quick way to isolate a failed attempt;</li>
+<li>repeated visual scanning while adjusting rules.</li>
 </ul>
-<p>When you&#39;re trying to debug why <code>/artikel/12345</code> isn&#39;t prerendering correctly, scrolling through hundreds of entries isn&#39;t fun.</p>
-<h2 id="the-fix-text-filter-for-speculation-rules-panel">The Fix: Text Filter for Speculation Rules Panel</h2>
-<p>I reached out to <a href="https://github.com/tunetheweb">Barry Pollard</a> (author of the origin trial blog post and a Chrome performance hero) who helped shape the approach. The result: a proper text filter for the Speculations panel.</p>
-<p><strong>Bug</strong>: <a href="https://issues.chromium.org/issues/479524246">479524246</a><br><strong>CL</strong>: <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/devtools/devtools-frontend/+/7520087"><strong>Add text filter to Speculation Rules panel</strong></a></p>
-<h2 id="why-this-matters">Why This Matters</h2>
-<p>Speculation Rules are the future of web performance. With features like:</p>
+<p>Debugging why <code>/artikel/12345</code> was not prerendered meant searching a long list by hand.</p>
+<h2 id="the-fix">The Fix</h2>
+<p>After discussing the UI with <a href="https://github.com/tunetheweb">Barry Pollard</a>, the panel gained a text filter using the existing DevTools filtering patterns.</p>
 <ul>
-<li><strong>Prefetch</strong> - fetch resources ahead of time</li>
-<li><strong>Prerender</strong> - render entire pages speculatively</li>
-<li><strong>Prerender Until Script</strong> - the new origin trial we&#39;re testing at krone.at</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/devtools/devtools-frontend/+/7520087"><strong>Add text filter to the Speculation Rules panel</strong></a></li>
 </ul>
-<p>Good debugging tools are essential. When you&#39;re implementing these features on a production site like krone.at, you need to:</p>
+<p><strong>Bug:</strong> <a href="https://issues.chromium.org/issues/479524246">479524246</a></p>
+<h2 id="what-it-changes">What It Changes</h2>
+<p>The filter helps with the ordinary questions that come up while testing speculation rules:</p>
 <ul>
-<li>See which URLs are being prerendered</li>
-<li>Debug failures quickly</li>
-<li>Filter to specific routes or statuses</li>
-<li>Verify your speculation rules work across different article types and sections</li>
+<li>Which URLs were considered?</li>
+<li>Did a specific route prefetch or prerender?</li>
+<li>Which attempts failed?</li>
+<li>Did a rule change affect the intended section of the site?</li>
 </ul>
-<p>This small DevTools improvement makes that workflow much better. What started as a pain point while implementing speculation rules for krone.at became a contribution that will help every developer working with this technology.</p>
-<h2 id="the-collaboration">The Collaboration</h2>
-<p>This is a great example of how the Chrome team supports external contributors. Barry helped validate the approach and ensure the UI patterns matched DevTools conventions. The feature went from idea to implementation in days, not months.</p>
-<p>When you&#39;re testing a Chrome origin trial and find rough edges in the tooling, file a bug, propose a fix. The team is receptive.</p>
-<h2 id="current-status">Current Status</h2>
-<p>The CL is in review. Once merged, this will ship with Chrome DevTools, available to everyone debugging speculation rules.</p>
-<h2 id="try-it">Try It</h2>
-<p>If you&#39;re interested in speculative prerendering:</p>
-<ol>
-<li>Read the <a href="https://developer.chrome.com/blog/prerender-until-script-origin-trial?hl=de">Prerender Until Script blog post</a></li>
-<li>Check out the <a href="https://developer.chrome.com/docs/devtools/application/debugging-speculation-rules">Speculation Rules documentation</a></li>
-<li>Sign up for the origin trial if you want to test the new features</li>
-</ol>
-<p>And once this CL lands, you&#39;ll have better filtering to debug your implementation!</p>
-<hr>
-<p><strong>Links:</strong></p>
+<p>The change is intentionally small. The panel already had the relevant status and URL data; it only needed a way to narrow the visible rows.</p>
+<h2 id="collaboration">Collaboration</h2>
+<p>Barry helped validate the interaction and align it with existing DevTools conventions. Testing on a production site supplied the scale that made the missing filter noticeable, while review kept the solution consistent with the rest of DevTools.</p>
+<h2 id="links">Links</h2>
 <ul>
 <li><a href="https://issues.chromium.org/issues/479524246">Chromium Bug 479524246</a></li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/devtools/devtools-frontend/+/7520087"><strong>Add text filter to Speculation Rules panel</strong></a></li>
-<li><a href="https://developer.chrome.com/blog/prerender-until-script-origin-trial?hl=de">Prerender Until Script Origin Trial</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/devtools/devtools-frontend/+/7520087">Add text filter to Speculation Rules panel</a></li>
+<li><a href="https://developer.chrome.com/blog/prerender-until-script-origin-trial?hl=de">Prerender Until Script origin trial</a></li>
 <li><a href="https://developer.chrome.com/docs/devtools/application/debugging-speculation-rules">Debugging Speculation Rules in DevTools</a></li>
 <li><a href="https://github.com/tunetheweb">Barry Pollard on GitHub</a></li>
 </ul>
@@ -979,25 +961,25 @@
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
-      { icon: '📄', name: 'Blog: Installed Web Apps on the OS', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+      { icon: '📄', name: 'Blog: Platform Integration for Installed Web Apps', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
       { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
       { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
-      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
-      { icon: '📄', name: 'Blog: Shrinking Binary Size with Tables', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
-      { icon: '📄', name: 'Blog: Four Dangling Pointers', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder', 'i2s', 'ship', '155'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+      { icon: '📄', name: 'Blog: Compact Generated Tables for Binary Size', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+      { icon: '📄', name: 'Blog: Member Order and Dangling raw_ptrs', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
       { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
-      { icon: '📄', name: 'Blog: DevTools Papercuts', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+      { icon: '📄', name: 'Blog: Small DevTools Usability Fixes', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
       { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
       { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
       { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
-      { icon: '📄', name: 'Blog: Another Try at HTTPS-RR', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
-      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
-      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
-      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
-      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
-      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: A Smaller HTTPS-RR Implementation', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
+      { icon: '📄', name: 'Blog: Chromium Work in 2025', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: Integrating JPEG XL with jxl-rs', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Chrome --focus Flag', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Refreshing Chrome Theme Policies', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Color-Management Crash', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
       { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
       { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },

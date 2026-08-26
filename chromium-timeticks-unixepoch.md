@@ -4,7 +4,7 @@ category: "Chromium"
 tech: "C++ / Refactoring"
 ---
 
-*Removing an API is easy. Proving nobody needs it, migrating every owner, and preventing it from coming back is the real work.*
+*Why monotonic time cannot be converted reliably to wall-clock time, and how callers were migrated.*
 
 **Status:** 🎉 Landed
 

@@ -1,37 +1,33 @@
 ---
-title: "From Tweet to Chrome: Implementing Tobi Lütke's Browser Focus Feature"
+title: "Implementing Chrome's --focus Flag"
 category: "Chromium"
 tech: "C++"
 ---
 
-*How a Twitter conversation led to adding a major new feature to Chromium*
+*A command-line option for focusing an existing tab instead of opening a duplicate.*
 
 **Update 16.10.2025:** ✅ Feature landed in Chromium main branch (Chrome 143)
 
-## The Origin Story
+## The Initial Request
 
-It started with [a tweet from Tobi Lütke](https://x.com/tobi/status/1957195479361438142) (CEO of Shopify). He proposed an elegant solution to a problem every developer faces: tab proliferation. His idea was simple but powerful - Chrome should focus existing tabs instead of blindly creating new ones.
+A [tweet from @tobi](https://x.com/tobi/status/1957195479361438142) proposed a command-line option for a common automation problem: focus an existing matching tab instead of opening another copy.
 
 His proposed CLI syntax was clean:
 ```sh
 chrome --focus=https://github.com/user/repo
 ```
 
-I saw the tweet, loved the idea, and thought: "Why wait? Let's build this into Chrome right now."
+## From Request to Implementation
 
-## From Concept to Implementation
-
-The vision was clear:
+The expected behavior was:
 - If a matching tab exists, focus it
 - If multiple matches exist, pick the most recently used
 - If nothing matches, optionally open a new tab
 - Make it scriptable for automation
 
-This became my north star for the implementation.
+## Technical Design
 
-## The Technical Journey
-
-### Turning Ideas into Architecture
+### Turning Behavior into Architecture
 
 The spec translated into several technical challenges:
 
@@ -59,7 +55,7 @@ void SortCandidatesByMRU(std::vector<MatchCandidate>& candidates);
 
 ### Making MRU Work
 
-The most challenging part was "pick the most recently used." Chrome doesn't directly track this, so I had to be creative:
+The less direct requirement was "pick the most recently used." The implementation uses session ordering as a practical recency proxy:
 
 ```cpp
 // Leverage Chrome's SessionID ordering as a proxy for recency
@@ -98,25 +94,22 @@ chrome --focus="https://example.com" --allow-create
 chrome --focus="app-id:abcdefghijklmnop"
 ```
 
-## Real-World Impact
+## Use Cases
 
-This feature changes how developers interact with Chrome:
+The option can be used for:
 
-1. **Shell Integration**: Bind keys to focus specific tabs
-2. **IDE Integration**: Jump to documentation without tab duplication
-3. **Workflow Automation**: Scripts can intelligently manage browser state
-4. **Reduced Memory**: Fewer duplicate tabs = less RAM usage
+1. **Shell integration**: Bind keys to focus specific tabs
+2. **IDE integration**: Open documentation without creating duplicate tabs
+3. **Workflow automation**: Let scripts select browser content and read a JSON result
+4. **Tab management**: Reuse an existing match when one is available
 
 
 ## Acknowledgments
 
-> Getting a feature into Chromium is a journey, not a sprint. The review process pushed me to think deeper about edge cases, performance implications, and API design. Every piece of feedback made this feature better. Huge thanks to all the reviewers who invested their time and expertise to make this happen.
-
 Thanks to:
-- **Tobi Lütke** for the original idea
-- **Yoav Weiss** who is actively supporting me getting forward with this feature
-- **Daniel Murphy, Kaan Alsan, Erik Chen, Jan Keitel** for thorough code reviews and valuable feedback
-- **The entire Chromium community** for the collaborative review process
+- **@tobi** for the original request
+- **Yoav Weiss** for helping route the proposal
+- **Daniel Murphy, Kaan Alsan, Erik Chen, and Jan Keitel** for code review and design feedback
 
 ## Implementation Details
 
@@ -135,4 +128,3 @@ Thanks to:
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Integration**](https://crrev.com/c/6943437)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**JSON API**](https://crrev.com/c/6946350)
 - [Design Document](https://docs.google.com/document/d/1YRf-BzHTAhqyV6wL6yRxVOU3zhByE6voSEwSNLgPZSU/edit)
-- [My GitHub](https://github.com/hjanuschka)

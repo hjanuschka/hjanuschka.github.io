@@ -52,7 +52,7 @@ The controller-side plumbing CL earned itself a small reland history. The code w
 - **Reland 1** ([7944188](https://chromium-review.googlesource.com/c/chromium/src/+/7944188)): skipped the tests on `DeviceFormFactor.DESKTOP_FREEFORM`. Still not enough - tablets and non-freeform desktop hit the same windowed-container behavior but are a different form factor value.
 - **Reland 2** ([7968718](https://chromium-review.googlesource.com/c/chromium/src/+/7968718)): widened the skip to `DeviceFormFactor.TABLET_OR_DESKTOP`. Standalone webapps with cutout treatment are only exercised on phones anyway; the fullscreen webapp test still covers the cutout path on the larger form factors. This one stuck.
 
-With the plumbing finally stable, the last CL flipped the actual behavior on for webapp and activity flows - and that is the piece that just landed.
+After the inset plumbing landed, the final CL enabled the behavior for webapp and activity flows.
 
 ## Trying It in Canary
 

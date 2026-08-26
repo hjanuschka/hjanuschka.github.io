@@ -1,17 +1,18 @@
 ---
-title: "JPEG XL Returns to Chrome: From Obsolete to the Future"
+title: "Integrating JPEG XL in Chromium with jxl-rs"
 category: "Chromium"
 tech: "Rust / C++"
 ---
 
-*How JPEG XL went from "obsolete" to the future of web images - and the honor of being part of its comeback*
+*Why Chromium selected a Rust decoder, how it was integrated, and what remained behind the feature flag.*
 
-**Status:** ✅ **LANDED** — JPEG XL is now supported in Chromium Canary 145.0.7632.0+!
+**Status:** ✅ Landed behind a flag in Chromium Canary 145.0.7632.0+
 
-<div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid #22c55e; border-radius: 12px;">
-  <h3 style="color: #22c55e; margin: 0 0 10px 0;">🎉 MISSION ACCOMPLISHED</h3>
-  <p style="margin: 0;">JPEG XL has officially returned to Chromium.</p>
-  <p style="font-size: 13px; opacity: 0.8; margin-top: 5px;">Available in Canary 145.0.7632.0+ (Enable via <code>chrome://flags/#enable-jxl-image-format</code>)</p>
+**Update:** The [Intent to Ship is approved](/chromium-jxl-one-year-later.html), and the default-enable CL targets Chrome 155.
+
+<div style="margin: 24px 0; padding: 16px 20px; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 8px;">
+  <strong style="color: #22c55e;">Implementation update</strong>
+  <p style="margin: 8px 0 0 0;">JPEG XL decoding is available in Canary 145.0.7632.0+ through <code>chrome://flags/#enable-jxl-image-format</code>.</p>
 </div>
 
 ```snippet
@@ -52,24 +53,24 @@ Initial approach used libjxl in C++. Feature complete with animation support, bu
 
 Pivoted to [jxl-rs](https://github.com/libjxl/jxl-rs), a pure Rust decoder. Memory-safe and aligned with Chromium's direction.
 
-<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7201443**](https://crrev.com/c/7201443) — Add jxl-rs to third_party (73,908 lines)
+<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7201443**](https://crrev.com/c/7201443) - Add jxl-rs to third_party
 
 **Blink integration:**
 1. <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7320482**](https://crrev.com/c/7320482) — Add JXL infrastructure: enums and build flag
 2. <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7319379**](https://crrev.com/c/7319379) — Add JXL image decoder using jxl-rs
-3. <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7184969**](https://crrev.com/c/7184969) — Wire up JXL decoder (The final piece!)
+3. <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**CL 7184969**](https://crrev.com/c/7184969) - Wire up the JXL decoder
 
-The Rust decoder required significant optimization. The jxl-rs community merged **26 PRs** in December 2025:
+The Rust decoder also needed performance work for browser workloads. Representative measurements from that period:
 
-| Image | Before | After | C++ libjxl | Speedup |
-|-------|--------|-------|------------|---------|
+| Image | Before | After | C++ libjxl | Change |
+|-------|--------|-------|------------|--------|
 | bike (2048×2560) | 265ms | 198ms | 170ms | **+34%** |
 | progressive (4064×2704) | 694ms | 560ms | 450ms | **+24%** |
 | blendmodes (1024×1024) | 115ms | 85ms | 266ms | **+35%** |
 
 ```snippet
 <details>
-<summary style="cursor: pointer; color: var(--accent); font-weight: bold;">View all jxl-rs contributions (26 PRs) →</summary>
+<summary style="cursor: pointer; color: var(--accent); font-weight: bold;">Selected upstream jxl-rs changes</summary>
 
 **SIMD Optimizations:**
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [#585](https://github.com/libjxl/jxl-rs/pull/585) SIMD table lookup with shuffle
@@ -124,22 +125,17 @@ The Rust decoder required significant optimization. The jxl-rs community merged 
 
 ---
 
-## Use JPEG XL Today
+## Testing Without Native Support
 
-Don't want to wait? The [jxl-rs-polyfill](https://github.com/hjanuschka/jxl-rs-polyfill) brings JPEG XL to all browsers now.
+The [jxl-rs-polyfill](https://github.com/hjanuschka/jxl-rs-polyfill) provides a WASM fallback for testing JPEG XL on browsers without native decoding.
 
-**One line of code:**
+**Basic usage:**
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/jxl-rs-polyfill/dist/auto.js"></script>
 ```
 
-That's it. All `.jxl` images work everywhere.
-
-- **Auto-detection** — skips polyfill in Safari 17+ (native support)
-- **Zero config** — just include the script
-- **Full coverage** — `<img>`, CSS backgrounds, `<picture>`, SVG
-- **~540KB gzipped** — compact WASM module
+The script detects native support before installing its fallback. It covers common `<img>`, CSS background, `<picture>`, and SVG cases; the WASM payload is approximately 540 KB gzipped.
 
 ```snippet
 <details>
@@ -230,6 +226,6 @@ Special thanks to [Luca Versari (veluca93)](https://github.com/veluca93) for rev
 - [Rick Byers' Announcement](https://groups.google.com/a/chromium.org/g/blink-dev/c/WjCKcBw219k/m/tdJGfuLQAAAJ)
 - [Tracking Bug: 462919304](https://issues.chromium.org/issues/462919304)
 - [Design Document](https://docs.google.com/document/d/1oT7K2h4Xf4E0ScUmsOQx0zXUVJj57qBwcsa3yK9SJr0/edit?tab=t.0)
-- [jxl-rs Repository](https://github.com/libjxl/jxl-rs) | [My PRs (23 merged)](https://github.com/libjxl/jxl-rs/pulls?q=is%3Apr+author%3Ahjanuschka)
+- [jxl-rs Repository](https://github.com/libjxl/jxl-rs)
 - [jxl-rs-polyfill](https://github.com/hjanuschka/jxl-rs-polyfill)
 - Press: [Heise](https://www.heise.de/en/news/U-turn-Google-wants-to-bring-JPEG-XL-back-to-Chrome-11089880.html) | [DevClass](https://devclass.com/2025/11/24/googles-chromium-team-decides-it-will-add-jpeg-xl-support-reverses-obsolete-declaration/)

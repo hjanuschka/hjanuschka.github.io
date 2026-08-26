@@ -1,5 +1,5 @@
 ---
-title: "Shrinking Chromium's Binary, One Table at a Time"
+title: "Compact Generated Tables for Chromium Binary Size"
 category: "Chromium"
 tech: "C++ / Binary Size"
 ---
@@ -10,7 +10,7 @@ tech: "C++ / Binary Size"
 
 ## The Shape of the Problem
 
-I previously wrote about [moving static data out of the Chrome binary](/chromium-binary-size.html) - putting USB IDs and compressed phone metadata into lazily-loaded resources. This is the other side of binary-size work: data that legitimately belongs in the binary, but is represented by far too much generated code.
+A related post covers [moving static data out of the Chrome binary](/chromium-binary-size.html), including USB IDs and compressed phone metadata in lazily-loaded resources. This post covers data that belongs in the binary but is represented by more generated code than necessary.
 
 Chromium generates a surprising amount of C++: feature registries, UKM maps, enum-name lookups, sanitizer configurations, color mappings, locale caches, and resource maps. A generator often emits the most direct implementation - one initializer, function call, or setter per entry.
 
@@ -18,7 +18,7 @@ That is readable in the generator, but expensive in the binary. Repeating an ope
 
 ## Measuring the Whole Batch
 
-I built an [interactive binary-size dashboard](https://static.januschka.com/apk-size/) from Chromium's `android-binary-size` and `compile-size` trybot results. Every point links back to its CL and records the newest patchset for which a size bot reported numbers.
+The [interactive binary-size dashboard](https://static.januschka.com/apk-size/) collects Chromium's `android-binary-size` and `compile-size` trybot results. Every point links back to its CL and records the newest patchset for which a size bot reported numbers.
 
 The dashboard can switch between per-CL deltas and a cumulative view, include or exclude unlanded CLs, and apply a deliberately conservative rule: count savings from an unlanded CL, but do not pretend its size increases have shipped.
 

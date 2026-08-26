@@ -1,10 +1,10 @@
 ---
-title: "Community-Driven Bug Fixing: Solving a Wayland Crash in 72 Hours"
+title: "Debugging a Wayland Color-Management Crash"
 category: "Chromium"
 tech: "C++ / Wayland"
 ---
 
-*When Chrome crashes, the community debugs - a story of open source collaboration*
+*A protocol-lifetime regression found through shared logs, workarounds, and upstream testing.*
 
 **Update 16.10.2025:** ✅ Fix landed and merged to Chromium main branch
 
@@ -12,9 +12,9 @@ tech: "C++ / Wayland"
 
 On October 3rd, 2025, users started reporting Chrome crashes across multiple Linux distributions. The symptoms were consistent: move a Chrome window between monitors on Wayland, instant crash. The error logs pointed to Wayland protocol violations.
 
-What made this interesting: it wasn't specific to one distro or configuration. Omarchy users, Arch Linux users, Fedora users - all seeing the same crash. Chrome 141 had introduced a regression that affected the entire Wayland ecosystem.
+It was not specific to one distribution or configuration. Reports came from Omarchy, Arch Linux, and Fedora users, pointing to a Chrome 141 regression in the Wayland path.
 
-The [Omarchy community](https://github.com/basecamp/omarchy) became the epicenter for this investigation - not because the bug was Omarchy-specific, but because Omarchy represents a movement of people who fix things fast, share openly, and embrace OSS values. When something breaks, they debug collectively and push fixes upstream where everyone benefits.
+The [Omarchy issue](https://github.com/basecamp/omarchy/issues/2184) became the shared place for logs, configurations, and workarounds even though the bug itself was not Omarchy-specific.
 
 ## Community Debugging
 
@@ -24,7 +24,7 @@ The GitHub issue ([#2184](https://github.com/basecamp/omarchy/issues/2184)) beca
 - Running with `--ozone-platform=x11` avoided the crash (isolated to Wayland)
 - Disabling `WaylandWpColorManagerV1` feature prevented crashes (identified the subsystem)
 
-This is open source at its best: distributed debugging. Each data point narrowed the search space.
+Each report narrowed the regression window and affected subsystem.
 
 ## The Investigation
 
@@ -60,7 +60,7 @@ DestroyOldImageDescription();
 CreateNewImageDescription(); // Now Wayland is happy
 ```
 
-A simple timing bug with catastrophic consequences.
+The ordering error caused Wayland to close the client connection.
 
 ## Parallel Solutions
 
@@ -72,10 +72,10 @@ The proper fix needed to be in Chromium - the protocol violation was on Chrome's
 
 **Chromium Bug**: [449370049](https://issues.chromium.org/issues/449370049)
 **Fix CL**: <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix color management object lifecycle**](https://crrev.com/c/7003036)
-**Merged**: October 6, 2025 (3 days from initial report)
+**Merged**: October 6, 2025
 **Reviewers**: Thomas Anderson, Tom Lukaszewicz
 
-The fix was minimal - just reordering the object lifecycle to match protocol requirements. Small change, huge impact.
+The fix reorders the object lifecycle to match the protocol requirement.
 
 ## Why This Matters
 
@@ -84,14 +84,11 @@ This bug affected:
 - All Wayland compositors with color management support
 - Multi-monitor setups globally
 
-Open source enabled rapid response:
-1. Users reported with detailed logs
-2. Community identified workarounds
-3. Bug was reproduced and fixed
-4. Fix merged upstream in 3 days
-5. Everyone benefits from the same fix
-
-No NDAs. No private bug trackers. No waiting for vendor support contracts. Just people sharing information until the problem was solved.
+The public reports supplied the information needed to reproduce the problem:
+1. users shared detailed logs;
+2. workarounds isolated the Wayland color-management path;
+3. the protocol-lifetime error was identified;
+4. the Chromium fix and compositor workaround were reviewed upstream.
 
 ## Status: Fixed
 
@@ -111,16 +108,7 @@ chrome --ozone-platform=x11 --force-device-scale-factor=1
 
 ## The Takeaway
 
-This wasn't about heroic debugging or individual brilliance. This was about open source working as designed - and about communities like Omarchy that embody these values:
-
-- Transparent bug reports
-- Shared reproduction steps
-- Public code review
-- Fast iteration
-- Universal benefit
-- Fix it upstream, help everyone
-
-From first report to merged fix: 72 hours. The Omarchy movement isn't just about a Linux distribution - it's about embracing the speed, openness, and collaborative spirit that makes open source powerful. When you fix it for everyone, everyone wins.
+The useful part of the community report was its specificity: version range, backend comparison, feature isolation, and reproducible monitor transition. Those details made it possible to trace the crash to Wayland object lifetime rather than treating it as a distribution-specific failure.
 
 ---
 

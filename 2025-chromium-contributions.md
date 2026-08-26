@@ -1,35 +1,22 @@
 ---
-title: "2025 Chromium Contributions Wrap-Up"
+title: "Chromium Work in 2025"
 category: "Chromium"
 tech: "C++ / Rust"
 ---
 
-# 2025: The Year I Became a Chromium OWNER
-
-*115+ merged contributions across Chromium, PDFium, and jxl-rs*
+*A technical index of browser, PDF, tooling, and image-codec work from the year.*
 
 ---
 
-## By the Numbers
+## Areas of Work
 
-| Project | Merged | In Progress |
-|---------|--------|-------------|
-| Chromium | 78 CLs | 15 CLs |
-| PDFium | 9 CLs | - |
-| jxl-rs | 28 PRs | 5 PRs |
-| **Total** | **115** | **20** |
+- **[Tab Focus](/chromium-focus-feature.html)** - Command-line tab matching, focus behavior, and result output for automation.
+- **[JPEG XL](/chromium-jxl-resurrection.html)** - Chromium integration, SIMD paths, HDR support, and decoder APIs developed with the jxl-rs community.
+- **[Omarchy Chromium](/chromium-omarchy.html)** - Downstream Chromium builds used by Omarchy, including ARM64 Linux packages.
 
-## 2025 Milestones
+## Resource Timing Across Browser Engines
 
-🎉 **[Chromium OWNER](/chromium-focus-feature.html)** - Earned OWNER status via the Tab Focus feature work. Now able to review and approve changes in that area.
-
-🚀 **[JPEG XL Revival](/chromium-jxl-resurrection.html)** - Part of the team bringing JPEG XL back to Chromium, this time with a Rust decoder. Contributed 28 merged PRs to [jxl-rs](https://github.com/libjxl/jxl-rs) for SIMD optimizations, HDR support, and Chromium integration.
-
-🔧 **[omarchy-chromium Maintainer](/chromium-omarchy.html)** - Maintaining a [custom Chromium build](https://github.com/basecamp/omarchy-chromium) for [Omarchy](https://omarchy.basecamp.com/). Provides ARM64 Linux builds not officially supported by Google.
-
-## The Browser Trinity ✅
-
-Contributing to all three major browser engines! Ported Resource Timing Level 3 (interim response timestamps for HTTP 103 Early Hints) across the board:
+Resource Timing Level 3 interim-response timestamps for HTTP 103 Early Hints required corresponding changes in each browser engine:
 
 | Browser | Status | Link |
 |---------|--------|------|
@@ -37,26 +24,24 @@ Contributing to all three major browser engines! Ported Resource Timing Level 3 
 | Firefox | ✅ Landed | [D276668](https://phabricator.services.mozilla.com/D276668) |
 | Safari/WebKit | ✅ Merged | [#55467](https://github.com/WebKit/WebKit/pull/55467) |
 
-🎉 Browser trifecta complete!
-
 ## Thank You
 
-- **[Yoav Weiss](https://github.com/yoavweiss)** - for being an incredible mentor, answering endless questions, finding the right reviewers, pointing me to the right mailing lists, and all the guidance that goes way beyond code
-- **[Tobi Lütke](https://github.com/tobi)** - for the original idea that became the `--focus` flag
+- **[Yoav Weiss](https://github.com/yoavweiss)** - for patient guidance, answering questions, finding the right reviewers, and pointing me to the relevant mailing lists
+- **[@tobi](https://github.com/tobi)** - for the original idea that became the `--focus` flag
 - **[DHH](https://github.com/dhh)** - for Omarchy and pushing browser theming forward
 - **[Rick Byers](https://github.com/RByers)** - for championing JPEG XL's return and providing direction
 - **[Philip Jägenstedt](https://github.com/foolip)** - for supporting the JPEG XL revival effort
 
-And to the countless Chromium developers on Slack - too many to name - who answered questions and provided feedback when I felt lost. Your patience and expertise made these contributions possible. 🙏
+Thanks also to the Chromium developers who answered questions and provided feedback on Slack and in code review.
 
-## Major Features
+## Selected Topics
 
 | Feature | Description |
 |---------|-------------|
 | [**Tab Focus Flag**](/chromium-focus-feature.html) (Chrome 143) | New `--focus` flag that focuses existing tabs instead of opening duplicates |
 | [**Instant Policy Refresh**](/chromium-omarchy.html) | Added `--refresh-platform-policy` flag for instant browser theme updates via managed policies |
 | [**Wayland Crash Fix**](/chromium-wayland-crash.html) | Fixed a crash affecting Linux users when moving Chrome windows between monitors |
-| [**JPEG XL Support**](/chromium-jxl-resurrection.html) (In Progress) | Bringing JPEG XL back to Chromium using the Rust-based jxl-rs decoder |
+| [**JPEG XL Support**](/chromium-jxl-one-year-later.html) (Targeting Chrome 155) | Rust-based jxl-rs decoder, approved through the Intent to Ship process |
 
 ## Chromium Bug Fixes
 
@@ -88,7 +73,7 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 
 ## PDFium
 
-9 merged CLs to PDFium in 2025:
+PDFium work in 2025:
 
 **New APIs:**
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add FPDF_SYSFONTINFO v2 for per-request font matching**](https://pdfium-review.googlesource.com/c/pdfium/+/136690)
@@ -103,9 +88,9 @@ And to the countless Chromium developers on Slack - too many to name - who answe
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix Form XObject content regeneration**](https://pdfium-review.googlesource.com/c/pdfium/+/132190)
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Fix undo counting for cut operations**](https://pdfium-review.googlesource.com/c/pdfium/+/132350)
 
-## jxl-rs Contributions
+## jxl-rs
 
-26 merged PRs to [libjxl/jxl-rs](https://github.com/libjxl/jxl-rs) - the Rust JPEG XL decoder:
+Upstream work in [libjxl/jxl-rs](https://github.com/libjxl/jxl-rs), the Rust JPEG XL decoder:
 
 **SIMD Optimizations:**
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add SIMD table lookup with shuffle**](https://github.com/libjxl/jxl-rs/pull/585)

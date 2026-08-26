@@ -1,5 +1,5 @@
 ---
-title: "Camera Capture on Desktop: Closing a 12-Year-Old Gap"
+title: "Desktop Camera Capture for HTML File Inputs"
 category: "Chromium"
 tech: "C++"
 ---
@@ -18,7 +18,7 @@ In October 2012, a feature request was filed: bring camera capture to desktop br
 <input type="file" accept="image/*" capture="camera">
 ```
 
-Click the input, and Android opens the camera app. Take a photo, and it's submitted as a file. Simple, elegant, and completely unavailable on desktop platforms for over a decade.
+On Android, selecting the input opens the camera app and returns the captured photo as a file. Desktop platforms did not provide the equivalent path.
 
 **Bug:** [40291635](https://issues.chromium.org/issues/40291635)
 
@@ -141,4 +141,4 @@ Key components:
 
 ---
 
-*Sometimes the best features are the ones that should have existed all along. After 12 years, desktop Chrome is finally catching up to mobile.*
+*The proposed desktop path gives the existing capture attribute a native camera UI on Windows, macOS, and Linux.*

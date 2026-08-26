@@ -1,16 +1,16 @@
 ---
-title: "Fixing a 3.5-Year-Old Race Condition: Pseudonymization Salt via Shared Memory"
+title: "Initializing Chromium's Pseudonymization Salt Before IPC"
 category: "Chromium"
 tech: "C++ / IPC"
 ---
 
-*When the bug report is older than some interns - a deep dive into cross-process initialization*
+*Using launch-time shared memory to remove an ordering race between Mojo interfaces.*
 
-**Status:** In Review | **CL:** [7486913](https://crrev.com/c/7486913) | **Bug:** [40850085](https://issues.chromium.org/issues/40850085)
+**Status:** 🎉 Landed | **CL:** [7486913](https://crrev.com/c/7486913) | **Bug:** [40850085](https://issues.chromium.org/issues/40850085)
 
 ---
 
-## The Bug That Wouldn't Die
+## The Race
 
 In June 2022, crash reports started appearing with a familiar pattern:
 
@@ -20,7 +20,7 @@ In June 2022, crash reports started appearing with a familiar pattern:
 
 The crash was simple to understand but deceptively hard to fix: child processes were trying to use a pseudonymization salt before it had been initialized. The salt is used by Chrome's tracing system to anonymize sensitive data like extension IDs before logging.
 
-The bug sat open for **3.5 years**. Multiple Googlers looked at it. Solutions were proposed. CLs were attempted. But the fundamental problem remained unsolved - until now.
+The issue remained open because the ordering problem crossed process startup, Mojo pipes, and platform-specific handle passing.
 
 ## Understanding the Race
 
@@ -37,7 +37,7 @@ So when an extension activates and tries to write a trace event (which needs to 
 
 ## The Long History
 
-Reading through [bug 40850085](https://issues.chromium.org/issues/40850085) is like an archaeology dig through Chromium's architecture:
+The history in [bug 40850085](https://issues.chromium.org/issues/40850085) records several approaches:
 
 **June 2022** - Bug reported. Initial analysis identifies the IPC race.
 
@@ -76,14 +76,14 @@ void InitializePseudonymizationSaltFromSharedMemory(
 }
 ```
 
-The key insight: shared memory is available **immediately** when the process starts, before any message loops or IPC handlers run.
+The shared-memory handle is available when the process starts, before message loops or IPC handlers can use the salt.
 
 ## Platform Complexity
 
 Passing handles to child processes is platform-specific:
 
 - **Windows/Linux**: Handle inheritance via command line descriptor
-- **macOS**: Mach port rendezvous system (had to bump `kMaxPortCount` from 6 to 7!)
+- **macOS**: Mach port rendezvous system, including an increase of `kMaxPortCount` from 6 to 7
 
 Each platform has different mechanisms for handle passing, and getting this right required touching:
 - `content/browser/child_process_launcher_helper.cc`
@@ -119,8 +119,6 @@ The salt adds randomness to trace hashing - without it, extension IDs in traces 
 - [2023 partial fix by wfh@](https://crrev.com/c/4143865)
 
 ---
-
-*Sometimes the best contribution is finishing what others started. The solution was known in 2022 - it just needed someone to implement it.*
 
 Thanks to:
 - **Will Harris** for extensive review feedback on determinism and error handling

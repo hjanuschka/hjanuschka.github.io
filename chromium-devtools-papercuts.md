@@ -1,5 +1,5 @@
 ---
-title: "Fixing the DevTools Friction I Kept Running Into"
+title: "A Set of Small DevTools Usability Fixes"
 category: "Chromium"
 tech: "DevTools / TypeScript"
 ---
@@ -41,9 +41,9 @@ The Network panel keeps the Request-number column in a predictable first positio
 
 ## The Pattern
 
-These changes started with the same observation: the information was already present somewhere in DevTools or the browser, but the interface stopped one step before making it useful.
+These changes have the same shape: the information was already present in DevTools or the browser, but the interface stopped one step before exposing it usefully.
 
-That is a productive way to find tooling work. Notice the moment you leave the tool - to calculate specificity, decode bytes, reload a page, or inspect raw XML elsewhere - and ask whether the missing step belongs in DevTools.
+A practical test for this kind of tooling gap is whether a developer has to leave DevTools to calculate specificity, decode bytes, reload a page, or inspect raw XML elsewhere.
 
 ## Links
 

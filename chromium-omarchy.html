@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Chrome Themes: Building DHH's Vision for Omarchy - Helmut Januschka</title>
-  <meta name="description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <title>Refreshing Chrome Policies for Dynamic Omarchy Themes - Helmut Januschka</title>
+  <meta name="description" content="Using managed theme policies and an explicit refresh command to update a running browser.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "Dynamic Chrome Themes: Building DHH's Vision for Omarchy",
-    "description": "How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming",
+    "headline": "Refreshing Chrome Policies for Dynamic Omarchy Themes",
+    "description": "Using managed theme policies and an explicit refresh command to update a running browser.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-17",
+    "dateModified": "2026-08-26",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -46,8 +46,8 @@
   </script>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta property="og:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta property="og:title" content="Refreshing Chrome Policies for Dynamic Omarchy Themes">
+  <meta property="og:description" content="Using managed theme policies and an explicit refresh command to update a running browser.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/chromium-omarchy.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -57,8 +57,8 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
-  <meta name="twitter:title" content="Dynamic Chrome Themes: Building DHH's Vision for Omarchy">
-  <meta name="twitter:description" content="How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming">
+  <meta name="twitter:title" content="Refreshing Chrome Policies for Dynamic Omarchy Themes">
+  <meta name="twitter:description" content="Using managed theme policies and an explicit refresh command to update a running browser.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/chromium-omarchy.html">
 
@@ -861,7 +861,7 @@
   <!-- Blog Header -->
   <div class="blog-header">
     <div class="container">
-      <h1 class="blog-title">Dynamic Chrome Themes: Building DHH's Vision for Omarchy</h1>
+      <h1 class="blog-title">Refreshing Chrome Policies for Dynamic Omarchy Themes</h1>
       <div class="blog-meta">
         <span>⚡ Chromium</span>
         <span>🔧 C++</span>
@@ -873,19 +873,19 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>How a single tweet led to a Chromium micro fork and a feature that changes how we think about browser theming</em></p>
-<h2 id="update-september-14-2025-merged-landed-a-better-way-through-managed-policies">🎉 Update: September 14, 2025 - MERGED & LANDED! A Better Way Through Managed Policies</h2>
-<h3 id="the-golden-nugget-discovery">The Golden Nugget Discovery</h3>
-<p>Google initially rejected our CLI approach, but working closely with friends at Brave, a crucial insight emerged: <strong>Chrome&#39;s managed policies could set theme colors!</strong> This was a game-changer - policies are an officially supported Chrome feature used by enterprises worldwide.</p>
+<p><em>Using managed theme policies and an explicit refresh command to update a running browser.</em></p>
+<h2 id="update-policy-refresh-landed">Update: Policy Refresh Landed</h2>
+<h3 id="using-managed-policies">Using Managed Policies</h3>
+<p>The direct theme CLI approach was not accepted upstream. Discussion with Brave and Chromium reviewers pointed to a supported alternative: Chrome&#39;s managed policies can already set theme colors.</p>
 <p>However, there was a catch: applying policies took 5+ seconds to take effect. This wasn&#39;t the instant response Omarchy users expected.</p>
-<h3 id="making-it-instant">Making It Instant</h3>
-<p>I dug deeper into Chrome&#39;s policy system and discovered we could add a new flag:</p>
+<h3 id="refreshing-without-the-delay">Refreshing Without the Delay</h3>
+<p>The remaining gap was an explicit way to refresh policies in a running browser:</p>
 <pre><code class="language-sh"># Instantly refresh and apply platform policies
 chromium --refresh-platform-policy
 </code></pre>
-<p>This flag forces Chrome to immediately reload and apply managed policies without the usual delay. The implications go far beyond just theming - it enables instant policy updates for any managed Chrome setting!</p>
-<h3 id="the-implementation-journey">The Implementation Journey</h3>
-<p>After much discussion and collaboration with Chrome&#39;s policy team, we refined the approach. The flag name evolved through several iterations as we better understood the use cases. The final implementation (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>--refresh-platform-policy flag</strong></a>) adds:</p>
+<p>The flag asks a running Chrome instance to reload platform policies immediately instead of waiting for the normal refresh interval. It is general policy infrastructure rather than a theme-specific command.</p>
+<h3 id="implementation">Implementation</h3>
+<p>Review with Chrome&#39;s policy team refined the command name and startup behavior. The final implementation (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>--refresh-platform-policy flag</strong></a>) adds:</p>
 <pre><code class="language-cpp">// chrome/common/chrome_switches.cc
 const char kRefreshPlatformPolicy[] = &quot;refresh-platform-policy&quot;;
 
@@ -897,16 +897,11 @@ if (command_line.HasSwitch(switches::kRefreshPlatformPolicy)) {
   return;
 }
 </code></pre>
-<p>The beauty of this implementation is its simplicity - just a few lines of code that unlock powerful functionality!</p>
-<h3 id="official-chrome-release">Official Chrome Release</h3>
-<p>This change has landed and will be released in <strong>Chrome Stable 142</strong>! This means:</p>
-<ul>
-<li>Official support for instant policy updates</li>
-<li>No more waiting for policy refresh intervals</li>
-<li>Works with any managed policy, not just themes</li>
-</ul>
-<h3 id="omarchys-lightning-fast-integration">Omarchy's Lightning-Fast Integration</h3>
-<p>I quickly assembled <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/basecamp/omarchy/pull/1251"><strong>Omarchy theme integration</strong></a> that integrates the new flag with JSON policy updates. Here&#39;s how it works in practice:</p>
+<p>The command reuses the existing browser policy connector and returns without opening another browser window.</p>
+<h3 id="chrome-release">Chrome Release</h3>
+<p>The change landed for <strong>Chrome 142</strong>. It applies to managed policies generally, not only theme colors.</p>
+<h3 id="omarchy-integration">Omarchy Integration</h3>
+<p>The downstream <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/basecamp/omarchy/pull/1251"><strong>Omarchy theme integration</strong></a> combines the refresh flag with JSON policy updates:</p>
 <pre><code class="language-sh"># Set theme via managed policy (Linux example)
 sudo mkdir -p /etc/chromium/policies/managed
 echo &#39;{
@@ -926,47 +921,40 @@ sudo defaults write /Library/Managed\ Preferences/com.google.Chrome BrowserTheme
 # Apply instantly
 open -a &quot;Google Chrome&quot; --args --refresh-platform-policy --no-startup-window
 </code></pre>
-<p>This approach is <strong>even faster than our original CLI implementation</strong> because:</p>
+<p>Compared with the direct theme CLI, the policy approach:</p>
 <ol>
-<li>Policies are read directly from disk (no IPC overhead)</li>
-<li>The refresh flag bypasses all delays</li>
-<li>Chrome&#39;s native policy system handles the theme application</li>
-<li>Works with existing enterprise policy infrastructure</li>
+<li>reads configuration from the existing policy files;</li>
+<li>bypasses the normal refresh interval;</li>
+<li>lets Chrome&#39;s policy and theme systems apply the update;</li>
+<li>works with existing managed deployments.</li>
 </ol>
-<h3 id="brave-ships-it-early">Brave Ships It Early</h3>
-<p>Brave has cherry-picked this change and will ship it even faster with their release based on Chrome 141! This shows the power of open-source collaboration - features can reach users through multiple channels.</p>
-<h3 id="the-bigger-picture">The Bigger Picture</h3>
-<p>The <code>--refresh-platform-policy</code> flag opens up new possibilities beyond theming:</p>
-<ul>
-<li>Instant enterprise policy updates without browser restart</li>
-<li>Dynamic security policy adjustments</li>
-<li>Real-time configuration changes for managed deployments</li>
-<li>Scriptable policy management for power users</li>
-</ul>
-<p>This is a perfect example of how solving one problem (theme switching) led to a more general solution that benefits the entire Chrome ecosystem.</p>
+<h3 id="brave-integration">Brave Integration</h3>
+<p>Brave cherry-picked the change for its Chrome 141-based release.</p>
+<h3 id="other-uses">Other Uses</h3>
+<p>The <code>--refresh-platform-policy</code> flag is not theme-specific. Managed deployments can use it to reload any platform policy without restarting the browser.</p>
+<p>The theme use case therefore resulted in a general policy-refresh command.</p>
 <hr>
-<h2 id="the-tweet-that-started-everything">The Tweet That Started Everything</h2>
-<p>It began with <a href="https://x.com/hjanuschka/status/1954552977814855845">a challenge from DHH</a> (David Heinemeier Hansson, creator of Ruby on Rails). He wanted something that seemed simple but revealed an interesting gap: the ability to change Chrome&#39;s theme colors dynamically from the command line.</p>
+<h2 id="the-initial-request">The Initial Request</h2>
+<p>The work started with <a href="https://x.com/hjanuschka/status/1954552977814855845">a request from DHH</a>: change Chrome&#39;s theme colors dynamically from the command line.</p>
 <p>The context was important - when Chrome uses GTK/Qt themes, this already works automatically. But when using Chrome&#39;s &quot;Classic&quot; theme (which many prefer for consistency across platforms), there was no CLI way to control colors. While you could manually change themes through settings for each instance, Omarchy needed scriptable control - just like it has for other applications.</p>
-<p>His vision was clear:</p>
+<p>The proposed interface was:</p>
 <pre><code class="language-sh"># Change theme when using Chrome&#39;s Classic theme
 chrome --set-user-color=&quot;255,0,0&quot;
 </code></pre>
-<p>This wasn&#39;t just about aesthetics. For DHH&#39;s new <a href="https://omarchy.org">Omarchy Linux distribution</a>, this represented a core philosophy: giving power users complete control over their environment through simple, scriptable interfaces.</p>
-<h2 id="why-this-matters">Why This Matters</h2>
+<p>For <a href="https://omarchy.org">Omarchy</a>, the requirement was consistency with its other scriptable desktop theme integrations.</p>
+<h2 id="why-scriptable-theming-was-needed">Why Scriptable Theming Was Needed</h2>
 <p>The gap in Chrome&#39;s theming:</p>
 <ul>
-<li><strong>GTK/Qt themes</strong>: Work great, update automatically</li>
+<li><strong>GTK/Qt themes</strong>: Follow system theme updates automatically</li>
 <li><strong>Classic theme</strong>: No CLI control, must use GUI per instance</li>
 <li><strong>Omarchy&#39;s need</strong>: Scriptable theming like other apps have</li>
 </ul>
-<p>DHH&#39;s request highlighted this inconsistency. Why shouldn&#39;t the Classic theme be as flexible as GTK/Qt integration?</p>
-<h2 id="the-pleasant-surprise">The Pleasant Surprise</h2>
-<p>The implementation turned out to be easier than expected - the code was already in Chromium! The theme system was robust and well-designed. It just wasn&#39;t exposed via command-line interface.</p>
-<p>My task was essentially plumbing: connecting existing functionality to a new entry point.</p>
+<p>The request highlighted the difference between Classic-theme configuration and the existing GTK/Qt integration.</p>
+<h2 id="existing-theme-infrastructure">Existing Theme Infrastructure</h2>
+<p>Most of the required theme behavior already existed in Chromium. The direct CLI prototype connected that infrastructure to a new entry point.</p>
 <h2 id="the-implementation">The Implementation</h2>
 <h3 id="finding-the-existing-code">Finding the Existing Code</h3>
-<p>Chrome&#39;s theme system was already sophisticated:</p>
+<p>Chrome&#39;s theme system already included the required primitives:</p>
 <pre><code class="language-cpp">// Theme colors are defined in the ThemeService
 class ThemeService : public KeyedService {
   // Material Design 3 (GM3) color generation
@@ -986,7 +974,7 @@ const char kSetColorScheme[] = &quot;set-color-scheme&quot;;        // light/dar
 const char kSetColorVariant[] = &quot;set-color-variant&quot;;      // Material variants
 const char kSetGrayscaleTheme[] = &quot;set-grayscale-theme&quot;;  // Grayscale overlay
 </code></pre>
-<p>These switches can be combined for complete control:</p>
+<p>The switches can be combined:</p>
 <pre><code class="language-sh"># Dark blue vibrant theme
 chrome --set-user-color=&quot;100,150,200&quot; \
        --set-color-scheme=&quot;dark&quot; \
@@ -1002,50 +990,29 @@ chrome --set-color-scheme=&quot;system&quot; \
        --set-grayscale-theme=&quot;true&quot;
 </code></pre>
 <h3 id="leveraging-chromes-theme-system">Leveraging Chrome's Theme System</h3>
-<p>The beauty was that Chrome already had:</p>
+<p>The prototype reused:</p>
 <ul>
 <li>Material Design 3 (GM3) dynamic color generation</li>
 <li>ProcessSingleton IPC for notifying running instances</li>
 <li>ThemeService infrastructure for applying changes</li>
 <li>Support for all Material color variants</li>
 </ul>
-<p>Combined with <code>--no-startup-window</code>, themes update without opening new windows!</p>
-<h2 id="plan-b-the-gtk-theme-generator">Plan B: The GTK Theme Generator</h2>
-<p>While working on the Chrome patch, I also explored an alternative approach: what if we could generate GTK themes using Chrome&#39;s Material Design 3 logic?</p>
-<p>This led to <a href="https://github.com/hjanuschka/material-gtk-generator">material-gtk-generator</a>:</p>
+<p>Combined with <code>--no-startup-window</code>, it could update a running instance without opening another window.</p>
+<h2 id="alternative-a-gtk-theme-generator">Alternative: A GTK Theme Generator</h2>
+<p>A separate experiment generated GTK themes from Chrome&#39;s Material Design 3 colors: <a href="https://github.com/hjanuschka/material-gtk-generator">material-gtk-generator</a>.</p>
 <pre><code class="language-sh"># Generate a GTK theme from Chrome&#39;s GM3 colors
 material-gtk-generator --seed-color=&quot;#FF6B6B&quot; --output-dir=~/.themes/
 </code></pre>
-<p>This was Plan B - if the Chromium CL didn&#39;t land, we could:</p>
-<ol>
-<li>Generate GTK themes matching Chrome&#39;s GM3 palette</li>
-<li>Apply them system-wide</li>
-<li>Chrome would pick them up automatically</li>
-</ol>
-<p>It&#39;s still useful for creating cohesive desktop themes!</p>
-<h2 id="the-micro-fork-getting-it-to-users-fast">The Micro Fork: Getting It to Users Fast</h2>
-<p>DHH didn&#39;t want to wait for Google&#39;s review process. He made a decisive move: <strong>invest in build infrastructure</strong> to ship a micro fork immediately.</p>
-<h3 id="what-happened">What Happened</h3>
-<ol>
-<li><strong>DHH&#39;s Decision</strong>: &quot;Let&#39;s ship this NOW to Omarchy users&quot;</li>
-<li><strong>Build Infrastructure</strong>: DHH funded dedicated build servers</li>
-<li><strong>The Micro Fork</strong>: <a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium</a> was born</li>
-<li><strong>Immediate Availability</strong>: Users got the feature within days, not months</li>
-</ol>
-<p>There&#39;s an excellent <a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">YouTube video by DHH</a> about the power of open source - showing how we went from idea to fork at incredible speed.</p>
+<p>If the Chromium CL did not land, Omarchy could generate a matching GTK theme, apply it system-wide, and let Chrome consume it through the existing Linux theme integration. The tool remains useful for matching other GTK applications to the same palette.</p>
+<h2 id="the-omarchy-chromium-fork">The Omarchy Chromium Fork</h2>
+<p>While upstream review continued, Omarchy used dedicated build infrastructure to distribute the direct CLI prototype through <a href="https://github.com/omacom-io/omarchy-chromium">Omarchy Chromium</a>. <a href="https://www.youtube.com/watch?v=ZEFYTdzYxQM">DHH&#39;s video</a> explains the downstream-fork approach.</p>
 <h3 id="the-patch">The Patch</h3>
-<p>The entire feature is contained in a single CL (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a> - superseded by policy approach):</p>
-<ul>
-<li>Minimal, focused changes</li>
-<li>Clean integration with existing code</li>
-<li>Easy to maintain and rebase</li>
-<li>No invasive modifications</li>
-</ul>
+<p>The direct CLI prototype is contained in one CL (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>Direct CLI approach</strong></a> - superseded by policy approach):<br>It connects the command-line switches to the existing theme service and can be rebased as a downstream patch.</p>
 <h2 id="real-world-usage">Real-World Usage</h2>
 <h3 id="for-omarchy-users">For Omarchy Users</h3>
-<p>Omarchy users just use the built-in theme switcher - it all happens automatically in the background! The system handles the Chrome theming seamlessly alongside other applications.</p>
-<h3 id="for-power-users-and-scripters">For Power Users and Scripters</h3>
-<p>The CLI switches enable powerful automation:</p>
+<p>Omarchy&#39;s theme switcher writes the policy value and asks the running browser to refresh it alongside the other desktop theme updates.</p>
+<h3 id="for-scripts">For Scripts</h3>
+<p>The CLI switches can be used for automation:</p>
 <pre><code class="language-sh"># Match browser to terminal theme (Classic theme only)
 chromium --set-user-color=&quot;$(get-terminal-color-rgb)&quot;
 
@@ -1097,11 +1064,11 @@ i3 = i3ipc.Connection()
 i3.on(&quot;workspace::focus&quot;, on_workspace_focus)
 i3.main()
 </code></pre>
-<h2 id="whats-next">What's Next?</h2>
+<h2 id="current-state">Current State</h2>
 <h3 id="upstream-progress">Upstream Progress</h3>
 <p>The direct CLI approach (<span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ABANDONED</span> <a href="https://crrev.com/c/6832165"><strong>CL 6832165</strong></a>) was superseded by the policy-based solution (<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://crrev.com/c/6900896"><strong>CL 6900896</strong></a>), which landed in Chrome 142.</p>
 <h3 id="extended-features">Extended Features</h3>
-<p>The complete feature set includes:</p>
+<p>The direct CLI prototype includes:</p>
 <ul>
 <li><strong>Material variants</strong>: tonal_spot, neutral, vibrant, expressive</li>
 <li><strong>Color schemes</strong>: light, dark, system</li>
@@ -1110,8 +1077,8 @@ i3.main()
 <li><strong>GM3 color generation</strong>: Full Material Design 3 palette from seed color</li>
 </ul>
 <h3 id="other-browsers">Other Browsers</h3>
-<p>Brave has shown interest in downstream landing our patch.</p>
-<h2 id="try-it-yourself">Try It Yourself</h2>
+<p>Brave has discussed downstream use of the direct CLI patch.</p>
+<h2 id="using-the-downstream-build">Using the Downstream Build</h2>
 <h3 id="for-archomarchy-users">For Arch/Omarchy Users</h3>
 <p>The AUR package is available (replaces the standard Chromium):</p>
 <pre><code class="language-sh">yay -S omarchy-chromium-bin
@@ -1124,7 +1091,7 @@ chromium --set-user-color=&quot;78,205,196&quot; \
 chromium --set-default-theme
 </code></pre>
 <hr>
-<p><em>Sometimes the best features are already there, waiting to be exposed. Thanks to DHH&#39;s vision and investment, Omarchy users don&#39;t have to wait.</em></p>
+<p><em>The upstream solution uses Chrome&#39;s existing policy system; the downstream fork retains the more direct theme CLI.</em></p>
 <p><strong>Links:</strong></p>
 <ul>
 <li><a href="https://x.com/hjanuschka/status/1954552977814855845">Original Tweet</a></li>
@@ -1186,25 +1153,25 @@ chromium --set-default-theme
       { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
       { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
       { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
-      { icon: '📄', name: 'Blog: Installed Web Apps on the OS', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+      { icon: '📄', name: 'Blog: Platform Integration for Installed Web Apps', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
       { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
       { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
-      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
-      { icon: '📄', name: 'Blog: Shrinking Binary Size with Tables', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
-      { icon: '📄', name: 'Blog: Four Dangling Pointers', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder', 'i2s', 'ship', '155'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+      { icon: '📄', name: 'Blog: Compact Generated Tables for Binary Size', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+      { icon: '📄', name: 'Blog: Member Order and Dangling raw_ptrs', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
       { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
-      { icon: '📄', name: 'Blog: DevTools Papercuts', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+      { icon: '📄', name: 'Blog: Small DevTools Usability Fixes', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
       { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
       { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
       { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
       { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
-      { icon: '📄', name: 'Blog: Another Try at HTTPS-RR', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
-      { icon: '📄', name: 'Blog: 2025 Chromium Wrap-Up', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
-      { icon: '📄', name: 'Blog: JPEG XL Returns to Chrome', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
-      { icon: '📄', name: 'Blog: Tab Focus Feature', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
-      { icon: '📄', name: 'Blog: Dynamic Chrome Themes', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
-      { icon: '📄', name: 'Blog: Wayland Crash Debugging', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: A Smaller HTTPS-RR Implementation', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
+      { icon: '📄', name: 'Blog: Chromium Work in 2025', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: Integrating JPEG XL with jxl-rs', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Chrome --focus Flag', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Refreshing Chrome Theme Policies', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Color-Management Crash', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
       { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
       { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
       { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },
