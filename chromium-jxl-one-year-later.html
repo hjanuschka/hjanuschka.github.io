@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-26",
+    "dateModified": "2026-08-27",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -931,7 +931,7 @@
 <p>The jxl-rs codestream parser eagerly reads input into a 4096-byte internal buffer while parsing headers. Chromium&#39;s decode loop saw that all <em>external</em> input had been consumed and stopped calling <code>process()</code>. But jxl-rs still had buffered bytes to drain. The result: no partial image until the network delivered more than the first 4096 bytes.</p>
 <p>The fix is subtle but simple: external input being empty does not mean the decoder has no work. Keep calling <code>process()</code> while the internal parser can make progress.</p>
 <ul>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8257552"><strong>Fix JXL progressive rendering stalling on the first 4096 bytes</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8257552"><strong>Add regression tests for JXL progressive decoding below 4096 bytes</strong></a></li>
 </ul>
 <p>A related bug happened at the other end of initialization: Chromium tried to flush partial pixels before the decoder had selected a pixel format. jxl-rs correctly aborted at an internal <code>unwrap()</code>. The browser now waits until basic image information exists before flushing.</p>
 <ul>
@@ -944,9 +944,9 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8008326"><strong>Fix RepetitionCount before header parsing</strong></a></li>
 </ul>
 <h2 id="more-cores-same-decoder">More Cores, Same Decoder</h2>
-<p>Large images should not decode on one core when the Rust decoder already supports parallel work. The next performance step is wiring jxl-rs&#39;s parallel runner into Chromium&#39;s decode path rather than implementing a second threading model around it.</p>
+<p>Large images should not decode on one core when the Rust decoder already supports parallel work. Chromium now wires jxl-rs&#39;s parallel runner into the decode path rather than implementing a second threading model around it.</p>
 <ul>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8177171"><strong>Enable multi-threaded JXL decoding via the jxl-rs parallel runner</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8177171"><strong>Enable multi-threaded JXL decoding via the jxl-rs parallel runner</strong></a></li>
 </ul>
 <p>The decoder itself also moved forward through the normal Rust roll from 0.4.3 to 0.5.1.</p>
 <ul>

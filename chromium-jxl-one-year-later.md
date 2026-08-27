@@ -84,7 +84,7 @@ The jxl-rs codestream parser eagerly reads input into a 4096-byte internal buffe
 
 The fix is subtle but simple: external input being empty does not mean the decoder has no work. Keep calling `process()` while the internal parser can make progress.
 
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Fix JXL progressive rendering stalling on the first 4096 bytes**](https://chromium-review.googlesource.com/c/chromium/src/+/8257552)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Add regression tests for JXL progressive decoding below 4096 bytes**](https://chromium-review.googlesource.com/c/chromium/src/+/8257552)
 
 A related bug happened at the other end of initialization: Chromium tried to flush partial pixels before the decoder had selected a pixel format. jxl-rs correctly aborted at an internal `unwrap()`. The browser now waits until basic image information exists before flushing.
 
@@ -100,9 +100,9 @@ The JXL path used to `CHECK` that `basic_info_` existed. A valid streaming seque
 
 ## More Cores, Same Decoder
 
-Large images should not decode on one core when the Rust decoder already supports parallel work. The next performance step is wiring jxl-rs's parallel runner into Chromium's decode path rather than implementing a second threading model around it.
+Large images should not decode on one core when the Rust decoder already supports parallel work. Chromium now wires jxl-rs's parallel runner into the decode path rather than implementing a second threading model around it.
 
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Enable multi-threaded JXL decoding via the jxl-rs parallel runner**](https://chromium-review.googlesource.com/c/chromium/src/+/8177171)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Enable multi-threaded JXL decoding via the jxl-rs parallel runner**](https://chromium-review.googlesource.com/c/chromium/src/+/8177171)
 
 The decoder itself also moved forward through the normal Rust roll from 0.4.3 to 0.5.1.
 
