@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JPEG XL, One Year Later - Helmut Januschka</title>
-  <meta name="description" content="Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.">
+  <meta name="description" content="Getting a decoder into Chrome was one milestone. Hardening it and enabling it by default completed the next stage.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -12,7 +12,7 @@
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "JPEG XL, One Year Later",
-    "description": "Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.",
+    "description": "Getting a decoder into Chrome was one milestone. Hardening it and enabling it by default completed the next stage.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-27",
+    "dateModified": "2026-09-02",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -47,7 +47,7 @@
 
   <!-- Open Graph -->
   <meta property="og:title" content="JPEG XL, One Year Later">
-  <meta property="og:description" content="Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.">
+  <meta property="og:description" content="Getting a decoder into Chrome was one milestone. Hardening it and enabling it by default completed the next stage.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/chromium-jxl-one-year-later.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -58,7 +58,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
   <meta name="twitter:title" content="JPEG XL, One Year Later">
-  <meta name="twitter:description" content="Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.">
+  <meta name="twitter:description" content="Getting a decoder into Chrome was one milestone. Hardening it and enabling it by default completed the next stage.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/chromium-jxl-one-year-later.html">
 
@@ -873,17 +873,16 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.</em></p>
-<p><strong>Status:</strong> ✅ Approved to Ship - Targeting Chrome 155</p>
+<p><em>Getting a decoder into Chrome was one milestone. Hardening it and enabling it by default completed the next stage.</em></p>
+<p><strong>Status:</strong> ✅ Enabled by Default for Chrome 155</p>
 <h2 id="after-the-initial-integration">After the Initial Integration</h2>
 <p>The original <a href="/chromium-jxl-resurrection.html">JPEG XL integration</a> added a memory-safe Rust decoder. Since then the work has covered ordinary browser concerns: partial input, paint requests arriving before headers, threading, MIME sniffing, and fuzzers.</p>
 <p>That is a good sign. A codec starts feeling native when its bugs are the same unglamorous bugs every mature decoder has to solve.</p>
 <h2 id="intent-to-ship-and-chrome-155">Intent to Ship and Chrome 155</h2>
 <p>We filed the <a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/-gDojQbDPRI">Intent to Ship</a>, and the Blink API Owners gate received the required three LGTMs.</p>
-<p><a href="https://chromestatus.com/feature/5114042131808256">ChromeStatus</a> targets JPEG XL decoding for <strong>Chrome 155</strong> on desktop, Android, and WebView. Assuming the remaining release work proceeds as expected, support should begin rolling out with M155.</p>
-<p>The flag-flip CL is now in review:</p>
+<p><a href="https://chromestatus.com/feature/5114042131808256">ChromeStatus</a> targets JPEG XL decoding for <strong>Chrome 155</strong> on desktop, Android, and WebView. The default-enable change has landed for that release:</p>
 <ul>
-<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8279712"><strong>Enable JPEG XL decoding by default</strong></a></li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8279712"><strong>Enable JPEG XL decoding by default</strong></a></li>
 </ul>
 <p>It enables both decoding and <code>image/jxl</code> advertising in the <code>Accept</code> header by default. <code>kJXLImageFormat</code> remains as a kill switch, and the virtual test suite is inverted to exercise the disabled configuration after the default changes. The CL also keeps incremental animation decoding sequential until the pixel decoder is initialized, avoiding an invalid early seek.</p>
 <p>The I2S review covers the decoder&#39;s security model and test coverage: Rust memory safety, renderer sandboxing, Chromium and upstream fuzzing, controlled allocation failures, conformance tests, and deterministic testing of parallel schedules.</p>
@@ -953,7 +952,7 @@
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8156062"><strong>Roll jxl-rs 0.4.3 to 0.5.1</strong></a></li>
 </ul>
 <h2 id="the-less-visible-chromium-work">The Less Visible Chromium Work</h2>
-<p>MIME sniffing now handles complete image data shorter than the longest known signature, stale web-test expectations are gone, and the feature flag remains available while the implementation matures. The Chromium AVIF and JXL fuzzers also dropped an invalid <code>timeout_per_input</code> option so ClusterFuzz runs the configuration it actually understands.</p>
+<p>MIME sniffing now handles complete image data shorter than the longest known signature, stale web-test expectations are gone, and the feature flag remains available as a kill switch after default enablement. The Chromium AVIF and JXL fuzzers also dropped an invalid <code>timeout_per_input</code> option so ClusterFuzz runs the configuration it actually understands.</p>
 <ul>
 <li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8187036"><strong>Remove invalid timeout_per_input from AVIF and JXL fuzzers</strong></a></li>
 </ul>

@@ -4,9 +4,9 @@ category: "Chromium"
 tech: "Rust / C++ / Images"
 ---
 
-*Getting a decoder into Chrome is one milestone. Hardening it and preparing a default rollout is the next one.*
+*Getting a decoder into Chrome was one milestone. Hardening it and enabling it by default completed the next stage.*
 
-**Status:** ✅ Approved to Ship - Targeting Chrome 155
+**Status:** ✅ Enabled by Default for Chrome 155
 
 ## After the Initial Integration
 
@@ -18,11 +18,9 @@ That is a good sign. A codec starts feeling native when its bugs are the same un
 
 We filed the [Intent to Ship](https://groups.google.com/a/chromium.org/g/blink-dev/c/-gDojQbDPRI), and the Blink API Owners gate received the required three LGTMs.
 
-[ChromeStatus](https://chromestatus.com/feature/5114042131808256) targets JPEG XL decoding for **Chrome 155** on desktop, Android, and WebView. Assuming the remaining release work proceeds as expected, support should begin rolling out with M155.
+[ChromeStatus](https://chromestatus.com/feature/5114042131808256) targets JPEG XL decoding for **Chrome 155** on desktop, Android, and WebView. The default-enable change has landed for that release:
 
-The flag-flip CL is now in review:
-
-- <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> [**Enable JPEG XL decoding by default**](https://chromium-review.googlesource.com/c/chromium/src/+/8279712)
+- <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Enable JPEG XL decoding by default**](https://chromium-review.googlesource.com/c/chromium/src/+/8279712)
 
 It enables both decoding and `image/jxl` advertising in the `Accept` header by default. `kJXLImageFormat` remains as a kill switch, and the virtual test suite is inverted to exercise the disabled configuration after the default changes. The CL also keeps incremental animation decoding sequential until the pixel decoder is initialized, avoiding an invalid early seek.
 
@@ -110,7 +108,7 @@ The decoder itself also moved forward through the normal Rust roll from 0.4.3 to
 
 ## The Less Visible Chromium Work
 
-MIME sniffing now handles complete image data shorter than the longest known signature, stale web-test expectations are gone, and the feature flag remains available while the implementation matures. The Chromium AVIF and JXL fuzzers also dropped an invalid `timeout_per_input` option so ClusterFuzz runs the configuration it actually understands.
+MIME sniffing now handles complete image data shorter than the longest known signature, stale web-test expectations are gone, and the feature flag remains available as a kill switch after default enablement. The Chromium AVIF and JXL fuzzers also dropped an invalid `timeout_per_input` option so ClusterFuzz runs the configuration it actually understands.
 
 - <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> [**Remove invalid timeout_per_input from AVIF and JXL fuzzers**](https://chromium-review.googlesource.com/c/chromium/src/+/8187036)
 
