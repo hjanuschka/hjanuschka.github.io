@@ -4,15 +4,13 @@ category: "Chromium"
 tech: "Rust / C++"
 ---
 
-*Why Chromium selected a Rust decoder, how it was integrated, and what remained behind the feature flag.*
+*Why Chromium selected a Rust decoder, how it was integrated, and how it reached default enablement.*
 
-**Status:** ✅ Landed behind a flag in Chromium Canary 145.0.7632.0+
-
-**Update:** The [Intent to Ship is approved](/chromium-jxl-one-year-later.html), and the default-enable CL targets Chrome 155.
+**Status:** ✅ Enabled by Default in Chrome 155
 
 <div style="margin: 24px 0; padding: 16px 20px; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 8px;">
-  <strong style="color: #22c55e;">Implementation update</strong>
-  <p style="margin: 8px 0 0 0;">JPEG XL decoding is available in Canary 145.0.7632.0+ through <code>chrome://flags/#enable-jxl-image-format</code>.</p>
+  <strong style="color: #22c55e;">Whoop whoop: enabled by default!</strong>
+  <p style="margin: 8px 0 0 0;">Starting with Chrome Canary <code>>=155.0.8040.0</code>, JPEG XL decoding and <code>image/jxl</code> advertising are enabled without changing a flag. The <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8279712">default-enable CL</a> has landed. Read the <a href="/chromium-jxl-one-year-later.html">one-year follow-up</a> for the hardening, fuzzing, and parallel-decoding work that prepared the rollout.</p>
 </div>
 
 ```snippet
@@ -223,6 +221,8 @@ Special thanks to [Luca Versari (veluca93)](https://github.com/veluca93) for rev
 ---
 
 **Resources:**
+- [JPEG XL, One Year Later: default enablement and hardening](/chromium-jxl-one-year-later.html)
+- [Default-enable CL 8279712](https://chromium-review.googlesource.com/c/chromium/src/+/8279712)
 - [Rick Byers' Announcement](https://groups.google.com/a/chromium.org/g/blink-dev/c/WjCKcBw219k/m/tdJGfuLQAAAJ)
 - [Tracking Bug: 462919304](https://issues.chromium.org/issues/462919304)
 - [Design Document](https://docs.google.com/document/d/1oT7K2h4Xf4E0ScUmsOQx0zXUVJj57qBwcsa3yK9SJr0/edit?tab=t.0)

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Integrating JPEG XL in Chromium with jxl-rs - Helmut Januschka</title>
-  <meta name="description" content="Why Chromium selected a Rust decoder, how it was integrated, and what remained behind the feature flag.">
+  <meta name="description" content="Why Chromium selected a Rust decoder, how it was integrated, and how it reached default enablement.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -12,7 +12,7 @@
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "Integrating JPEG XL in Chromium with jxl-rs",
-    "description": "Why Chromium selected a Rust decoder, how it was integrated, and what remained behind the feature flag.",
+    "description": "Why Chromium selected a Rust decoder, how it was integrated, and how it reached default enablement.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-08-26",
+    "dateModified": "2026-09-03",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -47,7 +47,7 @@
 
   <!-- Open Graph -->
   <meta property="og:title" content="Integrating JPEG XL in Chromium with jxl-rs">
-  <meta property="og:description" content="Why Chromium selected a Rust decoder, how it was integrated, and what remained behind the feature flag.">
+  <meta property="og:description" content="Why Chromium selected a Rust decoder, how it was integrated, and how it reached default enablement.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/chromium-jxl-resurrection.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -58,7 +58,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
   <meta name="twitter:title" content="Integrating JPEG XL in Chromium with jxl-rs">
-  <meta name="twitter:description" content="Why Chromium selected a Rust decoder, how it was integrated, and what remained behind the feature flag.">
+  <meta name="twitter:description" content="Why Chromium selected a Rust decoder, how it was integrated, and how it reached default enablement.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/chromium-jxl-resurrection.html">
 
@@ -873,12 +873,11 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>Why Chromium selected a Rust decoder, how it was integrated, and what remained behind the feature flag.</em></p>
-<p><strong>Status:</strong> ✅ Landed behind a flag in Chromium Canary 145.0.7632.0+</p>
-<p><strong>Update:</strong> The <a href="/chromium-jxl-one-year-later.html">Intent to Ship is approved</a>, and the default-enable CL targets Chrome 155.</p>
+<p><em>Why Chromium selected a Rust decoder, how it was integrated, and how it reached default enablement.</em></p>
+<p><strong>Status:</strong> ✅ Enabled by Default in Chrome 155</p>
 <div style="margin: 24px 0; padding: 16px 20px; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 8px;">
-  <strong style="color: #22c55e;">Implementation update</strong>
-  <p style="margin: 8px 0 0 0;">JPEG XL decoding is available in Canary 145.0.7632.0+ through <code>chrome://flags/#enable-jxl-image-format</code>.</p>
+  <strong style="color: #22c55e;">Whoop whoop: enabled by default!</strong>
+  <p style="margin: 8px 0 0 0;">Starting with Chrome Canary <code>>=155.0.8040.0</code>, JPEG XL decoding and <code>image/jxl</code> advertising are enabled without changing a flag. The <a href="https://chromium-review.googlesource.com/c/chromium/src/+/8279712">default-enable CL</a> has landed. Read the <a href="/chromium-jxl-one-year-later.html">one-year follow-up</a> for the hardening, fuzzing, and parallel-decoding work that prepared the rollout.</p>
 </div>
 
 <div class="youtube-embed">
@@ -1079,6 +1078,8 @@ const pngBytes = await decodeJxlToPng(jxlBytes);</code></pre>
 <hr>
 <p><strong>Resources:</strong></p>
 <ul>
+<li><a href="/chromium-jxl-one-year-later.html">JPEG XL, One Year Later: default enablement and hardening</a></li>
+<li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8279712">Default-enable CL 8279712</a></li>
 <li><a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/WjCKcBw219k/m/tdJGfuLQAAAJ">Rick Byers&#39; Announcement</a></li>
 <li><a href="https://issues.chromium.org/issues/462919304">Tracking Bug: 462919304</a></li>
 <li><a href="https://docs.google.com/document/d/1oT7K2h4Xf4E0ScUmsOQx0zXUVJj57qBwcsa3yK9SJr0/edit?tab=t.0">Design Document</a></li>
