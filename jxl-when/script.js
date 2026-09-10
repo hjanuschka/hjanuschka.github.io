@@ -1,4 +1,4 @@
-const TARGETS = { chrome: 155, firefox: 157 };
+const TARGETS = { chrome: 155, firefox: 158 };
 const DAY = 24 * 60 * 60 * 1000;
 
 function showCountdown(id, targetDate, currentVersion, targetVersion) {
@@ -14,7 +14,8 @@ function showCountdown(id, targetDate, currentVersion, targetVersion) {
     const days = Math.floor(remaining / DAY);
     const hours = Math.floor((remaining % DAY) / (60 * 60 * 1000));
     const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
-    element.innerHTML = `<strong>${days}d ${hours}h ${minutes}m</strong> until estimated stable`;
+    const dateLabel = targetDate.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+    element.innerHTML = `<strong>${days}d ${hours}h ${minutes}m</strong> until ${dateLabel} stable`; 
   }
 
   update();
@@ -22,43 +23,44 @@ function showCountdown(id, targetDate, currentVersion, targetVersion) {
 }
 
 async function loadChromeStatus() {
-  const fallback = { version: 154, date: new Date("2026-09-09T12:00:00Z") };
+  const fallback = { version: 154, targetDate: new Date("2026-10-06T00:00:00Z") };
   let release = fallback;
 
   try {
-    const response = await fetch("https://chromiumdash.appspot.com/fetch_releases?channel=Stable&platform=Windows&num=1");
-    if (!response.ok) throw new Error("Chrome status request failed");
-    const [data] = await response.json();
-    release = { version: Number(data.milestone), date: new Date(data.time) };
+    const [releaseResponse, scheduleResponse] = await Promise.all([
+      fetch("https://chromiumdash.appspot.com/fetch_releases?channel=Stable&platform=Windows&num=1"),
+      fetch(`https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone=${TARGETS.chrome}`),
+    ]);
+    if (!releaseResponse.ok || !scheduleResponse.ok) throw new Error("Chrome status request failed");
+    const [releaseData] = await releaseResponse.json();
+    const scheduleData = await scheduleResponse.json();
+    release = {
+      version: Number(releaseData.milestone),
+      targetDate: new Date(`${scheduleData.mstones[0].stable_date}Z`),
+    };
   } catch (error) {
     console.info("Using bundled Chrome release data.", error);
   }
 
   document.querySelector("#chrome-stable").textContent = `Stable ${release.version}`;
-  const targetDate = new Date(release.date.getTime() + Math.max(0, TARGETS.chrome - release.version) * 28 * DAY);
-  showCountdown("chrome", targetDate, release.version, TARGETS.chrome);
+  showCountdown("chrome", release.targetDate, release.version, TARGETS.chrome);
 }
 
 async function loadFirefoxStatus() {
-  const fallback = { version: 155, nextDate: new Date("2026-09-25T12:00:00Z") };
-  let release = fallback;
+  const targetDate = new Date("2026-10-13T00:00:00Z");
+  let version = 155;
 
   try {
     const response = await fetch("https://product-details.mozilla.org/1.0/firefox_versions.json");
     if (!response.ok) throw new Error("Firefox status request failed");
     const data = await response.json();
-    release = {
-      version: Number.parseInt(data.LATEST_FIREFOX_VERSION, 10),
-      nextDate: new Date(`${data.NEXT_RELEASE_DATE}T12:00:00Z`),
-    };
+    version = Number.parseInt(data.LATEST_FIREFOX_VERSION, 10);
   } catch (error) {
     console.info("Using bundled Firefox release data.", error);
   }
 
-  document.querySelector("#firefox-stable").textContent = `Stable ${release.version}`;
-  const releasesAfterNext = Math.max(0, TARGETS.firefox - release.version - 1);
-  const targetDate = new Date(release.nextDate.getTime() + releasesAfterNext * 28 * DAY);
-  showCountdown("firefox", targetDate, release.version, TARGETS.firefox);
+  document.querySelector("#firefox-stable").textContent = `Stable ${version}`;
+  showCountdown("firefox", targetDate, version, TARGETS.firefox);
 }
 
 function detectBrowser() {
