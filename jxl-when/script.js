@@ -66,7 +66,13 @@ function detectBrowser() {
   let browser = null;
   let label = "";
 
-  if (/Firefox\//.test(ua)) {
+  if (/Ladybird\//.test(ua)) {
+    browser = "ladybird";
+    label = "You are viewing in Ladybird";
+  } else if (/Servo\//.test(ua)) {
+    browser = "servo";
+    label = "You are viewing in Servo";
+  } else if (/Firefox\//.test(ua)) {
     browser = "firefox";
     label = "You are viewing in Firefox";
   } else if (/Edg\//.test(ua) || /Chrome\//.test(ua)) {
