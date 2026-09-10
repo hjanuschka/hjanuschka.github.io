@@ -194,6 +194,10 @@ h1 em {
 .countdown strong { color: var(--orange); font-size: 15px; }
 .issue-link { color: var(--ink); text-decoration: none; }
 .issue-link:hover { color: var(--orange); }
+.minor-links { display: flex; justify-content: space-between; gap: 8px; }
+.minor-links a { color: var(--ink); text-decoration: none; white-space: nowrap; }
+.minor-links a + a { color: var(--orange); }
+.minor-links a:hover { text-decoration: underline; }
 
 .demo {
   display: grid;
