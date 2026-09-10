@@ -94,13 +94,13 @@ h1 em {
 
 .browser-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   border-top: 1px solid var(--ink);
   border-left: 1px solid var(--ink);
 }
 
 .browser-card {
-  grid-column: span 2;
+  grid-column: span 4;
   min-height: 390px;
   padding: 28px;
   border-right: 1px solid var(--ink);
@@ -109,7 +109,20 @@ h1 em {
   overflow: hidden;
   transition: transform .25s ease, background-color .25s ease;
 }
-.browser-card:nth-last-child(-n + 2) { grid-column: span 3; }
+.browser-card.minor {
+  grid-column: span 3;
+  min-height: 330px;
+  padding: 22px;
+}
+.browser-card.minor:nth-child(4) {
+  grid-column: 4 / span 3;
+  border-left: 1px solid var(--ink);
+}
+.browser-card.minor:nth-child(5) { grid-column: 7 / span 3; }
+.browser-card.minor .browser-mark { width: 42px; height: 42px; }
+.browser-card.minor .browser-name { margin-top: 30px; }
+.browser-card.minor .version { font-size: 52px; }
+.browser-card.minor .countdown { left: 22px; right: 22px; bottom: 22px; }
 .browser-card:hover { background: rgba(255,255,255,.35); transform: translateY(-5px); }
 .browser-card.is-current::after {
   content: "Your browser";
@@ -246,7 +259,10 @@ footer { border-top: 1px solid var(--line); padding-top: 22px; display: flex; ju
   .intro { font-size: 16px; }
   .browser-grid { grid-template-columns: 1fr; }
   .browser-card,
-  .browser-card:nth-last-child(-n + 2) { grid-column: auto; min-height: 330px; }
+  .browser-card.minor,
+  .browser-card.minor:nth-child(4),
+  .browser-card.minor:nth-child(5) { grid-column: auto; min-height: 330px; }
+  .browser-card.minor:nth-child(4) { border-left: 0; }
   .browser-name { margin-top: 38px; }
   .demo { grid-template-columns: 1fr; padding: 60px 0; }
   .animation-demo { grid-template-columns: 1fr; padding: 60px 0; }
