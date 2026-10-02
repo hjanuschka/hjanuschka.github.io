@@ -884,35 +884,35 @@
 <p>Instead of one family glyph, you got 👨 👩 👧 👦 - four individual emoji stacked on top of each other. Same for the polar bear 🐻‍❄️ (which decomposed into a regular bear and a snowflake ❄️), the pirate flag 🏴‍☠️ (a plain black flag and a skull), and every other ZWJ sequence.</p>
 <p>The bug was <a href="https://issues.chromium.org/issues/41384307">filed in 2018</a> against Chrome 68: <em>&quot;Elements with writing-mode:tb-rl don&#39;t display ZWJ Emoji sequences expectedly.&quot;</em> It sat there for eight years while emoji ZWJ sequences only got more common.</p>
 <h2 id="try-it-live-samples">Try It: Live Samples</h2>
-<p>These render live in <strong>your</strong> browser, the same way the <a href="https://static.januschka.com/i-41384307/index.html">standalone sampler</a> does. The <strong>expected</strong> column is not live - it is a cropped <code>content_shell</code> baseline screenshot from the sampler, rendered with the patch applied. If your browser has the fix, the &quot;vertical, live&quot; column matches the screenshot; if not, it falls apart like the pre-fix column.</p>
+<p>The first two columns are real <code>content_shell</code> screenshots from the same patched build, with the <code>EmojiZWJVerticalOrientation</code> flag off (before) and on (after). The third column is live in <strong>your</strong> browser - if it has the fix, it matches the &quot;after&quot; shot; if not, it looks like &quot;before&quot;.</p>
 <div style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; align-items: flex-start; background: var(--bg-secondary); border-radius: 12px; padding: 24px; margin: 16px 0;">
   <div style="text-align: center;">
-    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">horizontal<br>(always worked)</div>
-    <div style="font-size: 32px; line-height: 1.4; border: 1px dashed var(--text-muted); border-radius: 8px; padding: 12px; min-height: 240px; display: flex; align-items: center;">👨‍👩‍👧‍👦</div>
+    <div style="font-size: 12px; color: #ef4444; margin-bottom: 8px;">before<br>(content_shell)</div>
+    <img src="/assets/emoji-vertical-zwj/before-family-vrl.png" alt="Pre-fix content_shell: four separate people stacked in vertical-rl" style="height: 169px; border: 1px dashed #ef4444; border-radius: 8px; background: #fff;">
   </div>
   <div style="text-align: center;">
-    <div style="font-size: 12px; color: var(--accent); margin-bottom: 8px;">vertical, live<br>(your browser)</div>
-    <div style="writing-mode: vertical-rl; font-size: 32px; line-height: 1.4; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; min-height: 240px; margin: 0 auto;">👨‍👩‍👧‍👦</div>
+    <div style="font-size: 12px; color: #6abf69; margin-bottom: 8px;">after<br>(content_shell)</div>
+    <img src="/assets/emoji-vertical-zwj/after-family-vrl.png" alt="Patched content_shell: one family glyph in vertical-rl" style="height: 52px; border: 1px solid #6abf69; border-radius: 8px; background: #fff;">
   </div>
   <div style="text-align: center;">
-    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">vertical, broken<br>(simulated, pre-fix)</div>
-    <div style="writing-mode: vertical-rl; font-size: 32px; line-height: 1.4; border: 1px dashed #ef4444; border-radius: 8px; padding: 12px; min-height: 240px; margin: 0 auto;">👨👩👧👦</div>
-  </div>
-  <div style="text-align: center;">
-    <div style="font-size: 12px; color: #6abf69; margin-bottom: 8px;">expected<br>(patched screenshot)</div>
-    <img src="/assets/emoji-vertical-zwj/expected-family-vrl.png" alt="Patched content_shell baseline: one family glyph in vertical-rl" style="height: 266px; border: 1px solid #6abf69; border-radius: 8px; background: #fff;">
+    <div style="font-size: 12px; color: var(--accent); margin-bottom: 8px;">live<br>(your browser)</div>
+    <div style="writing-mode: vertical-rl; font-size: 32px; line-height: 1.4; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; margin: 0 auto;">👨‍👩‍👧‍👦</div>
   </div>
 </div>
 
 <p>And in context, the way the original reporter hit it - emoji inside vertical Japanese text (&quot;The family is 👨‍👩‍👧‍👦&quot; / &quot;There are 🐻‍❄️ at the North Pole&quot;):</p>
 <div style="display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; background: var(--bg-secondary); border-radius: 12px; padding: 24px; margin: 16px 0;">
   <div style="text-align: center;">
-    <div style="font-size: 12px; color: var(--accent); margin-bottom: 8px;">live (your browser)</div>
-    <div style="writing-mode: vertical-rl; font-size: 22px; line-height: 1.6; min-height: 260px; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; margin: 0 auto;">家族は👨‍👩‍👧‍👦です。<br>北極には🐻‍❄️がいる。</div>
+    <div style="font-size: 12px; color: #ef4444; margin-bottom: 8px;">before (content_shell)</div>
+    <img src="/assets/emoji-vertical-zwj/before-japanese-vrl.png" alt="Pre-fix content_shell: emoji confetti inside vertical Japanese text" style="height: 242px; border: 1px dashed #ef4444; border-radius: 8px; background: #fff;">
   </div>
   <div style="text-align: center;">
-    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">pre-fix: emoji confetti 💥</div>
-    <div style="writing-mode: vertical-rl; font-size: 22px; line-height: 1.6; min-height: 260px; border: 1px dashed #ef4444; border-radius: 8px; padding: 12px; margin: 0 auto;">家族は👨👩👧👦です。<br>北極には🐻❄️がいる。</div>
+    <div style="font-size: 12px; color: #6abf69; margin-bottom: 8px;">after (content_shell)</div>
+    <img src="/assets/emoji-vertical-zwj/after-japanese-vrl.png" alt="Patched content_shell: family and polar bear as single glyphs inside vertical Japanese text" style="height: 205px; border: 1px solid #6abf69; border-radius: 8px; background: #fff;">
+  </div>
+  <div style="text-align: center;">
+    <div style="font-size: 12px; color: var(--accent); margin-bottom: 8px;">live (your browser)</div>
+    <div style="writing-mode: vertical-rl; font-size: 22px; line-height: 1.6; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; margin: 0 auto;">家族は👨‍👩‍👧‍👦です。<br>北極には🐻‍❄️がいる。</div>
   </div>
 </div>
 
@@ -957,32 +957,24 @@ bool ExtendsGraphemeCluster(UChar32 character,
 }
 </code></pre>
 <p>Now the whole sequence stays in one Upright run, HarfBuzz shapes it in one pass, and the font&#39;s ligature does its job. The orientation still comes from the cluster&#39;s <em>first</em> character, exactly as UAX #50 prescribes for grapheme clusters.</p>
-<p>The GB11 condition matters for correctness: a ZWJ between two Latin letters (<code>a + ZWJ + b</code>) does <strong>not</strong> merge runs - only pictograph-to-pictograph joins do. There&#39;s a test for that, plus the family, the kiss sequence, and a kill switch via a runtime flag (<code>EmojiZWJVerticalOrientation</code>) in case something regresses:</p>
-<pre><code class="language-cpp">TEST_F(OrientationIteratorTest, EmojiZWJSequence) {
-  CHECK_ORIENTATION(
-      {{&quot;👩‍👩‍👧‍👦&quot;, OrientationIterator::kOrientationKeep}});
-}
-
-TEST_F(OrientationIteratorTest, ZeroWidthJoinerBetweenLatin) {
-  // A ZWJ that does not join two Extended_Pictographic characters keeps its
-  // own Rotated orientation.
-  CHECK_ORIENTATION(
-      {{&quot;a\U0000200Db&quot;, OrientationIterator::kOrientationRotateSideways}});
-}
-</code></pre>
+<p>The GB11 condition matters for correctness: a ZWJ between two Latin letters (<code>a + ZWJ + b</code>) does <strong>not</strong> merge runs - only pictograph-to-pictograph joins do. The new behaviour sits behind a runtime flag (<code>EmojiZWJVerticalOrientation</code>), on by default, as a kill switch in case something regresses.</p>
 <h2 id="more-victims-reunited">More Victims, Reunited</h2>
-<p>A small gallery of sequences that were being decomposed. Left of each pair: what pre-fix Chrome showed (simulated live). Right: the patched <code>content_shell</code> baseline, cropped from the <a href="https://static.januschka.com/i-41384307/index.html">sampler</a>.</p>
+<p>A small gallery of sequences that were being decomposed. Each triple is the same <code>content_shell</code> build with the flag off, with the flag on, and your own browser rendering it live.</p>
 <div style="display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; align-items: flex-start; background: var(--bg-secondary); border-radius: 12px; padding: 24px; margin: 16px 0;">
   <div style="text-align: center;">
     <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">pirate flag + polar bear</div>
     <div style="display: flex; gap: 12px; justify-content: center; align-items: flex-start;">
       <div>
-        <div style="font-size: 11px; color: #ef4444; margin-bottom: 4px;">pre-fix</div>
-        <div style="writing-mode: vertical-rl; font-size: 28px; line-height: 1.4; border: 1px dashed #ef4444; border-radius: 8px; padding: 8px; min-height: 230px;">🏴☠️🐻❄️</div>
+        <div style="font-size: 11px; color: #ef4444; margin-bottom: 4px;">before</div>
+        <img src="/assets/emoji-vertical-zwj/before-flag-bear-vrl.png" alt="Pre-fix content_shell: flag, skull, bear and snowflake stacked separately" style="height: 151px; border: 1px dashed #ef4444; border-radius: 8px; background: #fff;">
       </div>
       <div>
-        <div style="font-size: 11px; color: #6abf69; margin-bottom: 4px;">expected</div>
-        <img src="/assets/emoji-vertical-zwj/expected-flag-bear-vrl.png" alt="Patched baseline: pirate flag and polar bear as single glyphs in vertical-rl" style="height: 250px; border: 1px solid #6abf69; border-radius: 8px; background: #fff;">
+        <div style="font-size: 11px; color: #6abf69; margin-bottom: 4px;">after</div>
+        <img src="/assets/emoji-vertical-zwj/after-flag-bear-vrl.png" alt="Patched content_shell: pirate flag and polar bear as single glyphs in vertical-rl" style="height: 75px; border: 1px solid #6abf69; border-radius: 8px; background: #fff;">
+      </div>
+      <div>
+        <div style="font-size: 11px; color: var(--accent); margin-bottom: 4px;">live</div>
+        <div style="writing-mode: vertical-rl; font-size: 28px; line-height: 1.4; border: 1px solid var(--accent); border-radius: 8px; padding: 8px;">🏴‍☠️🐻‍❄️</div>
       </div>
     </div>
   </div>
@@ -990,12 +982,16 @@ TEST_F(OrientationIteratorTest, ZeroWidthJoinerBetweenLatin) {
     <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">technologist + farmer</div>
     <div style="display: flex; gap: 12px; justify-content: center; align-items: flex-start;">
       <div>
-        <div style="font-size: 11px; color: #ef4444; margin-bottom: 4px;">pre-fix</div>
-        <div style="writing-mode: vertical-rl; font-size: 28px; line-height: 1.4; border: 1px dashed #ef4444; border-radius: 8px; padding: 8px; min-height: 230px;">👩💻👨🌾</div>
+        <div style="font-size: 11px; color: #ef4444; margin-bottom: 4px;">before</div>
+        <img src="/assets/emoji-vertical-zwj/before-tech-farmer-vrl.png" alt="Pre-fix content_shell: woman, laptop, man and sheaf stacked separately" style="height: 148px; border: 1px dashed #ef4444; border-radius: 8px; background: #fff;">
       </div>
       <div>
-        <div style="font-size: 11px; color: #6abf69; margin-bottom: 4px;">expected</div>
-        <img src="/assets/emoji-vertical-zwj/expected-tech-farmer-vrl.png" alt="Patched baseline: technologist and farmer as single glyphs in vertical-rl" style="height: 250px; border: 1px solid #6abf69; border-radius: 8px; background: #fff;">
+        <div style="font-size: 11px; color: #6abf69; margin-bottom: 4px;">after</div>
+        <img src="/assets/emoji-vertical-zwj/after-tech-farmer-vrl.png" alt="Patched content_shell: technologist and farmer as single glyphs in vertical-rl" style="height: 82px; border: 1px solid #6abf69; border-radius: 8px; background: #fff;">
+      </div>
+      <div>
+        <div style="font-size: 11px; color: var(--accent); margin-bottom: 4px;">live</div>
+        <div style="writing-mode: vertical-rl; font-size: 28px; line-height: 1.4; border: 1px solid var(--accent); border-radius: 8px; padding: 8px;">👩‍💻👨‍🌾</div>
       </div>
     </div>
   </div>
