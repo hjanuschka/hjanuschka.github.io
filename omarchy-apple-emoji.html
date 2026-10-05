@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Emojis on Omarchy: Why fc-match Lies to You - Helmut Januschka</title>
+  <meta name="description" content="Installing the font is the easy 10%. Making it actually render is a fontconfig fallback-chain debugging session.">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Apple Emojis on Omarchy: Why fc-match Lies to You",
+    "description": "Installing the font is the easy 10%. Making it actually render is a fontconfig fallback-chain debugging session.",
+    "author": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com",
+      "sameAs": [
+        "https://github.com/hjanuschka",
+        "https://twitter.com/hjanuschka",
+        "https://linkedin.com/in/hjanuschka"
+      ]
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Helmut Januschka",
+      "url": "https://januschka.com"
+    },
+    "datePublished": "2024-08-01",
+    "dateModified": "2026-10-05",
+    "image": "https://januschka.com/og-image.png",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://januschka.com/omarchy-apple-emoji.html"
+    },
+    "keywords": "Linux, fontconfig, Chromium, Open Source, Browser Development",
+    "articleSection": "Technology",
+    "inLanguage": "en-US",
+    "potentialAction": {
+      "@type": "ReadAction",
+      "target": "https://januschka.com/omarchy-apple-emoji.html"
+    }
+  }
+  </script>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Apple Emojis on Omarchy: Why fc-match Lies to You">
+  <meta property="og:description" content="Installing the font is the easy 10%. Making it actually render is a fontconfig fallback-chain debugging session.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://januschka.com/omarchy-apple-emoji.html">
+  <meta property="og:image" content="https://januschka.com/og-image.png">
+  <meta property="og:site_name" content="Helmut Januschka">
+  <meta property="article:author" content="Helmut Januschka">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@hjanuschka">
+  <meta name="twitter:title" content="Apple Emojis on Omarchy: Why fc-match Lies to You">
+  <meta name="twitter:description" content="Installing the font is the easy 10%. Making it actually render is a fontconfig fallback-chain debugging session.">
+  <meta name="twitter:image" content="https://januschka.com/og-image.png">
+  <link rel="canonical" href="https://www.januschka.com/omarchy-apple-emoji.html">
+
+  <meta name="color-scheme" content="dark light">
+  <meta name="color-scheme" content="dark light">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"></noscript>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root,
+    [data-theme="dark"] {
+      --bg: #121212;
+      --bg-light: #1e1e1e;
+      --bg-lighter: #2a2a2a;
+      --bg-bar: #2a2a2a;
+      --text: #bebebe;
+      --text-dim: #8a8a8d;
+      --accent: #FFC107;
+      --accent-dim: #e68e0d;
+      --accent-glow: rgba(255, 193, 7, 0.35);
+      --accent-grid: rgba(255, 193, 7, 0.06);
+      --border: #333333;
+      --orange: #D35F5F;
+      --green: #6ec06e;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f5f0;
+      --bg-light: #ffffff;
+      --bg-lighter: #ececec;
+      --bg-bar: #ececec;
+      --text: #1f1f1f;
+      --text-dim: #6a6a6a;
+      --accent: #c98a00;
+      --accent-dim: #a36d00;
+      --accent-glow: rgba(201, 138, 0, 0.30);
+      --accent-grid: rgba(201, 138, 0, 0.10);
+      --border: #d8d4c8;
+      --orange: #b14b4b;
+      --green: #2f8f3f;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+      --scan: rgba(0, 0, 0, 0.06);
+      --scan-blend: multiply;
+    }
+
+    [data-theme="blue"] {
+      --bg: #0d1117;
+      --bg-light: #161b22;
+      --bg-lighter: #21262d;
+      --bg-bar: #21262d;
+      --text: #ffffff;
+      --text-dim: #7d8590;
+      --accent: #58a6ff;
+      --accent-dim: #1f6feb;
+      --accent-glow: rgba(88, 166, 255, 0.30);
+      --accent-grid: rgba(88, 166, 255, 0.08);
+      --border: #30363d;
+      --orange: #ff7b72;
+      --green: #56d364;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
+    }
+
+    [data-theme="osaka-jade"] {
+      --bg: #111c18;
+      --bg-light: #23372B;
+      --bg-lighter: #53685B;
+      --bg-bar: #1b2b23;
+      --text: #C1C497;
+      --text-dim: #9eebb3;
+      --accent: #2DD5B7;
+      --accent-dim: #549e6a;
+      --accent-glow: rgba(45, 213, 183, 0.30);
+      --accent-grid: rgba(45, 213, 183, 0.08);
+      --border: #509475;
+      --orange: #FF5345;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
+    }
+
+    [data-theme="purple-moon"] {
+      --bg: #020007;
+      --bg-light: #37277d;
+      --bg-lighter: #643aad;
+      --bg-bar: #211650;
+      --text: #ffffff;
+      --text-dim: #b895dd;
+      --accent: #9b49c8;
+      --accent-dim: #9845c6;
+      --accent-glow: rgba(155, 73, 200, 0.35);
+      --accent-grid: rgba(155, 73, 200, 0.08);
+      --border: #9865cf;
+      --orange: #cd9ce1;
+      --green: #9eebb3;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+      --scan: rgba(0, 0, 0, 0.18);
+      --scan-blend: multiply;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Navigation */
+    .nav {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 15px 0;
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 16px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      border-color: var(--accent);
+      background: var(--bg);
+    }
+
+    /* Blog Post Styles */
+    .blog-header {
+      background: var(--bg-light);
+      border-bottom: 3px solid var(--accent);
+      padding: 40px 0;
+      margin-bottom: 40px;
+    }
+
+    .blog-title {
+      font-size: 32px;
+      color: var(--accent);
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+
+    .blog-meta {
+      display: flex;
+      gap: 20px;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    .blog-content {
+      background: var(--bg-light);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      margin-bottom: 40px;
+    }
+
+    /* Markdown Content Styles */
+    .blog-content h1 {
+      color: var(--accent);
+      font-size: 28px;
+      margin: 30px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content h2 {
+      color: var(--orange);
+      font-size: 24px;
+      margin: 30px 0 15px;
+    }
+
+    .blog-content h3 {
+      color: var(--accent);
+      font-size: 20px;
+      margin: 25px 0 15px;
+    }
+
+    .blog-content p {
+      margin: 15px 0;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .blog-content a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .blog-content a:hover {
+      color: var(--orange);
+      border-bottom-color: var(--orange);
+    }
+
+    .blog-content ul, .blog-content ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+
+    .blog-content li {
+      margin: 8px 0;
+      line-height: 1.8;
+    }
+
+    .blog-content code {
+      background: var(--bg);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .blog-content pre {
+      background: #1d1f21 !important;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 20px !important;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    .blog-content pre code {
+      background: none !important;
+      color: #c5c8c6 !important;
+      padding: 0;
+      text-shadow: none !important;
+    }
+
+    /* Override Prism theme colors for better integration */
+    .token.comment,
+    .token.prolog,
+    .token.doctype,
+    .token.cdata {
+      color: #969896 !important;
+    }
+
+    .token.punctuation {
+      color: #c5c8c6 !important;
+    }
+
+    .token.property,
+    .token.tag,
+    .token.boolean,
+    .token.number,
+    .token.constant,
+    .token.symbol,
+    .token.deleted {
+      color: #cc6666 !important;
+    }
+
+    .token.selector,
+    .token.attr-name,
+    .token.string,
+    .token.char,
+    .token.builtin,
+    .token.inserted {
+      color: #b5bd68 !important;
+    }
+
+    .token.operator,
+    .token.entity,
+    .token.url,
+    .language-css .token.string,
+    .style .token.string {
+      color: #8abeb7 !important;
+    }
+
+    .token.atrule,
+    .token.attr-value,
+    .token.keyword {
+      color: #b294bb !important;
+    }
+
+    .token.function,
+    .token.class-name {
+      color: #81a2be !important;
+    }
+
+    .token.regex,
+    .token.important,
+    .token.variable {
+      color: #de935f !important;
+    }
+
+    .blog-content blockquote {
+      border-left: 4px solid var(--accent);
+      padding-left: 20px;
+      margin: 20px 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content em {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .blog-content strong {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* Table styles */
+    .blog-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .blog-content thead,
+    .blog-content tbody,
+    .blog-content tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .blog-content th {
+      background: var(--bg-lighter);
+      color: var(--accent);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blog-content td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .blog-content tr:last-child td {
+      border-bottom: none;
+    }
+
+    .blog-content tr:hover {
+      background: var(--bg-light);
+    }
+
+    /* Mobile table responsiveness */
+    @media (max-width: 768px) {
+      .blog-content table {
+        font-size: 11px;
+        border: none;
+      }
+
+      .blog-content thead {
+        display: none;
+      }
+
+      .blog-content tbody,
+      .blog-content tr {
+        display: block;
+        width: 100%;
+      }
+
+      .blog-content tr {
+        margin-bottom: 15px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--bg);
+      }
+
+      .blog-content td {
+        display: block;
+        text-align: left;
+        padding: 8px 0;
+        border: none;
+        position: relative;
+        padding-left: 40%;
+      }
+
+      .blog-content td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 38%;
+        padding-right: 10px;
+        font-weight: bold;
+        color: var(--accent);
+        text-align: left;
+      }
+
+      /* First column (Image name) */
+      .blog-content td:nth-of-type(1):before {
+        content: "Image";
+      }
+
+      /* Second column (Size) */
+      .blog-content td:nth-of-type(2):before {
+        content: "Size";
+      }
+
+      /* Third column (Before) */
+      .blog-content td:nth-of-type(3):before {
+        content: "Before";
+      }
+
+      /* Fourth column (After) */
+      .blog-content td:nth-of-type(4):before {
+        content: "After";
+      }
+
+      /* Fifth column (C++) */
+      .blog-content td:nth-of-type(5):before {
+        content: "C++";
+      }
+
+      /* Sixth column (Speedup) */
+      .blog-content td:nth-of-type(6):before {
+        content: "Speedup";
+      }
+    }
+
+    /* Snippet blocks for inline HTML */
+    .snippet-block {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .snippet-block img {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    /* YouTube embed container */
+    .youtube-embed {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      margin: 30px 0;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .youtube-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Gravatar in nav */
+    .gravatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    /* Status indicator */
+    .status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-light);
+      border-top: 3px solid var(--accent);
+      padding: 30px 0;
+      margin-top: 60px;
+      text-align: center;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-dim);
+    }
+
+    .badge {
+      background: var(--bg-lighter);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    /* Command Palette */
+    .command-palette {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+    .command-palette.hidden { display: none; }
+    .command-palette-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+    .command-palette-modal {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 20px;
+      background: var(--bg-light);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent);
+      overflow: hidden;
+    }
+    .command-palette-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .command-palette-header .prompt {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .command-palette-header input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+    }
+    .command-palette-header input::placeholder { color: var(--text-dim); }
+    .command-palette-header kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-results {
+      list-style: none;
+      max-height: 320px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 8px;
+    }
+    .command-result {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+    .command-result:hover, .command-result.selected {
+      background: var(--bg-lighter);
+    }
+    .command-result .icon { font-size: 16px; }
+    .command-result .name { flex: 1; color: var(--text); }
+    .command-palette-footer {
+      display: flex;
+      gap: 20px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .command-palette-footer kbd {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 5px;
+      margin-right: 4px;
+    }
+
+
+    /* RunUntil-inspired refresh */
+    body {
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--accent-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 8%, black 92%, transparent 100%);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -160px;
+      left: 50%;
+      width: min(900px, 120vw);
+      height: 520px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+      filter: blur(50px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* RunUntil mouse-trail glyphs */
+    .glyph {
+      position: fixed;
+      pointer-events: none;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      opacity: 0.9;
+      z-index: 5;
+      animation: fadeglyph 900ms ease-out forwards;
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    @keyframes fadeglyph {
+      0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0;   transform: translate(-50%, -150%) scale(0.6); }
+    }
+
+    .nav, .blog-header, article, .footer, .command-palette {
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav, .blog-header, .footer {
+      border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .nav { border-bottom-width: 1px; }
+
+    .blog-header {
+      border-bottom-width: 1px;
+      background: linear-gradient(180deg, var(--bg-light), rgba(0, 0, 0, 0));
+    }
+
+    .blog-title { text-shadow: 0 0 22px var(--accent-glow); }
+
+    .blog-content {
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      background: var(--bg-light);
+    }
+
+    .blog-content pre {
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .blog-content code { background: var(--bg); }
+
+    .theme-menu, .command-palette-modal {
+      background: var(--bg-bar);
+      border-color: var(--border);
+    }
+
+    .footer { border-top-width: 1px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .status { animation: none; }
+      * { scroll-behavior: auto !important; }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .blog-title {
+        font-size: 24px;
+      }
+
+      .nav-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .nav-content > div {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .nav-links {
+        gap: 15px;
+      }
+
+      .theme-switcher {
+        justify-content: center;
+      }
+
+      .blog-content {
+        padding: 20px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-content">
+        <div class="nav-brand">
+          <img src="https://gravatar.com/avatar/7f3d8f25d208327860bdfebf145e481b?s=64"
+               alt="Helmut Januschka"
+               class="gravatar"
+               width="32" height="32">
+          <span class="status"></span>
+          hjanuschka@world
+        </div>
+        <div style="display: flex; align-items: center; gap: 30px;">
+          <div class="nav-links">
+            <a href="/">← Back to Home</a>
+            <a href="/#projects">Projects</a>
+            <a href="/#contact">Contact</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Blog Header -->
+  <div class="blog-header">
+    <div class="container">
+      <h1 class="blog-title">Apple Emojis on Omarchy: Why fc-match Lies to You</h1>
+      <div class="blog-meta">
+        <span>⚡ Linux</span>
+        <span>🔧 fontconfig</span>
+        <span>👤 Helmut Januschka</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Content -->
+  <article class="container">
+    <div class="blog-content">
+<p><em>Installing the font is the easy 10%. Making it actually render is a fontconfig fallback-chain debugging session.</em></p>
+<hr>
+<h2 id="the-goal">The Goal</h2>
+<p>Omarchy ships with Noto Color Emoji, like most Linux distros. If your muscle<br>memory (and taste) comes from macOS, you want Apple Color Emoji everywhere:<br>the browser, Slack, the Omarchy emoji picker, the bar.</p>
+<p>The AUR has you covered -- sort of:</p>
+<pre><code class="language-bash">yay -S ttf-apple-emoji
+fc-cache -f
+</code></pre>
+<p>The package even ships a ready-made fontconfig at<br><code>/usr/share/fontconfig/conf.avail/75-apple-color-emoji.conf</code> and tells you to<br>symlink it:</p>
+<pre><code class="language-bash">sudo ln -sf /usr/share/fontconfig/conf.avail/75-apple-color-emoji.conf \
+  /etc/fonts/conf.d/75-apple-color-emoji.conf
+fc-cache -f
+</code></pre>
+<p>And now the obvious verification <em>passes</em>:</p>
+<pre><code>$ fc-match emoji
+apple-color-emoji.ttf: &quot;Apple Color Emoji&quot; &quot;Regular&quot;
+$ fc-match &quot;Noto Color Emoji&quot;
+apple-color-emoji.ttf: &quot;Apple Color Emoji&quot; &quot;Regular&quot;
+</code></pre>
+<p>Ship it? Not so fast. Open the emoji picker and the pistol emoji is still<br>Noto&#39;s orange toy, not Apple&#39;s green water gun. 🔫</p>
+<h2 id="why-fc-match-lies">Why fc-match Lies</h2>
+<p><code>fc-match emoji</code> answers the question <em>&quot;if an app explicitly asks for the<br>family &#39;emoji&#39;, what do you give it?&quot;</em>. But that&#39;s not how emoji rendering<br>works in practice. Your terminal, the Omarchy shell (Quickshell/Qt), and<br>Chromium all render text in a <strong>UI font</strong> -- and when that font has no glyph<br>for 😀, fontconfig walks a <em>fallback chain</em>.</p>
+<p>The question you actually need to ask is: <em>&quot;for this codepoint, starting from<br>my UI font, which font wins?&quot;</em> That&#39;s <code>fc-match -s</code> with a charset:</p>
+<pre><code>$ fc-match -s &quot;CaskaydiaMono Nerd Font:charset=1f600&quot; | head -3
+NotoColorEmoji.ttf: &quot;Noto Color Emoji&quot; &quot;Regular&quot;
+apple-color-emoji.ttf: &quot;Apple Color Emoji&quot; &quot;Regular&quot;
+fa-regular-400.woff2: &quot;Font Awesome 7 Free&quot; &quot;Regular&quot;
+</code></pre>
+<p>Noto first. Apple second. The symlinked conf did remap <em>explicit requests</em><br>for &quot;Noto Color Emoji&quot; -- but during glyph fallback nobody requests any<br>family by name, so those <code>&lt;match&gt;</code> rules never fire.</p>
+<h2 id="finding-the-culprits">Finding the Culprits</h2>
+<p>Who is pinning Noto ahead? Grep the enabled fontconfig chain:</p>
+<pre><code class="language-bash">grep -rl &quot;Noto Color Emoji&quot; /etc/fonts/conf.d/ /usr/share/fontconfig/conf.*
+</code></pre>
+<p>Two offenders, both processed <em>before</em> the Apple conf (lower numbers win the<br>pattern-building race):</p>
+<p><strong><code>50-omarchy.conf</code></strong> -- Omarchy&#39;s own font config appends Noto to every<br>generic family via accept-aliases:</p>
+<pre><code class="language-xml">&lt;alias&gt;
+  &lt;family&gt;sans-serif&lt;/family&gt;
+  &lt;accept&gt;
+    &lt;family&gt;JetBrainsMono Nerd Font&lt;/family&gt;
+    &lt;family&gt;Noto Color Emoji&lt;/family&gt;
+  &lt;/accept&gt;
+&lt;/alias&gt;
+</code></pre>
+<p><strong><code>60-generic.conf</code></strong> -- fontconfig&#39;s stock emoji preference list, Noto<br>before Apple:</p>
+<pre><code class="language-xml">&lt;family&gt;Noto Color Emoji&lt;/family&gt; &lt;!-- Google --&gt;
+&lt;family&gt;Apple Color Emoji&lt;/family&gt; &lt;!-- Apple --&gt;
+</code></pre>
+<p>Both files are package-owned. Editing them works until the next<br><code>pacman -Syu</code> or <code>omarchy update</code> silently reverts your change.</p>
+<h2 id="the-fix-reject-dont-reorder">The Fix: Reject, Don't Reorder</h2>
+<p>Instead of fighting the ordering, remove Noto from the race entirely. Apple<br>Color Emoji covers the full emoji set, and on Arch <code>noto-fonts-emoji</code> has no<br>reverse dependencies -- nothing <em>needs</em> Noto&#39;s glyphs.</p>
+<p>Fontconfig&#39;s <code>&lt;rejectfont&gt;</code> blacklists a font from matching altogether, and<br>it works from the <strong>user-level</strong> config regardless of system conf ordering.<br>Create <code>~/.config/fontconfig/fonts.conf</code>:</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE fontconfig SYSTEM &quot;fonts.dtd&quot;&gt;
+&lt;fontconfig&gt;
+  &lt;!-- Noto Color Emoji outranks Apple Color Emoji in the system fallback
+       chain (50-omarchy.conf accept-aliases, 60-generic.conf prefer list),
+       both package-owned. Rejecting it here is the only override that works
+       regardless of conf ordering; Apple Color Emoji covers the full set. --&gt;
+  &lt;selectfont&gt;
+    &lt;rejectfont&gt;
+      &lt;pattern&gt;
+        &lt;patelt name=&quot;family&quot;&gt;
+          &lt;string&gt;Noto Color Emoji&lt;/string&gt;
+        &lt;/patelt&gt;
+      &lt;/pattern&gt;
+    &lt;/rejectfont&gt;
+  &lt;/selectfont&gt;
+&lt;/fontconfig&gt;
+</code></pre>
+<p>Then:</p>
+<pre><code class="language-bash">fc-cache -f
+</code></pre>
+<h2 id="proof">Proof</h2>
+<p>Run the <em>real</em> verification -- fallback from your UI font, per codepoint:</p>
+<pre><code>$ fc-match -s &quot;CaskaydiaMono Nerd Font:charset=1f600&quot; | head -3
+apple-color-emoji.ttf: &quot;Apple Color Emoji&quot; &quot;Regular&quot;
+fa-regular-400.woff2: &quot;Font Awesome 7 Free&quot; &quot;Regular&quot;
+fa-solid-900.woff2: &quot;Font Awesome 7 Free&quot; &quot;Solid&quot;
+</code></pre>
+<p>Apple is #1 and Noto is gone from the list entirely. Restart what you look<br>at:</p>
+<pre><code class="language-bash">omarchy restart shell   # emoji picker + bar
+# browsers need a full quit + relaunch
+</code></pre>
+<p>Open the Omarchy emoji picker (<code>SUPER+CTRL+E</code>): green water gun. 🎉</p>
+<h2 id="takeaways">Takeaways</h2>
+<ul>
+<li><code>fc-match emoji</code> only tests explicit family requests. Real emoji rendering<br>goes through per-codepoint fallback -- test with<br><code>fc-match -s &quot;&lt;your-ui-font&gt;:charset=1f600&quot;</code>.</li>
+<li>Drop-in confs that remap family names (like the one <code>ttf-apple-emoji</code><br>ships) don&#39;t touch the fallback sort order.</li>
+<li><code>&lt;rejectfont&gt;</code> in <code>~/.config/fontconfig/fonts.conf</code> beats any system-level<br>preference list, survives package updates, and lives in your dotfiles repo<br>instead of <code>/etc</code>.</li>
+</ul>
+
+    </div>
+  </article>
+
+  <!-- Command Palette -->
+  <div id="commandPalette" class="command-palette hidden">
+    <div class="command-palette-backdrop"></div>
+    <div class="command-palette-modal">
+      <div class="command-palette-header">
+        <span class="prompt">❯</span>
+        <input type="text" id="commandInput" placeholder="Type a command..." autocomplete="off">
+        <kbd>ESC</kbd>
+      </div>
+      <ul id="commandResults" class="command-results"></ul>
+      <div class="command-palette-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
+
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <span>© 2025 Helmut Januschka · <a href="http://www.rununtil.com/impressum.html" style="color: var(--text-dim);">Imprint</a></span>
+        <span class="badge">Powered by marked.js + Terminal Vibes</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Command Palette
+    const palette = document.getElementById('commandPalette');
+    const paletteInput = document.getElementById('commandInput');
+    const paletteResults = document.getElementById('commandResults');
+    let selectedIndex = 0;
+
+    const commands = [
+      { icon: '🏠', name: 'Go to Home', keywords: ['home', 'top', 'start'], action: () => window.location.href = '/' },
+      { icon: '👤', name: 'Go to About', keywords: ['about', 'bio', 'me'], action: () => window.location.href = '/#about' },
+      { icon: '💼', name: 'Go to Experience', keywords: ['experience', 'work', 'career'], action: () => window.location.href = '/#experience' },
+      { icon: '🚀', name: 'Go to Projects', keywords: ['projects', 'code', 'github'], action: () => window.location.href = '/#projects' },
+      { icon: '📝', name: 'Go to Blog', keywords: ['blog', 'posts', 'articles'], action: () => window.location.href = '/#blog' },
+      { icon: '📧', name: 'Go to Contact', keywords: ['contact', 'email', 'reach'], action: () => window.location.href = '/#contact' },
+      { icon: '📋', name: 'Copy Email', keywords: ['copy', 'email', 'clipboard'], action: () => { navigator.clipboard.writeText('helmut@januschka.com'); } },
+      { icon: '🐙', name: 'Open GitHub', keywords: ['github', 'code', 'repos'], action: () => window.open('https://github.com/hjanuschka', '_blank') },
+      { icon: '🐦', name: 'Open Twitter/X', keywords: ['twitter', 'x', 'social'], action: () => window.open('https://twitter.com/hjanuschka', '_blank') },
+      { icon: '💼', name: 'Open LinkedIn', keywords: ['linkedin', 'professional'], action: () => window.open('https://linkedin.com/in/hjanuschka', '_blank') },
+      { icon: '📄', name: 'Blog: Platform Integration for Installed Web Apps', keywords: ['blog', 'web', 'app', 'pwa', 'installed', 'android', 'linux', 'macos', 'icon', 'cutout'], action: () => window.location.href = '/chromium-installed-webapps-native.html' },
+      { icon: '📄', name: 'Blog: CSS Zoom and Explicit Inheritance', keywords: ['blog', 'css', 'zoom', 'inherit', 'unset', 'revert-layer', 'blink'], action: () => window.location.href = '/chromium-css-zoom-inheritance.html' },
+      { icon: '📄', name: 'Blog: Speculation Rules in the Preload Scanner', keywords: ['blog', 'speculation', 'rules', 'preload', 'scanner', 'parser', 'loading'], action: () => window.location.href = '/chromium-speculation-preload-scanner.html' },
+      { icon: '📄', name: 'Blog: JPEG XL, One Year Later', keywords: ['blog', 'jpeg', 'xl', 'jxl', 'rust', 'decoder', 'i2s', 'ship', '155'], action: () => window.location.href = '/chromium-jxl-one-year-later.html' },
+      { icon: '📄', name: 'Blog: Compact Generated Tables for Binary Size', keywords: ['blog', 'binary', 'size', 'table', 'generated', 'code', 'c++'], action: () => window.location.href = '/chromium-binary-size-tables.html' },
+      { icon: '📄', name: 'Blog: Member Order and Dangling raw_ptrs', keywords: ['blog', 'dangling', 'pointer', 'raw_ptr', 'memory', 'safety', 'destruction', 'order'], action: () => window.location.href = '/chromium-dangling-pointer-order.html' },
+      { icon: '📄', name: 'Blog: Implementing text-decoration-inset', keywords: ['blog', 'css', 'text', 'decoration', 'inset', 'underline', 'blink'], action: () => window.location.href = '/chromium-text-decoration-inset.html' },
+      { icon: '📄', name: 'Blog: Small DevTools Usability Fixes', keywords: ['blog', 'devtools', 'payload', 'storage', 'xml', 'columns', 'flame', 'chart'], action: () => window.location.href = '/chromium-devtools-papercuts.html' },
+      { icon: '📄', name: 'Blog: Deleting TimeTicks::UnixEpoch', keywords: ['blog', 'timeticks', 'unixepoch', 'time', 'monotonic', 'clock'], action: () => window.location.href = '/chromium-timeticks-unixepoch.html' },
+      { icon: '📄', name: 'Blog: Edge-to-Edge for Fullscreen PWAs', keywords: ['blog', 'edge', 'pwa', 'android', 'cutout', 'notch'], action: () => window.location.href = '/chromium-pwa-edge-to-edge.html' },
+      { icon: '📄', name: 'Blog: Touch Drag-and-Drop on Linux', keywords: ['blog', 'touch', 'drag', 'drop', 'linux'], action: () => window.location.href = '/chromium-touch-drag-drop-linux.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Write Size', keywords: ['blog', 'bluetooth', 'mtu', 'gatt', 'ble', 'maxwritewithoutresponsesize'], action: () => window.location.href = '/chromium-webbluetooth-mtu.html' },
+      { icon: '📄', name: 'Blog: Web Bluetooth Cancel Pending Connect', keywords: ['blog', 'bluetooth', 'cancel', 'connect', 'aosp', 'android'], action: () => window.location.href = '/chromium-webbluetooth-cancel-connect.html' },
+      { icon: '📄', name: 'Blog: A Smaller HTTPS-RR Implementation', keywords: ['blog', 'https-rr', 'dns', 'svcb', 'rfc 9460', 'aliasmode', 'servicemode', 'networking'], action: () => window.location.href = '/chromium-https-rr-take-two.html' },
+      { icon: '📄', name: 'Blog: Chromium Work in 2025', keywords: ['blog', '2025', 'chromium', 'owner', 'wrap'], action: () => window.location.href = '/2025-chromium-contributions.html' },
+      { icon: '📄', name: 'Blog: Integrating JPEG XL with jxl-rs', keywords: ['blog', 'jxl', 'jpeg', 'xl', 'rust'], action: () => window.location.href = '/chromium-jxl-resurrection.html' },
+      { icon: '📄', name: 'Blog: Chrome --focus Flag', keywords: ['blog', 'tab', 'focus', 'tobi'], action: () => window.location.href = '/chromium-focus-feature.html' },
+      { icon: '📄', name: 'Blog: Refreshing Chrome Theme Policies', keywords: ['blog', 'omarchy', 'theme', 'dhh'], action: () => window.location.href = '/chromium-omarchy.html' },
+      { icon: '📄', name: 'Blog: Wayland Color-Management Crash', keywords: ['blog', 'wayland', 'crash', 'debug'], action: () => window.location.href = '/chromium-wayland-crash.html' },
+      { icon: '📄', name: 'Blog: Packaging a Custom Chromium Build', keywords: ['blog', 'package', 'packaging', 'deb', 'rpm', 'installer', 'universal', 'share', 'build'], action: () => window.location.href = '/chromium-share-custom-build.html' },
+      { icon: '📄', name: 'Blog: Pi Coding Agent', keywords: ['blog', 'pi', 'agent', 'terminal', 'mario', 'badlogic'], action: () => window.location.href = '/pi-coding-agent.html' },
+      { icon: '📄', name: 'Blog: Building sesh for iOS', keywords: ['blog', 'sesh', 'ios', 'iphone', 'ipad', 'ssh', 'zellij', 'swift', 'swiftui', 'terminal'], action: () => window.location.href = '/building-sesh-ios-ssh-zellij.html' },
+    ];
+
+    function openPalette() {
+      palette.classList.remove('hidden');
+      paletteInput.value = '';
+      selectedIndex = 0;
+      renderResults(commands);
+      setTimeout(() => paletteInput.focus(), 10);
+    }
+
+    function closePalette() {
+      palette.classList.add('hidden');
+      paletteInput.value = '';
+    }
+
+    function filterCommands(query) {
+      if (!query) return commands;
+      const q = query.toLowerCase();
+      return commands.filter(cmd =>
+        cmd.name.toLowerCase().includes(q) ||
+        cmd.keywords.some(k => k.includes(q))
+      );
+    }
+
+    function renderResults(results) {
+      paletteResults.innerHTML = results.map((cmd, i) =>
+        '<li class="command-result' + (i === selectedIndex ? ' selected' : '') + '" data-index="' + i + '">' +
+          '<span class="icon">' + cmd.icon + '</span>' +
+          '<span class="name">' + cmd.name + '</span>' +
+        '</li>'
+      ).join('');
+    }
+
+    function executeCommand(results) {
+      if (results[selectedIndex]) {
+        results[selectedIndex].action();
+        closePalette();
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+      if (e.key === 'Escape' && !palette.classList.contains('hidden')) {
+        closePalette();
+      }
+    });
+
+    paletteInput.addEventListener('input', function() {
+      const results = filterCommands(this.value);
+      selectedIndex = 0;
+      renderResults(results);
+    });
+
+    paletteInput.addEventListener('keydown', function(e) {
+      const results = filterCommands(this.value);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+        renderResults(results);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        renderResults(results);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        executeCommand(results);
+      }
+    });
+
+    paletteResults.addEventListener('click', function(e) {
+      const item = e.target.closest('.command-result');
+      if (item) {
+        selectedIndex = parseInt(item.dataset.index);
+        executeCommand(filterCommands(paletteInput.value));
+      }
+    });
+
+    palette.querySelector('.command-palette-backdrop').addEventListener('click', closePalette);
+  </script>
+
+  <!-- Prism.js for syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script>
+    // Highlight all code blocks
+    Prism.highlightAll();
+  </script>
+  <script>
+    // RunUntil mouse-trail glyphs
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(pointer: coarse)').matches) return;
+      var chars = '01{}<>/$;=>_*+#';
+      var last = 0;
+      window.addEventListener('mousemove', function (e) {
+        var now = performance.now();
+        if (now - last < 45) return;
+        last = now;
+        var g = document.createElement('span');
+        g.className = 'glyph';
+        g.textContent = chars[Math.floor(Math.random() * chars.length)];
+        g.style.left = e.clientX + 'px';
+        g.style.top = e.clientY + 'px';
+        document.body.appendChild(g);
+        setTimeout(function () { g.remove(); }, 900);
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>
