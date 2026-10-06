@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Chromium Checkout Is Twice as Big as It Needs to Be - Helmut Januschka</title>
-  <meta name="description" content="How gclient quietly doubles the size of your third_party object stores, and a 150-line script that undoes it">
+  <meta name="description" content="How gclient quietly doubles the size of your third_party object stores, and a 200-line script that undoes it">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -12,7 +12,7 @@
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "Your Chromium Checkout Is Twice as Big as It Needs to Be",
-    "description": "How gclient quietly doubles the size of your third_party object stores, and a 150-line script that undoes it",
+    "description": "How gclient quietly doubles the size of your third_party object stores, and a 200-line script that undoes it",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -47,7 +47,7 @@
 
   <!-- Open Graph -->
   <meta property="og:title" content="Your Chromium Checkout Is Twice as Big as It Needs to Be">
-  <meta property="og:description" content="How gclient quietly doubles the size of your third_party object stores, and a 150-line script that undoes it">
+  <meta property="og:description" content="How gclient quietly doubles the size of your third_party object stores, and a 200-line script that undoes it">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/cl-shrink.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -58,7 +58,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
   <meta name="twitter:title" content="Your Chromium Checkout Is Twice as Big as It Needs to Be">
-  <meta name="twitter:description" content="How gclient quietly doubles the size of your third_party object stores, and a 150-line script that undoes it">
+  <meta name="twitter:description" content="How gclient quietly doubles the size of your third_party object stores, and a 200-line script that undoes it">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/cl-shrink.html">
 
@@ -873,8 +873,19 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>How gclient quietly doubles the size of your third_party object stores, and a 150-line script that undoes it</em></p>
+<p><em>How gclient quietly doubles the size of your third_party object stores, and a 200-line script that undoes it</em></p>
 <p><strong>Status:</strong> 🛠️ <a href="https://github.com/hjanuschka/cl-shrink">hjanuschka/cl-shrink</a></p>
+<div style="border: 1px solid var(--accent); border-left: 4px solid var(--accent); border-radius: 8px; padding: 18px 22px; margin: 28px 0; background: var(--bg-secondary);">
+  <div style="font-weight: bold; color: var(--accent); font-size: 13px; letter-spacing: 0.08em; margin-bottom: 10px;">TL;DR</div>
+  <pre style="margin: 0 0 12px 0;"><code class="language-bash">cl-shrink ~/chromium</code></pre>
+  <p style="margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.6;">
+    Reclaims <strong>50-65%</strong> of the disk your Chromium <code>third_party</code> git repos
+    are sitting on. <code>gclient sync</code> builds those object stores out of thin packs whose
+    deltas are never recomputed, and <code>git gc</code> will not fix it -- only
+    <code>git repack -f</code> does. Everything it removes is restored by <code>gclient sync</code>.
+  </p>
+</div>
+
 <h2 id="99">99%</h2>
 <p>My disk hit 99% full. 2 TB, 33 GB left, and three Chromium checkouts wondering why I was upset.</p>
 <p>The obvious suspects were innocent. <code>out/</code> directories are expected to be enormous, and I had already cleaned them. So I went looking for where the space actually was, and the answer turned out to be the one directory I had never thought to question: <code>.git</code>.</p>
@@ -983,14 +994,36 @@ candidate .git total: 51.6 GB -- expect 50-65% reclaim (25-33 GB)
 <p><strong>It never prunes a repo holding local work.</strong> If <code>git log --branches --not --remotes</code> is non-empty, or there is a stash, the repo gets repacked but keeps all its tags and reflogs. <code>--include-local</code> opts out. My <code>src</code> has 314 CL branches on it; nothing in there is &quot;recoverable by gclient sync&quot;.</p>
 <p><strong>It refuses to start during a build.</strong> <code>pgrep</code> for <code>gclient</code>, <code>autoninja</code>, <code>siso</code>. Repacking under a running build is not catastrophic but it is not polite either.</p>
 <p><strong>It is resumable.</strong> A stamp file per repo, compared against pack mtimes, so a re-run skips anything that has not been fetched since. At 4 minutes per GB a full three-checkout pass runs for hours, and you will want to interrupt it.</p>
-<p>Measured expectation across my three checkouts: <strong>50-65 GB reclaimed</strong> from 98.5 GB of candidate repos.</p>
+<p>Measured expectation across my three checkouts: <strong>50-65 GB reclaimed</strong> from 98.5 GB of candidate dependency repos.</p>
 <h2 id="the-65-gb-elephant">The 65 GB elephant</h2>
-<p>Which leaves <code>src/.git</code>. 65 GB each, and <code>cl-shrink</code> skips all three with:</p>
+<p>Which leaves <code>src/.git</code> itself. 65 GB each, and the first version of the tool refused to touch them:</p>
 <pre><code>SKIP  chromium/src   needs 64 GB free, have 31 GB
 </code></pre>
-<p>This is the catch-22 of the whole exercise: repacking a 63 GB pack needs ~63 GB of headroom, which is precisely what you do not have at the moment you care. The dependency pass frees enough to then come back and do them one at a time, which is the intended order of operations.</p>
-<p>But the honest observation is that repacking <code>src</code> is not the real win available here. Three checkouts storing three independent copies of the same 1.9-million-commit history is 130 GB of pure duplication, and git has a mechanism for exactly this -- <code>objects/info/alternates</code>, which lets one repo borrow another&#39;s object store. 196.7 GB becomes about 66 GB.</p>
-<p>I left it out of the tool, deliberately. A <code>gc</code> in the donor repository will happily delete objects that only the borrowers reference, and the borrowers find out by becoming corrupt. gclient has no idea the arrangement exists. It is a genuinely good trick and I may still do it by hand, but it does not belong behind a one-word command that also claims to be safe.</p>
+<p>This is the catch-22 of the whole exercise. <code>git repack -a</code> has to write out a complete replacement for every pack before it may unlink the originals, so peak usage includes a second copy of the largest one. For a 63 GB clone pack that means 63 GB of headroom -- precisely what you do not have at the moment you go looking for disk space.</p>
+<p>Giving up there bothered me, because <code>src</code> is where the growth actually happens. Look at the pack layout of a six-month-old checkout:</p>
+<pre><code>63857 MB  pack-bcaac772...pack     &lt;- the original clone, from the server
+  937 MB  pack-483be575...pack     &lt;- everything below here is gclient sync
+  218 MB  pack-2563e89d...pack
+  185 MB  pack-1d1a58c0...pack
+  166 MB  pack-eb1791b6...pack
+  ... 24 more ...
+29 packs
+</code></pre>
+<p>One big well-built pack from Google&#39;s servers, and 28 thin packs accreted one <code>gclient sync</code> at a time. The 63 GB is not the problem -- it is already well deltified and it is not growing. The 2.8 GB tail is the problem, and it will keep growing forever.</p>
+<p>And git has a mode for exactly that shape: <code>git repack --geometric=2 -d</code> maintains the packs in a geometric progression, which in practice means it rolls up the small ones and leaves the giant one alone. Peak disk usage is the size of the rolled-up set -- a couple of GB, not 63.</p>
+<pre><code>BEFORE: 68049 MB, packs=29
+$ git repack --geometric=2 -d      1m38s
+AFTER:  66579 MB, packs=4         -1469 MB
+</code></pre>
+<p>1.5 GB and 29 packs down to 4, in 98 seconds, on a checkout where the &quot;proper&quot; repack needs 20x more free space than exists. So <code>--top-level</code> opts into the solution repos and picks whichever it can afford:</p>
+<pre><code class="language-bash">cl-shrink ~/chromium                # skip chromium/src -- solution repo (--top-level to include)
+cl-shrink --top-level ~/chromium    # full repack if headroom allows, geometric if not
+</code></pre>
+<p>Two details that made it work rather than merely run. First, solution repos are processed <strong>last</strong>, after the dependency pass -- the 25+ GB that pass frees is often exactly what lets <code>src</code> clear the headroom check in the same invocation. Second, they always count as holding local work, so they are repacked but never pruned. My <code>src</code> has 133 branches and 38,897 tags on it; after a geometric pass, all 133 and all 38,897 are still there and <code>git fsck</code> is clean.</p>
+<h2 id="the-thing-i-did-not-automate">The thing I did not automate</h2>
+<p>There is a bigger win sitting right there, and I left it alone on purpose.</p>
+<p>Three checkouts storing three independent copies of the same 1.9-million-commit history is 130 GB of pure duplication. Git has a mechanism for this -- <code>objects/info/alternates</code>, which lets one repository borrow another&#39;s object store. 196.7 GB becomes about 66 GB. No compression tricks, no CPU, just not storing the same bytes three times.</p>
+<p>It is also a loaded gun. A <code>gc</code> in the donor repository will cheerfully delete objects that only the borrowers reference, and the borrowers find out by becoming corrupt. gclient has no idea the arrangement exists and will not warn you. It is a genuinely good trick, and I may still do it by hand, but it does not belong behind a one-word command that also advertises itself as safe.</p>
 <h2 id="install">Install</h2>
 <pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/hjanuschka/cl-shrink/main/cl-shrink \
   -o ~/.local/bin/cl-shrink &amp;&amp; chmod +x ~/.local/bin/cl-shrink

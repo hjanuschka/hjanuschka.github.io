@@ -4,9 +4,22 @@ category: "Tools"
 tech: "Bash / Git"
 ---
 
-*How gclient quietly doubles the size of your third_party object stores, and a 150-line script that undoes it*
+*How gclient quietly doubles the size of your third_party object stores, and a 200-line script that undoes it*
 
 **Status:** 🛠️ [hjanuschka/cl-shrink](https://github.com/hjanuschka/cl-shrink)
+
+```snippet
+<div style="border: 1px solid var(--accent); border-left: 4px solid var(--accent); border-radius: 8px; padding: 18px 22px; margin: 28px 0; background: var(--bg-secondary);">
+  <div style="font-weight: bold; color: var(--accent); font-size: 13px; letter-spacing: 0.08em; margin-bottom: 10px;">TL;DR</div>
+  <pre style="margin: 0 0 12px 0;"><code class="language-bash">cl-shrink ~/chromium</code></pre>
+  <p style="margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.6;">
+    Reclaims <strong>50-65%</strong> of the disk your Chromium <code>third_party</code> git repos
+    are sitting on. <code>gclient sync</code> builds those object stores out of thin packs whose
+    deltas are never recomputed, and <code>git gc</code> will not fix it -- only
+    <code>git repack -f</code> does. Everything it removes is restored by <code>gclient sync</code>.
+  </p>
+</div>
+```
 
 ## 99%
 
@@ -120,21 +133,56 @@ The guards that turned out to matter:
 
 **It is resumable.** A stamp file per repo, compared against pack mtimes, so a re-run skips anything that has not been fetched since. At 4 minutes per GB a full three-checkout pass runs for hours, and you will want to interrupt it.
 
-Measured expectation across my three checkouts: **50-65 GB reclaimed** from 98.5 GB of candidate repos.
+Measured expectation across my three checkouts: **50-65 GB reclaimed** from 98.5 GB of candidate dependency repos.
 
 ## The 65 GB elephant
 
-Which leaves `src/.git`. 65 GB each, and `cl-shrink` skips all three with:
+Which leaves `src/.git` itself. 65 GB each, and the first version of the tool refused to touch them:
 
 ```
 SKIP  chromium/src   needs 64 GB free, have 31 GB
 ```
 
-This is the catch-22 of the whole exercise: repacking a 63 GB pack needs ~63 GB of headroom, which is precisely what you do not have at the moment you care. The dependency pass frees enough to then come back and do them one at a time, which is the intended order of operations.
+This is the catch-22 of the whole exercise. `git repack -a` has to write out a complete replacement for every pack before it may unlink the originals, so peak usage includes a second copy of the largest one. For a 63 GB clone pack that means 63 GB of headroom -- precisely what you do not have at the moment you go looking for disk space.
 
-But the honest observation is that repacking `src` is not the real win available here. Three checkouts storing three independent copies of the same 1.9-million-commit history is 130 GB of pure duplication, and git has a mechanism for exactly this -- `objects/info/alternates`, which lets one repo borrow another's object store. 196.7 GB becomes about 66 GB.
+Giving up there bothered me, because `src` is where the growth actually happens. Look at the pack layout of a six-month-old checkout:
 
-I left it out of the tool, deliberately. A `gc` in the donor repository will happily delete objects that only the borrowers reference, and the borrowers find out by becoming corrupt. gclient has no idea the arrangement exists. It is a genuinely good trick and I may still do it by hand, but it does not belong behind a one-word command that also claims to be safe.
+```
+63857 MB  pack-bcaac772...pack     <- the original clone, from the server
+  937 MB  pack-483be575...pack     <- everything below here is gclient sync
+  218 MB  pack-2563e89d...pack
+  185 MB  pack-1d1a58c0...pack
+  166 MB  pack-eb1791b6...pack
+  ... 24 more ...
+29 packs
+```
+
+One big well-built pack from Google's servers, and 28 thin packs accreted one `gclient sync` at a time. The 63 GB is not the problem -- it is already well deltified and it is not growing. The 2.8 GB tail is the problem, and it will keep growing forever.
+
+And git has a mode for exactly that shape: `git repack --geometric=2 -d` maintains the packs in a geometric progression, which in practice means it rolls up the small ones and leaves the giant one alone. Peak disk usage is the size of the rolled-up set -- a couple of GB, not 63.
+
+```
+BEFORE: 68049 MB, packs=29
+$ git repack --geometric=2 -d      1m38s
+AFTER:  66579 MB, packs=4         -1469 MB
+```
+
+1.5 GB and 29 packs down to 4, in 98 seconds, on a checkout where the "proper" repack needs 20x more free space than exists. So `--top-level` opts into the solution repos and picks whichever it can afford:
+
+```bash
+cl-shrink ~/chromium                # skip chromium/src -- solution repo (--top-level to include)
+cl-shrink --top-level ~/chromium    # full repack if headroom allows, geometric if not
+```
+
+Two details that made it work rather than merely run. First, solution repos are processed **last**, after the dependency pass -- the 25+ GB that pass frees is often exactly what lets `src` clear the headroom check in the same invocation. Second, they always count as holding local work, so they are repacked but never pruned. My `src` has 133 branches and 38,897 tags on it; after a geometric pass, all 133 and all 38,897 are still there and `git fsck` is clean.
+
+## The thing I did not automate
+
+There is a bigger win sitting right there, and I left it alone on purpose.
+
+Three checkouts storing three independent copies of the same 1.9-million-commit history is 130 GB of pure duplication. Git has a mechanism for this -- `objects/info/alternates`, which lets one repository borrow another's object store. 196.7 GB becomes about 66 GB. No compression tricks, no CPU, just not storing the same bytes three times.
+
+It is also a loaded gun. A `gc` in the donor repository will cheerfully delete objects that only the borrowers reference, and the borrowers find out by becoming corrupt. gclient has no idea the arrangement exists and will not warn you. It is a genuinely good trick, and I may still do it by hand, but it does not belong behind a one-word command that also advertises itself as safe.
 
 ## Install
 
