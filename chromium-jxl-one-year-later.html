@@ -29,7 +29,7 @@
       "url": "https://januschka.com"
     },
     "datePublished": "2024-08-01",
-    "dateModified": "2026-09-02",
+    "dateModified": "2026-10-07",
     "image": "https://januschka.com/og-image.png",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -886,6 +886,7 @@
 </ul>
 <p>It enables both decoding and <code>image/jxl</code> advertising in the <code>Accept</code> header by default. <code>kJXLImageFormat</code> remains as a kill switch, and the virtual test suite is inverted to exercise the disabled configuration after the default changes. The CL also keeps incremental animation decoding sequential until the pixel decoder is initialized, avoiding an invalid early seek.</p>
 <p>The I2S review covers the decoder&#39;s security model and test coverage: Rust memory safety, renderer sandboxing, Chromium and upstream fuzzing, controlled allocation failures, conformance tests, and deterministic testing of parallel schedules.</p>
+<p>Alongside the launch, the Chrome for Developers team published an official announcement, <a href="https://developer.chrome.com/blog/jpeg-xl-in-chrome?hl=de">JPEG XL in Chrome</a>, covering the same ground from the team&#39;s side: why the decoder was rewritten in Rust (<a href="https://github.com/libjxl/jxl-rs">jxl-rs</a>) instead of ported C++, how SIMD performance was recovered via the stabilized <code>target_feature_11</code> and the <code>jxl_simd</code> abstraction layer inspired by Highway, and how developer feedback through the Interop Project drove the decision. It also points to the <a href="https://github.com/web-platform-tests/interop-jpegxl">Interop 2026 JPEG XL Investigation</a>, which ensures cross-browser interoperability of the format&#39;s features.</p>
 <h2 id="making-fuzzing-part-of-the-upstream-loop">Making Fuzzing Part of the Upstream Loop</h2>
 <p>Fuzzing needed to cover both Chromium and the upstream crate. Fixing every finding only in the browser would leave other jxl-rs embedders without the same corrections.</p>
 <p>ClusterFuzzLite was added to jxl-rs with short AddressSanitizer runs on pull requests and longer scheduled runs against the existing decode targets. It soon produced several arithmetic and allocation findings.</p>
@@ -961,6 +962,7 @@
 <ul>
 <li><a href="https://chromestatus.com/feature/5114042131808256">ChromeStatus: JPEG XL decoding support</a></li>
 <li><a href="https://groups.google.com/a/chromium.org/g/blink-dev/c/-gDojQbDPRI">Intent to Ship thread</a></li>
+<li><a href="https://developer.chrome.com/blog/jpeg-xl-in-chrome?hl=de">JPEG XL in Chrome (Chrome for Developers blog)</a></li>
 <li><a href="https://chromium-review.googlesource.com/c/chromium/src/+/8279712">Flag flip: enable JPEG XL by default</a></li>
 <li><a href="/chromium-jxl-resurrection.html">Original JPEG XL integration post</a></li>
 <li><a href="https://github.com/libjxl/jxl-rs/pull/628">ClusterFuzzLite integration in jxl-rs</a></li>

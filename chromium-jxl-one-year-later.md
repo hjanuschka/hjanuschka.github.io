@@ -26,6 +26,8 @@ It enables both decoding and `image/jxl` advertising in the `Accept` header by d
 
 The I2S review covers the decoder's security model and test coverage: Rust memory safety, renderer sandboxing, Chromium and upstream fuzzing, controlled allocation failures, conformance tests, and deterministic testing of parallel schedules.
 
+Alongside the launch, the Chrome for Developers team published an official announcement, [JPEG XL in Chrome](https://developer.chrome.com/blog/jpeg-xl-in-chrome?hl=de), covering the same ground from the team's side: why the decoder was rewritten in Rust ([jxl-rs](https://github.com/libjxl/jxl-rs)) instead of ported C++, how SIMD performance was recovered via the stabilized `target_feature_11` and the `jxl_simd` abstraction layer inspired by Highway, and how developer feedback through the Interop Project drove the decision. It also points to the [Interop 2026 JPEG XL Investigation](https://github.com/web-platform-tests/interop-jpegxl), which ensures cross-browser interoperability of the format's features.
+
 ## Making Fuzzing Part of the Upstream Loop
 
 Fuzzing needed to cover both Chromium and the upstream crate. Fixing every finding only in the browser would leave other jxl-rs embedders without the same corrections.
@@ -118,6 +120,7 @@ None of that makes a good launch screenshot. It is exactly what makes a decoder 
 
 - [ChromeStatus: JPEG XL decoding support](https://chromestatus.com/feature/5114042131808256)
 - [Intent to Ship thread](https://groups.google.com/a/chromium.org/g/blink-dev/c/-gDojQbDPRI)
+- [JPEG XL in Chrome (Chrome for Developers blog)](https://developer.chrome.com/blog/jpeg-xl-in-chrome?hl=de)
 - [Flag flip: enable JPEG XL by default](https://chromium-review.googlesource.com/c/chromium/src/+/8279712)
 - [Original JPEG XL integration post](/chromium-jxl-resurrection.html)
 - [ClusterFuzzLite integration in jxl-rs](https://github.com/libjxl/jxl-rs/pull/628)
