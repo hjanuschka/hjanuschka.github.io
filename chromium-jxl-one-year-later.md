@@ -8,6 +8,11 @@ tech: "Rust / C++ / Images"
 
 **Status:** ✅ Enabled by Default for Chrome 155
 
+<div style="margin: 24px 0; padding: 16px 20px; background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; border-radius: 8px;">
+  <strong style="color: #22c55e;">Official announcement: JPEG XL in Chrome</strong>
+  <p style="margin: 8px 0 0 0;">The Chrome for Developers team published <a href="https://developer.chrome.com/blog/jpeg-xl-in-chrome?hl=de">JPEG XL in Chrome</a>, covering why the decoder was rewritten in Rust (<a href="https://github.com/libjxl/jxl-rs">jxl-rs</a>), how SIMD performance was recovered via the stabilized <code>target_feature_11</code> and the <code>jxl_simd</code> abstraction layer inspired by Highway, and how developer feedback through the Interop Project drove the decision. See the <a href="https://github.com/web-platform-tests/interop-jpegxl">Interop 2026 JPEG XL Investigation</a> for cross-browser test coverage.</p>
+</div>
+
 ## After the Initial Integration
 
 The original [JPEG XL integration](/chromium-jxl-resurrection.html) added a memory-safe Rust decoder. Since then the work has covered ordinary browser concerns: partial input, paint requests arriving before headers, threading, MIME sniffing, and fuzzers.
