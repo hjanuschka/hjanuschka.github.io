@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Scoped View Transitions Across Three Engines - Helmut Januschka</title>
-  <meta name="description" content="One feature, three engines, one shared WPT suite - bringing Element.startViewTransition() to WebKit and Firefox.">
+  <meta name="description" content="Bringing Element.startViewTransition() to WebKit and Firefox against the same WPT suite.">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -12,7 +12,7 @@
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "Scoped View Transitions Across Three Engines",
-    "description": "One feature, three engines, one shared WPT suite - bringing Element.startViewTransition() to WebKit and Firefox.",
+    "description": "Bringing Element.startViewTransition() to WebKit and Firefox against the same WPT suite.",
     "author": {
       "@type": "Person",
       "name": "Helmut Januschka",
@@ -47,7 +47,7 @@
 
   <!-- Open Graph -->
   <meta property="og:title" content="Scoped View Transitions Across Three Engines">
-  <meta property="og:description" content="One feature, three engines, one shared WPT suite - bringing Element.startViewTransition() to WebKit and Firefox.">
+  <meta property="og:description" content="Bringing Element.startViewTransition() to WebKit and Firefox against the same WPT suite.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://januschka.com/cross-engine-view-transitions.html">
   <meta property="og:image" content="https://januschka.com/og-image.png">
@@ -58,7 +58,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@hjanuschka">
   <meta name="twitter:title" content="Scoped View Transitions Across Three Engines">
-  <meta name="twitter:description" content="One feature, three engines, one shared WPT suite - bringing Element.startViewTransition() to WebKit and Firefox.">
+  <meta name="twitter:description" content="Bringing Element.startViewTransition() to WebKit and Firefox against the same WPT suite.">
   <meta name="twitter:image" content="https://januschka.com/og-image.png">
   <link rel="canonical" href="https://www.januschka.com/cross-engine-view-transitions.html">
 
@@ -873,92 +873,131 @@
   <!-- Blog Content -->
   <article class="container">
     <div class="blog-content">
-<p><em>One feature, three engines, one shared WPT suite - bringing <code>Element.startViewTransition()</code> to WebKit and Firefox.</em></p>
+<p><em>Bringing <code>Element.startViewTransition()</code> to WebKit and Firefox against the same WPT suite.</em></p>
 <p><strong>Status:</strong> 🚧 In Progress</p>
+<h2 id="what-it-looks-like">What It Looks Like</h2>
+<p>Three engines, same scenario: a scope escapes its own clip region but stays inside an ancestor&#39;s <code>overflow: hidden</code> box. Before is the unpatched / baseline build, after is the scoped-VT implementation.</p>
+<div style="margin: 24px 0;">
+  <div style="font-size: 13px; color: var(--text-muted); margin: 0 0 8px;">Firefox - Bugzilla 2075158</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+    <figure style="margin: 0;">
+      <figcaption style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">before (pref off)</figcaption>
+      <video autoplay loop muted playsinline style="width: 100%; border: 1px solid var(--border); border-radius: 6px; background: #121212;">
+        <source src="https://static.januschka.com/firefox/i-2075158/vtg-clip-before.webm" type="video/webm">
+        <source src="https://static.januschka.com/firefox/i-2075158/vtg-clip-before.mp4" type="video/mp4">
+      </video>
+    </figure>
+    <figure style="margin: 0;">
+      <figcaption style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">after (patched)</figcaption>
+      <video autoplay loop muted playsinline style="width: 100%; border: 1px solid var(--border); border-radius: 6px; background: #121212;">
+        <source src="https://static.januschka.com/firefox/i-2075158/vtg-clip-after.webm" type="video/webm">
+        <source src="https://static.januschka.com/firefox/i-2075158/vtg-clip-after.mp4" type="video/mp4">
+      </video>
+    </figure>
+  </div>
+
+  <div style="font-size: 13px; color: var(--text-muted); margin: 0 0 8px;">WebKit - PR #81741</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+    <figure style="margin: 0;">
+      <figcaption style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">before (pref off)</figcaption>
+      <video autoplay loop muted playsinline style="width: 100%; border: 1px solid var(--border); border-radius: 6px; background: #121212;">
+        <source src="https://static.januschka.com/webkit/i-pr81741/before2.webm" type="video/webm">
+        <source src="https://static.januschka.com/webkit/i-pr81741/before2.mp4" type="video/mp4">
+      </video>
+    </figure>
+    <figure style="margin: 0;">
+      <figcaption style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">after (patched)</figcaption>
+      <video autoplay loop muted playsinline style="width: 100%; border: 1px solid var(--border); border-radius: 6px; background: #121212;">
+        <source src="https://static.januschka.com/webkit/i-pr81741/after2.webm" type="video/webm">
+        <source src="https://static.januschka.com/webkit/i-pr81741/after2.mp4" type="video/mp4">
+      </video>
+    </figure>
+  </div>
+
+  <div style="font-size: 13px; color: var(--text-muted); margin: 0 0 8px;">Chromium - baseline on <code>main</code></div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <figure style="margin: 0;">
+      <figcaption style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">before</figcaption>
+      <video autoplay loop muted playsinline style="width: 100%; border: 1px solid var(--border); border-radius: 6px; background: #121212;">
+        <source src="https://static.januschka.com/vt/chromium/nested-clip-before.webm" type="video/webm">
+        <source src="https://static.januschka.com/vt/chromium/nested-clip-before.mp4" type="video/mp4">
+      </video>
+    </figure>
+    <figure style="margin: 0;">
+      <figcaption style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">after (same build)</figcaption>
+      <video autoplay loop muted playsinline style="width: 100%; border: 1px solid var(--border); border-radius: 6px; background: #121212;">
+        <source src="https://static.januschka.com/vt/chromium/nested-clip-after.webm" type="video/webm">
+        <source src="https://static.januschka.com/vt/chromium/nested-clip-after.mp4" type="video/mp4">
+      </video>
+    </figure>
+  </div>
+</div>
+
+<p>Full tracking page with all four canonical scenarios per engine: <a href="https://static.januschka.com/vt/">https://static.januschka.com/vt/</a>.</p>
 <h2 id="the-feature">The Feature</h2>
-<p>Level 1 of the View Transitions API shipped <code>document.startViewTransition()</code>: one transition at a time, snapshotting the whole viewport. Nice for page-level swaps, useless for anything smaller than the document.</p>
-<p>Level 2 fixes that. <a href="https://drafts.csswg.org/css-view-transitions-2/">CSS View Transitions Module Level 2</a> adds <code>Element.startViewTransition()</code> so a transition can be scoped to a single subtree, several of them can run concurrently, and <code>view-transition-name</code> on nested elements resolves per scope instead of globally.</p>
+<p>Level 1 ships <code>document.startViewTransition()</code>: one transition at a time, snapshotting the whole viewport. Level 2 adds <code>Element.startViewTransition()</code> so a transition can be scoped to a subtree, multiple scopes can run concurrently, and <code>view-transition-name</code> on descendants resolves per scope.</p>
 <pre><code class="language-js">const transition = card.startViewTransition(() =&gt; updateCard());
 await transition.finished;
 </code></pre>
-<p>Chromium is actively implementing scoped View Transitions on top of its existing document-level implementation. WebKit and Firefox did not have it yet. The mega-adventure: ship the same spec, judged by the same WPT suite, in all three engines.</p>
-<h2 id="project-page">Project Page</h2>
-<p>The tracking page lives at <strong><a href="https://static.januschka.com/vt/">https://static.januschka.com/vt/</a></strong>. It compares scores across engines against the same suite (<code>css/css-view-transitions/scoped</code>, 93 tests at wpt <a href="https://github.com/web-platform-tests/wpt/commit/e8ca145562683547fb32faa7cfa9feb4cc99054b"><code>e8ca14556268</code></a>) and links out to one per-engine sampler:</p>
+<p>Spec: <a href="https://drafts.csswg.org/css-view-transitions-2/">css-view-transitions-2</a>. Shared test suite: <code>css/css-view-transitions/scoped</code> (93 tests at wpt <a href="https://github.com/web-platform-tests/wpt/commit/e8ca145562683547fb32faa7cfa9feb4cc99054b"><code>e8ca14556268</code></a>).</p>
+<h2 id="status">Status</h2>
 <table>
 <thead>
 <tr>
 <th>Engine</th>
 <th>Tracking</th>
-<th>Scoped suite</th>
-<th>Sampler</th>
+<th>Suite</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>Chromium</td>
-<td>baseline on <code>main</code> (shipped, no flag)</td>
+<td>baseline on <code>main</code>, shipped, no flag</td>
 <td>90/93</td>
-<td><a href="https://static.januschka.com/vt/chromium/">vt/chromium/</a></td>
 </tr>
 <tr>
 <td>Firefox</td>
-<td>Bugzilla <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2075158">2075158</a>, Phabricator stack in prep</td>
+<td><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2075158">Bugzilla 2075158</a>, Phabricator stack in prep</td>
 <td>90/93</td>
-<td><a href="https://static.januschka.com/firefox/i-2075158/">firefox/i-2075158/</a></td>
 </tr>
 <tr>
 <td>WebKit</td>
-<td>GitHub PR <a href="https://github.com/WebKit/WebKit/pull/81741">#81741</a></td>
+<td><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/WebKit/WebKit/pull/81741">PR #81741</a></td>
 <td>93/93</td>
-<td><a href="https://static.januschka.com/webkit/i-pr81741/">webkit/i-pr81741/</a></td>
 </tr>
 </tbody></table>
-<p>Each sampler has the same four scenarios so the engines can be compared visually:</p>
-<ol>
-<li><strong><code>case-list</code></strong> - reorder a 3-item list with <code>view-transition-name</code> per row.</li>
-<li><strong><code>case-image</code></strong> - swap two <code>&lt;img&gt;</code> sources inside a scoped element.</li>
-<li><strong><code>case-nested</code></strong> - a scoped element with named descendants (checks per-scope name resolution).</li>
-<li><strong><code>case-clip</code></strong> - a transition inside a <code>clip-path</code>/<code>overflow: hidden</code> region to show scope isolation.</li>
-</ol>
-<p>Every sampler also produces a short <strong>nested-clip video pair</strong> - a scope that escapes its own clip but stays inside an ancestor&#39;s <code>overflow: hidden</code> region. Rendered as before/after webm+mp4 so the overview page can show real motion from all three engines side by side.</p>
-<h2 id="the-webkit-branch">The WebKit Branch</h2>
-<p>WebKit <a href="https://github.com/WebKit/WebKit/pull/81741">PR #81741</a> is the end-to-end proof: ~5100 added lines across <code>WebCore</code>, the inspector protocol, preference plumbing, and every scoped WPT test imported into <code>LayoutTests</code>. The branch passes the full <code>css/css-view-transitions/scoped</code> suite (93/93) and is intended to be split into reviewable chunks before any of it lands. Keeping it as one branch first was the only way to prove the picture actually works together: style, bindings, EWS across iOS/macOS/WPE, and the scoped suite all green at the same time.</p>
-<p>Highlights on the WebKit side:</p>
+<p>Chromium and Firefox fail the same three tests: SVG root, MathML root, replaced-element root. One shared bug across three engines.</p>
+<h2 id="webkit-pr">WebKit PR</h2>
 <ul>
-<li><code>Element.startViewTransition()</code> with the Level 2 options bag, concurrent scopes, and per-scope name resolution.</li>
-<li>Scope containment tests covering remembered size, pseudo-element borders, sibling offset, display changes, and MathML / SVG roots.</li>
-<li>Shadow DOM: <code>auto</code> name discovery across shadow trees, cross-tree morphs, nested groups, and the pairing/collision rules.</li>
-<li>A new preference gate so the whole thing can roll out safely.</li>
+<li><span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN REVIEW</span> <a href="https://github.com/WebKit/WebKit/pull/81741"><strong>Add scoped view transitions (Element.startViewTransition)</strong></a></li>
 </ul>
-<h2 id="the-firefox-branch">The Firefox Branch</h2>
-<p>Firefox tracks the work under <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2075158">Bugzilla 2075158</a>. The Phabricator stack is being prepared from the implementation branch currently sitting at 90/93 on the same suite (91/93 once the pending WPT display-change fix lands upstream).</p>
-<h2 id="the-chromium-baseline">The Chromium Baseline</h2>
-<p>Chromium is the only engine where the API already partially exists - <code>document.startViewTransition()</code> has been shipping for a while, and scoped is in active implementation. For the cross-engine page, Chromium is the baseline: <code>chromium/src@main</code> content_shell captures, no patch, so before and after are the same. When a shipping scoped-VT CL is being tracked, the folder gets swapped to a proper <code>i-&lt;issueid&gt;/</code> sampler.</p>
-<p>The three failing tests at the moment are the same scope-root-kind bugs the other engines hit: SVG root, MathML root, replaced-element root. One issue in the spec/suite surface, three engines, one shared fix to make.</p>
-<h2 id="upstream-wpt-tests-and-fixes">Upstream WPT: Tests and Fixes</h2>
-<p>Running the same suite against three engines surfaces places where the suite itself is engine-specific or spec-ambiguous. Two WPT patches have been merged while building this project:</p>
+<p>~5100 added lines across <code>WebCore</code>, the inspector protocol, preference plumbing, and every scoped WPT test imported into <code>LayoutTests</code>. Passes the full suite (93/93). It stays as one branch for now to prove the end-to-end picture - style, bindings, EWS across iOS/macOS/WPE, and the full suite all green at once - then gets split into reviewable chunks before landing.</p>
+<p>What&#39;s in it:</p>
 <ul>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/web-platform-tests/wpt/pull/65510"><strong>[css-view-transitions] Reftest: scope background stable under ancestor overflow clip</strong></a> - new reftest for the exact scenario the nested-clip video demos cover: a scope whose content escapes its own clip region should still get painted correctly when an ancestor has <code>overflow: hidden</code>. Writing a cross-engine demo kept exposing subtle differences here, so the test now pins the behavior in the suite.</li>
-<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/web-platform-tests/wpt/pull/65518"><strong>[scoped-vt] Drop <code>:only-child</code> qualifier from display-change test</strong></a> - the <code>display-change-during-transition</code> test was accidentally gating on a structural selector unrelated to what it was trying to measure. With the qualifier dropped, Firefox picks up one more test (reaches 91/93) without any engine change, because the test is now actually measuring what the spec text describes.</li>
+<li><code>Element.startViewTransition()</code> with the Level 2 options bag, concurrent scopes, per-scope name resolution.</li>
+<li>Scope containment: remembered size, pseudo-element borders, sibling offset, display changes, MathML / SVG roots.</li>
+<li>Shadow DOM: <code>auto</code> name discovery across shadow trees, cross-tree morphs, nested groups, pairing/collision rules.</li>
+<li>Preference gate for staged rollout.</li>
 </ul>
-<p>The &quot;shared denominator&quot; rule of the tracking page exists precisely to make this kind of drift visible: the Firefox sampler used to say WebKit was at 83/93 while the WebKit sampler said 87/93, which is the kind of thing that makes cross-browser score claims meaningless. Same suite, same sha, same number on every card.</p>
-<h2 id="capture-contract">Capture Contract</h2>
-<p>A detail that matters more than it sounds: every sampler uses the same 800x600 viewport, the same dark theme, the same four case ids, and the same file naming (<code>before-&lt;case&gt;.png</code>, <code>after-&lt;case&gt;.png</code>, nested-clip videos as webm+mp4). Each engine&#39;s thread only owns its own folder and its own row on the overview page; nobody touches another engine&#39;s captures. That lets me re-run any engine in isolation and have the overview just work.</p>
-<p>The contract lives in <a href="https://static.januschka.com/vt/AGENTS.md"><code>vt/AGENTS.md</code></a> so a cold thread can refresh any engine&#39;s sampler without reverse-engineering the other two.</p>
-<h2 id="why">Why</h2>
-<p>Cross-engine interop is usually tracked by dashboards that count passes against a suite that only one engine runs regularly. That gives you three numbers that look comparable but are not. Running the same tests on the same sha on all three engines, with a physical sampler page per engine and a shared contract for how screenshots are captured, makes the comparison honest. And it surfaces bugs in the suite itself, which is how the two WPT fixes above happened.</p>
-<p>The Level 2 API is small but it unlocks a lot: scoped page updates, concurrent transitions, and shadow-tree behavior that web authors have been asking for since Level 1 shipped. Getting it into all three engines at once - against the same suite, with the same scoring - is the real adventure.</p>
+<h2 id="firefox-patches">Firefox Patches</h2>
+<ul>
+<li><span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">IN PROGRESS</span> <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=2075158"><strong>Bugzilla 2075158 - Implement scoped view transitions</strong></a></li>
+</ul>
+<p>Implementation branch sits at 90/93 (91/93 once the WPT display-change fix below propagates). Phabricator stack is being prepared from that branch.</p>
+<h2 id="chromium">Chromium</h2>
+<p>Baseline. <code>document.startViewTransition()</code> has shipped; scoped is in active implementation. For the tracking page the Chromium folder is <code>chromium/src@main</code> content_shell captures with no patch - before and after are the same clip. When a shipping scoped-VT CL is being tracked the folder gets swapped to a proper <code>i-&lt;issueid&gt;/</code> sampler.</p>
+<h2 id="upstream-wpt">Upstream WPT</h2>
+<p>Running the same suite on three engines surfaces test issues. Two merged:</p>
+<ul>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/web-platform-tests/wpt/pull/65510"><strong>Reftest: scope background stable under ancestor overflow clip</strong></a> - the exact scenario the videos above cover; now pinned in the suite.</li>
+<li><span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">MERGED</span> <a href="https://github.com/web-platform-tests/wpt/pull/65518"><strong>Drop <code>:only-child</code> qualifier from display-change test</strong></a> - the test was gating on a structural selector unrelated to what it was measuring. Firefox picks up one more test as a result, with no engine change.</li>
+</ul>
+<p>The tracking page uses the same wpt sha and the same denominator on every card. The Firefox sampler previously said WebKit was at 83/93 while WebKit itself reported 87/93; the shared number is what keeps that from happening.</p>
 <h2 id="next">Next</h2>
 <ul>
-<li>WebKit PR #81741: split into reviewable chunks and land them one at a time.</li>
-<li>Firefox Bugzilla 2075158: finish the Phabricator stack and get it into review.</li>
-<li>Chromium: track the shipping scoped-VT CL as it lands and swap the baseline folder to a proper issue sampler.</li>
-<li>Drive the three remaining failures (svg / mathml / replaced-element scope roots) to zero, since all three engines fail the same three tests.</li>
-</ul>
-<h2 id="thanks">Thanks</h2>
-<p>Thanks to:</p>
-<ul>
-<li>The <strong>CSS Working Group</strong> for the Level 2 spec work and reviews that keep these three engines heading toward the same picture.</li>
-<li>The <strong>WPT maintainers</strong> for turning both suite patches around quickly.</li>
+<li>WebKit PR #81741: split into reviewable chunks and land one at a time.</li>
+<li>Firefox Bugzilla 2075158: finish the Phabricator stack.</li>
+<li>Chromium: track the shipping scoped-VT CL and swap the baseline folder to a proper issue sampler.</li>
+<li>Drive the three shared failures (svg / mathml / replaced-element scope roots) to zero.</li>
 </ul>
 
     </div>
