@@ -1,9 +1,9 @@
 (async ()=>{
-    const T = Symbol("Comlink.proxy"), D = Symbol("Comlink.endpoint"), H = Symbol("Comlink.releaseProxy"), P = Symbol("Comlink.finalizer"), p = Symbol("Comlink.thrown"), j = (e)=>typeof e == "object" && e !== null || typeof e == "function", N = {
+    const T = Symbol("Comlink.proxy"), N = Symbol("Comlink.endpoint"), H = Symbol("Comlink.releaseProxy"), S = Symbol("Comlink.finalizer"), p = Symbol("Comlink.thrown"), j = (e)=>typeof e == "object" && e !== null || typeof e == "function", z = {
         canHandle: (e)=>j(e) && e[T],
         serialize (e) {
             const { port1: t, port2: r } = new MessageChannel;
-            return C(e, t), [
+            return P(e, t), [
                 r,
                 [
                     r
@@ -13,7 +13,7 @@
         deserialize (e) {
             return e.start(), F(e);
         }
-    }, z = {
+    }, D = {
         canHandle: (e)=>j(e) && p in e,
         serialize ({ value: e }) {
             let t;
@@ -38,18 +38,18 @@
     }, O = new Map([
         [
             "proxy",
-            N
+            z
         ],
         [
             "throw",
-            z
+            D
         ]
     ]);
     function W(e, t) {
         for (const r of e)if (t === r || r === "*" || r instanceof RegExp && r.test(t)) return !0;
         return !1;
     }
-    function C(e, t = globalThis, r = [
+    function P(e, t = globalThis, r = [
         "*"
     ]) {
         t.addEventListener("message", function c(s) {
@@ -83,7 +83,7 @@
                     case "ENDPOINT":
                         {
                             const { port1: f, port2: E } = new MessageChannel;
-                            C(e, E), a = B(f, [
+                            P(e, E), a = B(f, [
                                 f
                             ]);
                         }
@@ -107,7 +107,7 @@
                 const [g, f] = A(u);
                 t.postMessage(Object.assign(Object.assign({}, g), {
                     id: i
-                }), f), l === "RELEASE" && (t.removeEventListener("message", c), $(t), P in e && typeof e[P] == "function" && e[P]());
+                }), f), l === "RELEASE" && (t.removeEventListener("message", c), L(t), S in e && typeof e[S] == "function" && e[S]());
             }).catch((u)=>{
                 const [g, f] = A({
                     value: new TypeError("Unserializable return value"),
@@ -122,7 +122,7 @@
     function U(e) {
         return e.constructor.name === "MessagePort";
     }
-    function $(e) {
+    function L(e) {
         U(e) && e.close();
     }
     function F(e, t) {
@@ -136,35 +136,35 @@
             } finally{
                 r.delete(i.id);
             }
-        }), S(e, r, [], t);
+        }), C(e, r, [], t);
     }
     function h(e) {
         if (e) throw new Error("Proxy has been released and is not useable");
     }
-    function L(e) {
+    function $(e) {
         return m(e, new Map, {
             type: "RELEASE"
         }).then(()=>{
-            $(e);
+            L(e);
         });
     }
     const x = new WeakMap, k = "FinalizationRegistry" in globalThis && new FinalizationRegistry((e)=>{
         const t = (x.get(e) || 0) - 1;
-        x.set(e, t), t === 0 && L(e);
+        x.set(e, t), t === 0 && $(e);
     });
-    function V(e, t) {
+    function G(e, t) {
         const r = (x.get(t) || 0) + 1;
         x.set(t, r), k && k.register(e, t, e);
     }
-    function G(e) {
+    function I(e) {
         k && k.unregister(e);
     }
-    function S(e, t, r = [], c = function() {}) {
+    function C(e, t, r = [], c = function() {}) {
         let s = !1;
         const i = new Proxy(c, {
             get (l, o) {
                 if (h(s), o === H) return ()=>{
-                    G(i), L(e), t.clear(), s = !0;
+                    I(i), $(e), t.clear(), s = !0;
                 };
                 if (o === "then") {
                     if (r.length === 0) return {
@@ -176,7 +176,7 @@
                     }).then(y);
                     return n.then.bind(n);
                 }
-                return S(e, t, [
+                return C(e, t, [
                     ...r,
                     o
                 ]);
@@ -196,10 +196,10 @@
             apply (l, o, n) {
                 h(s);
                 const a = r[r.length - 1];
-                if (a === D) return m(e, t, {
+                if (a === N) return m(e, t, {
                     type: "ENDPOINT"
                 }).then(y);
-                if (a === "bind") return S(e, t, r.slice(0, -1));
+                if (a === "bind") return C(e, t, r.slice(0, -1));
                 const [u, g] = M(n);
                 return m(e, t, {
                     type: "APPLY",
@@ -217,16 +217,16 @@
                 }, a).then(y);
             }
         });
-        return V(i, e), i;
+        return G(i, e), i;
     }
-    function I(e) {
+    function V(e) {
         return Array.prototype.concat.apply([], e);
     }
     function M(e) {
         const t = e.map(A);
         return [
             t.map((r)=>r[0]),
-            I(t.map((r)=>r[1]))
+            V(t.map((r)=>r[1]))
         ];
     }
     const _ = new WeakMap;
@@ -346,9 +346,9 @@
     let R = null, d = [];
     async function Q() {
         if (R) return;
-        const e = (await import("./jxl-C28KHjPU.js")).default;
+        const e = (await import("./jxl-UykE1o5L.js")).default;
         R = await e({
-            locateFile: (t)=>t.endsWith(".wasm") ? new URL("/jxl-art/assets/jxl-D440PmfV.wasm", import.meta.url).href : t,
+            locateFile: (t)=>t.endsWith(".wasm") ? new URL("/jxl-art/assets/jxl-CL4Nl0fg.wasm", import.meta.url).href : t,
             printErr: (t)=>{
                 console.error("[libjxl]", t), d.push(t);
             },
@@ -409,5 +409,5 @@
             return K(e);
         }
     };
-    C(ee);
+    P(ee);
 })();
